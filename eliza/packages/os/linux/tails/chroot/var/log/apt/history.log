@@ -1,5 +1,0 @@
-
-Start-Date: 2026-07-18  01:03:36
-Commandline: apt-get.real --yes upgrade
-Upgrade: libapparmor1:amd64 (4.1.0-1, 4.1.0-1tails2)
-End-Date: 2026-07-18  01:03:37
