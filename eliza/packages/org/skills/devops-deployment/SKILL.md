@@ -1,6 +1,6 @@
 ---
 name: devops-deployment
-description: "DevOps deployment skill for Circuit. Docker multi-stage builds, Docker Compose, GitHub Actions CI/CD, EAS builds, monitoring (Prometheus/Grafana), logging, secret rotation, backups, SSL/TLS."
+description: "DevOps deployment skill for Circuit. Docker multi-stage builds, Docker Compose, GitHub Actions CI/CD, EAS builds, monitoring (Datadog dd-trace + pino), logging, secret rotation, backups, SSL/TLS."
 version: 1.0.0
 author: NottyBoi Engineering
 agent: Circuit
@@ -392,57 +392,33 @@ eas update --channel production --message "Bug fix for package detection"
 
 ---
 
-## 5. Monitoring Setup (Prometheus/Grafana)
+## 5. Monitoring Setup (Datadog — no Prometheus/Grafana in this stack)
 
-### Prometheus Configuration
+There is no Prometheus/Grafana/ELK/Loki anywhere in `atproto/` or `app/` —
+verified by grep. Real observability stack:
 
-```yaml
-global:
-  scrape_interval: 15s
-  evaluation_interval: 15s
+- **Tracing**: `dd-trace` (Datadog), wired per-service via each service's own
+  `tracer.ts` (e.g. `atproto/services/bsky/tracer.ts`).
+- **Logging**: pino, via `packages/common/src/logger.ts`'s `subsystemLogger`
+  — structured, not scraped metrics.
+- **Health checks**: `/xrpc/_health` (not `/health`) — confirmed on `pds` and
+  `ozone`; not confirmed whether `bsky`/`bsync` expose an equivalent.
+- **Client-side**: Sentry (crash/error reporting) + Bitdrift
+  (`BITDRIFT_API_KEY`, injected in CI) on `app/`.
 
-scrape_configs:
-  - job_name: "nottyboi-api"
-    static_configs:
-      - targets: ["api:3000"]
-    metrics_path: /metrics
+### Key things to monitor (mapped to what actually exists)
 
-  - job_name: "postgres"
-    static_configs:
-      - targets: ["postgres-exporter:9187"]
+| Concern                  | Where it's observed                              |
+|---------------------------|---------------------------------------------------|
+| Request latency/errors    | `dd-trace` spans per service                      |
+| Structured log errors     | pino `subsystemLogger` output, shipped wherever the deploy target sends stdout |
+| Service liveness          | `/xrpc/_health` polling                            |
+| Client crashes             | Sentry (app/)                                     |
+| Client-side perf/logs      | Bitdrift (app/)                                   |
 
-  - job_name: "redis"
-    static_configs:
-      - targets: ["redis-exporter:9121"]
-
-alerting:
-  alertmanagers:
-    - static_configs:
-        - targets: ["alertmanager:9093"]
-
-rule_files:
-  - "alerts.yml"
-```
-
-### Key Metrics to Monitor
-
-| Metric                      | Description                    | Alert Threshold    |
-|-----------------------------|--------------------------------|--------------------|
-| `http_request_duration_ms`  | API response time              | p95 > 500ms        |
-| `http_requests_total`       | Request count by status        | 5xx rate > 1%      |
-| `process_heap_bytes`        | Memory usage                   | > 400MB            |
-| `db_connections_active`     | Active DB connections          | > 80% pool         |
-| `redis_connected_clients`   | Redis connections              | > 100              |
-| `camera_frames_processed`   | Vision processing rate         | Drop > 50%         |
-| `detection_latency_ms`      | Object detection time          | p95 > 200ms        |
-
-### Grafana Dashboard Panels
-
-1. **API Overview**: Request rate, error rate, latency percentiles
-2. **System Health**: CPU, memory, disk, network per container
-3. **Database**: Query duration, connection pool, cache hit rate
-4. **Vision Pipeline**: Frame rate, detection rate, confidence distribution, fallback rate
-5. **Alert History**: Recent alerts with severity and resolution time
+Don't propose adding Prometheus/Grafana without first confirming with Circuit
+whether the deploy target already has a metrics-scraping story — the
+existing stack is trace- and log-based, not metrics-scraping-based.
 
 ---
 
@@ -456,12 +432,11 @@ All services must log in structured JSON format:
 {
   "timestamp": "2025-01-15T14:23:01.123Z",
   "level": "info",
-  "service": "api",
-  "message": "Detection processed",
+  "service": "pds",
+  "message": "record created",
   "traceId": "abc-123-def",
-  "cameraId": "cam-front-door",
-  "detectionClass": "package",
-  "confidence": 0.87,
+  "did": "did:plc:abc123",
+  "collection": "app.bsky.feed.post",
   "duration": 45
 }
 ```
@@ -566,7 +541,6 @@ find "${BACKUP_DIR}" -name "*.dump.gz" -mtime +${RETENTION_DAYS} -delete
 |-------------------|-----------|-----------|----------------|
 | PostgreSQL        | Daily     | 30 days   | S3 + local     |
 | Redis             | Daily     | 7 days    | S3             |
-| Camera config     | On change | Forever   | Git            |
 | Docker volumes    | Weekly    | 4 weeks   | S3             |
 | TLS certificates  | On renewal| Forever   | Git + S3       |
 

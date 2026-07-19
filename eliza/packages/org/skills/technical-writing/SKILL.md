@@ -108,90 +108,63 @@ Proprietary -- NottyBoi Engineering
 
 ### Endpoint Documentation Template
 
+The API surface here is **XRPC**, driven by lexicon schemas (see Lexi's
+`lexicon-schema.md`) — Scribe documents the method in narrative form, but
+the contract itself is the lexicon JSON, not a hand-written spec:
+
 ```markdown
-### `POST /api/v1/detections`
+### `com.atproto.repo.createRecord` (procedure)
 
-Process a camera frame and return object detections.
+Create a new record in the authenticated user's repo.
 
-**Authentication**: Bearer token required.
+**Authentication**: Session or OAuth access token required.
 
-**Request Body**:
+**Input**:
 
 | Field        | Type     | Required | Description                    |
-|--------------|----------|----------|--------------------------------|
-| `image`      | string   | Yes      | Base64-encoded JPEG image      |
-| `cameraId`   | string   | Yes      | Camera identifier              |
-| `timestamp`  | string   | No       | ISO 8601 timestamp (server time used if omitted) |
-| `model`      | string   | No       | Detection model to use (default: auto) |
+|--------------|----------|----------|---------------------------------|
+| `repo`       | string   | Yes      | DID of the repo (usually the caller's own) |
+| `collection` | string   | Yes      | NSID of the record type, e.g. `app.bsky.feed.post` |
+| `rkey`       | string   | No       | Explicit record key (auto-generated TID if omitted) |
+| `record`     | object   | Yes      | The record itself, matching the collection's lexicon |
 
-**Response**:
+**Output**:
 
 ```json
 {
-  "success": true,
-  "data": {
-    "detections": [
-      {
-        "class": "package",
-        "confidence": 0.87,
-        "bbox": [120, 80, 340, 290]
-      }
-    ],
-    "processingTime": 45,
-    "model": "yolov8n"
-  }
+  "uri": "at://did:plc:abc123/app.bsky.feed.post/3jwdwj2ctlk26",
+  "cid": "bafyrei...",
+  "commit": { "cid": "bafyrei...", "rev": "3jwdwj2ctlk26" }
 }
 ```
 
-**Error Responses**:
+**Errors** (from the lexicon's declared `errors`, not generic HTTP codes):
 
-| Status | Code              | Description                    |
-|--------|--------------------|--------------------------------|
-| 400    | `INVALID_IMAGE`   | Image could not be decoded     |
-| 401    | `UNAUTHORIZED`    | Missing or invalid token       |
-| 429    | `RATE_LIMITED`    | Too many requests              |
-| 500    | `DETECTION_ERROR` | Model inference failed         |
+| Error                  | Description                              |
+|-------------------------|--------------------------------------------|
+| `InvalidSwapCommit`     | `swapCommit` didn't match current HEAD  |
+| `InvalidSwapRecord`     | `swapRecord` didn't match existing value |
 ```
 
 ### API Documentation Rules
 
-- Every endpoint must have: method, path, description, auth requirements, request body, response body, and error codes
-- All code examples must be copy-pasteable and tested
-- Use consistent naming: `camelCase` for JSON fields, `SCREAMING_SNAKE` for error codes
-- Version APIs in the URL path (`/api/v1/`, `/api/v2/`)
-- Document rate limits for every public endpoint
-- Include curl examples for every endpoint
+- Every method's contract is the lexicon (`atproto/lexicons/**/*.json`), not
+  hand-written independently — document behavior and gotchas, don't restate
+  the schema (that duplicates what `lex gen-md` already produces).
+- All code examples must be copy-pasteable and tested against a real dev-env.
+- NSIDs, not URL paths, are the addressing scheme (`com.atproto.repo.createRecord`,
+  not `/api/v1/records`) — don't invent REST-style versioned paths.
+- Errors documented match the lexicon's declared `errors` array exactly.
+- Include a real request/response pair captured from a working call, not a
+  fabricated example.
 
-### OpenAPI Specification
+### Generated API Reference
 
-Maintain an OpenAPI 3.1 spec for all API services:
-
-```yaml
-openapi: 3.1.0
-info:
-  title: NottyBoi Vision API
-  version: 1.0.0
-  description: Object detection API for camera feeds
-paths:
-  /api/v1/detections:
-    post:
-      summary: Process a camera frame
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DetectionRequest'
-      responses:
-        '200':
-          description: Detection results
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DetectionResponse'
-```
+Don't hand-maintain an OpenAPI spec — `atproto/packages/lex-cli`'s `lex
+gen-md` generates a Markdown API reference directly from lexicon JSON,
+regenerated via `pnpm codegen`. Scribe's job is the narrative doc layer on
+top (guides, gotchas, migration notes), not re-deriving the contract by
+hand — see `api-doc-standards.md` for the full pipeline.
 
 ---
 
@@ -574,18 +547,20 @@ If the above steps do not resolve the issue:
 5. **Use active voice**: "The service processes the request" not "The request is processed by the service"
 6. **Front-load important information**: Don't bury the key point in the third paragraph
 
-### Jargon Glossary (NottyBoi)
+### Jargon Glossary (OnlyMen)
 
 | Term          | Definition                                            |
 |---------------|-------------------------------------------------------|
-| Camera        | Any video capture device (physical or virtual)        |
-| Detection     | An identified object in a camera frame                |
-| Edge          | Processing on the local device (not cloud)            |
-| Fallback      | Escalating processing from edge to cloud              |
-| Vision        | The perception agent (camera + detection pipeline)    |
-| Circuit       | The infrastructure agent (DevOps, deployment)         |
-| Compass       | The quality agent (testing, QA)                       |
-| Scribe        | The documentation agent                               |
+| NSID          | Namespaced identifier for a lexicon (`app.bsky.feed.post`) |
+| Lexicon       | JSON schema defining a record or XRPC method's contract |
+| AT-URI        | `at://did/collection/rkey` — addresses a specific record |
+| DID           | Decentralized identifier — an account's permanent identity |
+| PDS           | Personal Data Server — hosts a user's repo             |
+| Lexi          | The lexicon/schema-design agent                         |
+| Vision        | The moderation-tooling agent (Ozone, labels, reports)   |
+| Circuit       | The infrastructure agent (DevOps, deployment)           |
+| Compass       | The quality agent (testing, QA)                         |
+| Scribe        | The documentation agent                                 |
 
 ---
 
