@@ -11,8 +11,8 @@ import type { OrgReview, OrgTask } from '../types/index.ts'
 
 /** Short names the planner may use for org agents (usernames also accepted). */
 const ORG_AGENTS = [
-  'atlas', 'circuit', 'compass', 'echo', 'forge', 'nova', 'pixel',
-  'prism', 'pulse', 'scribe', 'sentinel', 'stream', 'vision',
+  'atlas', 'circuit', 'compass', 'echo', 'forge', 'lexi', 'nova', 'pixel',
+  'prism', 'pulse', 'scribe', 'sentinel', 'vision',
 ] as const
 
 const REVIEW_TYPES = [
