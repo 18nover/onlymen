@@ -1,0 +1,24 @@
+import type { Plugin } from "../../types/plugin.js";
+import * as pluginRegistry from "./services/pluginRegistryService.js";
+import * as types from "./types.js";
+export { createPluginAction, type PluginSubaction, pluginAction, } from "./actions/plugin.js";
+export type { ExtendedRuntime } from "./coreExtensions.js";
+export { applyRuntimeExtensions, extendRuntimeWithComponentUnregistration, } from "./coreExtensions.js";
+export { pluginConfigurationStatusProvider } from "./providers/pluginConfigurationStatus.js";
+export { pluginStateProvider } from "./providers/pluginStateProvider.js";
+export { registryPluginsProvider } from "./providers/registryPluginsProvider.js";
+export { buildKeywordRegex, buildProviderKeywords, COMMON_CONNECTOR_KEYWORDS, isProviderRelevant, keywordsFromPluginNames, PLUGIN_MANAGER_BASE_KEYWORDS, } from "./providers/relevance.js";
+export { hasAdminAccess, hasOwnerAccess, type SecurityDeps, } from "./security.js";
+export type { CoreEjectResult, CoreReinjectResult, CoreStatus, CoreSyncResult, UpstreamMetadata as CoreUpstreamMetadata, } from "./services/coreManagerService.js";
+export { CoreManagerService } from "./services/coreManagerService.js";
+export { PluginConfigurationService } from "./services/pluginConfigurationService.js";
+export { PluginManagerService } from "./services/pluginManagerService.js";
+export type { CloneResult, PluginSearchResult, RegistryPlugin, } from "./services/pluginRegistryService.js";
+export { clonePlugin, getAllPlugins, getPluginDetails, getRegistryEntry, listNonAppPlugins, loadRegistry, refreshRegistry, resetRegistryCache, searchNonAppPlugins, searchPluginsByContent, } from "./services/pluginRegistryService.js";
+export type { ComponentRegistration, EjectedPluginInfo, EjectResult, InstallProgress, InstallResult, LoadPluginParams, PluginComponents, PluginManagerConfig, PluginMetadata, PluginRegistry, PluginState, ReinjectResult, SyncResult, UninstallResult, UnloadPluginParams, UpstreamMetadata, } from "./types.js";
+export { PluginManagerServiceType, PluginStatus, } from "./types.js";
+export { resolveConfigPath, resolveStateDir, resolveUserPath, } from "./utils/paths.js";
+export { pluginRegistry, types };
+export declare const pluginManagerPlugin: Plugin;
+export default pluginManagerPlugin;
+//# sourceMappingURL=index.d.ts.map

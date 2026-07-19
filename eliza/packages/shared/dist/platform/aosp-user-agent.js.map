@@ -1,0 +1,1 @@
+{"version":3,"file":"aosp-user-agent.js","sourceRoot":"","sources":["../../src/platform/aosp-user-agent.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AACH,MAAM,UAAU,yBAAyB,CACvC,SAAoC;IAEpC,IAAI,OAAO,SAAS,KAAK,QAAQ,IAAI,SAAS,CAAC,MAAM,KAAK,CAAC;QAAE,OAAO,KAAK,CAAC;IAC1E,OAAO,eAAe,CAAC,IAAI,CAAC,SAAS,CAAC,CAAC;AACzC,CAAC;AAED,MAAM,CAAC,MAAM,oBAAoB,GAAG,yBAAyB,CAAC"}

@@ -1,0 +1,1 @@
+{"version":3,"file":"stack-context-manager.d.ts","sourceRoot":"","sources":["../../src/utils/stack-context-manager.ts"],"names":[],"mappings":"AAAA;;;;;GAKG;AACH,qBAAa,mBAAmB,CAAC,QAAQ;IACxC,OAAO,CAAC,KAAK,CAAkB;IAE/B,GAAG,CAAC,CAAC,EAAE,OAAO,EAAE,QAAQ,EAAE,EAAE,EAAE,MAAM,CAAC,GAAG,CAAC;IASzC,MAAM,IAAI,QAAQ,GAAG,SAAS;CAK9B"}

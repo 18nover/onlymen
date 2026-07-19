@@ -1,0 +1,1 @@
+{"version":3,"file":"subscription-auth.d.ts","sourceRoot":"","sources":["../../src/utils/subscription-auth.ts"],"names":[],"mappings":"AAAA;;;;GAIG;AACH,wBAAgB,8BAA8B,CAAC,GAAG,EAAE,OAAO,GAAG,MAAM,CAKnE;AAED,wBAAgB,4BAA4B,CAAC,KAAK,EAAE,MAAM,GACtD;IACE,EAAE,EAAE,IAAI,CAAC;IACT,IAAI,EAAE,MAAM,CAAC;CACd,GACD;IACE,EAAE,EAAE,KAAK,CAAC;IACV,KAAK,EAAE,MAAM,CAAC;CACf,CAgDJ"}

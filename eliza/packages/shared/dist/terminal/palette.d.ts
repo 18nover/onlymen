@@ -1,0 +1,18 @@
+/**
+ * Accent and status color tokens for CLI / terminal-adjacent UI theming.
+ *
+ * `CLI_PALETTE` is the single source of hex values for accent, info, success,
+ * warn, error, and muted terminal output. Keep in sync with the CLI palette
+ * section of `docs/cli/index.md`.
+ */
+export declare const CLI_PALETTE: {
+    readonly accent: "#FF5A2D";
+    readonly accentBright: "#FF7A3D";
+    readonly accentDim: "#D14A22";
+    readonly info: "#FF8A5B";
+    readonly success: "#2FBF71";
+    readonly warn: "#FFB020";
+    readonly error: "#E23D2D";
+    readonly muted: "#8B7F77";
+};
+//# sourceMappingURL=palette.d.ts.map

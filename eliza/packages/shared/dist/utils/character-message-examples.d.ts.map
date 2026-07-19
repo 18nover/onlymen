@@ -1,0 +1,1 @@
+{"version":3,"file":"character-message-examples.d.ts","sourceRoot":"","sources":["../../src/utils/character-message-examples.ts"],"names":[],"mappings":"AAAA;;;;GAIG;AACH,OAAO,KAAK,EAAW,mBAAmB,EAAE,MAAM,eAAe,CAAC;AAYlE,UAAU,wCAAwC;IAChD,sBAAsB,CAAC,EAAE,OAAO,CAAC;CAClC;AA6HD,wBAAgB,iCAAiC,CAC/C,KAAK,EAAE,OAAO,EACd,iBAAiB,SAAU,EAC3B,OAAO,GAAE,wCAA6C,GACrD,mBAAmB,EAAE,CAuCvB"}

@@ -1,0 +1,3 @@
+/** Re-exports the core connector-source registry helpers (normalize, alias, metadata lookup) so shared consumers avoid a direct `@elizaos/core` import. */
+export { expandConnectorSourceFilter, getConnectorIdentityMetadataMapping, getConnectorSourceAliases, getConnectorSourceMetadata, getConnectorWorldIdMetadataKeys, isPassiveConnectorSource, normalizeConnectorSource, registerConnectorSourceAliases, registerConnectorSourceDefinitions, registerConnectorSourceMetadata, unregisterConnectorSourceMetadataOwner, } from "@elizaos/core";
+//# sourceMappingURL=connectors.js.map

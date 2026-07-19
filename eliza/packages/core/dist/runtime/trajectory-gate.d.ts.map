@@ -1,0 +1,1 @@
+{"version":3,"file":"trajectory-gate.d.ts","sourceRoot":"","sources":["../../src/runtime/trajectory-gate.ts"],"names":[],"mappings":"AAAA;;;;;;;;;;;;;;GAcG;AAoBH,MAAM,WAAW,sBAAsB;IACtC,OAAO,EAAE,OAAO,CAAC;IACjB,8DAA8D;IAC9D,MAAM,EAAE,MAAM,CAAC;CACf;AAED;;;;;;;;;;GAUG;AACH,wBAAgB,qBAAqB,CACpC,GAAG,GAAE,MAAM,CAAC,UAAwB,GAClC,sBAAsB,CAwBxB"}

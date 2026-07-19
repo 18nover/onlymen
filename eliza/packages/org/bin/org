@@ -1,0 +1,186 @@
+#!/usr/bin/env bun
+/**
+ * `org` — command line for the onlymen engineering organization.
+ *
+ * Server lifecycle (start/stop/logs) delegates to the run-eliza driver;
+ * board commands (summary/board/assign/review/escalate/task) hit the
+ * org-coordinator plugin's REST routes directly (no LLM in the loop, instant);
+ * `say` goes through the chat pipeline (LLM in the loop, 1–3 min per turn).
+ *
+ * Usage:
+ *   org agents                                   list the 13 org agents
+ *   org start <agent>                            boot the server as <agent>
+ *   org stop | logs [n] | status                 server lifecycle
+ *   org say <text...>                            chat with the running agent
+ *   org summary                                  org summary + agent statuses
+ *   org board                                    full board snapshot (JSON)
+ *   org assign <assignee> <title> [--priority p] [--description d] [--deadline d]
+ *   org task <TASK-ID> <status>                  set task status
+ *   org review <reviewer> [--type t] [--task id] request a review
+ *   org escalate <description> [--severity s] [--task id]
+ *
+ * Env: ELIZA_RUN_PORT (default 2139) must match the running server.
+ */
+import { readdirSync } from 'node:fs'
+import { dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const pkgRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+const repoRoot = resolve(pkgRoot, '..', '..')
+const driver = join(repoRoot, '.claude', 'skills', 'run-eliza', 'driver.sh')
+const port = process.env.ELIZA_RUN_PORT ?? '2139'
+const base = `http://127.0.0.1:${port}`
+
+function fail(message: string): never {
+  console.error(`org: ${message}`)
+  process.exit(1)
+}
+
+function parseFlags(argv: string[]): { positional: string[]; flags: Record<string, string> } {
+  const positional: string[] = []
+  const flags: Record<string, string> = {}
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i]
+    if (arg.startsWith('--')) {
+      const value = argv[i + 1]
+      if (value === undefined || value.startsWith('--')) fail(`flag ${arg} needs a value`)
+      flags[arg.slice(2)] = value
+      i++
+    } else {
+      positional.push(arg)
+    }
+  }
+  return { positional, flags }
+}
+
+async function api(method: string, path: string, body?: unknown): Promise<unknown> {
+  const res = await fetch(`${base}${path}`, {
+    method,
+    headers: { 'content-type': 'application/json' },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  }).catch(() => fail(`cannot reach the agent server on :${port} — run \`org start <agent>\` first`))
+  const text = await res.text()
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(text)
+  } catch {
+    fail(`non-JSON response (${res.status}) from ${path}: ${text.slice(0, 200)}`)
+  }
+  if (!res.ok) fail(`${res.status} from ${path}: ${JSON.stringify(parsed)}`)
+  return parsed
+}
+
+async function exec(cmd: string[]): Promise<never> {
+  const proc = Bun.spawn(cmd, { stdout: 'inherit', stderr: 'inherit', stdin: 'inherit' })
+  process.exit(await proc.exited)
+}
+
+function agentRoster(): string[] {
+  return readdirSync(join(pkgRoot, 'characters'))
+    .filter((f) => f.endsWith('.json'))
+    .map((f) => f.replace(/\.json$/, ''))
+    .sort()
+}
+
+const [command, ...rest] = process.argv.slice(2)
+const { positional, flags } = parseFlags(rest)
+
+switch (command) {
+  case 'agents': {
+    for (const agent of agentRoster()) console.log(agent)
+    break
+  }
+  case 'start': {
+    const agent = positional[0] ?? 'atlas'
+    if (!agentRoster().includes(agent)) fail(`unknown agent "${agent}" — see \`org agents\``)
+    await exec(['bash', driver, 'start', agent])
+    break
+  }
+  case 'stop':
+    await exec(['bash', driver, 'stop'])
+    break
+  case 'logs':
+    await exec(['bash', driver, 'logs', positional[0] ?? '40'])
+    break
+  case 'status': {
+    console.log(JSON.stringify(await api('GET', '/api/health'), null, 2))
+    console.log(JSON.stringify(await api('GET', '/api/agents'), null, 2))
+    break
+  }
+  case 'say': {
+    const text = positional.join(' ')
+    if (!text) fail('usage: org say <text...>')
+    const agents = (await api('GET', '/api/agents')) as { agents: Array<{ id: string; name: string }> }
+    const agent = agents.agents[0]
+    if (!agent) fail('no agent running')
+    console.error(`(asking ${agent.name} — chat turns take 1–3 minutes)`)
+    const reply = (await api('POST', `/api/agents/${agent.id}/message`, {
+      userId: 'org-cli',
+      text,
+    })) as { response: string; agentName: string }
+    console.log(`${reply.agentName}: ${reply.response}`)
+    break
+  }
+  case 'summary': {
+    const data = (await api('GET', '/api/org/summary')) as {
+      summary: Record<string, unknown>
+      agents: Array<{ username: string; status: string; currentTask?: string }>
+    }
+    console.log(JSON.stringify(data.summary, null, 2))
+    for (const a of data.agents) {
+      console.log(`${a.username}: ${a.status}${a.currentTask ? ` (${a.currentTask})` : ''}`)
+    }
+    break
+  }
+  case 'board': {
+    console.log(JSON.stringify(await api('GET', '/api/org/board'), null, 2))
+    break
+  }
+  case 'assign': {
+    const [assignee, ...titleParts] = positional
+    const title = titleParts.join(' ')
+    if (!assignee || !title) fail('usage: org assign <assignee> <title...> [--priority p] [--description d] [--deadline d]')
+    const data = await api('POST', '/api/org/tasks', {
+      assignee,
+      title,
+      priority: flags.priority,
+      description: flags.description,
+      deadline: flags.deadline,
+    })
+    console.log(JSON.stringify(data, null, 2))
+    break
+  }
+  case 'task': {
+    const [taskId, status] = positional
+    if (!taskId || !status) fail('usage: org task <TASK-ID> <pending|in_progress|review|blocked|done|cancelled>')
+    console.log(JSON.stringify(await api('POST', `/api/org/tasks/${taskId}/status`, { status }), null, 2))
+    break
+  }
+  case 'review': {
+    const [reviewer] = positional
+    if (!reviewer) fail('usage: org review <reviewer> [--type t] [--task id]')
+    console.log(JSON.stringify(await api('POST', '/api/org/reviews', {
+      reviewer,
+      type: flags.type,
+      taskId: flags.task,
+    }), null, 2))
+    break
+  }
+  case 'escalate': {
+    const description = positional.join(' ')
+    if (!description) fail('usage: org escalate <description...> [--severity s] [--task id]')
+    console.log(JSON.stringify(await api('POST', '/api/org/blockers', {
+      description,
+      severity: flags.severity,
+      taskId: flags.task,
+    }), null, 2))
+    break
+  }
+  default: {
+    const source = await Bun.file(fileURLToPath(import.meta.url)).text()
+    // Print the usage block from this file's header comment.
+    const usage = source.split('\n').filter((l) => l.startsWith(' * ')).map((l) => l.slice(3))
+    console.log(usage.join('\n'))
+    if (command && command !== 'help') process.exit(1)
+  }
+}

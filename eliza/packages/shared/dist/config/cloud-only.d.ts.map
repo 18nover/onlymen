@@ -1,0 +1,1 @@
+{"version":3,"file":"cloud-only.d.ts","sourceRoot":"","sources":["../../src/config/cloud-only.ts"],"names":[],"mappings":"AAAA;;;;;GAKG;AACH,wBAAgB,0BAA0B,CAAC,OAAO,EAAE;IAClD,KAAK,EAAE,OAAO,CAAC;IACf,eAAe,CAAC,EAAE,MAAM,GAAG,IAAI,CAAC;IAChC,gBAAgB,CAAC,EAAE,OAAO,CAAC;IAC3B,iBAAiB,CAAC,EAAE,MAAM,GAAG,IAAI,CAAC;IAClC,kBAAkB,CAAC,EAAE,MAAM,GAAG,IAAI,CAAC;CACpC,GAAG,OAAO,CA0BV"}

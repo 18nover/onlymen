@@ -1,0 +1,1 @@
+{"version":3,"file":"owner-name.js","sourceRoot":"","sources":["../../src/utils/owner-name.ts"],"names":[],"mappings":"AAAA,uHAAuH;AACvH,MAAM,CAAC,MAAM,qBAAqB,GAAG,EAAE,CAAC;AAExC,MAAM,UAAU,kBAAkB,CAAC,KAAgC;IACjE,IAAI,OAAO,KAAK,KAAK,QAAQ,EAAE,CAAC;QAC9B,OAAO,EAAE,CAAC;IACZ,CAAC;IAED,OAAO,KAAK,CAAC,IAAI,EAAE,CAAC,KAAK,CAAC,CAAC,EAAE,qBAAqB,CAAC,CAAC;AACtD,CAAC"}

@@ -1,0 +1,1 @@
+{"version":3,"file":"pluginConfigurationStatus.d.ts","sourceRoot":"","sources":["../../../../src/features/plugin-manager/providers/pluginConfigurationStatus.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AACH,OAAO,KAAK,EAAE,QAAQ,EAAkB,MAAM,8BAA8B,CAAC;AA6C7E,eAAO,MAAM,iCAAiC,EAAE,QAAQ,GAAG;IAC1D,iBAAiB,EAAE,MAAM,EAAE,CAAC;CAwI5B,CAAC"}

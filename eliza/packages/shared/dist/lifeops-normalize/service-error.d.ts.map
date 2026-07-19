@@ -1,0 +1,1 @@
+{"version":3,"file":"service-error.d.ts","sourceRoot":"","sources":["../../src/lifeops-normalize/service-error.ts"],"names":[],"mappings":"AAAA;;;;;;;GAOG;AAEH,qBAAa,mBAAoB,SAAQ,KAAK;aAE1B,MAAM,EAAE,MAAM;aAEd,IAAI,CAAC,EAAE,MAAM;gBAFb,MAAM,EAAE,MAAM,EAC9B,OAAO,EAAE,MAAM,EACC,IAAI,CAAC,EAAE,MAAM,YAAA;CAKhC"}

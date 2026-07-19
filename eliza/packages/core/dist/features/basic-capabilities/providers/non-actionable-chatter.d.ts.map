@@ -1,0 +1,1 @@
+{"version":3,"file":"non-actionable-chatter.d.ts","sourceRoot":"","sources":["../../../../src/features/basic-capabilities/providers/non-actionable-chatter.ts"],"names":[],"mappings":"AAAA;;;;;GAKG;AACH,OAAO,KAAK,EAAE,MAAM,EAAE,MAAM,yBAAyB,CAAC;AAGtD,wBAAgB,oBAAoB,CAAC,OAAO,EAAE,MAAM,GAAG,MAAM,CAE5D;AAED,wBAAgB,qCAAqC,CACpD,OAAO,EAAE,MAAM,GACb,OAAO,CAST"}

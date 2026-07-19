@@ -1,0 +1,1 @@
+{"version":3,"file":"page-scope.d.ts","sourceRoot":"","sources":["../../src/contracts/page-scope.ts"],"names":[],"mappings":"AAAA;;;;GAIG;AACH,MAAM,MAAM,SAAS,GACjB,cAAc,GACd,gBAAgB,GAChB,kBAAkB,GAClB,WAAW,GACX,iBAAiB,GACjB,YAAY,GACZ,cAAc,GACd,eAAe,GACf,aAAa,CAAC;AAElB,eAAO,MAAM,WAAW,EAAE,SAAS,SAAS,EAUlC,CAAC;AAIX,wBAAgB,WAAW,CAAC,KAAK,EAAE,OAAO,GAAG,KAAK,IAAI,SAAS,CAE9D"}

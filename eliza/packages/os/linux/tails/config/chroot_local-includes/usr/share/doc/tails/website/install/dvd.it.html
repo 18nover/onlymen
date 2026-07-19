@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+
+<html lang="it" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<title>Tails - Masterizzare Tails su un DVD</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="icon" href="../favicon.ico" type="image/x-icon" />
+
+<link rel="stylesheet" href="../style.css" type="text/css" />
+
+<link rel="stylesheet" href="../local.css?reload-2025-10-14" type="text/css" />
+<link rel="stylesheet" href="../lib/fontawesome/css/all.min.css" type="text/css" />
+
+
+<script src="../lib/js/local.js" type="text/javascript"></script>
+
+<link href="./inc/stylesheets/download.css" rel="stylesheet" title="" type="text/css" />
+<link href="../doc/about/warnings.css" rel="stylesheet" title="" type="text/css" />
+<link href="./inc/stylesheets/steps.css" rel="stylesheet" title="" type="text/css" />
+<link href="./inc/stylesheets/dvd.css" rel="stylesheet" title="" type="text/css" />
+<script src="./inc/js/download.js" type="text/javascript"></script>
+<script src="./inc/js/forge.min.js" type="text/javascript"></script>
+</head>
+
+
+<body class="it">
+
+
+
+<nav id="skip-link">
+<!-- Skip navigation link for accessibility -->
+  <a href="#page-body">Vai al contenuto principale</a>
+
+</nav>
+
+
+<header id="banner">
+  <div id="banner-container">
+    <div id="tails-logo">
+  <a href="../index.it.html"> <span>Tails</span> <img alt="" class="svg" height="100" src="../lib/logo.png" width="270" />
+</a>
+</div>
+<div id="search-and-donate">
+  <nav aria-label="Search">
+    <form action="https://duckduckgo.com/" id="searchform" method="get" target="_blank">
+      <input id="searchbox" name="q" placeholder="Usando DuckDuckGo&hellip;" size="16" type="search" value="" /> <input name="sites" type="hidden" value="tails.net" /> <button aria-label="Cerca" type="submit"><span>Cerca</span></button>
+    </form>
+  </nav>
+  <div id="donate">
+    <a href="https://tails.net/donate/"><span>Donate</span></a>
+  </div>
+</div>
+
+  </div>
+</header>
+
+
+
+<header id="navigation-container">
+
+  
+  <nav id="main-navigation" aria-label="Primary">
+    <ul>
+  <li><a href="../index.it.html">Home</a></li>
+  <li><a href="../about.it.html">Come funziona Tails</a></li>
+  <li><a href="../install.it.html">Installa Tails</a></li>
+  <li><a href="../doc.it.html">Documentazione</a></li>
+  <li><a href="../support.it.html">Supporto</a></li>
+  <li><a href="../news.it.html">Notizie</a></li>
+</ul>
+
+  </nav>
+  
+
+  <div id="crumbs-and-languages">
+
+    <nav id="crumbs" aria-label="Breadcrumbs">
+      <ul>
+        
+        
+        
+        
+        
+        
+        <li><a href="../install.it.html">install</a></li>
+        
+        
+        <li>Masterizzare Tails su un DVD</li>
+      </ul>
+    </nav>
+
+    <div id="language-switcher-top">
+      
+      <nav class="language-switcher" aria-label="Languages">
+        <div class="current-language">Italiano</div>
+        <ul class="other-languages">
+          
+          <li>
+            <a href="./dvd.en.html">English</a>
+          </li>
+          
+          <li>
+            <a href="./dvd.ca.html">Català</a>
+          </li>
+          
+          <li>
+            <a href="./dvd.de.html">Deutsch</a>
+          </li>
+          
+          <li>
+            <a href="./dvd.es.html">Español</a>
+          </li>
+          
+          <li>
+            <a href="./dvd.fr.html">Français</a>
+          </li>
+          
+          <li>
+            <a href="./dvd.pt.html">Português</a>
+          </li>
+          
+          <li>
+            <a href="./dvd.ru.html">Русский</a>
+          </li>
+          
+          
+        </ul>
+      </nav>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+<main id="page-container">
+
+  
+
+  <article id="page-body">
+    <div id="page-title">
+      <h1>
+        Masterizzare Tails su un DVD
+      </h1>
+    </div>
+    <section id="content">
+      <div class="tip">
+
+<p>Consulta i nostri <a href="../doc/about/requirements.it.html">requisiti di sistema e hardware consigliato</a>.</p>
+
+</div>
+
+
+
+
+<h1 class="step" id="download">Scarica Tails</h1>
+
+
+
+
+<div class="step-image usb"><img alt="" class="img" height="200" src="./inc/infography/download.png" width="200" /></div>
+
+
+<div class="step-image upgrade-os"><img alt="" class="img" height="200" src="./inc/infography/download-with-intermediary.png" width="200" /></div>
+
+
+<div class="step-image upgrade-tails"><img alt="" class="img" height="200" src="./inc/infography/download-from-tails.png" width="200" /></div>
+
+
+
+
+<div class="usb upgrade download-only-img">
+  <span class="button display-as-inline-block" id="download-img"> <a href="
+https://download.tails.net/tails/stable/tails-amd64-7.7.2/tails-amd64-7.7.2.img
+">Scarica 
+7.7.2
+ l&#39;immagine USB di Tails (<span class="remove-extra-space">
+1.9 GB
+</span>)</a> </span> <span class="no-js button"> <a href="
+https://mirrors.wikimedia.org/tails/stable/tails-amd64-7.7.2/tails-amd64-7.7.2.img
+">Scarica 
+7.7.2
+ l&#39;immagine USB di Tails (<span class="remove-extra-space">
+1.9 GB
+</span>)</a> </span>
+</div>
+
+
+<div class="dvd download-only-iso">
+  <span class="button display-as-inline-block" id="download-iso"> <a href="
+https://download.tails.net/tails/stable/tails-amd64-7.7.2/tails-amd64-7.7.2.iso
+">Scarica Tails 
+7.7.2
+ ISO image (<span class="remove-extra-space">
+1.9 GB
+</span>)</a> </span>
+<span class="no-js button"> <a href="
+https://mirrors.wikimedia.org/tails/stable/tails-amd64-7.7.2/tails-amd64-7.7.2.iso
+">Scarica Tails
+
+7.7.2
+ ISO image
+(<span class="remove-extra-space">
+1.9 GB
+</span>)</a> </span>
+</div>
+
+
+
+
+<p class="usb upgrade-os">Salva il download nella cartella <i>Downloads</i> abituale e non nella
+chiavetta USB.</p>
+
+
+
+
+<p class="upgrade-tails">Consigliamo di salvare il download nell&#39;Archivio Persistente. Altrimenti,
+Tails potrebbe smettere di rispondere se la memoria RAM del computer si
+riempie.</p>
+
+
+
+
+<div class="tip upgrade">
+
+<p>While you are downloading, we recommend you read the <a href="../latest.it.html">release
+notes</a> for Tails 
+7.7.2
+<span class="remove-extra-space">.</span>&nbsp; They
+document all the changes in this new version: new features, problems that
+were solved, and known issues that have already been identified.</p>
+
+
+
+
+</div>
+
+
+
+
+<div id="tails-version">
+7.7.2
+</div>
+
+
+
+
+<h1 class="step" id="verify">Verifica il download</h1>
+
+
+
+
+<div class="step-image usb"><img alt="" class="img" height="200" src="./inc/infography/verify.png" width="200" /></div>
+
+
+<div class="step-image upgrade-os"><img alt="" class="img" height="200" src="./inc/infography/verify-with-intermediary.png" width="200" /></div>
+
+
+<div class="step-image upgrade-tails"><img alt="" class="img" height="200" src="./inc/infography/verify-from-tails.png" width="200" /></div>
+
+
+
+
+<div class="display-as-block" id="javascript-verification-tip">
+  <p>Verifica il download per assicurarti che sia sicuro e che non sia stato
+danneggiato durante il download.</p>
+</div>
+
+
+
+
+<div class="display-as-block" id="verification">
+  <div class="no-js">
+    <p>Sembra che JavaScript sia disabilitato. Per verificare il download, &egrave;
+possibile:</p>
+    <ul>
+      <li><p>Abilita JavaScript e ricarica la pagina.</p></li>
+      <li><p>Confronta manualmente il checksum del tuo download con <a href="./v2/Tails/amd64/stable/latest.json">il checksum delle
+nostre immagini</a>.     In Tails
+puoi installare <a href="https://gtkhash.org/"><i>GtkHash</i></a> come
+<a href="../doc/persistent_storage/additional_software.it.html">Software Aggiunto</a></p></li>
+      <li><p>Verifica l&#39;immagine scaricata usando <span class="createlink">OpenPGP signing
+key</span> e <span class="usb upgrade download-only-img"><a href="
+https://tails.net/torrents/files/tails-amd64-7.7.2.img.sig
+">la firma OpenPGP </a>.</span> <span class="dvd
+download-only-iso"><a href="
+https://tails.net/torrents/files/tails-amd64-7.7.2.iso.sig
+">Firma OpenPGP</a>.</span><br />
+        Non forniamo pi&ugrave; istruzioni per verificare i download con OpenPGP.
+      </p></li>
+    <p><a href="../contribute/design/download_verification.html">Vedi la nostra analisi di sicurezza delle diverse tecniche di
+verifica.</a></p>
+    </ul>
+  </div>
+  <div id="ie">
+    <p>Sembra che tu stia utilizzando <em>Internet Explorer</em>. Per verificare il
+download, utilizza un altro browser.</p>
+  </div>
+  <div class="display-as-block" id="verify-button">
+    <label class="button">Seleziona il download da verificare&hellip; <input id="verify-file" type="file" /></label>
+    <p id="verify-minor">o verifica usando il <a class="toggle" href="#install-inc-steps-verify.inline.it.openpgp-verification">OpenPGP
+signature</a></p>
+    <div class="floating-toggleable" id="openpgp-verification">
+    <div class="toggleable" id="install-inc-steps-verify.inline.it.openpgp-verification">
+
+ <a class="toggle" href="#install-inc-steps-verify.inline.it.openpgp-verification"></a>
+
+    <p>
+      <a class="usb upgrade download-only-img" href="
+https://tails.net/torrents/files/tails-amd64-7.7.2.img.sig
+"> Firma OpenPGP
+</a> <a class="dvd download-only-iso" href="
+https://tails.net/torrents/files/tails-amd64-7.7.2.iso.sig
+">Firma
+OpenPGP</a>
+    </p>
+
+    <p>Se non sai come utilizzare la OpenPGP signature, fai clic sul pulsante
+<b>Seleziona il tuo download&hellip;</b> per verificare il download con
+JavaScript.</p>
+
+    <p><span class="createlink">OpenPGP signing key</span></p>
+
+    <p><a href="../contribute/design/download_verification.html">Analisi della sicurezza delle diverse tecniche di
+verifica</a></p>
+
+    
+    </div>
+    </div>
+  </div>
+  <div class="display-as-block" id="verifying-download">
+    <p>Verifica di <em><span class="verify-filename">$FILENAME</span></em>&hellip;</p>
+    <div class="progress">
+      <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" class="progress-bar" id="progress-bar" role="progressbar" style="width: 0%"></div>
+    </div>
+  </div>
+  <div class="display-as-block" id="verification-successful">
+    <p><img alt="" class="icon" height="20" src="../lib/check.png" width="24" /><b>Verifica
+riuscita!</b> (<em><span class="verify-filename">$FILENAME</span></em>)</p>
+  </div>
+  <div class="display-as-block" id="verification-failed">
+    <p><img alt="" class="icon" height="22" src="../lib/cross.png" width="23" /><b>Verifica fallita!</b>
+(<em><span class="verify-filename">$FILENAME</span></em>)</p>
+    <p class="why-failed-link"><a class="toggle" href="#install-inc-steps-verify.inline.it.why-failed">Perch&eacute;?</a></p>
+    <div class="floating-toggleable" id="why-failed">
+    <div class="toggleable" id="install-inc-steps-verify.inline.it.why-failed">
+
+ <a class="toggle" href="#install-inc-steps-verify.inline.it.why-failed"></a>
+    <p>&Egrave; molto probabile che la verifica sia fallita a causa di un errore o di
+un&#39;interruzione durante lo scaricamento.</p>
+
+    <p>La verifica fallisce anche se cerchi di verificare un download diverso
+dall&#39;ultima versione, Tails 
+7.7.2
+.</p>
+
+    <p>Meno probabilmente, la verifica potrebbe essere fallita a causa di uno
+scaricamento malevolo dai nostri mirror di scaricamento o a causa di un
+attacco di rete nel tuo paese o sulla tua rete locale.</p>
+
+    <p>Provare a scaricare nuovamente di solito risolve il problema. In altro caso,
+prova a scaricare da un luogo diverso o da un altro computer.</p>
+
+    <p><a href="../contribute/design/download_verification.html">Come funziona la verifica? </a></p>
+    
+    </div>
+    </div>
+    <p class="usb upgrade download-only-img"><a href="
+https://download.tails.net/tails/stable/tails-amd64-7.7.2/tails-amd64-7.7.2.img
+" id="download-img-again">Prova a scaricare di nuovo&hellip;</a></p>
+    <p class="dvd download-only-iso"><a href="
+https://download.tails.net/tails/stable/tails-amd64-7.7.2/tails-amd64-7.7.2.iso
+" id="download-iso-again">Prova a scaricare nuovamente&hellip;</a></p>
+  </div>
+  <div class="display-as-block" id="verification-error-file">
+    <p><img alt="" class="icon" height="22" src="../lib/cross.png" width="23" /><b>Errore nella
+selezione dell&#39;immagine.</b></p>
+    <p class="usb upgrade download-only-img">Assicurati di selezionare un&#39;immagine USB leggibile dal tuo browser.</p>
+    <p class="dvd download-only-iso">Assicurati di selezionare un&#39;immagine ISO leggibile dal tuo browser.</p>
+    <p><a id="retry-json">Retry&hellip;</a></p>
+  </div>
+  <div class="display-as-block" id="verification-error-json">
+    <p><img alt="" class="icon" height="22" src="../lib/cross.png" width="23" /><b>Errore scaricando <a href="" id="checksum-file">checksum file</a> dal nostro sito web.</b></p>
+    <p>Assicurati che il browser sia connesso a Internet.</p>
+    <p><a id="retry-json">Retry&hellip;</a></p>
+  </div>
+  <div class="display-as-block" id="verification-error-image">
+    <p><img alt="" class="icon" height="22" src="../lib/cross.png" width="23" /><b>Errore di lettura
+dell&#39;immagine <em><span class="verify-filename">$FILENAME</span></em>.</b></p>
+    <p>Assicurati che <em><span class="verify-filename">$FILENAME</span></em> sia
+leggibile dal tuo browser.</p>
+    <p><a id="retry-image">Riprova&hellip;</a></p>
+  </div>
+</div>
+
+
+
+
+<h1 class="step">Continua a installare o aggiornare Tails</h1>
+
+
+<p>Per istruzioni dettagliate fai riferimento alla documentazione Ubuntu:</p>
+
+<ul>
+<li><p><a href="https://wiki.ubuntu-it.org/Hardware/DispositiviPartizioni/MasterizzareIso#Masterizzare_con_Windows">Masterizzare da
+Windows</a></p></li>
+<li><p><a href="https://wiki.ubuntu-it.org/Hardware/DispositiviPartizioni/MasterizzareIso#Masterizzare_con_Ubuntu">Masterizzare da
+Ubuntu</a></p></li>
+<li><p><a href="https://wiki.ubuntu-it.org/Hardware/DispositiviPartizioni/MasterizzareIso#Masterizzare_con_Mac_OS_X">Masterizzare da
+macOS</a></p></li>
+</ul>
+
+
+<h1 id="warnings">Avvertenze: Tails &egrave; sicuro ma non &egrave; magico!</h1>
+
+
+
+
+<div></div>
+
+
+
+
+<div class="caution">
+
+<p>Tails &egrave; pi&ugrave; sicuro di qualsiasi sistema operativo standard. Ma Tails, o
+qualsiasi software o sistema operativo, non pu&ograve; proteggerti da tutto&mdash;anche
+se sembra che lo faccia.</p>
+
+<p>Le raccomandazioni che seguono ti terranno ancora pi&ugrave; al sicuro,
+specialmente se sei ad alto rischio.</p>
+
+</div>
+
+
+
+
+<div id="columns">
+
+<div id="identity">
+
+<div class="content">
+
+<h3>Proteggere la tua identit&agrave; quando usi Tails</h3>
+
+<img alt="" class="svg" height="169" src="../doc/about/warnings/identity.png" width="290" /> 
+<p>Tails &egrave; progettato per nascondere la tua identit&agrave;.</p>
+
+<p>Ma alcune delle tue attivit&agrave; potrebbero rivelare la tua identit&agrave;:</p>
+
+<ul>
+  <li>Condividendo file con metadati, come data, ora, posizione e informazioni sul
+dispositivo</li>
+  <li>Usando Tails per pi&ugrave; di uno scopo alla volta</li>
+</ul>
+
+
+</div>
+
+<div><button id="toggle-identity">Proteggere la tua identit&agrave;</button></div>
+
+</div>
+
+<div id="tor">
+
+<div class="content">
+
+<h3>Limiti della rete Tor</h3>
+
+<img alt="" class="svg" height="169" src="../doc/about/warnings/tor.png" width="290" /> 
+<p>Tails usa la rete Tor perch&eacute; &egrave; la rete pi&ugrave; sicura e popolare per proteggerti
+dalla sorveglianza e dalla censura.</p>
+
+<p>Ma Tor ha dei limiti se ti preoccupi di:</p>
+
+<ul>
+  <li>Nascondere che stai usando Tor e Tails</li>
+  <li>Proteggere le tue comunicazioni online da aggressori determinati ed esperti</li>
+</ul>
+
+
+</div>
+
+<div><button id="toggle-tor">Limiti di Tor</button></div>
+
+</div>
+
+<div id="computer">
+
+<div class="content">
+
+<h3>Riduzione dei rischi durante l&#39;utilizzo di computer non fidati</h3>
+
+<img alt="" class="svg" height="169" src="../doc/about/warnings/computer.png" width="290" /> 
+<p>Tails pu&ograve; funzionare in sicurezza su un computer con un virus.</p>
+
+<p>Ma Tails non pu&ograve; sempre proteggerti quando:</p>
+
+<ul>
+  <li>Viene installato da un computer infetto</li>
+  <li>Tail viene eseguito su un computer con BIOS, firmware o hardware compromessi</li>
+</ul>
+
+
+</div>
+
+<div><button id="toggle-computer">Usando computer non fidati</button></div>
+
+</div>
+
+</div>
+
+
+
+
+<div class="toggleable warning hidden" id="detailed-identity">
+
+<span class="hide-button" id="hide-identity"></span> 
+<div></div>
+
+<h1 class="embedded">Proteggere l&#39;identit&agrave;</h1>
+
+<div class="standalone">
+
+ 
+
+</div>
+
+<h2 id="metadata">Pulire i metadati dei file prima di condividerli</h2>
+
+<p>Molti file nascondono dati, o metadati:</p>
+
+<ul>
+
+<li><p>I file JPEG e altri file d&#39;immagine spesso contengono informazioni su dove &egrave;
+stata scattata una foto e quale macchina fotografica &egrave; stata usata.</p></li>
+
+<li><p>I documenti di Office spesso contengono informazioni sul loro autore, e la
+data e l&#39;ora in cui il documento &egrave; stato creato.</p></li>
+
+</ul>
+
+<p>Per aiutarti a eliminare i metadati, Tails include <a href="../doc/sensitive_documents/metadata.it.html"><i>Metadata
+Cleaner</i></a>, uno strumento per rimuovere
+i metadati di una vasta gamma di formati di file.</p>
+
+<div class="attack">
+
+<p>I metadati sono stati usati in passato per localizzare le persone dalle foto
+che hanno scattato. Per un esempio, vedi
+<a href="https://www.npr.org/sections/thetwo-way/2012/12/04/166487197/betrayed-by-metadata-john-mcafee-admits-hes-really-in-guatemala">
+da NPR: Tradito dai metadati, John McAfee ammette di essere davvero in
+Guatemala</a>.</p>
+
+</div>
+
+<h2 id="contextual">Utilizza le sessioni Tails per un solo scopo alla volta</h2>
+
+<p>Se usi le sessioni di Tails per pi&ugrave; di uno scopo alla volta, un avversario
+potrebbe associare le tue  attivit&agrave;.</p>
+
+<p>Per esempio, se accedi a diversi account sullo stesso sito web in una
+singola sessione Tails, il sito web potrebbe stabilire che gli account sono
+utilizzati dalla stessa persona. Questo perch&eacute; i siti web possono capire
+quando 2 account stanno usando lo stesso circuito Tor.</p>
+
+<p>Per evitare che un avversario colleghi le tue attivit&agrave; mentre usi Tails,
+riavvia Tails tra le diverse attivit&agrave; . Per esempio, riavvia  Tails tra il
+controllo della tua email di lavoro e la tua  email di whistleblowing.</p>
+
+<div class="attack">
+
+<p>Non siamo a conoscenza di alcun attacco di questo tipo che riveli l&#39;identit&agrave;
+delle  persone online che hanno usato Tails per scopi diversi in una volta.</p>
+
+</div>
+
+<p>Se ti preoccupi che i file nel tuo <a href="../doc/persistent_storage.it.html">Archivio
+Persistente</a> possano essere usati per collegare le
+tue attivit&agrave;, considera di usare una chiavetta USB Tails diversa per ogni
+attivit&agrave;. Per esempio, usa una chiavetta USB Tails per il tuo lavoro di
+attivismo e un&#39;altra per il tuo lavoro di giornalismo.</p>
+
+
+</div>
+
+
+
+
+<div class="toggleable warning hidden" id="detailed-tor">
+
+<span class="hide-button" id="hide-tor"></span> 
+<div></div>
+
+<h1 class="embedded">Limitazioni di Tor</h1>
+
+<div class="standalone">
+
+
+
+
+</div>
+
+<h2 id="fingerprint">Tails rende visibile che stai usando Tor e probabilmente Tails</h2>
+
+<p>Tutto quello che fai  su Internet da Tails passa attraverso la rete Tor.</p>
+
+<p>Tor and Tails don&#39;t protect you by making you look like any random Internet
+user, but by making all Tor and Tails users look the same. It becomes
+impossible to know who is who among all users.</p>
+
+<ul>
+
+<li><p>Your Internet service provider (ISP) and local network can see that you
+connect to the Tor network. But, they cannot know which sites you visit.  To
+also hide that you connect to Tor, use a <a href="../doc/anonymous_internet/tor.it.html">Tor
+bridge</a>.</p></li>
+
+<li><p>I siti che visiti possono sapere che stai usando Tor, perch&eacute; la <a href="https://metrics.torproject.org/exonerator.html">lista degli exit node
+della rete Tor</a> &egrave; pubblica.</p></li>
+
+</ul>
+
+<div class="attack">
+
+<p>I controlli parentali, i fornitori di servizi Internet e i paesi con una
+pesante censura possono identificare e bloccare le connessioni alla rete Tor
+che non utilizzano i Tor bridges.</p>
+
+</div>
+
+<div class="attack">
+
+<p>Molti siti web richiedono di risolvere un CAPTCHA o di bloccare l&#39;accesso
+dalla rete Tor.</p>
+
+</div>
+
+<h2 id="exit">Gli  exit node possono intercettare il traffico verso il server di
+destinazione</h2>
+
+<p>Tor nasconde la tua posizione ai server di destinazione, ma non cripta
+<i>tutte</i> le tue comunicazioni. L&#39;ultimo rel&egrave; di un circuito Tor,
+chiamato <i>exit node</i>, stabilisce l&#39;effettiva connessione al server di
+destinazione. Quest&#39;ultimo passo pu&ograve; essere non criptato ma in chiaro, ad
+esempio, se ti connetti a un sito web usando  HTTP invece di HTTPS.</p>
+
+<img alt="Una
+connessione Tor passa attraverso 3 rel&egrave;, l&#39;ultimo dei quali stabilisce la
+connessione effettiva alla destinazione finale" class="img" src="../doc/anonymous_internet/tor/tor.svg" width="600" />
+
+<p>L&#39;exit node pu&ograve;:</p>
+
+<ul>
+
+<li><p>Osservare il tuo traffico. Questo &egrave; il motivo per cui <i>Tor Browser</i> e
+Tails hanno inclusi strumenti per criptare la connessione tra l&#39;exit node e
+il server di destinazione, quando possibile.</p></li>
+
+<li><p>Fingere di essere il server di destinazione, una tecnica conosciuta come
+attacco <i>machine-in-the-middle</i> (MitM). Ecco perch&eacute; dovresti prestare
+ancora pi&ugrave; attenzione agli avvisi di sicurezza in <i>Tor Browser</i>. Se
+ricevi questo avviso, usa la funzione <a href="../doc/anonymous_internet/Tor_Browser.it.html#new-identity">Nuova
+identit&agrave;</a> di <i>Tor
+Browser</i> per cambiare l&#39;exit node.</p></li>
+
+<img alt="Warning: Potential Security Risk
+Ahead" class="img" height="260" src="../doc/about/warnings/ssl_warning.png" width="533" />
+
+</ul>
+
+<p>To learn more about what information is available to someone observing the
+different parts of a Tor circuit, see the interactive graphics at <a href="https://support.torproject.org/about-tor/security/https-encryption-and-tor/">Tor
+Support: How HTTPS encryption and Tor works in Tor Browser to enhance your
+privacy and
+anonymity</a>.</p>
+
+<div class="attack">
+
+<p>Gli exit node di Tor sono stati usati in passato per raccogliere
+informazioni sensibili da connessioni non criptate. I nodi di uscita
+Pericolosi sono regolarmente identificati e rimossi dalla rete Tor. Come
+esempio, vedi <a href="https://arstechnica.com/information-technology/2007/09/security-expert-used-tor-to-collect-government-e-mail-passwords/">Ars
+Technica: Esperto di sicurezza ha usato Tor per raccogliere le password
+delle e-mail del governo</a>.</p>
+
+</div>
+
+<h2 id="correlation">Gli avversari che guardano entrambe le estremit&agrave; di un circuito Tor
+potrebbero identificare gli utenti</h2>
+
+<p>Un avversario, potrebbe controllare i 3 rel&egrave; di un circuito, potrebbe
+rivelare gli utenti di Tor.</p>
+
+<div class="attack">
+
+<p>Tor sceglie 3 rel&egrave; che appartengono a 3 diversi operatori di rete per ogni
+circuito.</p>
+
+<p>Tails adotta misure supplementari per <a href="../contribute/design/stream_isolation.html">utilizzare circuiti diversi per
+applicazioni diverse</a>.</p>
+
+<p>La rete Tor ha pi&ugrave; di 6.000 rel&egrave;. Le organizzazioni che gestiscono i rel&egrave;
+Tor includono universit&agrave; come il MIT, gruppi di attivisti come Riseup,
+organizzazioni non profit come Derechos Digitales, aziende di hosting
+Internet come Private Internet Access, e cos&igrave; via. La grande diversit&agrave; di
+persone e organizzazioni che gestiscono i rel&egrave; Tor lo rende pi&ugrave; sicuro e pi&ugrave;
+sostenibile.</p>
+
+</div>
+
+<p>Un potente avversario, in grado di analizzare i tempi e la forma del
+traffico in entrata e in uscita dalla rete Tor, potrebbe essere in grado di
+rendere identificabili  gli utenti Tor.  Questi attacchi sono chiamati
+attacchi di <i>correlazione end-to-end</i>, perch&eacute; l&#39;attaccante deve
+osservare entrambe le estremit&agrave; di un circuito Tor nello stesso momento.</p>
+
+<p>Nessuna rete di anonimato utilizzata per connessioni rapide, come la
+navigazione sul web o la messaggistica istantanea, pu&ograve; proteggere al 100% da
+attacchi di correlazione end-to-end. In questo caso, le VPN (Virtual Private
+Network) sono meno sicure di Tor, perch&eacute; non utilizzano 3 rel&egrave; indipendenti.</p>
+
+<div class="attack">
+
+<p>Gli attacchi correlati end-to-end sono stati studiati in lavori di ricerca,
+ma non siamo a conoscenza di un uso effettivo per togliere l&#39;anonimato agli
+utenti di Tor. Come esempio, vedi<a href="https://www.freehaven.net/anonbib/cache/murdoch-pet2007.pdf">Murdoch e
+Zieli&#x144;ski:Sampled Traffic Analysis by Internet-Exchange-Level
+Adversaries</a>.</p>
+
+</div>
+
+
+</div>
+
+
+
+
+<div class="toggleable warning hidden" id="detailed-computer">
+
+<span class="hide-button" id="hide-computer"></span> 
+<div></div>
+
+<h1 class="embedded">Utilizzare computer non fidati</h1>
+
+<div class="standalone">
+
+ 
+
+</div>
+
+<h2 id="software">Installa Tails da un computer  fidato</h2>
+
+<p>Tails ti protegge da virus e malware sul tuo solito sistema
+operativo. Questo perch&eacute; Tails funziona indipendentemente dagli altri
+sistemi operativi.</p>
+
+<p>Ma la tua Tails potrebbe essere danneggiata se si installa da un sistema
+operativo compromesso. Per ridurre tale rischio:</p>
+
+<ul>
+
+<li><p>Installare sempre Tails da un sistema operativo attendibile.  Ad esempio,
+scaricare Tails su un computer senza virus o clonare Tails da un amico
+fidato.</p></li>
+
+<li><p>Non inserire la chiavetta USB Tails mentre un altro sistema operativo &egrave; in
+esecuzione sul computer.</p></li>
+
+<li><p>Utilizzare la chiavetta USB Tails solo per eseguire Tails. Non utilizzare la
+chiavetta USB Tails per trasferire file da o verso un altro sistema
+operativo.</p></li>
+
+</ul>
+
+<p>Se temete che la vostra Tails possa essere danneggiata, fate una <a href="../doc/upgrade.it.html">manual
+upgrade</a> da un sistema operativo attendibile.</p>
+
+<div class="attack">
+
+<p>Non sappiamo di nessun virus in grado di infettare un&#39;installazione di
+Tails, ma potrebbe essere creato in futuro.</p>
+
+</div>
+
+<h2 id="hardware">Nessun sistema operativo pu&ograve; proteggere da alterazioni hardware</h2>
+
+<p>Il computer potrebbe essere compromesso se i suoi componenti fisici sono
+stati alterati. Ad esempio, se un keylogger &egrave; stato installato fisicamente
+sul computer, le tue password, informazioni personali e altri dati digitati
+sulla tastiera potrebbero essere memorizzati e accessibili da qualcun altro,
+anche se stai usando Tails.</p>
+
+<p>Try to keep your computer in a safe location. Hardware alterations are more
+likely on public computers, in Internet caf&eacute;s or libraries, and on desktop
+computers, where a device is easier to hide.</p>
+
+<p>Se si teme che un computer possa essere modificato:</p>
+
+<ul>
+
+<li><p>Usa un <a href="../doc/encryption_and_privacy/manage_passwords.it.html">password manager</a> per
+incollare le password salvate. In questo modo, non &egrave; necessario digitare
+password che potrebbero essere visibili a persone o telecamere nelle
+vicinanze.</p></li>
+
+<li><p>Usa la <a href="../doc/first_steps/accessibility.it.html#keyboard">tastiera su schermo</a>, se
+stai usando un computer pubblico o temi che il computer possa avere un
+keylogger.</p></li>
+
+</ul>
+
+<div class="attack">
+
+<p>I keyloggers sono facili da comprare e nascondere in un computer da
+scrivania, ma non in un portatile. Per esempio, guarda <a href="https://www.youtube.com/watch?v=6JJo8qCYE8M">KeeLog: KeyGrabber
+forensic keylogger getting started</a>.</p>
+
+<p>Altre modifiche hardware sono molto pi&ugrave; complicate e costose da
+installare. Per esempio, vedi <a href="https://arstechnica.com/tech-policy/2014/05/photos-of-an-nsa-upgrade-factory-show-cisco-router-getting-implant/">Ars
+Technica: Le foto di una fabbrica di &quot;aggiornamento&quot; dell&#39;NSA mostrano
+l&#39;impianto di un router Cisco</a>.</p>
+
+</div>
+
+<h2 id="firmware">Nessun sistema operativo pu&ograve; proteggere da attacchi al BIOS ed al firmware</h2>
+
+<p>Il firmware include il BIOS o l&#39;UEFI e altri software memorizzati nei chip
+elettronici sul computer.  Tutti i sistemi operativi, inclusi Tails,
+dipendono dal firmware per l&#39;avvio e l&#39;esecuzione, quindi nessun sistema
+operativo pu&ograve; proteggere da un attacco firmware. Nello stesso modo in cui
+un&#39;auto dipende dalla qualit&agrave; della strada su cui sta viaggiando, i sistemi
+operativi dipendono dal loro firmware.</p>
+
+<p>Mantenere il computer in un luogo sicuro pu&ograve; proteggere da alcuni attacchi
+del firmware, ma &egrave; possibile eseguire altri attacchi da remoto.</p>
+
+<div class="attack">
+
+<p>Gli attacchi ai firmware sono stati dimostrati, ma sono complicati e costosi
+da eseguire. Non siamo a conoscenza di nessun uso effettivo contro gli
+utenti di Tails. Per esempio, guarda <a href="https://www.youtube.com/watch?v=sNYsfUNegEA">LegbaCore: Stealing GPG
+keys/emails in Tails via remote firmware infection</a>.</p>
+
+</div>
+
+
+</div>
+
+
+
+
+<div class="tip">
+
+<p>Poich&eacute; devi sempre adattare le tue pratiche di sicurezza digitale alle tue
+specfiche esigenze e minacce, ti esortiamo a saperne di pi&ugrave; leggendo le
+seguenti guide:</p>
+
+<ul>
+  <li><a href="https://ssd.eff.org/">EFF: Surveillance Self-Defense</a></li>
+  <li><a href="https://securityinabox.org/">Front Line Defenders:
+Security-in-a-Box</a></li>
+</ul>
+
+</div>
+
+
+
+
+
+
+    </section>
+  </article>
+
+</main>
+
+<footer id="footer" class="pagefooter">
+  <div id="footer-container">
+
+    <div id="language-switcher-bottom">
+      
+      <nav class="language-switcher" aria-label="Languages">
+        <div class="current-language">Italiano</div>
+        <ul class="other-languages">
+          
+          <li>
+            <a href="./dvd.en.html">English</a>
+          </li>
+          
+          <li>
+            <a href="./dvd.ca.html">Català</a>
+          </li>
+          
+          <li>
+            <a href="./dvd.de.html">Deutsch</a>
+          </li>
+          
+          <li>
+            <a href="./dvd.es.html">Español</a>
+          </li>
+          
+          <li>
+            <a href="./dvd.fr.html">Français</a>
+          </li>
+          
+          <li>
+            <a href="./dvd.pt.html">Português</a>
+          </li>
+          
+          <li>
+            <a href="./dvd.ru.html">Русский</a>
+          </li>
+          
+          
+        </ul>
+      </nav>
+      
+    </div>
+
+    <div id="footer-columns">
+      <div>
+
+<h5>Tails</h5>
+
+<ul>
+<li><a href="../index.it.html">Home</a></li>
+<li><a href="../about.it.html">Come funziona Tails</a></li>
+<li><a href="../install.it.html">Installa Tails</a></li>
+<li><a href="../nav/doc.it.html">Documentazione</a></li>
+<li><a href="../support.it.html">Sostieni</a></li>
+<li><a href="../news.it.html">Notizie</a></li>
+</ul>
+
+</div>
+
+<div>
+
+<h5>Supporto</h5>
+
+<ul>
+<li><a href="../support/faq.it.html">FAQs</a></li>
+<li><a href="../support/known_issues.it.html">Problemi noti</a></li>
+<li><a href="../doc/about/warnings.it.html">Avvertenze</a></li>
+<li><a href="../security.it.html">Avvisi di sicurezza</a></li>
+<li><a href="../doc/first_steps/accessibility.it.html">Accessibilit&agrave;</a></li>
+<li><a href="../doc/upgrade.it.html">Aggiornamento</a></li>
+</ul>
+
+</div>
+
+<div>
+
+<h5>Contribuisci</h5>
+
+<ul>
+<li><a href="../contribute.it.html">Contribuire</a></li>
+<li><a href="../doc/first_steps/whisperback.it.html">Segnala un errore</a></li>
+<li><a href="../contribute/how/translate.html">Traduci</a></li>
+<li><a href="../contribute/how/code.html">Codice sorgente</a></li>
+<li><a href="https://gitlab.tails.boum.org/tails/tails/-/issues">GitLab</a></li>
+<li><a href="../donate.it.html">Dona</a></li>
+</ul>
+
+</div>
+
+<div>
+
+<h5>Su di noi</h5>
+
+<ul>
+<li><a href="../doc/about/contact.it.html">Contatti</a></li>
+<li><a href="../contribute/mission.html">Missione e principi</a></li>
+<li><a href="https://community.torproject.org/policies/social_contract/">Patto sociale</a></li>
+<li><a href="https://www.torproject.org/it/about/supporters/">Sostenitori</a></li>
+<li><a href="https://community.torproject.org/policies/code_of_conduct/">Codice di
+condotta</a></li>
+<li><a href="../doc/about/license.it.html">Licenze</a></li>
+<li><a href="../jobs.html">Posizioni aperte</a></li>
+</ul>
+
+</div>
+
+<div>
+
+<h5>Novit&agrave;</h5>
+
+<p>Iscriviti alla nostra <a href="../news.it.html">newsletter</a></p>
+
+<form action="https://www.autistici.org/mailman/subscribe/amnesia-news" method="POST">
+  <input aria-label="Email" name="email" value="" /> <button aria-label="Subscribe" type="submit">Iscriviti</button>
+</form>
+
+<div id="social-media">
+  <div><a href="https://forum.torproject.org" target="_blank"><i class="fab
+fa-discourse"></i></a></div>
+  <div><a href="https://www.facebook.com/TorProject/" target="_blank"><i class="fab
+fa-facebook"></i></a></div>
+  <div><a href="https://mastodon.social/@torproject" rel="me" target="_blank"><i class="fab fa-mastodon"></i></a></div>
+  <div><a href="https://www.instagram.com/torproject" target="_blank"><i class="fab
+fa-instagram"></i></a></div>
+  <div><a href="https://twitter.com/Tails_live" target="_blank"><i class="fab
+fa-twitter"></i></a></div>
+  <div><a href="https://www.linkedin.com/company/tor-project" target="_blank"><i class="fab fa-linkedin"></i></a></div>
+  <div><a href="https://github.com/torproject" target="_blank"><i class="fab
+fa-github"></i></a></div>
+  <div><a href="https://t.me/torproject" target="_blank"><i class="fab
+fa-telegram"></i></a></div>
+  <div><a href="https://gitlab.torproject.org/" target="_blank"><i class="fab
+fa-gitlab"></i></a></div>
+</div>
+
+</div>
+
+<div id="made-by">
+
+<img alt="" class="svg" height="91" src="../lib/tor-black.png" width="151" />
+
+<p>Tails &egrave; realizzato dal <a href="https://torproject.org/">progetto Tor</a>.</p>
+
+</div>
+
+    </div>
+
+  </div>
+</footer>
+<script src="../ikiwiki/ikiwiki.js" type="text/javascript" charset="utf-8"></script>
+<script src="../ikiwiki/toggle.js" type="text/javascript" charset="utf-8"></script>
+</body>
+</html>

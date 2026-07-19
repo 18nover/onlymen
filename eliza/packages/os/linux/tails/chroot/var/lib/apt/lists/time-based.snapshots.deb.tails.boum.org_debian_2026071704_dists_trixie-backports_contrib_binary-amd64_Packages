@@ -1,0 +1,1086 @@
+Package: gamescope
+Version: 3.16.22+ds-1~bpo13+1
+Installed-Size: 4370
+Maintainer: Debian Games Team <pkg-games-devel@lists.alioth.debian.org>
+Architecture: amd64
+Depends: xwayland, libavif16 (>= 1.2.1), libc6 (>= 2.38), libcap2 (>= 1:2.10), libdecor-0-0 (>= 0.1.0), libdisplay-info2 (>= 0.2.0), libdrm2 (>= 2.4.113), libeis1 (>= 1.0.901), libgcc-s1 (>= 4.3), libinput10 (>= 1.19.1), libliftoff0 (>= 0.5.0), libluajit-5.1-2 (>= 2.0.4) | libluajit-5.1-2 (>= 2.1.0+openresty), libpipewire-0.3-0t64 (>= 0.3.38), libpixman-1-0 (>= 0.25.2), libsdl2-2.0-0 (>= 2.26.0), libstdc++6 (>= 13.1), libudev1 (>= 183), libwayland-client0 (>= 1.20.0), libwayland-server0 (>= 1.17.0), libwlroots-0.18 (>= 0.18.0), libx11-6, libx11-xcb1, libxcb1, libxcomposite1 (>= 1:0.4.6), libxcursor1 (>> 1.1.2), libxdamage1 (>= 1:1.1), libxext6, libxfixes3, libxi6 (>= 2:1.2.99.4), libxkbcommon0 (>= 1.0.0), libxmu6 (>= 2:1.1.3), libxrender1 (>= 1:0.9.12), libxres1 (>= 2:1.2.1), libxtst6 (>= 2:1.2.5), libxxf86vm1
+Recommends: seatd
+Suggests: libcap2-bin, mangoapp, pipewire-audio
+Size: 1017480
+SHA256: 020d6fb22491f2b1023e334df1ffad6b3f8edb66ee2972d7eaee4f0fe3cbf79a
+SHA1: bd7a4c2887d643d3e5d4cf7e26dbc53f2e108d1b
+MD5sum: b31f0f7c00e2782998d958b6b3ecc943
+Description: Micro-compositor for game scaling
+ Gamescope wraps your games to give them scaling and fullscreen options. It
+ provides a Wayland compositor to your games, but gamescope runs under both
+ Wayland and X.org.
+ .
+ Your game sees a virtual display at the resolution you specified. You see a
+ scaled view in a window or fullscreen. This is useful when either the game or
+ your system do not permit running the game at native window/screen sizes. You
+ can also use integer scaling to keep your pixels sharp and pixelated.
+Homepage: https://github.com/ValveSoftware/gamescope
+Section: contrib/games
+Priority: optional
+Filename: pool/contrib/g/gamescope/gamescope_3.16.22+ds-1~bpo13+1_amd64.deb
+
+Package: josm-installer
+Version: 0.0.8+svn19519~bpo13+1
+Installed-Size: 319
+Maintainer: Debian GIS Project <pkg-grass-devel@lists.alioth.debian.org>
+Architecture: all
+Depends: default-jre (>= 2:1.11) | java11-runtime, fonts-noto, proj-data, python3, python3-requests
+Recommends: openjfx
+Conflicts: josm
+Size: 175236
+SHA256: d55bd1135b43b37fe55c39ddc2b1a99a2e52b8bff82f4745077afc89ccf6d1c6
+SHA1: 3523c7eabdabc0ad4ecd622445b1d3b9742b1afe
+MD5sum: f99ca72b18d611e1f8ebf681669d8db7
+Description: Editor for OpenStreetMap (installer)
+ JOSM is an editor for OpenStreetMap (OSM) written in Java.
+ The current version supports stand alone GPX tracks, GPX track data
+ from OSM database and existing nodes, line segments and metadata tags
+ from the OSM database.
+ .
+ OpenStreetMap is a project aimed squarely at creating and providing
+ free geographic data such as street maps to anyone who wants them.
+ The project was started because most maps you think of as free actually
+ have legal or technical restrictions on their use, holding back people
+ from using them in creative, productive or unexpected ways.
+ .
+ This package provides a script to install the upstream JARs.
+Homepage: https://josm.openstreetmap.de
+Section: contrib/utils
+Priority: optional
+Filename: pool/contrib/j/josm-installer/josm-installer_0.0.8+svn19519~bpo13+1_all.deb
+
+Package: libhwloc-contrib-plugins
+Source: hwloc-contrib
+Version: 2.13.0-2~bpo13+1
+Installed-Size: 54
+Maintainer: Samuel Thibault <sthibault@debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.38), libcudart12, libnvidia-ml1 (>= 470) | libnvidia-ml.so.1 (>= 470), libhwloc15 (>= 2.13.0~), libhwloc15 (<< 2.13.0A)
+Size: 13296
+SHA256: 419802fa6f5453e73c6a9222c3f3ea1a907cad311c17d740dd00bf6dd6fedeb1
+SHA1: a1051c350bc116efe764cd8a1b719d54f6704e0c
+MD5sum: 6b41caa54febc97a278e73ff7cbfc504
+Description: Hierarchical view of the machine - contrib plugins
+ libhwloc provides a portable abstraction (across OS, versions,
+ architectures, ...) of the hierarchical topology of modern architectures. It
+ primarily aims at helping high-performance computing applications with
+ gathering information about the hardware so as to exploit it accordingly and
+ efficiently.
+ .
+ libhwloc provides a hierarchical view of the machine, NUMA memory nodes,
+ sockets, shared caches, cores and simultaneous multithreading. It also gathers
+ various attributes such as cache and memory information.
+ .
+ libhwloc supports old kernels not having sysfs topology information,
+ with knowledge of cpusets, offline cpus, and Kerrighed support
+ .
+ This package contains plugins to add discovery support for non-free items. This
+ includes
+  - CUDA support.
+Multi-Arch: same
+Homepage: https://www.open-mpi.org/projects/hwloc/
+Section: contrib/libs
+Priority: optional
+Filename: pool/contrib/h/hwloc-contrib/libhwloc-contrib-plugins_2.13.0-2~bpo13+1_amd64.deb
+
+Package: libnvpair3linux
+Source: zfs-linux
+Version: 2.4.3-1~bpo13+1
+Installed-Size: 196
+Maintainer: Debian ZFS on Linux maintainers <pkg-zfsonlinux-devel@alioth-lists.debian.net>
+Architecture: amd64
+Replaces: libnvpair1, libnvpair3
+Depends: libc6 (>= 2.38), libtirpc3t64 (>= 1.0.2)
+Breaks: libnvpair1, libnvpair3
+Size: 64228
+SHA256: 339d989142e6c726638c31e914e218eb9eaad06381aed8ca675cb9fe957c8689
+SHA1: aba3189510c99e92eee071a6a0d2567e9dc27107
+MD5sum: 1b35412cf213b6c2a6651838afee6bd2
+Description: Solaris name-value library for Linux
+ This library provides routines for packing and unpacking nv pairs for
+ transporting data across process boundaries, transporting between
+ kernel and userland, and possibly saving onto disk files.
+Multi-Arch: same
+Homepage: https://zfsonlinux.org/
+Section: contrib/libs
+Priority: optional
+Filename: pool/contrib/z/zfs-linux/libnvpair3linux_2.4.3-1~bpo13+1_amd64.deb
+
+Package: libpam-zfs
+Source: zfs-linux
+Version: 2.4.3-1~bpo13+1
+Installed-Size: 103
+Maintainer: Debian ZFS on Linux maintainers <pkg-zfsonlinux-devel@alioth-lists.debian.net>
+Architecture: amd64
+Depends: libpam-runtime, libc6 (>= 2.38), libnvpair3linux (>= 0.8.2), libpam0g (>= 1.1.0), libssl3t64 (>= 3.0.0), libzfs7linux (>= 2.2)
+Size: 37128
+SHA256: 13a98e4403c33e82a1e6547ae300d66d091cc95bb7b7098a647496b761f3db9c
+SHA1: 335467317e9b1028a70ecbcb6cce1b2977509539
+MD5sum: 7260c300435d3622937ee7407b454360
+Description: PAM module for managing encryption keys for ZFS
+ OpenZFS is a storage platform that encompasses the functionality of
+ traditional filesystems and volume managers. It supports data checksums,
+ compression, encryption, snapshots, and more.
+ .
+ This provides a Pluggable Authentication Module (PAM) that automatically
+ unlocks encrypted ZFS datasets upon login.
+Homepage: https://zfsonlinux.org/
+Section: contrib/admin
+Priority: optional
+Filename: pool/contrib/z/zfs-linux/libpam-zfs_2.4.3-1~bpo13+1_amd64.deb
+
+Package: libuutil3linux
+Source: zfs-linux
+Version: 2.4.3-1~bpo13+1
+Installed-Size: 156
+Maintainer: Debian ZFS on Linux maintainers <pkg-zfsonlinux-devel@alioth-lists.debian.net>
+Architecture: amd64
+Replaces: libuutil1, libuutil3
+Depends: libc6 (>= 2.38)
+Breaks: libuutil1, libuutil3
+Size: 55972
+SHA256: 11b076d111034328c25bb666ca24216a1f6a2791127624655e46b7a937a8eabc
+SHA1: 5d0ee8deee4568050cce13c249795403f84beba1
+MD5sum: a01d10c62a369881fd4632add34a79a5
+Description: Solaris userland utility library for Linux
+ This library provides a variety of glue functions for ZFS on Linux:
+  * libspl: The Solaris Porting Layer userland library, which provides APIs
+    that make it possible to run Solaris user code in a Linux environment
+    with relatively minimal modification.
+  * libavl: The Adelson-Velskii Landis balanced binary tree manipulation
+    library.
+  * libefi: The Extensible Firmware Interface library for GUID disk
+    partitioning.
+  * libshare: NFS, SMB, and iSCSI service integration for ZFS.
+Multi-Arch: same
+Homepage: https://zfsonlinux.org/
+Section: contrib/libs
+Priority: optional
+Filename: pool/contrib/z/zfs-linux/libuutil3linux_2.4.3-1~bpo13+1_amd64.deb
+
+Package: libzfs6linux
+Source: zfs-linux
+Version: 2.3.5-2~bpo13+1
+Installed-Size: 680
+Maintainer: Debian ZFS on Linux maintainers <pkg-zfsonlinux-devel@alioth-lists.debian.net>
+Architecture: amd64
+Replaces: libzfs2, libzfs4, libzfs4linux
+Depends: libblkid1 (>= 2.16), libc6 (>= 2.38), libnvpair3linux (>= 0.8.2), libssl3t64 (>= 3.0.0), libudev1 (>= 183), libuuid1 (>= 2.16), libuutil3linux (>= 0.8.2), zlib1g (>= 1:1.1.4)
+Recommends: libcurl4
+Breaks: libzfs2, libzfs4, libzfs4linux
+Size: 239648
+SHA256: 20dde34907ab4b92e3c7425037d828b29afa3ca62156ec86e74042451983f14a
+SHA1: 9c7e7a588e8bbab6c76d77dafa7709b5c8cba42d
+MD5sum: b2208944aa3bef085a8bb3535628d47b
+Description: OpenZFS filesystem library for Linux - general support
+ OpenZFS is a storage platform that encompasses the functionality of
+ traditional filesystems and volume managers. It supports data checksums,
+ compression, encryption, snapshots, and more.
+ .
+ The OpenZFS library provides support for managing OpenZFS filesystems.
+Multi-Arch: same
+Homepage: https://zfsonlinux.org/
+Section: contrib/libs
+Priority: optional
+Filename: pool/contrib/z/zfs-linux/libzfs6linux_2.3.5-2~bpo13+1_amd64.deb
+
+Package: libzfs7linux
+Source: zfs-linux
+Version: 2.4.3-1~bpo13+1
+Installed-Size: 692
+Maintainer: Debian ZFS on Linux maintainers <pkg-zfsonlinux-devel@alioth-lists.debian.net>
+Architecture: amd64
+Replaces: libzfs2, libzfs4, libzfs4linux, libzfs6linux
+Depends: libblkid1 (>= 2.16), libc6 (>= 2.38), libnvpair3linux (>= 0.8.2), libssl3t64 (>= 3.0.0), libudev1 (>= 183), libuuid1 (>= 2.16), libuutil3linux (>= 0.8.2), zlib1g (>= 1:1.1.4)
+Recommends: libcurl4
+Breaks: libzfs2, libzfs4, libzfs4linux, libzfs6linux
+Size: 243816
+SHA256: b9b36accdad516050ddd9d09652a30874dfdea728a0ae4a8e55b468d02e19729
+SHA1: 4c90297600b6ae2ccdd1518c193153b5a76e9c5d
+MD5sum: 05d3f62d45a7d6a6f9cf5a365bd39f84
+Description: OpenZFS filesystem library for Linux - general support
+ OpenZFS is a storage platform that encompasses the functionality of
+ traditional filesystems and volume managers. It supports data checksums,
+ compression, encryption, snapshots, and more.
+ .
+ The OpenZFS library provides support for managing OpenZFS filesystems.
+Multi-Arch: same
+Homepage: https://zfsonlinux.org/
+Section: contrib/libs
+Priority: optional
+Filename: pool/contrib/z/zfs-linux/libzfs7linux_2.4.3-1~bpo13+1_amd64.deb
+
+Package: libzfsbootenv1linux
+Source: zfs-linux
+Version: 2.4.3-1~bpo13+1
+Installed-Size: 109
+Maintainer: Debian ZFS on Linux maintainers <pkg-zfsonlinux-devel@alioth-lists.debian.net>
+Architecture: amd64
+Replaces: libzfs2, libzfs4
+Depends: libc6 (>= 2.8), libnvpair3linux (>= 0.8.2), libzfs7linux (>= 2.0)
+Breaks: libzfs2, libzfs4
+Size: 40332
+SHA256: 51c4e0865150caca92360d51ca06a7d92944fb46a33852edfce4d225c21a53df
+SHA1: f0c5ff199c1607263e7f32e93a28c1d373498d61
+MD5sum: a627286416057b6301463e750ab11368
+Description: OpenZFS filesystem library for Linux - label info support
+ OpenZFS is a storage platform that encompasses the functionality of
+ traditional filesystems and volume managers. It supports data checksums,
+ compression, encryption, snapshots, and more.
+ .
+ The zfsbootenv library provides support for modifying ZFS label information.
+Multi-Arch: same
+Homepage: https://zfsonlinux.org/
+Section: contrib/libs
+Priority: optional
+Filename: pool/contrib/z/zfs-linux/libzfsbootenv1linux_2.4.3-1~bpo13+1_amd64.deb
+
+Package: libzfslinux-dev
+Source: zfs-linux
+Version: 2.4.3-1~bpo13+1
+Installed-Size: 12042
+Maintainer: Debian ZFS on Linux maintainers <pkg-zfsonlinux-devel@alioth-lists.debian.net>
+Architecture: amd64
+Provides: libnvpair-dev, libuutil-dev
+Depends: libblkid-dev, libssl-dev | libssl1.0-dev, libtirpc-dev, zlib1g-dev, libnvpair3linux (= 2.4.3-1~bpo13+1), libuutil3linux (= 2.4.3-1~bpo13+1), libzfs7linux (= 2.4.3-1~bpo13+1), libzfsbootenv1linux (= 2.4.3-1~bpo13+1), libzpool7linux (= 2.4.3-1~bpo13+1)
+Size: 2050412
+SHA256: f17e6039826aa01274dabc73e1f4712088d967245ad8978a2dcc5e5034949e75
+SHA1: 1c78349e0ae32b756b1c172f0bae3c4bf88560be
+MD5sum: ff6157b642e818b46be8665724bf2206
+Description: OpenZFS filesystem development files for Linux
+ Header files and static libraries for compiling software against
+ libraries of OpenZFS filesystem.
+ .
+ This package includes the development files of libnvpair3, libuutil3,
+ libzpool7 and libzfs7.
+Multi-Arch: same
+Homepage: https://zfsonlinux.org/
+Section: contrib/libdevel
+Priority: optional
+Filename: pool/contrib/z/zfs-linux/libzfslinux-dev_2.4.3-1~bpo13+1_amd64.deb
+
+Package: libzpool6linux
+Source: zfs-linux
+Version: 2.3.5-2~bpo13+1
+Installed-Size: 4486
+Maintainer: Debian ZFS on Linux maintainers <pkg-zfsonlinux-devel@alioth-lists.debian.net>
+Architecture: amd64
+Replaces: libzpool2, libzpool5, libzpool5linux
+Depends: libblkid1 (>= 2.16), libc6 (>= 2.38), libnvpair3linux (>= 0.8.2), libudev1 (>= 183), libuuid1 (>= 2.16), zlib1g (>= 1:1.1.4)
+Breaks: libzpool2, libzpool5, libzpool5linux
+Size: 1387968
+SHA256: e024c03d3b07783eb0e1289b04547d499468a34118143944e706b406361a1949
+SHA1: fabd828d7a2f95e05cb730e8b954b7d888c6250c
+MD5sum: 4fc19db7028f869207b81d64cef4a92d
+Description: OpenZFS pool library for Linux
+ OpenZFS is a storage platform that encompasses the functionality of
+ traditional filesystems and volume managers. It supports data checksums,
+ compression, encryption, snapshots, and more.
+ .
+ This zpool library provides support for managing zpools.
+Multi-Arch: same
+Homepage: https://zfsonlinux.org/
+Section: contrib/libs
+Priority: optional
+Filename: pool/contrib/z/zfs-linux/libzpool6linux_2.3.5-2~bpo13+1_amd64.deb
+
+Package: libzpool7linux
+Source: zfs-linux
+Version: 2.4.3-1~bpo13+1
+Installed-Size: 4447
+Maintainer: Debian ZFS on Linux maintainers <pkg-zfsonlinux-devel@alioth-lists.debian.net>
+Architecture: amd64
+Replaces: libzpool2, libzpool5
+Depends: libblkid1 (>= 2.16), libc6 (>= 2.38), libnvpair3linux (>= 2.4.0), libudev1 (>= 183), libuuid1 (>= 2.16), zlib1g (>= 1:1.1.4)
+Breaks: libzpool2, libzpool5
+Size: 1418964
+SHA256: 3df82ddec5859e4a4aeb5a2996edb0e63e2c5f16fcddf1f5155f8920bd6d13d6
+SHA1: 4949827041472094584bd2b0c0f0bff9b5a11aba
+MD5sum: db1f886c86d294fefc08e5ddf7410c47
+Description: OpenZFS pool library for Linux
+ OpenZFS is a storage platform that encompasses the functionality of
+ traditional filesystems and volume managers. It supports data checksums,
+ compression, encryption, snapshots, and more.
+ .
+ This zpool library provides support for managing zpools.
+Multi-Arch: same
+Homepage: https://zfsonlinux.org/
+Section: contrib/libs
+Priority: optional
+Filename: pool/contrib/z/zfs-linux/libzpool7linux_2.4.3-1~bpo13+1_amd64.deb
+
+Package: linux-entra-sso
+Version: 1.8.1-1~bpo13+1
+Installed-Size: 40
+Maintainer: Luca Boccassi <bluca@debian.org>
+Architecture: all
+Depends: python3, python3-gi, python3-pydbus
+Suggests: chromium | chromium-browser, firefox | firefox-esr
+Enhances: chromium, chromium-browser, firefox, firefox-esr
+Size: 6936
+SHA256: 4fed6c5765c3a22ee7327cd020521ccebfdbb4960f69a22ce324ebe2b102d963
+SHA1: 4c949faa5e09c87d724c24792467d7015bb632a4
+MD5sum: 5ed7ac887c78a8ff1a32965df8966512
+Description: Entra ID SSO via Himmelblau or Microsoft Identity Broker on Linux
+ Local native host messaging connector for Firefox/Chromium/Chrome extension to
+ implement Entra ID SSO Conditional Access, connecting to the Identity Broker
+ via D-Bus. Supports the open source Himmelblau stack or the Microsoft stack.
+Homepage: https://github.com/siemens/linux-entra-sso
+Section: contrib/web
+Priority: optional
+Filename: pool/contrib/l/linux-entra-sso/linux-entra-sso_1.8.1-1~bpo13+1_all.deb
+
+Package: nvidia-open-kernel-dkms
+Source: nvidia-open-gpu-kernel-modules
+Version: 550.163.01-4~bpo13+1
+Installed-Size: 245215
+Maintainer: Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>
+Architecture: amd64
+Provides: nvidia-open-kernel-550.163.01, nvidia-open-kernel-dkms-any (= 550.163.01)
+Depends: firmware-nvidia-gsp (= 550.163.01) | firmware-nvidia-gsp-550.163.01, nvidia-open-kernel-support--v1, dkms (>= 3.0.11)
+Pre-Depends: nvidia-installer-cleanup
+Size: 37347620
+SHA256: b979d0bd5e38527412bc04a6c7be516712b18684fab06bb9054e3bcd1a947497
+SHA1: e106cfc47c429f4a7b754ec70c48512ebf9817af
+MD5sum: f6b5a7c2dd380903034c1504502398ef
+Description: NVIDIA open kernel module DKMS source
+ This package builds the NVIDIA binary kernel modules needed by
+ nvidia-driver, using DKMS.
+ Provided that you have the kernel header packages installed, the kernel
+ module will be built for your running kernel and automatically rebuilt for
+ any new kernel headers that are installed.
+ .
+ The NVIDIA binary driver provides optimized hardware acceleration of
+ OpenGL/GLX/EGL/GLES applications via a direct-rendering X Server
+ for graphics cards using NVIDIA chip sets.
+ .
+ The NVIDIA open driver for graphics cards supports Turing and newer chip sets.
+ .
+ Building the kernel modules has been tested up to Linux 6.18.
+ .
+ Note: The new 'non-free-firmware' archive area has to be enabled in apt's
+ sources.list(.d/) in order to install firmware-nvidia-gsp.
+Multi-Arch: foreign
+Homepage: https://github.com/NVIDIA/open-gpu-kernel-modules
+Section: contrib/kernel
+Priority: optional
+Filename: pool/contrib/n/nvidia-open-gpu-kernel-modules/nvidia-open-kernel-dkms_550.163.01-4~bpo13+1_amd64.deb
+
+Package: nvidia-open-kernel-source
+Source: nvidia-open-gpu-kernel-modules
+Version: 550.163.01-4~bpo13+1
+Installed-Size: 35467
+Maintainer: Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>
+Architecture: amd64
+Depends: debhelper-compat (= 13), module-assistant
+Recommends: firmware-nvidia-gsp (= 550.163.01) | firmware-nvidia-gsp-550.163.01, nvidia-open-kernel-support--v1
+Size: 36301292
+SHA256: bd0c0f8b8bcbd786e078aa20e9d3fa964b6159cf3eca1a626984a3fc44557523
+SHA1: 7e2e15137bc8a1de9425072be3d8342f711bac93
+MD5sum: d0d4483c0e0ecadd3a8d71e339783a89
+Description: NVIDIA open kernel module source
+ This package provides the source for the NVIDIA binary kernel modules
+ needed by nvidia-driver in a form suitable
+ for use by module-assistant.
+ .
+ The NVIDIA binary driver provides optimized hardware acceleration of
+ OpenGL/GLX/EGL/GLES applications via a direct-rendering X Server
+ for graphics cards using NVIDIA chip sets.
+ .
+ PLEASE read /usr/share/doc/nvidia-open-kernel-source/README.Debian.gz
+ for building information. If you want the kernel module to be automatically
+ installed via DKMS, install nvidia-open-kernel-dkms instead.
+ .
+ The NVIDIA open driver for graphics cards supports Turing and newer chip sets.
+ .
+ Building the kernel modules has been tested up to Linux 6.18.
+Homepage: https://github.com/NVIDIA/open-gpu-kernel-modules
+Section: contrib/kernel
+Priority: optional
+Filename: pool/contrib/n/nvidia-open-gpu-kernel-modules/nvidia-open-kernel-source_550.163.01-4~bpo13+1_amd64.deb
+
+Package: nvidia-open-kernel-support
+Source: nvidia-open-gpu-kernel-modules
+Version: 550.163.01-4~bpo13+1
+Installed-Size: 42
+Maintainer: Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>
+Architecture: amd64
+Provides: nvidia-kernel-support-any, nvidia-open-kernel-support--v1, nvidia-open-kernel-support-550.163.01
+Depends: nvidia-alternative-550.163.01 | nvidia-alternative-550.163.01, nvidia-kernel-common (>= 20151021), nvidia-modprobe (>= 550)
+Conflicts: nvidia-open-kernel-support-550.163.01
+Size: 12876
+SHA256: 635bdc57f9c1bdabb2bffb8324a42a7b2c517513db448ab70a11b0de222610f4
+SHA1: 426e28b35fe81586ca4cd645a6c90239517b1f3b
+MD5sum: 0e927159534687e2044167515fd8a6ac
+Description: NVIDIA open kernel module support files
+ The NVIDIA binary driver provides optimized hardware acceleration of
+ OpenGL/GLX/EGL/GLES applications via a direct-rendering X Server
+ for graphics cards using NVIDIA chip sets.
+ .
+ The NVIDIA open driver for graphics cards supports Turing and newer chip sets.
+ .
+ This package provides supporting configuration for the kernel module.
+Multi-Arch: foreign
+Homepage: https://github.com/NVIDIA/open-gpu-kernel-modules
+Section: contrib/kernel
+Priority: optional
+Filename: pool/contrib/n/nvidia-open-gpu-kernel-modules/nvidia-open-kernel-support_550.163.01-4~bpo13+1_amd64.deb
+
+Package: openrct2
+Version: 0.5.3+ds-1~bpo13+1
+Installed-Size: 28029
+Maintainer: Mathias Gibbens <gibmat@debian.org>
+Architecture: amd64
+Depends: openrct2-data (= 0.5.3+ds-1~bpo13+1), openrct2-objects (>= 1.7.10), openrct2-title-sequences (>= 0.4.26), libc6 (>= 2.38), libcurl4t64 (>= 7.16.2), libdiscord-rpc3 (>= 3.4.0), libflac14 (>= 1.5.0), libfontconfig1 (>= 2.12.6), libgcc-s1 (>= 3.4), libgzstream0 (>= 1.5+git20171107.9a20658), libicu76 (>= 76.1-1~), libpng16-16t64 (>= 1.6.46), libqjs0 (>= 0.13.0), libsdl2-2.0-0 (>= 2.0.18), libsdl2-ttf-2.0-0 (>= 2.0.15), libssl3t64 (>= 3.0.0), libstdc++6 (>= 14), libvorbisfile3 (>= 1.1.2), libzip5 (>= 0.11.2), libzstd1 (>= 1.5.5), zlib1g (>= 1:1.1.4)
+Recommends: openrct2-openmsx (>= 1.6.1), openrct2-opensfx (>= 1.0.6), zenity
+Suggests: innoextract
+Size: 5988200
+SHA256: b03c8316f21419f9d42405d644b5e1232370c0f7fd9ddfa2e3f7f3bb423e3c76
+SHA1: 27cd03df31d3a018c358e80e91bd54ce599ba772
+MD5sum: 819abcc4023be440134856e0eb4a3fe8
+Description: Open-source re-implementation of RollerCoaster Tycoon 2
+ OpenRCT2 is an open-source re-implementation of RollerCoaster Tycoon 2
+ (RCT2). The gameplay revolves around building and maintaining an
+ amusement park containing attractions, shops and facilities. The player
+ must try to make a profit and maintain a good park reputation whilst
+ keeping the guests happy. OpenRCT2 allows for both scenario and sandbox
+ play. Scenarios require the player to complete a certain objective in a
+ set time limit whilst sandbox allows the player to build a more flexible
+ park with optionally no restrictions or finance.
+ .
+ RollerCoaster Tycoon 2 was originally written by Chris Sawyer in x86
+ assembly and is the sequel to RollerCoaster Tycoon. The engine was based
+ on Transport Tycoon, an older game which also has an equivalent
+ open-source project, OpenTTD. OpenRCT2 attempts to provide everything
+ from RCT2 as well as many improvements and additional features, some of
+ these include support for modern platforms, an improved interface,
+ improved guest and staff AI, more editing tools, increased limits, and
+ cooperative multiplayer. It also re-introduces mechanics from RollerCoaster
+ Tycoon that were not present in RollerCoaster Tycoon 2. Some of those
+ include; mountain tool in-game, the "have fun" objective, launched coasters
+ (not passing-through the station) and several buttons on the toolbar.
+Multi-Arch: foreign
+Homepage: https://openrct2.io/
+Section: contrib/games
+Priority: optional
+Filename: pool/contrib/o/openrct2/openrct2_0.5.3+ds-1~bpo13+1_amd64.deb
+
+Package: openrct2-data
+Source: openrct2
+Version: 0.5.3+ds-1~bpo13+1
+Installed-Size: 11293
+Maintainer: Mathias Gibbens <gibmat@debian.org>
+Architecture: all
+Size: 3455048
+SHA256: 7a896a6590fbf1662340fef6627569021421a8e25232b5e24137fd6e29b84d11
+SHA1: eaa43fba2abd19b6bc9b9b5381d500505547ec96
+MD5sum: 9dd20f9e3d894a259c6cbee1eb18259f
+Description: Required game data for OpenRCT2
+ This package provides the architecture-independent game assets required by
+ the openrct2 executables.
+Multi-Arch: foreign
+Homepage: https://openrct2.io/
+Section: contrib/games
+Priority: optional
+Filename: pool/contrib/o/openrct2/openrct2-data_0.5.3+ds-1~bpo13+1_all.deb
+
+Package: openrct2-objects
+Version: 1.7.10+dfsg-1~bpo13+1
+Installed-Size: 16138
+Maintainer: Mathias Gibbens <gibmat@debian.org>
+Architecture: all
+Size: 9790364
+SHA256: 8940ac9429c3c6449a037d5e59996cfff196da0d6eb684e8455007eb36a1a734
+SHA1: 84f8c5dd5beee3707a5bf1f9d4a0edff6a93d352
+MD5sum: 144100e6559e8f135af626e083989265
+Description: Object definitions for OpenRCT2
+ This package contains object definitions and translations for
+ RollerCoaster Tycoon and RollerCoaster Tycoon 2 (requires the
+ original game files; not included with this package).
+Multi-Arch: foreign
+Homepage: https://openrct2.io/
+Section: contrib/games
+Priority: optional
+Filename: pool/contrib/o/openrct2-objects/openrct2-objects_1.7.10+dfsg-1~bpo13+1_all.deb
+
+Package: openrct2-openmsx
+Version: 1.6.1-1~bpo13+1
+Installed-Size: 41948
+Maintainer: Mathias Gibbens <gibmat@debian.org>
+Architecture: all
+Size: 42752360
+SHA256: 8bb957bec5b04a091c53376130be5ad0c9faa673baae2f21fa5b731ec2025869
+SHA1: 4ee4dc305ff8aee9361c377a53a0fdce561d025f
+MD5sum: ba657fc0bc31d21557e5e28b1164d838
+Description: New versions of the songs from RollerCoaster Tycoon 2
+ This project aims to create an alternative, high quality soundtrack
+ as replacement for, and addition to RollerCoaster Tycoon 2's
+ soundtrack for use in OpenRCT2.
+Multi-Arch: foreign
+Homepage: https://openrct2.io/
+Section: contrib/games
+Priority: optional
+Filename: pool/contrib/o/openrct2-openmsx/openrct2-openmsx_1.6.1-1~bpo13+1_all.deb
+
+Package: openrct2-opensfx
+Version: 1.0.6-1~bpo13+1
+Installed-Size: 4208
+Maintainer: Mathias Gibbens <gibmat@debian.org>
+Architecture: all
+Size: 4280800
+SHA256: 3b57d5264462559c20dd9f1d04b47bc212c645e7034bdc9eaad29bc03a33e3db
+SHA1: e4f48199dda3138f47534a73533bfaaf11541ad4
+MD5sum: acb6551cb3d333a962039d2838fc9337
+Description: Project to create a replacement for RCT2's sound effects file
+ A free collection of alternative sound effects from RollerCoaster
+ Tycoon 2 for use in OpenRCT2.
+Multi-Arch: foreign
+Homepage: https://openrct2.io/
+Section: contrib/games
+Priority: optional
+Filename: pool/contrib/o/openrct2-opensfx/openrct2-opensfx_1.0.6-1~bpo13+1_all.deb
+
+Package: openrct2-title-sequences
+Version: 0.4.26-1~bpo13+1
+Installed-Size: 8579
+Maintainer: Mathias Gibbens <gibmat@debian.org>
+Architecture: all
+Size: 8760384
+SHA256: 6671f134e9067b544cb6adea9cac9aed9756ced2b7980608222f6e4573b2edcf
+SHA1: 7864c250a2a07d1ee97611752d6d0bd6eb2f5b3b
+MD5sum: 6f4b2c07b45c0b63f4c1d32608195391
+Description: Title sequences for OpenRCT2
+ This package contains the custom title sequence for OpenRCT2, along
+ with metadata to select the original title sequences that shipped
+ with RollerCoaster Tycoon and RollerCoaster Tycoon 2 (requires the
+ original game files; not included with this package).
+Multi-Arch: foreign
+Homepage: https://openrct2.io/
+Section: contrib/games
+Priority: optional
+Filename: pool/contrib/o/openrct2-title-sequences/openrct2-title-sequences_0.4.26-1~bpo13+1_all.deb
+
+Package: play.it
+Version: 2.35.1-1~bpo13+1
+Installed-Size: 645
+Maintainer: Debian Games Team <pkg-games-devel@lists.alioth.debian.org>
+Architecture: all
+Recommends: convmv, icoutils, imagemagick, play.it-action, play.it-action-adventure, play.it-adventure, play.it-community, play.it-platform, play.it-puzzle, play.it-rpg, play.it-strategy, play.it-vv221
+Suggests: 7zip, binwalk, cabextract, innoextract, lhasa, libarchive-tools, msitools, squashfs-tools, unar, unshield, unzip
+Size: 129012
+SHA256: 7f60b1390f75debfcf7a13c6d26b8a7ac6a3339d9e568a0c3420fa2fbe12d4cf
+SHA1: 0f6fb24b48876fe6e7daeda0c5ea7ed545747ea1
+MD5sum: cbcecbce96aed134b13ae068fd495a60
+Description: Packages generator for DRM-free commercial games
+ play.it is a libre software building packages (such as .deb) from installers
+ for Linux, Windows or MacOS, mainly those sold by stores focusing on DRM-free
+ games distribution. The goal is that a game installed via ./play.it is
+ indistinguishable from a game installed via the official repositories of your
+ favourite distribution.
+ .
+ Linux games are supported, as well as games developed for other systems thanks
+ to tools like Wine, DOSBox and ScummVM.
+ .
+ The games are installed globally on multi-user systems, avoiding unnecessary
+ duplication. The locations of save games, settings, mods, temporary files and
+ backups are standardized with XDG Base Directory support.
+ .
+ Packaging the games simplifies future updates, uninstalls and handling of any
+ necessary dependencies, including integrated obsolete dependencies if specific
+ versions are needed.
+Homepage: https://git.dotslashplay.it/play.it/about/
+Section: contrib/games
+Priority: optional
+Filename: pool/contrib/p/play.it/play.it_2.35.1-1~bpo13+1_all.deb
+
+Package: prismlauncher
+Version: 11.0.2-1~bpo13+1
+Installed-Size: 14658
+Maintainer: Ben Westover <bjw@debian.org>
+Architecture: amd64
+Provides: multimc, polymc
+Depends: libarchive13t64 (>= 3.2.1), libc6 (>= 2.38), libcmark0.30.2 (>= 0.30.2), libgcc-s1 (>= 3.0), libqrencode4 (>= 3.2.0), libqt6core6t64 (>= 6.8.2), libqt6dbus6 (>= 6.4.0), libqt6gui6 (>= 6.7.2), libqt6network6 (>= 6.7.2), libqt6networkauth6 (>= 6.6.1), libqt6opengl6 (>= 6.1.2), libqt6widgets6 (>= 6.3.0), libqt6xml6 (>= 6.1.2), libstdc++6 (>= 14), libtomlplusplus3t64 (>= 3.2.0), zlib1g (>= 1:1.1.4), libqt6svg6, qt6-image-formats-plugins, qt6-wayland, pciutils
+Recommends: default-jre | java-runtime (>= 25), flite, x11-xserver-utils
+Suggests: libglfw3-wayland, gamemode, openjdk-8-jre | java-runtime (= 8), openjdk-17-jre | java-runtime (= 17), openjdk-21-jre | java-runtime (= 21)
+Size: 5156784
+SHA256: 56f9563a232936eb1fbec4960dd1bd5895bde3021797f3c9dac481ce50a674eb
+SHA1: f613b4e0c206afcfd3c28c90c2cb575af6a8159a
+MD5sum: 075fda689dabd6c3806d56ba52f2c054
+Description: FOSS Minecraft launcher supporting multiple instances and accounts
+ Prism Launcher is a custom launcher for Minecraft that allows users to
+ create multiple instances and use multiple accounts. As a fork of the
+ popular MultiMC, it focuses on user freedom, stability, & simplicity.
+Homepage: https://prismlauncher.org
+Section: contrib/games
+Priority: optional
+Filename: pool/contrib/p/prismlauncher/prismlauncher_11.0.2-1~bpo13+1_amd64.deb
+
+Package: python3-pyzfs
+Source: zfs-linux
+Version: 2.4.3-1~bpo13+1
+Installed-Size: 435
+Maintainer: Debian ZFS on Linux maintainers <pkg-zfsonlinux-devel@alioth-lists.debian.net>
+Architecture: amd64
+Depends: python3-cffi, zfsutils-linux (= 2.4.3-1~bpo13+1), python3-cffi-backend-api-min (<= 9729), python3-cffi-backend-api-max (>= 9729), python3:any
+Size: 72688
+SHA256: 3efe7b7ed5b777b429dafef56bb2941c0bd2ff5010bc59675d4e1f98070f0eab
+SHA1: 50eda99c4b9597484932d847ed0ea26a0ed69f6b
+MD5sum: d7c5e03af8c7e1c4f6465d539d87bd03
+Description: wrapper for libzfs_core C library
+ libzfs_core is intended to be a stable interface for programmatic
+ administration of ZFS. This wrapper provides one-to-one wrappers for
+ libzfs_core API functions, but the signatures and types are more natural to
+ Python.
+ .
+ nvlists are wrapped as dictionaries or lists depending on their usage.
+ Some parameters have default values depending on typical use for
+ increased convenience. Enumerations and bit flags become strings and lists
+ of strings in Python. Errors are reported as exceptions rather than integer
+ errno-style error codes.  The wrapper takes care to provide one-to-many
+ mapping of the error codes to the exceptions by interpreting a context
+ in which the error code is produced.
+Homepage: https://zfsonlinux.org/
+Section: contrib/python
+Priority: optional
+Filename: pool/contrib/z/zfs-linux/python3-pyzfs_2.4.3-1~bpo13+1_amd64.deb
+
+Package: pyzfs-doc
+Source: zfs-linux
+Version: 2.4.3-1~bpo13+1
+Installed-Size: 550
+Maintainer: Debian ZFS on Linux maintainers <pkg-zfsonlinux-devel@alioth-lists.debian.net>
+Architecture: all
+Depends: libjs-sphinxdoc (>= 8.1)
+Recommends: python3-pyzfs
+Size: 66144
+SHA256: 6c23038ede3f8350c25b756ccaf7b4182a9f7ac58bece3b1d7a822204653e072
+SHA1: 00abce2ebd69816c69570d875690618d844c15a5
+MD5sum: 40ae466aac232fcd9084bdd3cde93026
+Description: wrapper for libzfs_core C library (documentation)
+ libzfs_core is intended to be a stable interface for programmatic
+ administration of ZFS. This wrapper provides one-to-one wrappers for
+ libzfs_core API functions, but the signatures and types are more natural to
+ Python.
+ .
+ nvlists are wrapped as dictionaries or lists depending on their usage.
+ Some parameters have default values depending on typical use for
+ increased convenience. Enumerations and bit flags become strings and lists
+ of strings in Python. Errors are reported as exceptions rather than integer
+ errno-style error codes.  The wrapper takes care to provide one-to-many
+ mapping of the error codes to the exceptions by interpreting a context
+ in which the error code is produced.
+ .
+ This package contains the documentation.
+Multi-Arch: foreign
+Homepage: https://zfsonlinux.org/
+Static-Built-Using: sphinx (= 8.1.3-5)
+Section: contrib/doc
+Priority: optional
+Filename: pool/contrib/z/zfs-linux/pyzfs-doc_2.4.3-1~bpo13+1_all.deb
+
+Package: sabnzbdplus
+Version: 5.0.4+dfsg-1~bpo13+1
+Installed-Size: 3956
+Maintainer: Jeroen Ploemen <jcfp@debian.org>
+Architecture: all
+Depends: python3:any, 7zip, apprise, libjs-bootstrap, libjs-jquery, libjs-jquery-ui, libjs-moment, par2-turbo | par2, python3-certifi, python3-charset-normalizer, python3-cheetah, python3-cheroot, python3-cherrypy3, python3-configobj, python3-cryptography, python3-feedparser, python3-guessit, python3-more-itertools, python3-portend, python3-puremagic, python3-rarfile (>= 4.0), python3-rebulk, python3-sabctools (>= 9.4.0), python3-sabctools (<< 9.5.0~), python3-socks, python3-orjson | python3-ujson, unrar | rar
+Pre-Depends: init-system-helpers (>= 1.54~)
+Recommends: gir1.2-xapp-1.0, libavahi-compat-libdnssd1, python3-dbus, python3-gi, python3-notify2
+Size: 713080
+SHA256: cb173a253ad0d6fad976638bbc098e799a6d56b86cbd7553236cc084f7aa2622
+SHA1: c377b599904ba7ac58fd8ee38a0fc5ec23f45488
+MD5sum: d8ba74669255add4d940d208a4dd0068
+Description: web-based binary newsreader with nzb support
+ SABnzbd+ is a web-based binary newsgrabber written in Python, with support for
+ the popular nzb file format. It greatly simplifies the process of downloading
+ from Usenet, thanks to a friendly web-based, fully customizable user interface
+ and advanced built-in post-processing options including the ability to
+ automatically verify, repair, extract and clean up downloaded posts.
+ .
+ Multiple servers are supported, as well as secure (ssl) connections, ipv6,
+ scheduling, pausing and resuming downloads, queue manipulation, rss feeds,
+ automatic sorting, a download history, email notifications, and custom
+ post-processing scripts. An extensive API allows third party applications to
+ interact with the program.
+ .
+ This package contains the program itself and all interface templates.
+Homepage: https://sabnzbd.org
+Section: contrib/net
+Priority: optional
+Filename: pool/contrib/s/sabnzbdplus/sabnzbdplus_5.0.4+dfsg-1~bpo13+1_all.deb
+
+Package: scrcpy
+Version: 3.3.4-1~bpo13+1
+Installed-Size: 286
+Maintainer: Yangfl <mmyangfl@gmail.com>
+Architecture: amd64
+Replaces: scrcpy-server (<< 3.3.2)
+Depends: debconf (>= 0.5) | debconf-2.0, libavcodec61 (>= 7:7.0), libavdevice61 (>= 7:7.0), libavformat61 (>= 7:7.0), libavutil59 (>= 7:7.0), libc6 (>= 2.38), libsdl2-2.0-0 (>= 2.0.12), libswresample5 (>= 7:7.0), libusb-1.0-0 (>= 2:1.0.16)
+Recommends: adb, wget | curl, ca-certificates
+Breaks: scrcpy-server (<< 3.3.2)
+Size: 102952
+SHA256: 6b0df622fc5301bc9ca80f402762548387e1a95ee9ffe22b72e85e6809194633
+SHA1: c08ab165804c0eb70e7a13dc6975d5ea772b43b9
+MD5sum: 2a97a480dddfed8858c7a0f576c8036a
+Description: Display and control your Android devices
+ scrcpy mirrors Android devices (video and audio) connected via USB or TCP/IP,
+ and allows one to control them using the computer's keyboard and mouse. It does
+ not require root access or an app installed on the device.
+ .
+ Its features include:
+   * audio forwarding (Android 11+)
+   * recording
+   * virtual display
+   * mirroring with Android device screen off
+   * copy-paste in both directions
+   * configurable quality
+   * camera mirroring (Android 12+)
+   * mirroring as a webcam (V4L2) (Linux-only)
+   * physical keyboard and mouse simulation (HID)
+   * gamepad support
+   * OTG mode
+   * and more...
+ .
+ The Android device requires at least API 21 (Android 5.0). Audio forwarding is
+ supported for API >= 30 (Android 11+). Make sure you enabled USB debugging on
+ your device(s).
+ .
+ This package contains the client (desktop) binary. Server (mobile) binary will
+ be downloaded directly from upstream.
+Homepage: https://github.com/Genymobile/scrcpy
+Section: contrib/net
+Priority: optional
+Filename: pool/contrib/s/scrcpy/scrcpy_3.3.4-1~bpo13+1_amd64.deb
+
+Package: speech-dispatcher-baratinoo
+Source: speech-dispatcher-contrib
+Version: 0.12.1-3~bpo13+1
+Installed-Size: 98
+Maintainer: Debian TTS Team <tts-project@alioth-lists.debian.net>
+Architecture: amd64
+Replaces: speech-dispatcher (<< 0.10.2-1)
+Depends: libc6 (>= 2.38), libdotconf0 (>= 1.0.13), libglib2.0-0t64 (>= 2.36), libltdl7 (>= 2.5.4), libspeechd-module0 (>= 0.12.0), speech-dispatcher (>= 0.12.1), speech-dispatcher (<< 0.12.1.0~)
+Recommends: voxygen
+Breaks: speech-dispatcher (<< 0.10.2-1)
+Size: 31004
+SHA256: b81bf256420a56ffb47032f4065349145f062089d7631466d5fca7a8c2fd9332
+SHA1: 1909a8a3a592420f71f99f575f275ddeb73b4d11
+MD5sum: 2a3129fe9094c9ecc9509937a5e5b5f7
+Description: Speech Dispatcher: Baratinoo (VoxyGen) output module
+ Speech Dispatcher provides a device independent layer for speech synthesis.
+ It supports various software and hardware speech synthesizers as
+ backends and provides a generic layer for synthesizing speech and
+ playing back PCM data via those different backends to applications.
+ .
+ Various high level concepts like enqueueing vs. interrupting speech and
+ application specific user configurations are implemented in a device
+ independent way, therefore freeing the application programmer from
+ having to yet again reinvent the wheel.
+ .
+ This package contains the output module for the Baratinoo speech synthesizer,
+ also called VoxyGen, which needs to be installed separately.
+Multi-Arch: foreign
+Homepage: http://devel.freebsoft.org/speechd
+Section: contrib/sound
+Priority: optional
+Filename: pool/contrib/s/speech-dispatcher-contrib/speech-dispatcher-baratinoo_0.12.1-3~bpo13+1_amd64.deb
+
+Package: speech-dispatcher-ivona
+Source: speech-dispatcher-contrib
+Version: 0.12.1-3~bpo13+1
+Installed-Size: 91
+Maintainer: Debian TTS Team <tts-project@alioth-lists.debian.net>
+Architecture: amd64
+Replaces: speech-dispatcher (<< 0.10.2-3)
+Depends: libc6 (>= 2.38), libdotconf0 (>= 1.0.13), libdumbtts0 (>= 0.3.2), libglib2.0-0t64 (>= 2.36), libltdl7 (>= 2.5.4), libsndfile1 (>= 1.0.20), libspeechd-module0 (>= 0.12.0), speech-dispatcher (>= 0.12.1), speech-dispatcher (<< 0.12.1.0~)
+Breaks: speech-dispatcher (<< 0.10.2-3)
+Size: 29084
+SHA256: ed9186fd2365fe01f650ab13095ca3128c25938a4305a8a869d9b440646fa8ce
+SHA1: 49f3e6ceea57a454dac328ef1ff424402d57b523
+MD5sum: 099850edd0431eb9b586124568bd40d0
+Description: Speech Dispatcher: Ivona output module
+ Speech Dispatcher provides a device independent layer for speech synthesis.
+ It supports various software and hardware speech synthesizers as
+ backends and provides a generic layer for synthesizing speech and
+ playing back PCM data via those different backends to applications.
+ .
+ Various high level concepts like enqueueing vs. interrupting speech and
+ application specific user configurations are implemented in a device
+ independent way, therefore freeing the application programmer from
+ having to yet again reinvent the wheel.
+ .
+ This package contains the output module for the Ivona speech synthesizer,
+ which needs to be installed separately.
+Multi-Arch: foreign
+Homepage: http://devel.freebsoft.org/speechd
+Section: contrib/sound
+Priority: optional
+Filename: pool/contrib/s/speech-dispatcher-contrib/speech-dispatcher-ivona_0.12.1-3~bpo13+1_amd64.deb
+
+Package: speech-dispatcher-kali
+Source: speech-dispatcher-contrib
+Version: 0.12.1-3~bpo13+1
+Installed-Size: 88
+Maintainer: Debian TTS Team <tts-project@alioth-lists.debian.net>
+Architecture: amd64
+Replaces: speech-dispatcher (<< 0.10.2-1)
+Depends: libc6 (>= 2.38), libdotconf0 (>= 1.0.13), libglib2.0-0t64 (>= 2.36), libltdl7 (>= 2.5.4), libspeechd-module0 (>= 0.12.0), speech-dispatcher (>= 0.12.1), speech-dispatcher (<< 0.12.1.0~)
+Recommends: kali-tts
+Breaks: speech-dispatcher (<< 0.10.2-1)
+Size: 26280
+SHA256: 267b154e788c8e4112c58f706def1d84529c1c8ee5331a9938e48905d638d0a9
+SHA1: a9afe64a92f566b35afa7c1b02648cb38e10c56a
+MD5sum: 06e67bccc45dbab2279079d7165b38e0
+Description: Speech Dispatcher: Kali output module
+ Speech Dispatcher provides a device independent layer for speech synthesis.
+ It supports various software and hardware speech synthesizers as
+ backends and provides a generic layer for synthesizing speech and
+ playing back PCM data via those different backends to applications.
+ .
+ Various high level concepts like enqueueing vs. interrupting speech and
+ application specific user configurations are implemented in a device
+ independent way, therefore freeing the application programmer from
+ having to yet again reinvent the wheel.
+ .
+ This package contains the output module for the Kali speech synthesizer,
+ which needs to be installed separately.
+Multi-Arch: foreign
+Homepage: http://devel.freebsoft.org/speechd
+Section: contrib/sound
+Priority: optional
+Filename: pool/contrib/s/speech-dispatcher-contrib/speech-dispatcher-kali_0.12.1-3~bpo13+1_amd64.deb
+
+Package: speech-dispatcher-pico
+Source: speech-dispatcher-contrib
+Version: 0.12.1-3~bpo13+1
+Installed-Size: 84
+Maintainer: Debian TTS Team <tts-project@alioth-lists.debian.net>
+Architecture: amd64
+Replaces: speech-dispatcher (<< 0.10.2-1), speech-dispatcher-contrib (<< 0.8.5-5)
+Depends: libc6 (>= 2.38), libdotconf0 (>= 1.0.13), libglib2.0-0t64 (>= 2.36), libltdl7 (>= 2.5.4), libspeechd-module0 (>= 0.12.0), libttspico0t64 (>= 1.0), speech-dispatcher (>= 0.12.1), speech-dispatcher (<< 0.12.1.0~)
+Breaks: speech-dispatcher (<< 0.10.2-1), speech-dispatcher-contrib (<< 0.8.5-5)
+Size: 27128
+SHA256: e55b2f1070a9e66843565041d4ba96358ed95e9a758a63905715d2b58b5a35dd
+SHA1: 8df0bf4ce26783df91af7182dbd806af6acfb2a9
+MD5sum: 55848b76ef5f569bc8763230d500c4df
+Description: Speech Dispatcher: Pico output module
+ Speech Dispatcher provides a device independent layer for speech synthesis.
+ It supports various software and hardware speech synthesizers as
+ backends and provides a generic layer for synthesizing speech and
+ playing back PCM data via those different backends to applications.
+ .
+ Various high level concepts like enqueueing vs. interrupting speech and
+ application specific user configurations are implemented in a device
+ independent way, therefore freeing the application programmer from
+ having to yet again reinvent the wheel.
+ .
+ This package contains the output module for the pico speech synthesizer.
+Multi-Arch: foreign
+Homepage: http://devel.freebsoft.org/speechd
+Section: contrib/sound
+Priority: optional
+Filename: pool/contrib/s/speech-dispatcher-contrib/speech-dispatcher-pico_0.12.1-3~bpo13+1_amd64.deb
+
+Package: speech-dispatcher-voxin
+Source: speech-dispatcher-contrib
+Version: 0.12.1-3~bpo13+1
+Installed-Size: 118
+Maintainer: Debian TTS Team <tts-project@alioth-lists.debian.net>
+Architecture: amd64
+Replaces: speech-dispatcher (<< 0.10.1-3)
+Depends: libc6 (>= 2.38), libdotconf0 (>= 1.0.13), libglib2.0-0t64 (>= 2.76.0), libltdl7 (>= 2.5.4), libspeechd-module0 (>= 0.12.0), speech-dispatcher-audio-plugins (>= 0.12.1), speech-dispatcher-audio-plugins (<< 0.12.1.0~), speech-dispatcher (>= 0.12.1), speech-dispatcher (<< 0.12.1.0~)
+Breaks: speech-dispatcher (<< 0.10.1-3)
+Size: 35996
+SHA256: 0689169e6b6664ca8d04acaf77c8ada164fc0e7b7e82f8295c1c3034a0d5dafa
+SHA1: 22851a6cc4344784a1c13607dea083b912bc1aee
+MD5sum: b430b7400c0baf2efc52fbce9b0efecb
+Description: Speech Dispatcher: Voxin output module
+ Speech Dispatcher provides a device independent layer for speech synthesis.
+ It supports various software and hardware speech synthesizers as
+ backends and provides a generic layer for synthesizing speech and
+ playing back PCM data via those different backends to applications.
+ .
+ Various high level concepts like enqueueing vs. interrupting speech and
+ application specific user configurations are implemented in a device
+ independent way, therefore freeing the application programmer from
+ having to yet again reinvent the wheel.
+ .
+ This package contains the output module for the Voxin speech synthesizer,
+ which supports IBM TTS (aka Eloquence) and Vocalizer Embedded, which needs to
+ be installed separately.
+Multi-Arch: foreign
+Homepage: http://devel.freebsoft.org/speechd
+Section: contrib/sound
+Priority: optional
+Filename: pool/contrib/s/speech-dispatcher-contrib/speech-dispatcher-voxin_0.12.1-3~bpo13+1_amd64.deb
+
+Package: zfs-dkms
+Source: zfs-linux
+Version: 2.4.3-1~bpo13+1
+Installed-Size: 18754
+Maintainer: Debian ZFS on Linux maintainers <pkg-zfsonlinux-devel@alioth-lists.debian.net>
+Architecture: all
+Replaces: spl-dkms
+Provides: zfs-modules
+Depends: dkms (>= 3.0.11), file, libc6-dev | libc-dev, lsb-release, libpython3-stdlib, debconf (>= 0.5) | debconf-2.0
+Recommends: zfs-zed, zfsutils-linux (>= 2.4.3-1~bpo13+1), linux-libc-dev (<< 7.1~), linux-libc-dev (>= 4.18~)
+Suggests: debhelper
+Breaks: spl-dkms (<< 0.8.0~rc1), zfs-fuse (<< 2.4.3-1~bpo13+1)
+Size: 2511120
+SHA256: 31f972abb1b84a277d64e41d48c1047ad33923f2fd2d1d2ec8781faa4d884d16
+SHA1: 0ce9ae5773257a986992d2cfbc199b8e3622d35d
+MD5sum: ebf38338f4c2ec44b01c2a51cf45c5f3
+Description: OpenZFS filesystem kernel modules for Linux
+ OpenZFS is a storage platform that encompasses the functionality of
+ traditional filesystems and volume managers. It supports data checksums,
+ compression, encryption, snapshots, and more.
+ .
+ This DKMS package includes the SPA, DMU, ZVOL, and ZPL components of
+ OpenZFS.
+Multi-Arch: foreign
+Homepage: https://zfsonlinux.org/
+Section: contrib/kernel
+Priority: optional
+Filename: pool/contrib/z/zfs-linux/zfs-dkms_2.4.3-1~bpo13+1_all.deb
+
+Package: zfs-dracut
+Source: zfs-linux
+Version: 2.4.3-1~bpo13+1
+Installed-Size: 111
+Maintainer: Debian ZFS on Linux maintainers <pkg-zfsonlinux-devel@alioth-lists.debian.net>
+Architecture: all
+Depends: dracut, zfs-modules | zfs-dkms, zfsutils-linux (>= 2.4.3-1~bpo13+1)
+Size: 39112
+SHA256: 808c1f8c2714255f029fde7d3713a7f352c2dcc32fb0c5020287b14185d2d129
+SHA1: f7099e4a204942cea1d593432ab751fa55b3c0a1
+MD5sum: 90cb8a00821322742013e085add4d382
+Description: OpenZFS root filesystem capabilities for Linux - dracut
+ OpenZFS is a storage platform that encompasses the functionality of
+ traditional filesystems and volume managers. It supports data checksums,
+ compression, encryption, snapshots, and more.
+ .
+ This package adds OpenZFS to the system initramfs with a hook
+ for the dracut infrastructure.
+Multi-Arch: foreign
+Homepage: https://zfsonlinux.org/
+Section: contrib/kernel
+Priority: optional
+Filename: pool/contrib/z/zfs-linux/zfs-dracut_2.4.3-1~bpo13+1_all.deb
+
+Package: zfs-initramfs
+Source: zfs-linux
+Version: 2.4.3-1~bpo13+1
+Installed-Size: 120
+Maintainer: Debian ZFS on Linux maintainers <pkg-zfsonlinux-devel@alioth-lists.debian.net>
+Architecture: all
+Replaces: zfsutils-linux (<= 0.7.11-2)
+Depends: busybox-initramfs | busybox-static | busybox, initramfs-tools, zfs-modules | zfs-dkms, zfsutils-linux (>= 2.4.3-1~bpo13+1)
+Breaks: zfsutils-linux (<= 0.7.11-2)
+Size: 39736
+SHA256: 33ba29250149e5a7b8074d576fbeed74b111f93fd88bcf534a2565f9067bf28d
+SHA1: 03c8a11465db0335c58220e2ebcaa227a3d3ce62
+MD5sum: 46395c7d7996916c043d9c79ba27b426
+Description: OpenZFS root filesystem capabilities for Linux - initramfs
+ OpenZFS is a storage platform that encompasses the functionality of
+ traditional filesystems and volume managers. It supports data checksums,
+ compression, encryption, snapshots, and more.
+ .
+ This package adds OpenZFS to the system initramfs with a hook
+ for the initramfs-tools infrastructure.
+Multi-Arch: foreign
+Homepage: https://zfsonlinux.org/
+Section: contrib/kernel
+Priority: optional
+Filename: pool/contrib/z/zfs-linux/zfs-initramfs_2.4.3-1~bpo13+1_all.deb
+
+Package: zfs-test
+Source: zfs-linux
+Version: 2.4.3-1~bpo13+1
+Installed-Size: 36528
+Maintainer: Debian ZFS on Linux maintainers <pkg-zfsonlinux-devel@alioth-lists.debian.net>
+Architecture: amd64
+Replaces: zfsutils-linux (<= 0.7.9-2)
+Depends: acl, attr, bc, fio, ksh, lsscsi, mdadm, parted, python3, python3-pyzfs, sudo, sysstat, zfs-modules | zfs-dkms, zfsutils-linux (>= 2.4.3-1~bpo13+1), libaio1t64 (>= 0.3.93), libc6 (>= 2.38), libnvpair3linux (>= 0.8.2), libudev1 (>= 183), libzfs7linux (>= 2.2), libzpool7linux (>= 2.4.0), zlib1g (>= 1:1.2.3.4)
+Recommends: curl, nfs-kernel-server, rsync, tzdata-legacy
+Conflicts: zutils
+Breaks: zfsutils-linux (<= 0.7.9-2)
+Size: 28751956
+SHA256: 00353ca92354a777c443d4a0e14a2b439175ff7c63d51517f8b51376b6a757d4
+SHA1: 079db393adc9e279df37eef2aeee901095ff7a68
+MD5sum: 583c8ca23a13803eac420acbb7bf8c75
+Description: OpenZFS test infrastructure and support scripts
+ OpenZFS is a storage platform that encompasses the functionality of
+ traditional filesystems and volume managers. It supports data checksums,
+ compression, encryption, snapshots, and more.
+ .
+ This package provides the OpenZFS test infrastructure for destructively
+ testing and validating a system using OpenZFS. It is entirely optional
+ and should only be installed and used in test environments.
+Homepage: https://zfsonlinux.org/
+Section: contrib/admin
+Priority: optional
+Filename: pool/contrib/z/zfs-linux/zfs-test_2.4.3-1~bpo13+1_amd64.deb
+
+Package: zfs-zed
+Source: zfs-linux
+Version: 2.4.3-1~bpo13+1
+Installed-Size: 285
+Maintainer: Debian ZFS on Linux maintainers <pkg-zfsonlinux-devel@alioth-lists.debian.net>
+Architecture: amd64
+Depends: zfs-modules | zfs-dkms, zfsutils-linux (>= 2.4.3-1~bpo13+1), libc6 (>= 2.38), libnvpair3linux (>= 0.8.2), libudev1 (>= 183), libuuid1 (>= 2.16), libuutil3linux (>= 0.8.2), libzfs7linux (>= 2.2.3)
+Pre-Depends: init-system-helpers (>= 1.54~)
+Size: 85100
+SHA256: ac6bdca337d86d4a303d67ee9900007915f94066649372dfb86efd995d8190d6
+SHA1: 75d662bc7e9ee3836f5eb101c87e62e9d57963b0
+MD5sum: a5571887520dd125e958a5f6aa1b87e7
+Description: OpenZFS Event Daemon
+ OpenZFS is a storage platform that encompasses the functionality of
+ traditional filesystems and volume managers. It supports data checksums,
+ compression, encryption, snapshots, and more.
+ .
+ ZED (ZFS Event Daemon) monitors events generated by the ZFS kernel
+ module. When a zevent (ZFS Event) is posted, ZED will run any ZEDLETs
+ (ZFS Event Daemon Linkage for Executable Tasks) that have been enabled
+ for the corresponding zevent class.
+ .
+ This package provides the OpenZFS Event Daemon (zed).
+Homepage: https://zfsonlinux.org/
+Section: contrib/admin
+Priority: optional
+Filename: pool/contrib/z/zfs-linux/zfs-zed_2.4.3-1~bpo13+1_amd64.deb
+
+Package: zfsutils-linux
+Source: zfs-linux
+Version: 2.4.3-1~bpo13+1
+Installed-Size: 1911
+Maintainer: Debian ZFS on Linux maintainers <pkg-zfsonlinux-devel@alioth-lists.debian.net>
+Architecture: amd64
+Replaces: spl (<< 0.7.9-2), spl-dkms
+Provides: zfsutils
+Depends: libnvpair3linux (= 2.4.3-1~bpo13+1), libuutil3linux (= 2.4.3-1~bpo13+1), libzfs7linux (= 2.4.3-1~bpo13+1), libzpool7linux (= 2.4.3-1~bpo13+1), python3, gawk, libblkid1 (>= 2.16), libc6 (>= 2.38), libssl3t64 (>= 3.0.0), libudev1 (>= 183), libuuid1 (>= 2.16)
+Pre-Depends: init-system-helpers (>= 1.54~)
+Recommends: zfs-modules | zfs-dkms, zfs-zed
+Suggests: nfs-kernel-server, samba-common-bin (>= 3.0.23), zfs-initramfs | zfs-dracut
+Conflicts: zfs, zfs-fuse
+Breaks: spl (<< 0.7.9-2), spl-dkms (<< 0.8.0~rc1), zfs-dkms (>> 2.4.3-1~bpo13+1...), zfs-dkms (<< 2.4.3-1~bpo13+1)
+Size: 614596
+SHA256: 80a34370278512601f678295c0584ae33c58adfd1bc93540f123a0d81c616ddb
+SHA1: d28d8ac5caaf0b6384a468940fb07044823a9fdb
+MD5sum: 6d1fe5006e96e8106269f166cf966085
+Description: command-line tools to manage OpenZFS filesystems
+ OpenZFS is a storage platform that encompasses the functionality of
+ traditional filesystems and volume managers. It supports data checksums,
+ compression, encryption, snapshots, and more.
+ .
+ This package provides the zfs and zpool commands to create and administer
+ OpenZFS filesystems.
+Homepage: https://zfsonlinux.org/
+Section: contrib/admin
+Priority: optional
+Filename: pool/contrib/z/zfs-linux/zfsutils-linux_2.4.3-1~bpo13+1_amd64.deb
+

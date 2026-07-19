@@ -1,0 +1,30 @@
+/**
+ * Time-zone normalization helpers (runtime-level primitives).
+ *
+ * Pure `Intl`-backed helpers for resolving and validating IANA time zones.
+ * No DB, no plugin imports. Consumed by the LifeOps normalize primitives and by
+ * `@elizaos/plugin-personal-assistant` (which re-exports them from
+ * `lifeops/defaults.ts` for historical import paths).
+ */
+export function resolveDefaultTimeZone() {
+    const resolved = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    return resolved && resolved.trim().length > 0 ? resolved : "UTC";
+}
+export function isValidTimeZone(timeZone) {
+    try {
+        new Intl.DateTimeFormat("en-US", { timeZone }).format(new Date());
+        return true;
+    }
+    catch {
+        // error-policy:J3 invalid IANA time zone -> false
+        return false;
+    }
+}
+export function normalizeTimeZone(timeZone) {
+    const candidate = typeof timeZone === "string" ? timeZone.trim() : "";
+    if (candidate && isValidTimeZone(candidate)) {
+        return candidate;
+    }
+    return resolveDefaultTimeZone();
+}
+//# sourceMappingURL=time-zone.js.map

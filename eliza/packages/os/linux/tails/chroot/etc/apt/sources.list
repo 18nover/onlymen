@@ -1,0 +1,5 @@
+# /etc/apt/sources.list
+
+deb http://time-based.snapshots.deb.tails.boum.org/debian/2026071704 trixie main contrib non-free non-free-firmware
+deb http://time-based.snapshots.deb.tails.boum.org/debian-security/2026071704 trixie-security main contrib non-free non-free-firmware
+deb http://time-based.snapshots.deb.tails.boum.org/debian/2026071704 trixie-updates main contrib non-free non-free-firmware

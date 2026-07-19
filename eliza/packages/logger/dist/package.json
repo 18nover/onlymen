@@ -1,0 +1,52 @@
+{
+  "name": "@elizaos/logger",
+  "version": "2.0.3-beta.7",
+  "description": "Standalone structured logger for elizaOS (extracted from @elizaos/core).",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./index.js",
+  "license": "MIT",
+  "homepage": "https://github.com/elizaOS/eliza",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elizaOS/eliza.git",
+    "directory": "packages/logger"
+  },
+  "keywords": [
+    "elizaos",
+    "logger",
+    "logging"
+  ],
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./index.d.ts",
+      "eliza-source": {
+        "types": "./index.d.ts",
+        "import": "./index.js",
+        "default": "./index.js"
+      },
+      "import": "./index.js",
+      "default": "./index.js"
+    }
+  },
+  "dependencies": {
+    "adze": "^2.2.5",
+    "fast-redact": "^3.5.0"
+  },
+  "elizaos": {
+    "scripts": {
+      "buildOnInstall": {
+        "sentinel": "dist/index.js",
+        "order": 1
+      }
+    }
+  },
+  "types": "./index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,24 @@
+Package: intel-microcode
+Version: 3.20250812.1~deb13u1
+Installed-Size: 19295
+Maintainer: Henrique de Moraes Holschuh <hmh@debian.org>
+Architecture: amd64
+Depends: iucode-tool (>= 1.0)
+Conflicts: microcode.ctl (<< 0.18~0)
+Size: 11548812
+SHA256: 7cf3e9141eb155b7504342ae7f65bd19bc69a8dee5f2f7f415c4ff30360775f4
+SHA1: 7e30ca1ef11bde400a6af1c756e3bf92c6ff8371
+MD5sum: 4bdbb4ea4f517e3b3d26877de5ed5fb4
+Description: Processor microcode firmware for Intel CPUs
+ This package contains updated system processor microcode for
+ Intel i686 and Intel X86-64 processors.  Intel releases microcode
+ updates to correct processor behavior as documented in the
+ respective processor specification updates.
+ .
+ For AMD processors, please refer to the amd64-microcode package.
+Homepage: https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files
+Recommends: initramfs-tools (>= 0.113~)
+Section: non-free-firmware/admin
+Priority: standard
+Filename: pool/non-free-firmware/i/intel-microcode/intel-microcode_3.20250812.1~deb13u1_amd64.deb
+

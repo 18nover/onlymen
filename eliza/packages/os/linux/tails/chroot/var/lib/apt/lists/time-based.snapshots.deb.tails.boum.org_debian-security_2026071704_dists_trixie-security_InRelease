@@ -1,0 +1,93 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Origin: Debian
+Label: Debian-Security
+Suite: trixie-security/snapshots/2026071704
+Codename: trixie-security
+Date: Fri, 17 Jul 2026 23:15:04 UTC
+Valid-Until: Mon, 27 Jul 2026 23:15:04 UTC
+Architectures: amd64
+Components: main contrib non-free non-free-firmware
+MD5Sum:
+ 4dea1c36c1fcbb491a177a65f2cc6f55 2222507 main/binary-amd64/Packages
+ e7257b8bb65b2d6e30ff93829dd33dcb 458392 main/binary-amd64/Packages.gz
+ b38f2fe48339e397f4dc9e56818c8aa4 99 main/binary-amd64/Release
+ 0eea5b17c0d11999e3c83d054a9dede5 872470 main/source/Sources
+ 97b248202452fa6314a09f25915de440 167981 main/source/Sources.gz
+ 26a8ab8e78718ea9298867d5e962c559 100 main/source/Release
+ d41d8cd98f00b204e9800998ecf8427e 0 contrib/binary-amd64/Packages
+ 7029066c27ac6f5ef18d660d5741979a 20 contrib/binary-amd64/Packages.gz
+ 7a8d267f961dbc56dac2b477cacfb972 102 contrib/binary-amd64/Release
+ d41d8cd98f00b204e9800998ecf8427e 0 contrib/source/Sources
+ 7029066c27ac6f5ef18d660d5741979a 20 contrib/source/Sources.gz
+ 2594114dbf95dc9c02760d6db804af30 103 contrib/source/Release
+ d41d8cd98f00b204e9800998ecf8427e 0 non-free/binary-amd64/Packages
+ 7029066c27ac6f5ef18d660d5741979a 20 non-free/binary-amd64/Packages.gz
+ e4f7822dec8b603cff9033239a3339fa 103 non-free/binary-amd64/Release
+ d41d8cd98f00b204e9800998ecf8427e 0 non-free/source/Sources
+ 7029066c27ac6f5ef18d660d5741979a 20 non-free/source/Sources.gz
+ 2ca9776e7ac85e978105982b4ed85704 104 non-free/source/Release
+ 541a17ba46c7a7a2d2f1b167732b1469 1026 non-free-firmware/binary-amd64/Packages
+ e59ce9a88713323044e9357e7b0c49da 625 non-free-firmware/binary-amd64/Packages.gz
+ d992ae07a7938cc8fa646c7f0cc51bde 112 non-free-firmware/binary-amd64/Release
+ 05c6b4082452e573b9f1b49c67788e3e 1417 non-free-firmware/source/Sources
+ 25933671b3cbfc6db6033ea8fe9f6677 718 non-free-firmware/source/Sources.gz
+ 5b654f9184150ebe6c32ae357408fc55 113 non-free-firmware/source/Release
+SHA1:
+ d9bbc275444cc0ee11fcb1e745f6b8c4f2ebb4e0 2222507 main/binary-amd64/Packages
+ a853f7aa3260021dbc6a450738adf14e092cb1d9 458392 main/binary-amd64/Packages.gz
+ 435bcc02efb669c3f7a7f2bd983531072e7308af 99 main/binary-amd64/Release
+ 1ea4613e225e8e4201c43cd36d5c4762906bb172 872470 main/source/Sources
+ 05efa5e028f8caef6a7ff4ac83be2bcc09726d56 167981 main/source/Sources.gz
+ 62e3d14a8087914e50a1cfa16fc4067952850d47 100 main/source/Release
+ da39a3ee5e6b4b0d3255bfef95601890afd80709 0 contrib/binary-amd64/Packages
+ 46c6643f07aa7f6bfe7118de926b86defc5087c4 20 contrib/binary-amd64/Packages.gz
+ 2d9b45d1e969f408c87e28f19c88f9c5f0929a12 102 contrib/binary-amd64/Release
+ da39a3ee5e6b4b0d3255bfef95601890afd80709 0 contrib/source/Sources
+ 46c6643f07aa7f6bfe7118de926b86defc5087c4 20 contrib/source/Sources.gz
+ 22f61d17d814c42444284fd6b61d6257774c6ac0 103 contrib/source/Release
+ da39a3ee5e6b4b0d3255bfef95601890afd80709 0 non-free/binary-amd64/Packages
+ 46c6643f07aa7f6bfe7118de926b86defc5087c4 20 non-free/binary-amd64/Packages.gz
+ 33a6858b37e4ac36413512e027f5f01f94c8c2f1 103 non-free/binary-amd64/Release
+ da39a3ee5e6b4b0d3255bfef95601890afd80709 0 non-free/source/Sources
+ 46c6643f07aa7f6bfe7118de926b86defc5087c4 20 non-free/source/Sources.gz
+ 72bcb624a7341c0b9d03766f3c1af55b3304de33 104 non-free/source/Release
+ bc2594e032ad89ea249d455628659d3f2c760409 1026 non-free-firmware/binary-amd64/Packages
+ 2c89e3b962a155d7bd1ee970e2aa029636c754f0 625 non-free-firmware/binary-amd64/Packages.gz
+ 360bb5a2e53feb42522904869e737db6bac6e33b 112 non-free-firmware/binary-amd64/Release
+ c7bafbaa2705080dc8f17d07ae3333a570554cde 1417 non-free-firmware/source/Sources
+ 14560585147adeb618b4f0f5d5e8858e99e69c8b 718 non-free-firmware/source/Sources.gz
+ 0dd42420c25bc96ff57addc00ed17620cf620b84 113 non-free-firmware/source/Release
+SHA256:
+ 5abe35c549e61e6af9d87cc63ab1e78a3931a95ba612a4c979825446c3e13631 2222507 main/binary-amd64/Packages
+ cbba7d3668fe6795daddf83ba8c94521037928329ce2f483da2e31de2133af71 458392 main/binary-amd64/Packages.gz
+ dff087fa67a9328975cb17f7a4646114b24ceb7c7364d9489f41185af6b71717 99 main/binary-amd64/Release
+ 8aec7bf9496d43d2266f17a03cc39e50e6aa649acfa03df8b5cd89719a935827 872470 main/source/Sources
+ 02de0fd0cadf3e2d8b515ec544b978946122d6289d95cb7ed14d0cec0aba6686 167981 main/source/Sources.gz
+ c744aa535621d4c4256915095ca98dac779840be90344d12c9e537d1b7f15b35 100 main/source/Release
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 contrib/binary-amd64/Packages
+ 59869db34853933b239f1e2219cf7d431da006aa919635478511fabbfc8849d2 20 contrib/binary-amd64/Packages.gz
+ 13ca2dd8fa0aa5a37f7ad46519e9ae5b5c6f478f7217b9383c20a1c0ce5a1687 102 contrib/binary-amd64/Release
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 contrib/source/Sources
+ 59869db34853933b239f1e2219cf7d431da006aa919635478511fabbfc8849d2 20 contrib/source/Sources.gz
+ 6042ce77c6bb27cede5efc164b09d49545fe7f66bb88672c5f481609f9d7be95 103 contrib/source/Release
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 non-free/binary-amd64/Packages
+ 59869db34853933b239f1e2219cf7d431da006aa919635478511fabbfc8849d2 20 non-free/binary-amd64/Packages.gz
+ 00d1718fbbb48796d7a3cf5fad5ddda2f5842917652331c7548963d6a2f88059 103 non-free/binary-amd64/Release
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 non-free/source/Sources
+ 59869db34853933b239f1e2219cf7d431da006aa919635478511fabbfc8849d2 20 non-free/source/Sources.gz
+ 28b152944bcccff3a7b55a29e46b02ef8f950db1cfc7cf28bf90a3595e74d539 104 non-free/source/Release
+ a7a91d7db74a42997596059cb809b0c667ce409cb039c7f8d4e6fb96e10a6b9e 1026 non-free-firmware/binary-amd64/Packages
+ 5cf45507a3d7d48cac4fcef4cf93b24b6d9dc0222980b92b1bc23fc4f617febc 625 non-free-firmware/binary-amd64/Packages.gz
+ 9c9e7d2fcbfece6a6d1cfcd83169c177ef1318d0d70c5fa5a98deb70c04be7d0 112 non-free-firmware/binary-amd64/Release
+ a3fc6a646ca431789c288e4b5c76b1042addaca4f818f8be0aa362cea08b40a7 1417 non-free-firmware/source/Sources
+ 720c6de65e132af5d68b0252fef7159c577c9a45560202e686be6622125982eb 718 non-free-firmware/source/Sources.gz
+ 527e4b5715fd5fe932c11fda28375181de7ca5d83b3d5886804f47cbcb77f8e9 113 non-free-firmware/source/Release
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQTWj4cUnrp3VBVzwcEkU6qc5BI6mgUCalq3eAAKCRAkU6qc5BI6
+mlXjAQD5DKGdiYxWMIwnw1DUehK+WNbRzCRUGNgDCYDFmOLJewD/dE4xmqpTgopf
+xyj2mHvHcr0kWaXxAHhWdS/+WpFKeA4=
+=U25F
+-----END PGP SIGNATURE-----

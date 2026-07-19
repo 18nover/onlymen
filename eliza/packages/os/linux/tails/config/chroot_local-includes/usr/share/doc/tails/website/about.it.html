@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+
+<html lang="it" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<title>Tails - Come funziona Tails</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="icon" href="favicon.ico" type="image/x-icon" />
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+<link rel="stylesheet" href="local.css?reload-2025-10-14" type="text/css" />
+<link rel="stylesheet" href="lib/fontawesome/css/all.min.css" type="text/css" />
+
+
+<script src="lib/js/local.js" type="text/javascript"></script>
+
+<link href="./about.css" rel="stylesheet" title="" type="text/css" />
+</head>
+
+
+<body class="it">
+
+
+
+<nav id="skip-link">
+<!-- Skip navigation link for accessibility -->
+  <a href="#page-body">Vai al contenuto principale</a>
+
+</nav>
+
+
+<header id="banner">
+  <div id="banner-container">
+    <div id="tails-logo">
+  <a href="./index.it.html"> <span>Tails</span> <img alt="" class="svg" height="100" src="./lib/logo.png" width="270" />
+</a>
+</div>
+<div id="search-and-donate">
+  <nav aria-label="Search">
+    <form action="https://duckduckgo.com/" id="searchform" method="get" target="_blank">
+      <input id="searchbox" name="q" placeholder="Usando DuckDuckGo&hellip;" size="16" type="search" value="" /> <input name="sites" type="hidden" value="tails.net" /> <button aria-label="Cerca" type="submit"><span>Cerca</span></button>
+    </form>
+  </nav>
+  <div id="donate">
+    <a href="https://tails.net/donate/"><span>Donate</span></a>
+  </div>
+</div>
+
+  </div>
+</header>
+
+
+
+<header id="navigation-container">
+
+  
+  <nav id="main-navigation" aria-label="Primary">
+    <ul>
+  <li><a href="./index.it.html">Home</a></li>
+  <li><span class="selflink">Come funziona Tails</span></li>
+  <li><a href="./install.it.html">Installa Tails</a></li>
+  <li><a href="./doc.it.html">Documentazione</a></li>
+  <li><a href="./support.it.html">Supporto</a></li>
+  <li><a href="./news.it.html">Notizie</a></li>
+</ul>
+
+  </nav>
+  
+
+  <div id="crumbs-and-languages">
+
+    <nav id="crumbs" aria-label="Breadcrumbs">
+      <ul>
+        
+        
+        
+        
+        
+        <li>Come funziona Tails</li>
+      </ul>
+    </nav>
+
+    <div id="language-switcher-top">
+      
+      <nav class="language-switcher" aria-label="Languages">
+        <div class="current-language">Italiano</div>
+        <ul class="other-languages">
+          
+          <li>
+            <a href="./about.en.html">English</a>
+          </li>
+          
+          <li>
+            <a href="./about.ca.html">Català</a>
+          </li>
+          
+          <li>
+            <a href="./about.de.html">Deutsch</a>
+          </li>
+          
+          <li>
+            <a href="./about.es.html">Español</a>
+          </li>
+          
+          <li>
+            <a href="./about.fr.html">Français</a>
+          </li>
+          
+          <li>
+            <a href="./about.pt.html">Português</a>
+          </li>
+          
+          <li>
+            <a href="./about.ru.html">Русский</a>
+          </li>
+          
+          
+        </ul>
+      </nav>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+<main id="page-container">
+
+  
+
+  <article id="page-body">
+    <div id="page-title">
+      <h1>
+        Come funziona Tails
+      </h1>
+    </div>
+    <section id="content">
+      <div></div>
+
+
+
+<h1>Non lasciare tracce sul computer</h1>
+
+<section id="secure-computer">
+
+  <div class="image order-1">
+
+  <img alt="" class="svg" height="461" src="./about/anywhere.png" width="403" />
+
+  <p><i class="metaphor">Puoi portare con te Tails e usarlo ovunque, come una
+tenda da campo.</i></p>
+
+  </div>
+
+  <div class="text order-2">
+
+  <h2>Il tuo computer sicuro, ovunque</h2>
+
+  <p class="big">Per usare Tails, arresta il computer e avvialo sulla tua chiavetta USB Tails
+invece di avviarlo su Windows, macOS o Linux.</p>
+
+  <p class="big">Puoi temporaneamente <strong>trasformare il tuo computer in una macchina
+sicura</strong>. Puoi anche <strong>utilizzare in modo sicuro il computer di
+un&#39;altra persona</strong>.</p>
+
+  <p class="medium">Tails richiede &frac12; ora per l&#39;installazione, dopo un download di 
+1.9 GB
+. Tails pu&ograve; essere
+installato su una qualsiasi chiavetta USB da almeno 8 GB. Tails funziona
+sulla maggior parte dei computer con meno di 10 anni.  Puoi riavviare il
+computer sul precedente sistema operativo dopo aver spento Tails.</p>
+
+  <p class="medium">Non devi preoccuparti dell&#39;eventuale presenza di virus sul computer poich&eacute;
+Tails viene eseguito indipendentemente dall&#39;altro sistema operativo e non
+utilizza mai il disco fisso. Tuttavia, Tails potrebbe non offrirti
+protezione se lo installi da un computer infettato da virus o se lo usi su
+un computer su cui siano presenti componenti hardware malevoli, come un
+keylogger.</p>
+
+  <div class="links">
+    <p>Vedere anche:</p>
+    <ul>
+      <li><a href="./doc/about/warnings.it.html">Attenzione: Tails &egrave; sicuro ma non &egrave; magico!</a></li>
+      <li><a href="./install.it.html">Scaricare e installare Tails</a></li>
+      <li><a href="./doc/about/requirements.it.html">Requisiti di sistema e hardware consigliato</a></li>
+    </ul>
+  </div>
+
+  </div>
+
+</section>
+
+<section id="amnesia">
+
+  <div class="image order-2">
+
+  <img alt="" class="svg" height="461" src="./about/amnesia.png" width="403" /> <i class="metaphor">Come
+una tenda da campo, Tails &egrave; amnesico: &egrave; sempre vuoto all&#39;inizio e non lascia
+tracce quando te ne vai.</i>
+
+  </div>
+
+  <div class="text order-1">
+
+  <h2>Amnesia</h2>
+
+  <p class="big">A ogni avvio Tails si presenta libero da qualsiasi dato gestito in
+precedenza e <strong>tutte le attivit&agrave; che svolgi svaniscono</strong>
+automaticamente quando arresti Tails.</p>
+
+  <p class="medium">Senza Tails, quasi tutto ci&ograve; che fai pu&ograve; lasciare tracce sul computer:</p>
+
+  <ul class="medium">
+    <li>I siti web che hai visitato, anche in modalit&agrave; anonima</li>
+    <li>I file che hai aperto, anche se poi li hai eliminati</li>
+    <li>Le tue password, anche se usi un gestore di password</li>
+    <li>Tutti i dispositivi e le reti Wi-Fi che hai usato</li>
+  </ul>
+
+  <p class="medium">Tails, invece, non scrive mai nulla sul disco fisso e viene eseguito
+esclusivamente dalla memoria del computer. La memoria viene interamente
+cancellata quando arresti Tails, eliminando ogni possibile traccia.</p>
+
+  </div>
+
+</section>
+
+<section id="persistent-storage">
+
+  <div class="image order-1">
+
+  <img alt="" class="svg" height="461" src="./about/persistent-storage.png" width="403" /> <i class="metaphor">Come in uno zaino, puoi conservare i tuoi effetti personali
+nel tuo volume persistente e usarli nella tua tenda.</i>
+
+  </div>
+
+  <div class="text order-2">
+
+  <h2>Archivio Persistente</h2>
+
+  <p class="big">Puoi <strong>salvare alcuni dei tuoi file e delle tue
+configurazioni</strong> in un volume persistente cifrato sulla chiavetta
+USB: i tuoi documenti, i segnalibri del browser, le tue email, e anche dei
+programmi aggiuntivi.</p>
+
+  <p class="medium">Il volume persistente &egrave; opzionale e potrai sempre decidere cosa rendere
+<i>persistente</i>. Tutto il resto &egrave; <i>amnesico</i>.</p>
+
+  <div class="links">
+    <p>Vedere anche:</p>
+    <ul>
+      <li><span class="createlink">Usare l&#39;Archivio persistente</span></li>
+      <li><a href="./doc/persistent_storage/additional_software.it.html">Installare programmi
+aggiuntivi</a></li>
+    </ul>
+  </div>
+
+  </div>
+
+</section>
+
+<section id="toolbox">
+
+  <div class="image order-2">
+
+  <img alt="" class="svg" height="461" src="./about/toolbox.png" width="403" />
+
+  </div>
+
+  <div class="text order-1">
+
+  <h2>Attrezzatura per la sicurezza digitale</h2>
+
+  <p class="big">Tails include una selezione di applicazioni per <strong>lavorare su
+documenti sensibili</strong> e per <strong>comunicare in maniera
+sicura</strong>.</p>
+
+  <p class="big">Tutte le applicazioni sono pronte per l&#39;uso e sono preconfigurate con
+impostazioni sicure, in modo da <strong>impedire errori</strong>.</p>
+
+  <p class="medium">Tails include:</p>
+
+  <ul class="medium">
+    <li><i>Tor Browser</i> con <i>uBlock</i>, un browser sicuro e un&#39;estensione per
+il blocco della pubblicit&agrave;</li>
+    <li><i>Thunderbird</i>, per gestire email cifrate</li>
+    <li><i>GNOME Secrets</i>, to create and store strong passwords</li>
+    <li><i>LibreOffice</i>, una suite di applicazioni da ufficio</li>
+    <li><i>OnionShare</i>, per condividere file, siti web e chat attraverso Tor</li>
+    <li><i>Metadata Cleaner</i>, per rimuovere i metadata dai file</li>
+    <li>e molte altre applicazioni ancora!</li>
+  </ul>
+
+  <p class="medium">Per impedire errori:</p>
+
+  <ul class="medium">
+    <li>Le applicazioni vengono automaticamente bloccate se tentano di connettersi a
+Internet senza utilizzare Tor.</li>
+    <li>Tutto ci&ograve; che si trova nell&#39;Archivio Persistente viene cifrato
+automaticamente.</li>
+    <li>Tails non scrive nulla sul disco fisso. L&#39;intera memoria viene cancellata
+all&#39;arresto.</li>
+  </ul>
+
+  <div class="links">
+    <p>Vedere anche:</p>
+    <ul>
+      <li><a href="./doc/about/features.it.html">Funzionalit&agrave; e programmi inclusi</a></li>
+      <li><a href="./doc.it.html">Documentazione</a></li>
+    </ul>
+  </div>
+
+  </div>
+
+</section>
+
+<h1 class="follow">Non lasciare traccia su Internet</h1>
+
+<section id="tor">
+
+  <div class="image order-1">
+
+  <img alt="" class="svg" height="461" src="./about/relays.png" width="403" />
+
+  </div>
+
+  <div class="text order-2">
+
+  <h2>Tor per qualsiasi cosa</h2>
+
+  <p class="big">Ogni cosa che fai su Internet con Tails passa attraverso la rete Tor. Tor
+cifra e rende anonima la tua connessione <strong>facendola passare
+attraverso 3 relay</strong>. I <i>relay</i> sono server mantenuti da diverse
+persone e organizzazioni in tutto il mondo.</p>
+
+  <p class="medium">Un singolo relay non pu&ograve; mai sapere contemporaneamente da dove viene e dove
+&egrave; diretta la connessione cifrata:</p>
+
+  <ul class="medium">
+    <li>Il 1&deg; relay sa solo da dove vieni, ma non dove stai andando.</li>
+    <li>Il 3&deg; relay sa solo dove stai andando, ma non da dove vieni.</li>
+    <li>La connessione alla destinazione finale viene criptata quando possibile, per
+impedire al terzo relay di leggerne il contenuto.</li>
+  </ul>
+
+  <p class="medium">In questo modo, Tor &egrave; <strong>sicuro per natura</strong> anche in caso ci
+siano alcuni relay malevoli.</p>
+
+  <p class="medium">La rete Tor ha pi&ugrave; di 6.000 rel&egrave;. Le organizzazioni che gestiscono i rel&egrave;
+Tor includono universit&agrave; come il MIT, gruppi di attivisti come Riseup,
+organizzazioni non profit come Derechos Digitales, aziende di hosting
+Internet come Private Internet Access, e cos&igrave; via. La grande diversit&agrave; di
+persone e organizzazioni che gestiscono i rel&egrave; Tor lo rende pi&ugrave; sicuro e pi&ugrave;
+sostenibile.</p>
+
+  <div class="links">
+    <p>Vedere anche:</p>
+    <ul>
+      <li><a href="./doc/anonymous_internet/tor.it.html">Connettersi alla rete Tor </a></li>
+      <li><a href="./doc/anonymous_internet/tor/why.it.html">Perch&eacute; Tails utilizza Tor?</a></li>
+    </ul>
+  </div>
+
+  </div>
+
+</section>
+
+<section id="surveillance">
+
+  <div class="image order-2">
+
+  <img alt="" class="svg" height="461" src="./about/walkie-talkie.png" width="403" />
+
+  </div>
+
+  <div class="text order-1">
+
+  <h2>Evitare la sorveglianza online e la censura</h2>
+
+  <p class="big">Tor impedisce a chi sta osservando la tua connessione Internet di capire
+<strong><i>cosa</i> stai facendo su Internet</strong>.</p>
+
+  <p class="big">Puoi evitare la censura perch&eacute; &egrave; <strong>impossibile per chi censura
+sapere</strong> quali siti web stai visitando.</p>
+
+  <p class="medium">Se la connessione a Tor &egrave; bloccata oppure &egrave; pericoloso usarla da dove ti
+trovi, per esempio in alcune regioni con forte censura, puoi utilizzare dei
+<i>bridge</i> per nascondere che ti stai connettendo al network di Tor.</p>
+
+  </div>
+
+</section>
+
+<section id="identity">
+
+  <div class="image order-1">
+
+  <img alt="" class="svg" height="461" src="./about/footprints.png" width="403" />
+
+  </div>
+
+  <div class="text order-2">
+
+  <h2>Evitare il tracciamento geografico e cambiare identit&agrave;</h2>
+
+  <p class="big">Inoltre, Tor impedisce ai siti web che stai visitando di sapere
+<strong><i>dove</i> e <i>chi</i> tu sia</strong>, a meno che non sia tu a
+comunicarlo a loro. Puoi visitare siti web <strong>in modo anonimo o
+cambiare la tua identit&agrave;</strong>.</p>
+
+  <p class="big">Gli strumenti di tracciamento e di profilazione pubblicitaria online non
+saranno pi&ugrave; in grado di seguire i tuoi spostamenti da un sito web all&#39;altro.</p>
+
+  <p class="medium">You can publish a blog or manage an email account entirely from Tails. If
+you only access it from Tails, it cannot be related to you. You can store
+documents and images related to this different identity in your Persistent
+Storage, keep your passwords in the <i>Secrets</i> password manager, have a
+dedicated email account in <i>Thunderbird</i>, etc.</p>
+
+  </div>
+
+</section>
+
+<h1 class="follow">Software per la libert&agrave;</h1>
+
+<section id="transparency">
+
+  <div class="image order-2">
+
+  <img alt="" class="svg" height="461" src="./about/blueprint.png" width="403" />
+
+  </div>
+
+  <div class="text order-1">
+
+  <h2>Trasparenza per creare fiducia</h2>
+
+  <p class="big">Tutto il codice del nostro software &egrave; pubblico, in modo da permettere a
+ricercatori in sicurezza informatica indipendenti da noi di verificare che
+Tails funzioni veramente come dovrebbe.</p>
+
+  <div class="links">
+    <p>Vedere anche:</p>
+    <ul>
+      <li><a href="./doc/about/trust.it.html">Fidarsi di Tails</a></li>
+      <li><a href="./doc/about/license.it.html">Licenza e distribuzione del codice sorgente</a></li>
+      <li><a href="./contribute/design.html">Documenti di progettazione</a></li>
+    </ul>
+  </div>
+
+  </div>
+
+</section>
+
+<section id="free">
+
+  <div class="image order-1">
+
+  <img alt="" class="svg" height="461" src="./about/fire.png" width="403" />
+
+  </div>
+
+  <div class="text order-2">
+
+  <h2>Il massimo della sicurezza, gratuitamente</h2>
+
+  <p class="big">Nessuna persona dovrebbe essere obbligata a pagare per poter usare un
+computer in maniera sicura.  Ecco perch&eacute; distribuiamo Tails gratuitamente e
+cerchiamo di renderne facile l&#39;uso a chiunque.</p>
+
+  <p class="big">Tails &egrave; realizzato dal <a href="https://torproject.org/">Tor Project</a>,
+una no-profit globale senza scopo di lucro che sviluppa strumenti per la
+privacy e l&#39;anonimato online.</p>
+
+  <p class="medium">Il nostro lavoro &egrave; sovvenzionato da donazioni di persone come te e
+organizzazioni che sostengono il diritto alla libert&agrave; su Internet: Mozilla,
+DuckDuckGo, Open Tech Fund, Craig Newmark Philanthropies, etc.</p>
+
+  <div class="links">
+    <p>Vedere anche:</p>
+    <ul>
+      <li><a href="./donate.it.html">Dona</a></li>
+      <li><a href="https://www.torproject.org/it/about/supporters/">Sostenitori</a></li>
+      <li><a href="https://community.torproject.org/policies/social_contract/">Patto sociale</a></li>
+    </ul>
+  </div>
+
+  </div>
+
+</section>
+
+<section id="sharing">
+
+  <div class="image order-2">
+
+  <img alt="" class="svg" height="461" src="./about/roots.png" width="403" />
+
+  </div>
+
+  <div class="text order-1">
+
+  <h2>Condividere per essere pi&ugrave; forti</h2>
+
+  <p class="big">Tails &egrave; costruito su solide fondamenta: la rete Tor, il sistema operativo
+Debian, l&#39;ambiente desktop GNOME, e tutti gli strumenti inclusi in Tails.</p>
+
+  <p class="big">Condividiamo i nostri progressi in modo che molte altre persone possano
+beneficiare del nostro lavoro.</p>
+
+  <div class="links">
+    <p>Vedere anche:</p>
+    <ul>
+      <li><a href="./contribute/relationship_with_upstream.html">Relazione con l&#39;upstream</a></li>
+      <li><a href="https://www.torproject.org/it/">The Tor Project</a></li>
+      <li><a href="https://debian.org/">Debian GNU/Linux</a></li>
+      <li><a href="https://www.gnome.org/">GNOME</a></li>
+      <li><a href="./doc/about/contact.it.html">Contatti</a></li>
+    </ul>
+  </div>
+
+  </div>
+
+</section>
+
+<div class="cta">
+
+<a href="./install.it.html">Installa Tails</a>
+
+</div>
+
+    </section>
+  </article>
+
+</main>
+
+<footer id="footer" class="pagefooter">
+  <div id="footer-container">
+
+    <div id="language-switcher-bottom">
+      
+      <nav class="language-switcher" aria-label="Languages">
+        <div class="current-language">Italiano</div>
+        <ul class="other-languages">
+          
+          <li>
+            <a href="./about.en.html">English</a>
+          </li>
+          
+          <li>
+            <a href="./about.ca.html">Català</a>
+          </li>
+          
+          <li>
+            <a href="./about.de.html">Deutsch</a>
+          </li>
+          
+          <li>
+            <a href="./about.es.html">Español</a>
+          </li>
+          
+          <li>
+            <a href="./about.fr.html">Français</a>
+          </li>
+          
+          <li>
+            <a href="./about.pt.html">Português</a>
+          </li>
+          
+          <li>
+            <a href="./about.ru.html">Русский</a>
+          </li>
+          
+          
+        </ul>
+      </nav>
+      
+    </div>
+
+    <div id="footer-columns">
+      <div>
+
+<h5>Tails</h5>
+
+<ul>
+<li><a href="./index.it.html">Home</a></li>
+<li><span class="selflink">Come funziona Tails</span></li>
+<li><a href="./install.it.html">Installa Tails</a></li>
+<li><a href="./nav/doc.it.html">Documentazione</a></li>
+<li><a href="./support.it.html">Sostieni</a></li>
+<li><a href="./news.it.html">Notizie</a></li>
+</ul>
+
+</div>
+
+<div>
+
+<h5>Supporto</h5>
+
+<ul>
+<li><a href="./support/faq.it.html">FAQs</a></li>
+<li><a href="./support/known_issues.it.html">Problemi noti</a></li>
+<li><a href="./doc/about/warnings.it.html">Avvertenze</a></li>
+<li><a href="./security.it.html">Avvisi di sicurezza</a></li>
+<li><a href="./doc/first_steps/accessibility.it.html">Accessibilit&agrave;</a></li>
+<li><a href="./doc/upgrade.it.html">Aggiornamento</a></li>
+</ul>
+
+</div>
+
+<div>
+
+<h5>Contribuisci</h5>
+
+<ul>
+<li><a href="./contribute.it.html">Contribuire</a></li>
+<li><a href="./doc/first_steps/whisperback.it.html">Segnala un errore</a></li>
+<li><a href="./contribute/how/translate.html">Traduci</a></li>
+<li><a href="./contribute/how/code.html">Codice sorgente</a></li>
+<li><a href="https://gitlab.tails.boum.org/tails/tails/-/issues">GitLab</a></li>
+<li><a href="./donate.it.html">Dona</a></li>
+</ul>
+
+</div>
+
+<div>
+
+<h5>Su di noi</h5>
+
+<ul>
+<li><a href="./doc/about/contact.it.html">Contatti</a></li>
+<li><a href="./contribute/mission.html">Missione e principi</a></li>
+<li><a href="https://community.torproject.org/policies/social_contract/">Patto sociale</a></li>
+<li><a href="https://www.torproject.org/it/about/supporters/">Sostenitori</a></li>
+<li><a href="https://community.torproject.org/policies/code_of_conduct/">Codice di
+condotta</a></li>
+<li><a href="./doc/about/license.it.html">Licenze</a></li>
+<li><a href="./jobs.html">Posizioni aperte</a></li>
+</ul>
+
+</div>
+
+<div>
+
+<h5>Novit&agrave;</h5>
+
+<p>Iscriviti alla nostra <a href="./news.it.html">newsletter</a></p>
+
+<form action="https://www.autistici.org/mailman/subscribe/amnesia-news" method="POST">
+  <input aria-label="Email" name="email" value="" /> <button aria-label="Subscribe" type="submit">Iscriviti</button>
+</form>
+
+<div id="social-media">
+  <div><a href="https://forum.torproject.org" target="_blank"><i class="fab
+fa-discourse"></i></a></div>
+  <div><a href="https://www.facebook.com/TorProject/" target="_blank"><i class="fab
+fa-facebook"></i></a></div>
+  <div><a href="https://mastodon.social/@torproject" rel="me" target="_blank"><i class="fab fa-mastodon"></i></a></div>
+  <div><a href="https://www.instagram.com/torproject" target="_blank"><i class="fab
+fa-instagram"></i></a></div>
+  <div><a href="https://twitter.com/Tails_live" target="_blank"><i class="fab
+fa-twitter"></i></a></div>
+  <div><a href="https://www.linkedin.com/company/tor-project" target="_blank"><i class="fab fa-linkedin"></i></a></div>
+  <div><a href="https://github.com/torproject" target="_blank"><i class="fab
+fa-github"></i></a></div>
+  <div><a href="https://t.me/torproject" target="_blank"><i class="fab
+fa-telegram"></i></a></div>
+  <div><a href="https://gitlab.torproject.org/" target="_blank"><i class="fab
+fa-gitlab"></i></a></div>
+</div>
+
+</div>
+
+<div id="made-by">
+
+<img alt="" class="svg" height="91" src="./lib/tor-black.png" width="151" />
+
+<p>Tails &egrave; realizzato dal <a href="https://torproject.org/">progetto Tor</a>.</p>
+
+</div>
+
+    </div>
+
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,1 @@
+{"version":3,"file":"parse-duration.d.ts","sourceRoot":"","sources":["../../src/cli/parse-duration.ts"],"names":[],"mappings":"AAAA;;;;GAIG;AACH,MAAM,MAAM,sBAAsB,GAAG;IACnC,WAAW,CAAC,EAAE,IAAI,GAAG,GAAG,GAAG,GAAG,GAAG,GAAG,GAAG,GAAG,CAAC;CAC5C,CAAC;AAEF,wBAAgB,eAAe,CAC7B,GAAG,EAAE,MAAM,EACX,IAAI,CAAC,EAAE,sBAAsB,GAC5B,MAAM,CAiCR"}

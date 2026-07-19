@@ -1,0 +1,119 @@
+{
+  "name": "@elizaos/security",
+  "version": "2.0.3-beta.7",
+  "description": "Eliza security foundation: KMS contract, audit-event dispatcher, and AEAD primitives. Foundation package for SOC2 compliance work.",
+  "type": "module",
+  "license": "MIT",
+  "homepage": "https://github.com/elizaOS/eliza",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elizaOS/eliza.git",
+    "directory": "packages/security"
+  },
+  "keywords": [
+    "elizaos",
+    "security",
+    "kms",
+    "audit",
+    "soc2",
+    "steward"
+  ],
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "eliza-source": {
+        "types": "./index.d.ts",
+        "import": "./index.js",
+        "default": "./index.js"
+      },
+      "bun": {
+        "types": "./index.d.ts",
+        "import": "./index.js",
+        "default": "./index.js"
+      },
+      "import": "./index.js",
+      "default": "./index.js"
+    },
+    "./package.json": "./package.json",
+    "./kms": {
+      "types": "./kms/index.d.ts",
+      "eliza-source": {
+        "types": "./kms/index.d.ts",
+        "import": "./kms/index.js",
+        "default": "./kms/index.js"
+      },
+      "bun": {
+        "types": "./kms/index.d.ts",
+        "import": "./kms/index.js",
+        "default": "./kms/index.js"
+      },
+      "import": "./kms/index.js",
+      "default": "./kms/index.js"
+    },
+    "./audit": {
+      "types": "./audit/index.d.ts",
+      "eliza-source": {
+        "types": "./audit/index.d.ts",
+        "import": "./audit/index.js",
+        "default": "./audit/index.js"
+      },
+      "bun": {
+        "types": "./audit/index.d.ts",
+        "import": "./audit/index.js",
+        "default": "./audit/index.js"
+      },
+      "import": "./audit/index.js",
+      "default": "./audit/index.js"
+    },
+    "./mcp-server-config": {
+      "types": "./mcp-server-config.d.ts",
+      "bun": {
+        "types": "./mcp-server-config.d.ts",
+        "import": "./mcp-server-config.js",
+        "default": "./mcp-server-config.js"
+      },
+      "import": "./mcp-server-config.js",
+      "default": "./mcp-server-config.js"
+    },
+    "./network-policy": {
+      "types": "./network-policy.d.ts",
+      "bun": {
+        "types": "./network-policy.d.ts",
+        "import": "./network-policy.js",
+        "default": "./network-policy.js"
+      },
+      "import": "./network-policy.js",
+      "default": "./network-policy.js"
+    },
+    "./*": {
+      "types": "./*.d.ts",
+      "bun": {
+        "types": "./*.d.ts",
+        "import": "./*.js",
+        "default": "./*.js"
+      },
+      "import": "./*.js",
+      "default": "./*.js"
+    }
+  },
+  "dependencies": {
+    "zod": "^4.4.3"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "elizaos": {
+    "scripts": {
+      "buildOnInstall": {
+        "sentinel": "dist/index.js",
+        "order": 2
+      }
+    }
+  }
+}

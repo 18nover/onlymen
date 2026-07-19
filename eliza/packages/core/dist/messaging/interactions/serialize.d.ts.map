@@ -1,0 +1,1 @@
+{"version":3,"file":"serialize.d.ts","sourceRoot":"","sources":["../../../src/messaging/interactions/serialize.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AAEH,OAAO,KAAK,EAIX,gBAAgB,EAEhB,MAAM,0BAA0B,CAAC;AAiClC,uEAAuE;AACvE,wBAAgB,yBAAyB,CAAC,KAAK,EAAE,gBAAgB,GAAG,MAAM,CAiBzE;AAED,oFAAoF;AACpF,wBAAgB,sBAAsB,CACrC,IAAI,EAAE,MAAM,EACZ,KAAK,EAAE,gBAAgB,GACrB,MAAM,CAKR"}

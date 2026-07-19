@@ -1,0 +1,1 @@
+{"version":3,"file":"api-key-prefix-hints.d.ts","sourceRoot":"","sources":["../../src/config/api-key-prefix-hints.ts"],"names":[],"mappings":"AAAA;;;;;;;;;;;;;;;GAeG;AAEH,MAAM,WAAW,gBAAgB;IAC/B,mEAAmE;IACnE,QAAQ,CAAC,MAAM,EAAE,MAAM,CAAC;IACxB,0DAA0D;IAC1D,QAAQ,CAAC,KAAK,EAAE,MAAM,CAAC;CACxB;AAED,eAAO,MAAM,oBAAoB,EAAE,QAAQ,CAAC,MAAM,CAAC,MAAM,EAAE,gBAAgB,CAAC,CASzE,CAAC"}

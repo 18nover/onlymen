@@ -1,0 +1,1 @@
+{"version":3,"file":"pluginStateProvider.d.ts","sourceRoot":"","sources":["../../../../src/features/plugin-manager/providers/pluginStateProvider.ts"],"names":[],"mappings":"AAAA;;;;;GAKG;AACH,OAAO,KAAK,EAAE,QAAQ,EAAkB,MAAM,8BAA8B,CAAC;AAsC7E,eAAO,MAAM,mBAAmB,EAAE,QAAQ,GAAG;IAAE,iBAAiB,EAAE,MAAM,EAAE,CAAA;CAqLzE,CAAC"}

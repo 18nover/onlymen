@@ -1,0 +1,803 @@
+/**
+ * Executes the agent's scheduled/event triggers and wires them into the task
+ * scheduler. Registers the TRIGGER_DISPATCH task worker, dispatches each fire to
+ * either a workflow (the WORKFLOW_DISPATCH service, idempotency-keyed) or a
+ * prompt automation (a synthetic-entity turn through the message service), then
+ * records the run, recomputes next-fire metadata, deletes one-shot/exhausted
+ * tasks, and hands the per-fire re-arm interval back so varying-cadence triggers
+ * don't drift. Tracks per-agent execution metrics, surfaces success/failure on
+ * the notification rail, and projects tasks into read-only trigger/heartbeat
+ * summaries and a health snapshot for the API.
+ */
+import crypto from "node:crypto";
+import type { IAgentRuntime, Memory, Service, Task, UUID } from "@elizaos/core";
+import { ServiceType, stringToUuid } from "@elizaos/core";
+import {
+  buildTriggerMetadata,
+  DISABLED_TRIGGER_INTERVAL_MS,
+  MAX_TRIGGER_RUN_HISTORY,
+} from "./scheduling.ts";
+import type {
+  PromptTriggerConfig,
+  TriggerConfig,
+  TriggerHealthSnapshot,
+  TriggerRunRecord,
+  TriggerSummary,
+  TriggerTaskMetadata,
+  WorkflowTriggerConfig,
+} from "./types.ts";
+
+export const TRIGGER_TASK_NAME = "TRIGGER_DISPATCH" as const;
+export const TRIGGER_TASK_TAGS = ["queue", "repeat", "trigger"] as const;
+const HEARTBEAT_TASK_TAGS = ["queue", "repeat", "heartbeat"] as const;
+
+const DEFAULT_MAX_ACTIVE_TRIGGERS = 100;
+
+interface TriggerMetricsState {
+  totalExecutions: number;
+  totalFailures: number;
+  totalSkipped: number;
+  lastExecutionAt?: number;
+}
+
+export interface TriggerExecutionOptions {
+  source: "scheduler" | "manual" | "event";
+  force?: boolean;
+  event?: {
+    kind: string;
+    payload?: Record<string, unknown>;
+  };
+}
+
+export interface TriggerExecutionResult {
+  status: "success" | "error" | "skipped";
+  error?: string;
+  taskDeleted: boolean;
+  runRecord?: TriggerRunRecord;
+  trigger?: TriggerSummary | null;
+  // Present when a workflow-kind trigger dispatches to WORKFLOW_DISPATCH and
+  // the service returns an execution id.
+  executionId?: string;
+  // The re-arm interval this fire persisted (ms until the next scheduled fire).
+  // Trigger cadence VARIES per fire (e.g. a weekday cron's Fri→Mon gap), so the
+  // task worker must hand this back to the scheduler as `nextInterval` — else
+  // the success path falls back to a frozen `baseInterval` and drifts.
+  updateInterval?: number;
+}
+
+interface NotificationEmitter {
+  notify: (input: {
+    title: string;
+    body?: string;
+    category?: string;
+    priority?: string;
+    source?: string;
+    deepLink?: string;
+    groupKey?: string;
+    data?: Record<string, unknown>;
+  }) => Promise<unknown>;
+}
+
+function getNotifier(runtime: IAgentRuntime): NotificationEmitter | null {
+  const svc = runtime.getService(
+    ServiceType.NOTIFICATION,
+  ) as NotificationEmitter | null;
+  return svc && typeof svc.notify === "function" ? svc : null;
+}
+
+const metricsByAgent = new Map<UUID, TriggerMetricsState>();
+
+function getMetrics(agentId: UUID): TriggerMetricsState {
+  const current = metricsByAgent.get(agentId);
+  if (current) return current;
+  const created: TriggerMetricsState = {
+    totalExecutions: 0,
+    totalFailures: 0,
+    totalSkipped: 0,
+  };
+  metricsByAgent.set(agentId, created);
+  return created;
+}
+
+function recordExecutionMetric(
+  agentId: UUID,
+  status: TriggerExecutionResult["status"],
+  ts: number,
+): void {
+  const metrics = getMetrics(agentId);
+  if (status === "success" || status === "error") {
+    metrics.totalExecutions += 1;
+    metrics.lastExecutionAt = ts;
+  }
+  if (status === "error") {
+    metrics.totalFailures += 1;
+  }
+  if (status === "skipped") {
+    metrics.totalSkipped += 1;
+  }
+}
+
+function appendRunRecord(
+  existing: TriggerRunRecord[] | undefined,
+  record: TriggerRunRecord,
+): TriggerRunRecord[] {
+  const runs = [...(existing ?? []), record];
+  return runs.length <= MAX_TRIGGER_RUN_HISTORY
+    ? runs
+    : runs.slice(runs.length - MAX_TRIGGER_RUN_HISTORY);
+}
+
+function taskMetadata(task: Task): TriggerTaskMetadata {
+  const metadata = task.metadata;
+  return metadata && typeof metadata === "object" && !Array.isArray(metadata)
+    ? (metadata as TriggerTaskMetadata)
+    : {};
+}
+
+export function readTriggerConfig(task: Task): TriggerConfig | null {
+  const trigger = taskMetadata(task).trigger;
+  if (!trigger || typeof trigger !== "object" || Array.isArray(trigger))
+    return null;
+  return (trigger as TriggerConfig).triggerId
+    ? (trigger as TriggerConfig)
+    : null;
+}
+
+export function readTriggerRuns(task: Task): TriggerRunRecord[] {
+  const runs = taskMetadata(task).triggerRuns;
+  return Array.isArray(runs) ? (runs as TriggerRunRecord[]) : [];
+}
+
+export function triggersFeatureEnabled(runtime?: IAgentRuntime): boolean {
+  const runtimeSetting = runtime?.getSetting("ELIZA_TRIGGERS_ENABLED");
+  if (
+    runtimeSetting === false ||
+    runtimeSetting === "false" ||
+    runtimeSetting === "0"
+  ) {
+    return false;
+  }
+  const env = process.env.ELIZA_TRIGGERS_ENABLED;
+  if (!env) return true;
+  const normalized = env.trim().toLowerCase();
+  return normalized !== "0" && normalized !== "false";
+}
+
+export function getTriggerLimit(runtime?: IAgentRuntime): number {
+  const runtimeSetting = runtime?.getSetting("ELIZA_TRIGGERS_MAX_ACTIVE");
+  if (typeof runtimeSetting === "number" && Number.isFinite(runtimeSetting)) {
+    return Math.max(1, Math.floor(runtimeSetting));
+  }
+  if (typeof runtimeSetting === "string" && /^\d+$/.test(runtimeSetting)) {
+    return Math.max(1, Number(runtimeSetting));
+  }
+  const env = process.env.ELIZA_TRIGGERS_MAX_ACTIVE;
+  if (env && /^\d+$/.test(env)) {
+    return Math.max(1, Number(env));
+  }
+  return DEFAULT_MAX_ACTIVE_TRIGGERS;
+}
+
+interface WorkflowDispatchOptionsLike {
+  triggerData?: Record<string, unknown>;
+  idempotencyKey?: string;
+}
+
+interface WorkflowDispatchServiceLike {
+  execute(
+    workflowId: string,
+    payload?: Record<string, unknown>,
+    options?: WorkflowDispatchOptionsLike,
+  ): Promise<{
+    ok: boolean;
+    error?: string;
+    executionId?: string;
+    dedup?: boolean;
+  }>;
+}
+
+/**
+ * Read the idempotency key the task metadata carries for this trigger
+ * fire. armSchedules / rehydrateSchedules write a minute-bucketed key
+ * onto the metadata so dispatch can short-circuit duplicate fires.
+ */
+function readTaskIdempotencyKey(task: Task): string | undefined {
+  const meta = task.metadata as Record<string, unknown> | undefined;
+  const key = meta?.idempotencyKey;
+  return typeof key === "string" && key.length > 0 ? key : undefined;
+}
+
+/**
+ * How long a workflow trigger waits for the WORKFLOW_DISPATCH service before
+ * declaring the workflow subsystem unavailable. plugin-workflow loads in the
+ * DEFERRED boot phase and registers the dispatcher inside its init, so a
+ * trigger firing in the boot window can race the registration — a bounded
+ * wait turns that race into a short dispatch delay instead of a spurious
+ * "Automation failed" notification.
+ */
+const WORKFLOW_DISPATCH_WAIT_MS = 15_000;
+const WORKFLOW_DISPATCH_POLL_MS = 250;
+
+/**
+ * Resolve the workflow dispatcher, waiting out the deferred-boot window.
+ * WORKFLOW_DISPATCH is a closure-based singleton set directly into the
+ * runtime services map by plugin-workflow's init (no service class), so
+ * `getServiceLoadPromise` can't await it — polling `getService` is the one
+ * signal that exists. Returns null only when the plugin never registers it
+ * (not enabled on this runtime), which is a configuration state, not a race.
+ */
+async function resolveWorkflowDispatch(
+  runtime: IAgentRuntime,
+): Promise<(Service & WorkflowDispatchServiceLike) | null> {
+  const deadline = Date.now() + WORKFLOW_DISPATCH_WAIT_MS;
+  for (;;) {
+    const svc = runtime.getService<Service & WorkflowDispatchServiceLike>(
+      "WORKFLOW_DISPATCH",
+    ) as (Service & WorkflowDispatchServiceLike) | null;
+    if (svc) return svc;
+    if (Date.now() >= deadline) return null;
+    await new Promise((resolve) =>
+      setTimeout(resolve, WORKFLOW_DISPATCH_POLL_MS),
+    );
+  }
+}
+
+async function dispatchWorkflow(
+  runtime: IAgentRuntime,
+  task: Task,
+  trigger: WorkflowTriggerConfig,
+  event?: TriggerExecutionOptions["event"],
+): Promise<{ ok: true; executionId?: string } | { ok: false; error: string }> {
+  if (!trigger.workflowId) {
+    return { ok: false, error: "workflow trigger missing workflowId" };
+  }
+  const svc = await resolveWorkflowDispatch(runtime);
+  if (!svc) {
+    runtime.logger.warn(
+      {
+        src: "trigger-runtime",
+        triggerId: trigger.triggerId,
+        workflowId: trigger.workflowId,
+      },
+      "[triggers] workflow dispatch requested but the workflow plugin never registered WORKFLOW_DISPATCH — is @elizaos/plugin-workflow enabled on this agent?",
+    );
+    return {
+      ok: false,
+      error:
+        "workflow subsystem unavailable: the workflow plugin is not enabled on this agent",
+    };
+  }
+  const idempotencyKey = readTaskIdempotencyKey(task);
+  const payload = event
+    ? {
+        eventKind: event.kind,
+        eventPayload: event.payload ?? {},
+      }
+    : {};
+  const result = await svc.execute(trigger.workflowId, payload, {
+    idempotencyKey,
+  });
+  return result.ok
+    ? { ok: true, executionId: result.executionId }
+    : { ok: false, error: result.error ?? "workflow execution failed" };
+}
+
+interface AutonomyRoomService {
+  getAutonomousRoomId?(): UUID;
+}
+
+/**
+ * Dispatch a `prompt`-kind trigger: inject the trigger's `instructions` as an
+ * agent turn via the message-service pipeline, so the agent can act on it (the
+ * "prompt automation" path). The message is authored by a per-trigger synthetic
+ * entity (never the agent's own id — the pipeline skips messages "from self")
+ * and lands in the autonomy room when one is available.
+ */
+async function dispatchPrompt(
+  runtime: IAgentRuntime,
+  trigger: PromptTriggerConfig,
+): Promise<
+  { ok: true; executionId?: undefined } | { ok: false; error: string }
+> {
+  const instructions = trigger.instructions.trim();
+  if (!instructions) {
+    return { ok: false, error: "prompt trigger missing instructions" };
+  }
+  const messageService = runtime.messageService;
+  if (!messageService) {
+    return { ok: false, error: "message service not available" };
+  }
+
+  const roomId =
+    (
+      runtime.getService("AUTONOMY") as AutonomyRoomService | null
+    )?.getAutonomousRoomId?.() ??
+    stringToUuid(`trigger-room:${runtime.agentId}`);
+  const entityId = stringToUuid(`trigger-entity:${trigger.triggerId}`);
+
+  const message: Memory = {
+    id: stringToUuid(crypto.randomUUID()),
+    entityId,
+    agentId: runtime.agentId,
+    roomId,
+    content: {
+      text: instructions,
+      source: "trigger-prompt",
+      metadata: {
+        type: "prompt-automation",
+        triggerId: trigger.triggerId,
+        wakeMode: trigger.wakeMode,
+      },
+    },
+    createdAt: Date.now(),
+  };
+
+  await messageService.handleMessage(runtime, message);
+  return { ok: true };
+}
+
+export async function executeTriggerTask(
+  runtime: IAgentRuntime,
+  task: Task,
+  options: TriggerExecutionOptions,
+): Promise<TriggerExecutionResult> {
+  if (!task.id) {
+    return { status: "skipped", taskDeleted: false };
+  }
+
+  const trigger = readTriggerConfig(task);
+  if (!trigger) {
+    recordExecutionMetric(runtime.agentId, "skipped", Date.now());
+    return { status: "skipped", taskDeleted: false };
+  }
+
+  if (!trigger.enabled && !options.force) {
+    recordExecutionMetric(runtime.agentId, "skipped", Date.now());
+    return { status: "skipped", taskDeleted: false };
+  }
+
+  if (
+    options.source === "event" &&
+    trigger.triggerType !== "event" &&
+    !options.force
+  ) {
+    recordExecutionMetric(runtime.agentId, "skipped", Date.now());
+    return { status: "skipped", taskDeleted: false };
+  }
+
+  if (
+    options.source === "event" &&
+    trigger.triggerType === "event" &&
+    trigger.eventKind !== options.event?.kind &&
+    !options.force
+  ) {
+    recordExecutionMetric(runtime.agentId, "skipped", Date.now());
+    return { status: "skipped", taskDeleted: false };
+  }
+
+  if (
+    typeof trigger.maxRuns === "number" &&
+    trigger.maxRuns > 0 &&
+    trigger.runCount >= trigger.maxRuns
+  ) {
+    await runtime.deleteTask(task.id);
+    recordExecutionMetric(runtime.agentId, "skipped", Date.now());
+    return {
+      status: "skipped",
+      taskDeleted: true,
+      trigger: taskToTriggerSummary(task),
+    };
+  }
+
+  // `trigger.kind` is a `TriggerKind` literal in the type system, but the value
+  // is read from persisted jsonb, so a corrupt row could carry anything. Widen
+  // to string once here so the guard can report the offending value without a
+  // cast on the narrowed (`never`) branch.
+  const triggerKind: string = trigger.kind;
+  if (triggerKind !== "workflow" && triggerKind !== "prompt") {
+    runtime.logger.warn(
+      {
+        src: "trigger-runtime",
+        taskId: task.id,
+        triggerId: trigger.triggerId,
+        kind: triggerKind,
+      },
+      "Trigger kind is not workflow or prompt; skipping",
+    );
+    recordExecutionMetric(runtime.agentId, "skipped", Date.now());
+    return { status: "skipped", taskDeleted: false };
+  }
+
+  const startedAt = Date.now();
+  let status: TriggerExecutionResult["status"] = "success";
+  let errorMessage = "";
+  let workflowExecutionId: string | undefined;
+
+  const result =
+    trigger.kind === "workflow"
+      ? await dispatchWorkflow(runtime, task, trigger, options.event)
+      : await dispatchPrompt(runtime, trigger);
+  if (result.ok === true) {
+    // Only workflow dispatch carries an execution id; prompt dispatch types it
+    // as `undefined`, so this reads `string | undefined` without a cast.
+    workflowExecutionId = result.executionId;
+  } else {
+    status = "error";
+    errorMessage = result.error;
+    runtime.logger.error(
+      {
+        src: "trigger-runtime",
+        agentId: runtime.agentId,
+        taskId: task.id,
+        triggerId: trigger.triggerId,
+        kind: trigger.kind,
+        workflowId:
+          trigger.kind === "workflow" ? trigger.workflowId : undefined,
+        error: errorMessage,
+      },
+      "Trigger dispatch failed",
+    );
+    // Scheduled automations run without the user in the chat loop, so a
+    // dispatch failure is otherwise invisible. Surface it on the notification
+    // rail (fire-and-forget; never let a notify failure mask the trigger error).
+    void getNotifier(runtime)
+      ?.notify({
+        title: `Automation "${trigger.displayName}" failed`,
+        body: errorMessage.slice(0, 200),
+        category: "workflow",
+        priority: "high",
+        source: "trigger",
+        groupKey: `trigger:${task.id ?? trigger.triggerId}`,
+        data: {
+          taskId: task.id,
+          triggerId: trigger.triggerId,
+          error: errorMessage,
+        },
+      })
+      .catch(() => {});
+  }
+
+  if (status === "success") {
+    runtime.logger.info(
+      {
+        src: "trigger-runtime",
+        triggerId: trigger.triggerId,
+        triggerName: trigger.displayName,
+        triggerType: trigger.triggerType,
+        source: options.source,
+        latencyMs: Date.now() - startedAt,
+      },
+      `Trigger "${trigger.displayName}" executed successfully`,
+    );
+    // Scheduled automations run without the user in the chat loop, so a
+    // successful completion is otherwise invisible — the rail only ever showed
+    // the failure path (#10697). Surface a low-priority "completed" so the user
+    // can see the agent finished the task. Grouped per trigger so a frequently
+    // scheduled automation updates ONE rail entry instead of spamming, and
+    // fire-and-forget so a notify failure never masks the successful run.
+    void getNotifier(runtime)
+      ?.notify({
+        title: `Automation "${trigger.displayName}" completed`,
+        category: "workflow",
+        priority: "low",
+        source: "trigger",
+        groupKey: `trigger:${task.id ?? trigger.triggerId}`,
+        data: {
+          taskId: task.id,
+          triggerId: trigger.triggerId,
+          workflowExecutionId,
+        },
+      })
+      .catch(() => {});
+  }
+
+  const finishedAt = Date.now();
+  const runRecord: TriggerRunRecord = {
+    triggerRunId: stringToUuid(crypto.randomUUID()),
+    triggerId: trigger.triggerId,
+    taskId: task.id,
+    startedAt,
+    finishedAt,
+    status,
+    error: errorMessage || undefined,
+    latencyMs: finishedAt - startedAt,
+    source: options.source,
+    eventKind: options.event?.kind,
+  };
+
+  const updatedTrigger: TriggerConfig = {
+    ...trigger,
+    runCount: trigger.runCount + 1,
+    lastRunAtIso: new Date(finishedAt).toISOString(),
+    lastStatus: status,
+    lastError: errorMessage || undefined,
+  };
+
+  const shouldDeleteTask =
+    updatedTrigger.triggerType === "once" ||
+    (typeof updatedTrigger.maxRuns === "number" &&
+      updatedTrigger.maxRuns > 0 &&
+      updatedTrigger.runCount >= updatedTrigger.maxRuns);
+
+  const existingMetadata = taskMetadata(task);
+  const nextMetadata = buildTriggerMetadata({
+    existingMetadata,
+    trigger: updatedTrigger,
+    nowMs: finishedAt,
+  });
+
+  let metadataToPersist: TriggerTaskMetadata;
+  if (!nextMetadata) {
+    metadataToPersist = {
+      ...existingMetadata,
+      updatedAt: finishedAt,
+      updateInterval: DISABLED_TRIGGER_INTERVAL_MS,
+      trigger: {
+        ...updatedTrigger,
+        enabled: false,
+        nextRunAtMs: finishedAt + DISABLED_TRIGGER_INTERVAL_MS,
+        lastError:
+          updatedTrigger.lastError ?? "Failed to compute next trigger schedule",
+      },
+      triggerRuns: appendRunRecord(existingMetadata.triggerRuns, runRecord),
+    };
+  } else {
+    metadataToPersist = {
+      ...nextMetadata,
+      triggerRuns: appendRunRecord(existingMetadata.triggerRuns, runRecord),
+    };
+  }
+
+  // Refresh the idempotency key for the next fire so a re-run within the
+  // same minute window collapses at dispatch. The schedule-arming layer
+  // (`armSchedules`) seeds the initial key with the same formula.
+  if (
+    metadataToPersist.trigger?.kind === "workflow" &&
+    metadataToPersist.trigger.workflowId &&
+    typeof metadataToPersist.trigger.nextRunAtMs === "number"
+  ) {
+    const minuteBucket = Math.floor(
+      metadataToPersist.trigger.nextRunAtMs / 60_000,
+    );
+    metadataToPersist.idempotencyKey = `${metadataToPersist.trigger.workflowId}:${minuteBucket}`;
+  } else {
+    delete metadataToPersist.idempotencyKey;
+  }
+
+  await runtime.updateTask(task.id, {
+    description: metadataToPersist.trigger?.displayName ?? task.description,
+    metadata: metadataToPersist,
+  });
+
+  const updatedTask: Task = {
+    ...task,
+    description: metadataToPersist.trigger?.displayName ?? task.description,
+    metadata: metadataToPersist,
+  };
+  const triggerSummary = taskToTriggerSummary(updatedTask);
+
+  if (shouldDeleteTask) {
+    await runtime.deleteTask(task.id);
+    recordExecutionMetric(runtime.agentId, status, finishedAt);
+    return {
+      status,
+      error: errorMessage || undefined,
+      runRecord,
+      taskDeleted: true,
+      trigger: triggerSummary,
+      executionId: workflowExecutionId,
+    };
+  }
+
+  recordExecutionMetric(runtime.agentId, status, finishedAt);
+  return {
+    status,
+    error: errorMessage || undefined,
+    runRecord,
+    taskDeleted: false,
+    trigger: triggerSummary,
+    executionId: workflowExecutionId,
+    updateInterval:
+      typeof metadataToPersist.updateInterval === "number"
+        ? metadataToPersist.updateInterval
+        : undefined,
+  };
+}
+
+export function registerTriggerTaskWorker(runtime: IAgentRuntime): void {
+  if (runtime.getTaskWorker(TRIGGER_TASK_NAME)) return;
+
+  runtime.registerTaskWorker({
+    name: TRIGGER_TASK_NAME,
+    shouldRun: async () => true,
+    execute: async (rt, options, task) => {
+      const result = await executeTriggerTask(rt, task, {
+        source: options.source === "manual" ? "manual" : "scheduler",
+        force: options.force === true,
+      });
+      // Hand the per-fire re-arm interval back to the task service as scheduling
+      // metadata. Without it, the service's success path falls through to a
+      // frozen `baseInterval` (seeded on the first transient failure), so a
+      // varying-cadence trigger (e.g. weekday cron) permanently drifts — firing
+      // on the wrong days. Deleted tasks don't reschedule, so return nothing.
+      if (!result.taskDeleted && typeof result.updateInterval === "number") {
+        return { nextInterval: result.updateInterval };
+      }
+      return undefined;
+    },
+  });
+}
+
+export async function listTriggerTasks(
+  runtime: IAgentRuntime,
+): Promise<Task[]> {
+  if (!triggersFeatureEnabled(runtime)) return [];
+  const agentIds = [runtime.agentId];
+  const [triggerTasks, heartbeatTasks] = await Promise.all([
+    runtime.getTasks({
+      agentIds,
+      tags: ["repeat", "trigger"],
+    }),
+    runtime.getTasks({
+      agentIds,
+      tags: ["repeat", "heartbeat"],
+    }),
+  ]);
+
+  const merged = new Map<string, Task>();
+  for (const task of [...triggerTasks, ...heartbeatTasks]) {
+    const key =
+      task.id ??
+      `${task.name}:${task.description ?? ""}:${(task.tags ?? []).join(",")}`;
+    if (!merged.has(key)) {
+      merged.set(key, task);
+    }
+  }
+  return [...merged.values()];
+}
+
+function isExplicitHeartbeatTask(task: Task): boolean {
+  const tags = task.tags ?? [];
+  return HEARTBEAT_TASK_TAGS.every((tag) => tags.includes(tag));
+}
+
+/**
+ * Derive a friendly display name for a plugin-owned repeat task that
+ * doesn't carry explicit trigger metadata. Prefers the task's own
+ * `name` (e.g. "IMESSAGE_HEARTBEAT") humanized, then falls back to the
+ * first non-generic tag ("imessage", "telegram", etc.), then to a
+ * generic "System Heartbeat" label.
+ */
+function deriveSystemHeartbeatName(task: Task): string {
+  if (task.name && task.name.length > 0) {
+    return task.name
+      .replace(/_/g, " ")
+      .toLowerCase()
+      .replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+  const tag = (task.tags ?? []).find(
+    (t) => t !== "queue" && t !== "repeat" && t !== "trigger",
+  );
+  if (tag) {
+    return `${tag.charAt(0).toUpperCase()}${tag.slice(1)} Heartbeat`;
+  }
+  return "System Heartbeat";
+}
+
+/**
+ * Synthesize a read-only TriggerSummary for an explicit heartbeat task
+ * that Eliza's trigger schema doesn't fully own. This is narrower than
+ * "any repeat task": internal queue drains and runtime schedulers should
+ * stay out of the Heartbeats UI even though they also use repeat tasks.
+ */
+function synthesizeSystemHeartbeatSummary(task: Task): TriggerSummary | null {
+  if (!task.id) return null;
+  const metadata = taskMetadata(task);
+  const intervalMs =
+    typeof metadata.updateInterval === "number"
+      ? metadata.updateInterval
+      : undefined;
+  const tags = task.tags ?? [];
+  // Identify the owning plugin from the third tag (first two are "queue"
+  // and "repeat"). This becomes createdBy so the UI can group by source.
+  const createdBy =
+    tags.find((t) => t !== "queue" && t !== "repeat" && t !== "trigger") ??
+    "system";
+  return {
+    id: task.id,
+    taskId: task.id,
+    displayName: deriveSystemHeartbeatName(task),
+    instructions: task.description ?? "",
+    triggerType: "interval",
+    enabled: true,
+    wakeMode: "next_autonomy_cycle",
+    createdBy,
+    intervalMs,
+    runCount: 0,
+    updatedAt:
+      typeof metadata.updatedAt === "number" ? metadata.updatedAt : undefined,
+    updateInterval: intervalMs,
+  };
+}
+
+export function taskToTriggerSummary(task: Task): TriggerSummary | null {
+  const trigger = readTriggerConfig(task);
+  if (trigger && task.id) {
+    const metadata = taskMetadata(task);
+    return {
+      id: trigger.triggerId,
+      taskId: task.id,
+      displayName: trigger.displayName,
+      instructions: trigger.instructions,
+      triggerType: trigger.triggerType,
+      enabled: trigger.enabled,
+      wakeMode: trigger.wakeMode,
+      createdBy: trigger.createdBy,
+      timezone: trigger.timezone,
+      intervalMs: trigger.intervalMs,
+      scheduledAtIso: trigger.scheduledAtIso,
+      cronExpression: trigger.cronExpression,
+      eventKind: trigger.eventKind,
+      maxRuns: trigger.maxRuns,
+      runCount: trigger.runCount,
+      nextRunAtMs: trigger.nextRunAtMs,
+      lastRunAtIso: trigger.lastRunAtIso,
+      lastStatus: trigger.lastStatus,
+      lastError: trigger.lastError,
+      updatedAt: metadata.updatedAt,
+      updateInterval: metadata.updateInterval,
+      kind: trigger.kind,
+      workflowId: trigger.kind === "workflow" ? trigger.workflowId : undefined,
+      workflowName:
+        trigger.kind === "workflow" ? trigger.workflowName : undefined,
+    };
+  }
+
+  if (isExplicitHeartbeatTask(task)) {
+    return synthesizeSystemHeartbeatSummary(task);
+  }
+
+  return null;
+}
+
+export async function getTriggerHealthSnapshot(
+  runtime: IAgentRuntime,
+): Promise<TriggerHealthSnapshot> {
+  const tasks = await listTriggerTasks(runtime);
+  let activeTriggers = 0;
+  let disabledTriggers = 0;
+
+  let durableExecutions = 0;
+  let durableFailures = 0;
+  let durableLastExecAt: number | undefined;
+
+  for (const task of tasks) {
+    const trigger = readTriggerConfig(task);
+    if (!trigger) continue;
+    if (trigger.enabled) {
+      activeTriggers += 1;
+    } else {
+      disabledTriggers += 1;
+    }
+
+    const runs = readTriggerRuns(task);
+    for (const run of runs) {
+      durableExecutions += 1;
+      if (run.status === "error") durableFailures += 1;
+      if (!durableLastExecAt || run.finishedAt > durableLastExecAt) {
+        durableLastExecAt = run.finishedAt;
+      }
+    }
+  }
+
+  const inMemory = getMetrics(runtime.agentId);
+  return {
+    triggersEnabled: triggersFeatureEnabled(runtime),
+    activeTriggers,
+    disabledTriggers,
+    totalExecutions: Math.max(inMemory.totalExecutions, durableExecutions),
+    totalFailures: Math.max(inMemory.totalFailures, durableFailures),
+    totalSkipped: inMemory.totalSkipped,
+    lastExecutionAt: inMemory.lastExecutionAt ?? durableLastExecAt,
+  };
+}

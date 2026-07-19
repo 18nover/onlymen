@@ -1,0 +1,2352 @@
+<!DOCTYPE html>
+
+<html lang="es" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<title>Tails - Instalar Tails desde Windows</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="icon" href="../favicon.ico" type="image/x-icon" />
+
+<link rel="stylesheet" href="../style.css" type="text/css" />
+
+<link rel="stylesheet" href="../local.css?reload-2025-10-14" type="text/css" />
+<link rel="stylesheet" href="../lib/fontawesome/css/all.min.css" type="text/css" />
+
+
+<script src="../lib/js/local.js" type="text/javascript"></script>
+
+<link href="./inc/stylesheets/overview.css" rel="stylesheet" title="" type="text/css" />
+<link href="./inc/stylesheets/download.css" rel="stylesheet" title="" type="text/css" />
+<link href="../doc/about/warnings.css" rel="stylesheet" title="" type="text/css" />
+<link href="./inc/stylesheets/steps.css" rel="stylesheet" title="" type="text/css" />
+<link href="./inc/stylesheets/windows.css" rel="stylesheet" title="" type="text/css" />
+<script src="./inc/js/download.js" type="text/javascript"></script>
+<script src="./inc/js/forge.min.js" type="text/javascript"></script>
+</head>
+
+
+<body class="es">
+
+
+
+<nav id="skip-link">
+<!-- Skip navigation link for accessibility -->
+  <a href="#page-body">Skip to main content</a>
+
+</nav>
+
+
+<header id="banner">
+  <div id="banner-container">
+    <div id="tails-logo">
+  <a href="../index.es.html"> <span>Tails</span> <img alt="" class="svg" height="100" src="../lib/logo.png" width="270" />
+</a>
+</div>
+<div id="search-and-donate">
+  <nav aria-label="Search">
+    <form action="https://duckduckgo.com/" id="searchform" method="get" target="_blank">
+      <input id="searchbox" name="q" placeholder="Using DuckDuckGo&hellip;" size="16" type="search" value="" /> <input name="sites" type="hidden" value="tails.net" /> <button aria-label="Search" type="submit"><span>Search</span></button>
+    </form>
+  </nav>
+  <div id="donate">
+    <a href="https://tails.net/donate/"><span>Donate</span></a>
+  </div>
+</div>
+
+  </div>
+</header>
+
+
+
+<header id="navigation-container">
+
+  
+  <nav id="main-navigation" aria-label="Primary">
+    <ul>
+  <li><a href="../index.es.html">Inicio</a></li>
+  <li><a href="../about.es.html">C&oacute;mo funciona Tails</a></li>
+  <li><a href="../install.es.html">Instalar Tails</a></li>
+  <li><a href="../doc.es.html">Documentaci&oacute;n</a></li>
+  <li><a href="../support.es.html">Soporte</a></li>
+  <li><a href="../news.es.html">Noticias</a></li>
+</ul>
+
+  </nav>
+  
+
+  <div id="crumbs-and-languages">
+
+    <nav id="crumbs" aria-label="Breadcrumbs">
+      <ul>
+        
+        
+        
+        
+        
+        
+        <li><a href="../install.es.html">install</a></li>
+        
+        
+        <li>Instalar Tails desde Windows</li>
+      </ul>
+    </nav>
+
+    <div id="language-switcher-top">
+      
+      <nav class="language-switcher" aria-label="Languages">
+        <div class="current-language">Español</div>
+        <ul class="other-languages">
+          
+          <li>
+            <a href="./windows.en.html">English</a>
+          </li>
+          
+          <li>
+            <a href="./windows.ca.html">Català</a>
+          </li>
+          
+          <li>
+            <a href="./windows.de.html">Deutsch</a>
+          </li>
+          
+          <li>
+            <a href="./windows.fr.html">Français</a>
+          </li>
+          
+          <li>
+            <a href="./windows.it.html">Italiano</a>
+          </li>
+          
+          <li>
+            <a href="./windows.pt.html">Português</a>
+          </li>
+          
+          <li>
+            <a href="./windows.ru.html">Русский</a>
+          </li>
+          
+          
+        </ul>
+      </nav>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+<main id="page-container">
+
+  
+
+  <article id="page-body">
+    <div id="page-title">
+      <h1>
+        Instalar Tails desde Windows
+      </h1>
+    </div>
+    <section id="content">
+      <h2>Necesitas</h2>
+
+
+
+
+
+
+
+<div id="needs">
+
+  <div class="windows linux mac expert pc-clone mac-clone">
+    <img alt="" class="img" height="200" src="./inc/icons/usb.png" width="200" />
+    <p>1 memoria USB</p>
+    <p class="small">&iexcl;S&oacute;lo para Tails!</p>
+    <p class="small">8 GB m&iacute;nimo</p>
+  </div>
+
+  <div class="upgrade-clone upgrade-tails upgrade-os">
+    <img alt="" class="img" height="200" src="./inc/icons/usb.png" width="200" />
+    <p>Your primary Tails</p>
+  </div>
+
+  <div class="upgrade-tails upgrade-os">
+    <img alt="" class="img" height="200" src="./inc/icons/intermediary.png" width="200" />
+    <p>1 memoria USB</p>
+    <p class="small">&iexcl;Se perder&aacute; toda la informaci&oacute;n!</p>
+    <p class="small">8 GB m&iacute;nimo</p>
+    <p class="small"><a class="toggle" href="#install-inc-overview.es.why-extra">&iquest;Por qu&eacute;?</a></p>
+    <div class="floating-toggleable">
+    <div class="toggleable" id="install-inc-overview.es.why-extra">
+
+ <a class="toggle" href="#install-inc-overview.es.why-extra"></a>
+    <p>Actualmente es imposible actualizar manualmente una memoria USB de Tails
+mientras se ejecuta desde s&iacute; misma. Este escenario requiere la creaci&oacute;n de
+un Tails intermedio en otra memoria USB, desde la que actualizar tu Tails.</p>
+    
+    </div>
+    </div>
+  </div>
+
+  <div class="windows upgrade-windows">
+    <img alt="" class="img" height="200" src="./inc/icons/windows.png" width="200" />
+    <p>Windows 8</p>
+    <p class="small">o posterior</p>
+  </div>
+
+  <div class="mac upgrade-mac">
+    <img alt="" class="img" height="200" src="./inc/icons/apple.png" width="200" />
+    <p>macOS 10.10</p>
+    <p class="small">Yosemite<br />
+    o posterior</p>
+    
+  
+</div>
+
+  <div class="linux upgrade-linux">
+    <img alt="" class="img" height="200" src="./inc/icons/linux.png" width="200" />
+    <p>Linux</p>
+    <p class="small">cualquier distribuci&oacute;n</p>
+  </div>
+
+  <div class="expert">
+    <img alt="" class="img" height="200" src="./inc/icons/debian.png" width="200" />
+    <p>Debian</p>
+    <p>Ubuntu</p>
+    <p class="small">u otra distribuci&oacute;n derivada</p>
+  </div>
+
+  <div class="pc-clone mac-clone upgrade-clone">
+    <img alt="" class="img" height="200" src="./inc/icons/intermediary.png" width="200" />
+    <p>Another Tails</p>
+    <p class="small">Memoria USB o DVD</p>
+  </div>
+
+  <div class="windows upgrade-windows">
+    <img alt="" class="img" height="200" src="./inc/icons/laptop.png" width="200" />
+    <p>2 GB de RAM</p>
+    <p class="small"><a href="https://support.microsoft.com/es-es/windows/windows-de-32-y-64-bits-preguntas-frecuentes-c6ca9541-8dce-4d48-0415-94a3faa2e13d">64-bit</a></p>
+  </div>
+
+  <div class="mac upgrade-mac">
+    <img alt="" class="img" height="200" src="./inc/icons/laptop.png" width="200" />
+    <p>Procesador Intel</p>
+    <p class="small">not Apple processor</p>
+  </div>
+
+  <div class="linux upgrade-linux expert">
+    <img alt="" class="img" height="200" src="./inc/icons/laptop.png" width="200" />
+    <p>2 GB de RAM</p>
+    <p class="small"><a href="https://www.howtogeek.com/198615/how-to-check-if-your-linux-system-is-32-bit-or-64-bit/">64-bit
+(en ingl&eacute;s)</a></p>
+  </div>
+
+  <div>
+    <img alt="" class="img" height="200" src="./inc/icons/phone.png" width="200" />
+    <p>Smartphone</p>
+    <p class="small">or printer<br />
+    para seguir las instrucciones</p>
+  </div>
+
+  <div>
+    <img alt="" class="img" height="200" src="./inc/icons/clock.png" width="200" />
+    <p class="windows linux mac expert upgrade-tails upgrade-os">1 hora en total</p>
+    <p class="pc-clone mac-clone">&frac12; hora</p>
+    <p class="upgrade-clone">&frac14; hora</p>
+    <p class="windows linux mac expert upgrade-tails upgrade-os small">
+1.9 GB
+ para
+descargar</p>
+    <p class="windows linux mac expert small">&frac12; hora para instalar</p>
+    <p class="upgrade-tails upgrade-os small">&frac12; hora para actualizar</p>
+  </div>
+
+</div>
+
+
+
+
+<div class="bug mac">
+
+<p>To learn about the processor in your Mac, choose <b>Apple menu &nbsp;&#x25B8; About
+This Mac</b> and check the <b>Processor</b> or <b>Chip</b> information.</p>
+
+<p>If your Mac has an Apple chip, Tails won&#39;t work.</p>
+
+<p>Making Tails work on Apple chips represents a massive engineering challenge.</p>
+
+<p>The <a href="https://asahilinux.org/">Asahi Linux</a> project is working on
+support for Apple chips in Linux. Support for <a href="https://wiki.debian.org/InstallingDebianOn/Apple/M1">Apple chips in
+Debian</a> is following along, but it is not complete yet.</p>
+
+<p>You can track our own experiments on <a href="https://gitlab.tails.boum.org/tails/tails/-/issues/10972">#10972</a>.</p>
+
+</div>
+
+
+
+
+<p class="windows linux mac expert"><a class="toggle" href="#install-inc-overview.es.requirements">System requirements and recommended USB
+sticks</a></p>
+
+
+
+
+<div class="toggleable" id="install-inc-overview.es.requirements">
+
+
+<p> <span class="hide"><a class="toggle" href="#install-inc-overview.es.requirements"></a></span></p>
+
+<h2 id="computer">System requirements</h2>
+
+
+<p>Tails works on most PC computers that are less than 10 years old.</p>
+
+<p>Tails does not work on:</p>
+
+<ul>
+<li>Mac computers with an Apple processor (M1, M2, and so on)</li>
+<li>Tel&eacute;fonos inteligentes o tabletas</li>
+<li>Raspberry Pi</li>
+</ul>
+
+
+<p>Tails might not work on some PC computers, for example, if their <a href="../support/known_issues/graphics.es.html">graphics
+card is incompatible with Linux</a>. Nvidia or
+AMD Radeon cards often do not work in Tails.</p>
+
+<p>Mira nuestra <a href="../support/known_issues.es.html">lista de problemas conocidos de compatibilidad
+de hardware</a>.</p>
+
+
+<h3>Requerimientos detallados de hardware</h3>
+
+<ul>
+<li><p>3 GB of RAM to work smoothly.</p>
+
+<p>Tails can work with less than 3 GB RAM but might experience reduced
+performance, instability, or crashes.</p></li>
+<li><p>La posibilidad de iniciar desde una memoria USB o una lectora de DVD.</p></li>
+<li><p>A 64-bit <a href="https://en.wikipedia.org/wiki/x86%2D64">x86-64</a> <a href="https://en.wikipedia.org/wiki/IBM%20PC%20compatible">IBM PC compatible</a> processor.</p>
+
+<ul>
+<li><p>Tails no funciona en procesadores <a href="https://es.wikipedia.org/wiki/Arquitectura%5FARM">ARM</a> o <a href="https://es.wikipedia.org/wiki/PowerPC">PowerPC</a>.</p></li>
+<li><p>Tails no funciona en computadoras de 32 bits desde <a href="../news/Tails_3.0_will_require_a_64-bit_processor.html">Tails
+3.0</a> (Junio de 2017).</p></li>
+</ul>
+</li>
+</ul>
+
+
+<h3>Recommended laptops</h3>
+
+<p>Los modelos de port&aacute;tiles evolucionan demasiado r&aacute;pido como para que podamos
+ofrecer una lista actualizada del hardware recomendado. A continuaci&oacute;n te
+ofrecemos algunas pautas si t&uacute;, o tu organizaci&oacute;n, est&aacute;is considerando
+adquirir un port&aacute;til dedicado a ejecutar Tails.</p>
+
+<h4>Para PC</h4>
+
+<ul>
+<li><p>Evita los modelos &laquo;gaming&raquo; con tarjetas gr&aacute;ficas Nvidia o AMD Radeon.</p></li>
+<li><p>Considera comprar un port&aacute;til reacondicionado de una serie de alta gama
+(profesional). Estos son mas baratos y durar&aacute;n mas que un port&aacute;til nuevo y
+de menor calidad.</p>
+
+<ul>
+<li><p>Por ejemplo, la serie ThinkPad de Lenovo funciona bien con Tails,
+incluyendo los modelos X250, X1 Carbon, T440, y T490.</p></li>
+<li><p>Si vives en una parte del mundo donde los port&aacute;tiles reacondicionados no
+son comunes, busca en eBay o en Amazon. Amazon ofrece una <a href="https://www.amazon.es/gp/help/customer/display.html?nodeId=GJB4W4URK6H2E6Y9">Garant&iacute;a de
+Amazon
+Renewed</a>
+de 90 d&iacute;as.</p></li>
+</ul>
+</li>
+<li><p>Considera comprar una port&aacute;til nueva de vendedores que garanticen
+compatibilidad con Linux y Tails, como
+<a href="https://www.thinkpenguin.com/">ThinkPenguin</a>.</p></li>
+</ul>
+
+
+<h4>Para Mac</h4>
+
+<p>Tails still works on some older Mac computers with an Intel processor.</p>
+
+<p>Desafortunadamente, no conocemos ning&uacute;n modelo de Mac que funcione bien con
+Tails y pueda ejecutar la &uacute;ltima versi&oacute;n de macOS.</p>
+
+
+
+
+
+
+<h2 id="usb">Recommended USB sticks</h2>
+
+
+<p>You need a USB stick of 8 GB minimum to use Tails.</p>
+
+<p>All the data on this USB stick is lost when installing Tails.</p>
+
+<p>The quality of your USB stick is crucial when using Tails. A bad USB stick
+will be slower and more likely to corrupt the files in your <a href="../doc/persistent_storage.es.html">Persistent
+Storage</a>.</p>
+
+<p>We recommend that you:</p>
+
+<ul>
+<li><p><strong>Buy new USB sticks.</strong></p>
+
+<p>USB sticks become slower and less reliable over the years. Older USB sticks
+were also built with slower technology.</p></li>
+<li><p><strong>Buy USB sticks from well-known brands, such as
+<a href="https://www.kingston.com/en/usb-flash-drives">Kingston</a>,
+<a href="https://www.samsung.com/us/computing/memory-storage/usb-flash-drives/">Samsung</a>,
+and
+<a href="https://www.sandisk.com/product-portfolio/usb-flash-drives">SanDisk</a>.</strong></p>
+
+<p>Generic brands are more likely to be slower and less reliable.</p>
+
+<p>Any modern USB stick from a well-known brand is fast enough to use Tails
+comfortably.</p></li>
+<li><p><strong>Buy your USB sticks from a reputable local store.</strong></p>
+
+<p>If you are in a place where counterfeit electronics are common, buy your USB
+stick from an international supermarket chain, which should have a more
+reliable supply chain.</p>
+
+<p>Avoid buying USB sticks online or using USB sticks that were given to you,
+because they could contain malware.</p>
+
+<div class="attack">
+
+<p>In 2020, the <a href="https://www.cybereason.com/blog/fbi-warns-us-companies-to-avoid-malicious-usb-devices">FBI warned US companies to avoid USB sticks
+received by
+mail</a>
+because some of them contained malicious software, such as <a href="https://en.wikipedia.org/wiki/BadUSB">BadUSB</a>.</p>
+
+</div>
+</li>
+<li><p><strong>Consider buying faster USB sticks that support USB version 3.0 or
+later.</strong></p>
+
+<p>Check the specifications of your computer to determine whether your USB ports
+support USB 3.0 or later. USB 3.0 ports are sometimes blue.</p>
+
+<p>USB 3.0 can be up to 10 times faster than USB 2.0. USB 2.0 has a maximum read
+speed of around 50 MB/s on USB sticks, while USB 3.0 has a maximum read speed
+of around 500 MB/s.</p>
+
+<p>Most quality USB sticks nowadays have read speeds of at least 100 MB/s and
+are faster when used on USB 3.0 ports. Some USB sticks advertised for USB 3.0
+have even greater speeds.</p>
+
+<p>You can test the write speed of your different USB sticks by comparing the
+time it takes to <a href="./clone/pc.es.html">clone Tails</a>, for example.</p></li>
+</ul>
+
+
+<h3>How many USB sticks should I buy?</h3>
+
+<p>If you want to store personal files and configuration in an encrypted
+<a href="../doc/persistent_storage.es.html">Persistent Storage</a>, we recommend that you buy 2
+USB sticks, ideally 3:</p>
+
+<ul>
+<li><p>1 USB stick to be your <strong>primary Tails</strong>.</p></li>
+<li><p>1 USB stick of the same size to be your <strong>backup Tails</strong>, if you use the
+Persistent Storage.</p>
+
+<p>We recommend that you <a href="../doc/persistent_storage/backup.es.html">create a backup Tails</a>
+by cloning your primary Tails, including its Persistent Storage.</p></li>
+<li><p>1 USB stick to do <a href="../doc/upgrade.es.html">manual upgrades</a> on a few occasions when
+automatic upgrades are not available.</p>
+
+<p>This USB stick can be of a smaller size and worse quality.</p>
+
+
+</li>
+</ul>
+
+
+<p> </p></div>
+
+<h2>Tus pasos</h2>
+
+
+
+
+<div id="steps">
+
+  <a class="windows linux mac expert" href="#download"> <img alt="" class="img" height="200" src="./inc/infography/download.png" width="200" />
+    <p>Descargar Tails</p>
+  </a> <a class="upgrade-os" href="#download"> <img alt="" class="img" height="200" src="./inc/infography/download-with-intermediary.png" width="200" />
+    <p>Descargar Tails</p>
+  </a> <a class="upgrade-tails" href="#download"> <img alt="" class="img" height="200" src="./inc/infography/download-from-tails.png" width="200" />
+    <p>Descargar la actualizaci&oacute;n</p>
+  </a> <a class="windows linux mac expert" href="#verify"> <img alt="" class="img" height="200" src="./inc/infography/verify.png" width="200" />
+    <p>Verifica tu descarga</p>
+  </a> <a class="upgrade-os" href="#verify"> <img alt="" class="img" height="200" src="./inc/infography/verify-with-intermediary.png" width="200" />
+    <p>Verifica tu descarga</p>
+  </a> <a class="upgrade-tails" href="#verify"> <img alt="" class="img" height="200" src="./inc/infography/verify-from-tails.png" width="200" />
+    <p>Verifica tu descarga</p>
+  </a> <a class="pc-clone mac-clone upgrade-clone" href="#other"> <img alt="" class="img" height="200" src="./inc/infography/restart-on-other-tails.png" width="200" />
+    <p>Reiniciar en el otro Tails</p>
+  </a> <a class="windows" href="#rufus"> <img alt="" class="img" height="200" src="./inc/infography/install-rufus.png" width="200" />
+    <p class="windows upgrade-windows">Download <i>Rufus</i></p>
+  </a> <a class="mac" href="#etcher"> <img alt="" class="img" height="200" src="./inc/infography/install-etcher.png" width="200" />
+    <p class="mac upgrade-mac">Instalar <i>balenaEtcher</i></p>
+  </a> <a class="upgrade-windows" href="#rufus"> <img alt="" class="img" height="200" src="./inc/infography/install-rufus-with-intermediary.png" width="200" />
+    <p class="windows upgrade-windows">Download <i>Rufus</i></p>
+  </a> <a class="upgrade-mac" href="#etcher"> <img alt="" class="img" height="200" src="./inc/infography/install-etcher-with-intermediary.png" width="200" />
+    <p class="mac upgrade-mac">Instalar <i>balenaEtcher</i></p>
+  </a> <a class="windows linux mac expert" href="#install"> <img alt="" class="img" height="200" src="./inc/infography/install-tails.png" width="200" />
+    <p class="windows">Install Tails using <i>Rufus</i></p>
+    <p class="mac">Instalar Tails usando <i>balenaEtcher</i></p>
+    <p class="linux">Instalar Tails usando <i>Discos de GNOME</i></p>
+    <p class="expert">Instalar Tails usando <code>dd</code></p>
+  </a> <a class="upgrade-windows" href="#install"> <img alt="" class="img" height="200" src="./inc/infography/install-upgrade-usb-only.png" width="200" />
+    <p>Install intermediary using <i>Rufus</i></p>
+  </a> <a class="upgrade-mac" href="#install"> <img alt="" class="img" height="200" src="./inc/infography/install-upgrade-usb-only.png" width="200" />
+    <p>Instalar intermedio usando <i>balenaEtcher</i></p>
+  </a> <a class="upgrade-linux" href="#install"> <img alt="" class="img" height="200" src="./inc/infography/install-upgrade-usb-only.png" width="200" />
+    <p>Instalar intermedio usando <i>Discos de GNOME</i></p>
+  </a> <a class="upgrade-tails" href="#install"> <img alt="" class="img" height="200" src="./inc/infography/install-upgrade-usb.png" width="200" />
+    <p>Instalar intermedio usando <i>Discos de GNOME</i></p>
+  </a> <a class="windows linux mac expert" href="#restart"> <img alt="" class="img" height="200" src="./inc/infography/restart.png" width="200" />
+    <p>Reinicia en tu memoria USB de Tails</p>
+  </a> <a class="upgrade-os" href="#intermediary"> <img alt="" class="img" height="200" src="./inc/infography/restart-on-other-tails.png" width="200" />
+    <p>Reiniciar en intermedio</p>
+  </a> <a class="upgrade-tails" href="#intermediary"> <img alt="" class="img" height="200" src="./inc/infography/restart-on-upgrade-usb.png" width="200" />
+    <p>Reiniciar en intermedio</p>
+  </a> <a class="pc-clone mac-clone" href="#install"> <img alt="" class="img" height="200" src="./inc/infography/clone-tails.png" width="200" />
+    <p>Install Tails by cloning</p>
+  </a> <a class="upgrade-tails upgrade-os upgrade-clone" href="#upgrade">
+<img alt="" class="img" height="200" src="./inc/infography/clone-tails.png" width="200" />
+    <p>Upgrade your primary Tails by cloning</p>
+  </a> <a class="pc-clone mac-clone" href="#restart-new"> <img alt="" class="img" height="200" src="./inc/infography/restart-on-new-tails.png" width="200" />
+    <p>Reinicia tu nuevo Tails</p>
+  </a> <a class="windows linux mac expert" href="#tails"> <img alt="" class="img" height="200" src="./inc/infography/tails.png" width="200" />
+    <p>Welcome to Tails!</p>
+  </a>
+
+</div>
+
+
+
+
+<h1 id="warnings">Advertencia: &iexcl;Tails es seguro, pero no m&aacute;gico!</h1>
+
+
+
+
+<div></div>
+
+
+
+
+<div class="caution">
+
+<p>Tails es m&aacute;s seguro que cualquier sistema operativo normal. Pero Tails, o
+cualquier software o sistema operativo, no puede protegerte de todo, incluso
+si lo pretende.</p>
+
+<p>Las recomendaciones a continuaci&oacute;n te dar&aacute;n a&uacute;n m&aacute;s seguridad, sobre todo en
+situaciones de alto riesgo.</p>
+
+</div>
+
+
+
+
+<div id="columns">
+
+<div id="identity">
+
+<div class="content">
+
+<h3>Proteger tu identidad al usar Tails</h3>
+
+<img alt="" class="svg" height="169" src="../doc/about/warnings/identity.png" width="290" /> 
+<p>Tails est&aacute; dise&ntilde;ado para esconder tu identidad.</p>
+
+<p>Pero algunas de tus actividades podr&iacute;an revelarla:</p>
+
+<ul>
+  <li>Compartir archivos con metadatos como lugar, hora, e informaci&oacute;n sobre el
+dispositivo</li>
+  <li>Usar Tails para m&aacute;s de una cosa a la vez</li>
+</ul>
+
+
+</div>
+
+<div><button id="toggle-identity">Proteger tu identidad</button></div>
+
+</div>
+
+<div id="tor">
+
+<div class="content">
+
+<h3>Limitaciones de la red Tor</h3>
+
+<img alt="" class="svg" height="169" src="../doc/about/warnings/tor.png" width="290" /> 
+<p>Tails usa la red Tor porque es la red m&aacute;s fuerte y popular para protegerse
+de la vigilancia y la censura.</p>
+
+<p>Pero Tor tiene limitaciones si est&aacute;s interesado en:</p>
+
+<ul>
+  <li>Esconder que est&aacute;s usando Tor y Tails</li>
+  <li>Proteger tus comunicaciones en l&iacute;nea de determinados atacantes
+especializados</li>
+</ul>
+
+
+</div>
+
+<div><button id="toggle-tor">Limitaciones de Tor</button></div>
+
+</div>
+
+<div id="computer">
+
+<div class="content">
+
+<h3>Reducir los riesgos al utilizar equipos que no son de confianza</h3>
+
+<img alt="" class="svg" height="169" src="../doc/about/warnings/computer.png" width="290" /> 
+<p>Tails puede ejecutarse de forma segura en una computadora que tenga un
+virus.</p>
+
+<p>Pero Tails no siempre puede protegerte cuando:</p>
+
+<ul>
+  <li>Se hace la instalaci&oacute;n desde una computadora infectada</li>
+  <li>Se ejecuta Tails en una computadora con una BIOS, firmware o hardware
+comprometidos</li>
+</ul>
+
+
+</div>
+
+<div><button id="toggle-computer">Usar computadoras que no son de
+confianza</button></div>
+
+</div>
+
+</div>
+
+
+
+
+<div class="toggleable warning hidden" id="detailed-identity">
+
+<span class="hide-button" id="hide-identity"></span> 
+<div></div>
+
+<h1 class="embedded">Proteger tu identidad</h1>
+
+<div class="standalone">
+
+ 
+
+</div>
+
+<h2 id="metadata">Limpiar los metadatos de los archivos antes de compartirlos</h2>
+
+<p>Muchos archivos contienen datos ocultos o metadatos:</p>
+
+<ul>
+
+<li><p>JPEG y otros formatos de imagen a veces contienen informaci&oacute;n sobre d&oacute;nde
+fue tomada la foto y qu&eacute; c&aacute;mara se us&oacute;.</p></li>
+
+<li><p>Documentos de Office a veces contienen informaci&oacute;n sobre su autor, y la
+fecha y hora en la que el documento fue creado.</p></li>
+
+</ul>
+
+<p>Para ayudarte a eliminar los metadatos, Tails incluye
+<a href="../doc/sensitive_documents/metadata.es.html"><i>mat2</i></a>, una herramienta que
+elimina los metadatos en una variedad de formatos de archivo.</p>
+
+<div class="attack">
+
+<p>Se han utilizado metadatos en el pasado para localizar gente por fotos que
+ellos tomaron. Por ejemplo, <a href="https://www.npr.org/sections/thetwo-way/2012/12/04/166487197/betrayed-by-metadata-john-mcafee-admits-hes-really-in-guatemala">NPR:
+Traicionado por los metadatos, John McAfee admite que realmente est&aacute; en
+Guatemala</a>.</p>
+
+</div>
+
+<h2 id="contextual">Usa las sesiones de Tails para un solo prop&oacute;sito a la vez</h2>
+
+<p>Si usas una sesi&oacute;n de Tails para m&aacute;s de un prop&oacute;sito a la vez, un adversario
+podr&iacute;a relacionar tus actividades.</p>
+
+<p>Por ejemplo, si inicias sesion con diferentes cuentas en el mismo sitio web
+en una sola sesi&oacute;n de Tails, el sitio web podria determinar que las cuentas
+son usadas por la misma persona. Esto es porque las paginas web pueden
+deducir cuando 2 cuentas estan usando el mismo circuito Tor.</p>
+
+<p>Para prevenir que un adversario relacione sus actividades mientras usa
+Tails, reinicie Tails entre diferentes actividades. Por ejemplo, reinicie
+Tails cuando cambie entre su correo electronico de trabajo y su correo
+electronico de denunciante.</p>
+
+<div class="attack">
+
+<p>No somos conscientes de ning&uacute;n ataque de este tipo para desanonimizar
+personas en la red que usen Tails por diferentes prop&oacute;sitos a la vez.</p>
+
+</div>
+
+<p>Si te preocupa que tus archivos del <a href="../doc/persistent_storage.es.html">Almacenamiento
+Persistente</a> sean usados para vincular tus
+actividades, considera usar una memoria USB de Tails diferente para cada
+actividad. Por ejemplo, usa una memoria USB de Tails para tu trabajo de
+activista y otra para tu trabajo de periodista.</p>
+
+
+</div>
+
+
+
+
+<div class="toggleable warning hidden" id="detailed-tor">
+
+<span class="hide-button" id="hide-tor"></span> 
+<div></div>
+
+<h1 class="embedded">Limitaciones de Tor</h1>
+
+<div class="standalone">
+
+
+
+
+</div>
+
+<h2 id="fingerprint">Tails no oculta que est&aacute;s usando Tor y probablemente Tails</h2>
+
+<p>Todo lo que haces en Internet desde Tails pasa por la red Tor.</p>
+
+<p>Tor and Tails don&#39;t protect you by making you look like any random Internet
+user, but by making all Tor and Tails users look the same. It becomes
+impossible to know who is who among all users.</p>
+
+<ul>
+
+<li><p>Your Internet service provider (ISP) and local network can see that you
+connect to the Tor network. But, they cannot know which sites you visit.  To
+also hide that you connect to Tor, use a <a href="../doc/anonymous_internet/tor.es.html">Tor
+bridge</a>.</p></li>
+
+<li><p>Los sitios que visitas pueden saber que est&aacute;s usando Tor, porque la <a href="https://metrics.torproject.org/exonerator.html">lista de nodos de
+salida de la red Tor</a> es p&uacute;blica.</p></li>
+
+</ul>
+
+<div class="attack">
+
+<p>Los controles parentales, los proveedores de servicios de Internet y los
+pa&iacute;ses con una fuerte censura pueden identificar y bloquear las conexiones a
+la red Tor que no utilizan puentes Tor.</p>
+
+</div>
+
+<div class="attack">
+
+<p>Muchos sitios web te piden que resuelvas un CAPTCHA o bloquean el acceso
+desde la red Tor.</p>
+
+</div>
+
+<h2 id="exit">Los nodos de salida pueden interceptar el tr&aacute;fico hacia el servidor de
+destino</h2>
+
+<p>Tor oculta tu ubicaci&oacute;n de los servidores de destino, pero no cifra
+<i>todas</i> tus comunicaciones. El &uacute;ltimo repetidor de un circuito Tor,
+llamado <i>nodo de salida</i>, establece la conexi&oacute;n real con el servidor de
+destino. Este &uacute;ltimo paso se puede descifrar, por ejemplo, si te conectas a
+un sitio web mediante HTTP en lugar de HTTPS.</p>
+
+<img alt="A Tor
+connection goes through 3 relays with the last one establishing the actual
+connection to the final destination" class="img" src="../doc/anonymous_internet/tor/tor.svg" width="600" />
+
+<p>El nodo de salida puede:</p>
+
+<ul>
+
+<li><p>Observar tu tr&aacute;fico. Es por eso que el <i>Navegador Tor</i> y Tails incluyen
+herramientas para cifrar la conexi&oacute;n entre el nodo de salida y el servidor
+de destino, siempre que sea posible.</p></li>
+
+<li><p>Pretend to be the destination server, a technique known as
+<i>machine-in-the-middle</i> attack (MitM). That is why you should pay even
+more attention to the security warnings in <i>Tor Browser</i>. If you get
+such a warning, use the <a href="../doc/anonymous_internet/Tor_Browser.es.html#new-identity">New
+Identity</a> feature of <i>Tor
+Browser</i> to change exit node.</p></li>
+
+<img alt="Warning: Potential Security Risk
+Ahead" class="img" height="260" src="../doc/about/warnings/ssl_warning.png" width="533" />
+
+</ul>
+
+<p>To learn more about what information is available to someone observing the
+different parts of a Tor circuit, see the interactive graphics at <a href="https://support.torproject.org/about-tor/security/https-encryption-and-tor/">Tor
+Support: How HTTPS encryption and Tor works in Tor Browser to enhance your
+privacy and
+anonymity</a>.</p>
+
+<div class="attack">
+
+<p>Tor exit nodes have been used in the past to collect sensitive information
+from unencrypted connections. Malicious exit nodes are regularly identified
+and removed from the Tor network. For an example, see <a href="https://arstechnica.com/information-technology/2007/09/security-expert-used-tor-to-collect-government-e-mail-passwords/">Ars
+Technica: Security expert used Tor to collect government e-mail
+passwords</a>.</p>
+
+</div>
+
+<h2 id="correlation">Los adversarios que observan ambos extremos de un circuito Tor podr&iacute;an
+identificar a los usuarios</h2>
+
+<p>Un adversario, que pudiera controlar los 3 repetidores en un circuito,
+podr&iacute;a desanonimizar a los usuarios de Tor.</p>
+
+<div class="attack">
+
+<p>Tor elige 3 repetidores que pertenecen a 3 operadores de red diferentes para
+cada circuito.</p>
+
+<p>Tails toma medidas adicionales para <a href="../contribute/design/stream_isolation.html">usar diferentes circuitos para
+diferentes aplicaciones</a>.</p>
+
+<p>La red Tor tiene m&aacute;s de 6&#x202F;000 repetidores. Las organizaciones que
+ejecutan repetidores de Tor incluyen universidades como el MIT, grupos de
+activistas como Riseup, organizaciones sin fines de lucro como Derechos
+Digitales, empresas de alojamiento de Internet como Private Internet Access,
+entre otras. La enorme diversidad de personas y organizaciones que ejecutan
+repetidores de Tor lo hace m&aacute;s seguro y sostenible.</p>
+
+</div>
+
+<p>A powerful adversary, who could analyze the timing and shape of the traffic
+entering and exiting the Tor network, might be able to deanonymize Tor
+users.  These attacks are called <i>end-to-end correlation</i> attacks,
+because the attacker has to observe both ends of a Tor circuit at the same
+time.</p>
+
+<p>Ninguna red de anonimato utilizada para conexiones r&aacute;pidas, como navegar por
+la web o mensajer&iacute;a instant&aacute;nea, puede proteger al 100 % de los ataques de
+correlaci&oacute;n de extremo a extremo. En este caso, las VPN (redes privadas
+virtuales) son menos seguras que Tor, porque no utilizan 3 repetidores
+independientes.</p>
+
+<div class="attack">
+
+<p>End-to-end correlation attacks have been studied in research papers, but we
+don&#39;t know of any actual use to deanonymize Tor users. For an example, see
+<a href="https://www.freehaven.net/anonbib/cache/murdoch-pet2007.pdf">Murdoch
+and Zieli&#x144;ski: Sampled Traffic Analysis by Internet-Exchange-Level
+Adversaries</a>.</p>
+
+</div>
+
+
+</div>
+
+
+
+
+<div class="toggleable warning hidden" id="detailed-computer">
+
+<span class="hide-button" id="hide-computer"></span> 
+<div></div>
+
+<h1 class="embedded">Using untrusted computers</h1>
+
+<div class="standalone">
+
+ 
+
+</div>
+
+<h2 id="software">Instala Tails desde una computadora en la que conf&iacute;es</h2>
+
+<p>Tails te protege de virus y malware en tu sistema operativo habitual. Esto
+se debe a que Tails se ejecuta independientemente de otros sistemas
+operativos.</p>
+
+<p>Pero tu Tails podr&iacute;a estar da&ntilde;ado si lo instalas desde un sistema operativo
+comprometido. Para reducir ese riesgo:</p>
+
+<ul>
+
+<li><p>Siempre instala Tails desde un sistema operativo confiable. Por ejemplo,
+descarga Tails en una computadora sin virus o clona Tails de un amigo de
+confianza.</p></li>
+
+<li><p>No conectes tu memoria USB Tails mientras otro sistema operativo se est&eacute;
+ejecutando en la computadora.</p></li>
+
+<li><p>Utiliza tu memoria USB Tails solo para ejecutar Tails. No uses tu memoria
+USB Tails para transferir archivos hacia o desde otro sistema operativo.</p></li>
+
+</ul>
+
+<p>Si te preocupa que tu Tails pueda estar da&ntilde;ado, haz una <a href="../doc/upgrade.es.html">actualizaci&oacute;n
+manual</a> desde un sistema operativo confiable.</p>
+
+<div class="attack">
+
+<p>No conocemos ning&uacute;n virus capaz de infectar una instalaci&oacute;n de Tails, pero
+podr&iacute;a crearse uno en el futuro.</p>
+
+</div>
+
+<h2 id="hardware">Ning&uacute;n sistema operativo puede protegerte contra alteraciones de hardware</h2>
+
+<p>The computer might be compromised if its physical components have been
+altered.  For example, if a keylogger has been physically installed on the
+computer, your passwords, personal information, and other data typed on the
+keyboard could be stored and accessed by someone else, even if you are using
+Tails.</p>
+
+<p>Try to keep your computer in a safe location. Hardware alterations are more
+likely on public computers, in Internet caf&eacute;s or libraries, and on desktop
+computers, where a device is easier to hide.</p>
+
+<p>Si te preocupa que una computadora pueda ser modificada:</p>
+
+<ul>
+
+<li><p>Utiliza un <a href="../doc/encryption_and_privacy/manage_passwords.es.html">administrador de
+contrase&ntilde;as</a> para pegar las
+contrase&ntilde;as guardadas. De esta forma, no es necesario que escribas
+contrase&ntilde;as que puedan ser visibles para las personas o las c&aacute;maras
+cercanas.</p></li>
+
+<li><p>Use the <a href="../doc/first_steps/accessibility.es.html#keyboard">screen keyboard</a>, if you
+are using a public computer or worry that the computer might have a
+keylogger.</p></li>
+
+</ul>
+
+<div class="attack">
+
+<p>Los keyloggers son f&aacute;ciles de comprar y esconder en computadoras de
+escritorio pero no en computadoras port&aacute;tiles. Por ejemplo, lee <a href="https://www.youtube.com/watch?v=6JJo8qCYE8M">KeeLog: KeyGrabber
+forensic keylogger getting started</a>.</p>
+
+<p>Otras modificaciones de hardware son mucho m&aacute;s complicadas y costosas de
+instalar. Para ver un ejemplo, consulta <a href="https://arstechnica.com/tech-policy/2014/05/photos-of-an-nsa-upgrade-factory-show-cisco-router-getting-implant/">Ars
+Technica: Las fotos de una f&aacute;brica de &quot;actualizaci&oacute;n&quot; de la NSA muestran el
+implante del enrutador Cisco</a>.</p>
+
+</div>
+
+<h2 id="firmware">Ning&uacute;n sistema operativo puede proteger contra ataques de BIOS y firmware</h2>
+
+<p>El firmware incluye el BIOS o UEFI y otro software almacenado en chips
+electr&oacute;nicos en la computadora. Todos los sistemas operativos, incluido
+Tails, dependen del firmware para iniciarse y ejecutarse, por lo que ning&uacute;n
+sistema operativo puede proteger contra un ataque de firmware. De la misma
+manera que un autom&oacute;vil depende de la calidad de la carretera por la que
+circula, los sistemas operativos dependen de su firmware.</p>
+
+<p>Mantener tu computadora en un lugar seguro puede proteger contra algunos
+ataques de firmware, pero algunos otros ataques de firmware se pueden
+realizar de forma remota.</p>
+
+<div class="attack">
+
+<p>Se han demostrado ataques de firmware, pero son complicados y caros de
+realizar. No sabemos de ning&uacute;n uso real contra usuarios de Tails. Por
+ejemplo, lee <a href="https://www.youtube.com/watch?v=sNYsfUNegEA">LegbaCore:
+Stealing GPG keys/emails in Tails via remote firmware infection</a>.</p>
+
+</div>
+
+
+</div>
+
+
+
+
+<div class="tip">
+
+<p>Debido a que siempre debes adaptar tus pr&aacute;cticas de seguridad digital a tus
+necesidades y amenazas espec&iacute;ficas, te alentamos a aprender m&aacute;s leyendo las
+siguientes gu&iacute;as:</p>
+
+<ul>
+  <li><a href="https://ssd.eff.org/es">EFF: Surveillance Self-Defense</a></li>
+  <li><a href="https://securityinabox.org/es">Front Line Defenders:
+Security-in-a-Box</a></li>
+</ul>
+
+</div>
+
+
+
+
+<h1 class="step" id="download">Descargar Tails</h1>
+
+
+
+
+<div class="step-image usb"><img alt="" class="img" height="200" src="./inc/infography/download.png" width="200" /></div>
+
+
+<div class="step-image upgrade-os"><img alt="" class="img" height="200" src="./inc/infography/download-with-intermediary.png" width="200" /></div>
+
+
+<div class="step-image upgrade-tails"><img alt="" class="img" height="200" src="./inc/infography/download-from-tails.png" width="200" /></div>
+
+
+
+
+<div class="usb upgrade download-only-img">
+  <span class="button display-as-inline-block" id="download-img"> <a href="
+https://download.tails.net/tails/stable/tails-amd64-7.7.2/tails-amd64-7.7.2.img
+">Download Tails 
+7.7.2
+ USB image (<span class="remove-extra-space">
+1.9 GB
+</span>)</a> </span>
+<span class="no-js button"> <a href="
+https://mirrors.wikimedia.org/tails/stable/tails-amd64-7.7.2/tails-amd64-7.7.2.img
+">Download
+Tails 
+7.7.2
+ USB
+image (<span class="remove-extra-space">
+1.9 GB
+</span>)</a> </span>
+</div>
+
+
+<div class="dvd download-only-iso">
+  <span class="button display-as-inline-block" id="download-iso"> <a href="
+https://download.tails.net/tails/stable/tails-amd64-7.7.2/tails-amd64-7.7.2.iso
+">Download Tails 
+7.7.2
+ ISO image (<span class="remove-extra-space">
+1.9 GB
+</span>)</a> </span>
+<span class="no-js button"> <a href="
+https://mirrors.wikimedia.org/tails/stable/tails-amd64-7.7.2/tails-amd64-7.7.2.iso
+">Download
+Tails 
+7.7.2
+ ISO
+image (<span class="remove-extra-space">
+1.9 GB
+</span>)</a> </span>
+</div>
+
+
+
+
+<p class="usb upgrade-os">Save your download to your usual <i>Downloads</i> folder and not to the USB
+stick.</p>
+
+
+
+
+<p class="upgrade-tails">We recommend that you save your download to your Persistent
+Storage. Otherwise, Tails might stop responding if the RAM memory of the
+computer gets full.</p>
+
+
+
+
+<div class="tip upgrade">
+
+<p>While you are downloading, we recommend you read the <a href="../latest.es.html">release
+notes</a> for Tails 
+7.7.2
+<span class="remove-extra-space">.</span>&nbsp; They
+document all the changes in this new version: new features, problems that
+were solved, and known issues that have already been identified.</p>
+
+
+
+
+</div>
+
+
+
+
+<div id="tails-version">
+7.7.2
+</div>
+
+
+
+
+<h1 class="step" id="verify">Verifica tu descarga</h1>
+
+
+
+
+<div class="step-image usb"><img alt="" class="img" height="200" src="./inc/infography/verify.png" width="200" /></div>
+
+
+<div class="step-image upgrade-os"><img alt="" class="img" height="200" src="./inc/infography/verify-with-intermediary.png" width="200" /></div>
+
+
+<div class="step-image upgrade-tails"><img alt="" class="img" height="200" src="./inc/infography/verify-from-tails.png" width="200" /></div>
+
+
+
+
+<div class="display-as-block" id="javascript-verification-tip">
+  <p>Verifica tu descarga para asegurarte que es segura y no se corrompi&oacute; durante
+la descarga.</p>
+</div>
+
+
+
+
+<div class="display-as-block" id="verification">
+  <div class="no-js">
+    <p>Parece que tienes JavaScript deshabilitado. Para verificar tu descarga,
+puedes:</p>
+    <ul>
+      <li><p>Habilitar JavaScript y recargar esta p&aacute;gina.</p></li>
+      <li><p>Compare manually the checksum of your download with <a href="./v2/Tails/amd64/stable/latest.json">the checksum of our
+images</a>.  In Tails, you can
+install <a href="https://gtkhash.org/"><i>GtkHash</i></a> as <a href="../doc/persistent_storage/additional_software.es.html">Additional
+Software</a></p></li>
+      <li><p>Verify your download using our <span class="createlink">OpenPGP signing key</span> and
+<span class="usb upgrade download-only-img"><a href="
+https://tails.net/torrents/files/tails-amd64-7.7.2.img.sig
+">OpenPGP
+signature</a>.</span> <span class="dvd download-only-iso"><a href="
+https://tails.net/torrents/files/tails-amd64-7.7.2.iso.sig
+">OpenPGP
+signature</a>.</span><br />
+        Ya no proporcionamos instrucciones para verificar las descargas con OpenPGP.
+      </p></li>
+    <p><a href="../contribute/design/download_verification.html">See our security analysis of the different verification
+techniques.</a></p>
+    </ul>
+  </div>
+  <div id="ie">
+    <p>Parece que est&aacute;s usando <em>Internet Explorer</em>. Para verificar tu
+descarga, por favor utiliza otro navegador.</p>
+  </div>
+  <div class="display-as-block" id="verify-button">
+    <label class="button"> Select your download to verify&hellip; <input id="verify-file" type="file" /> </label>
+    <p id="verify-minor">o verifica usando la <a class="toggle" href="#install-inc-steps-verify.inline.es.openpgp-verification">firma
+OpenPGP</a></p>
+    <div class="floating-toggleable" id="openpgp-verification">
+    <div class="toggleable" id="install-inc-steps-verify.inline.es.openpgp-verification">
+
+ <a class="toggle" href="#install-inc-steps-verify.inline.es.openpgp-verification"></a>
+
+    <p>
+      <a class="usb upgrade download-only-img" href="
+https://tails.net/torrents/files/tails-amd64-7.7.2.img.sig
+">OpenPGP
+signature </a> <a class="dvd download-only-iso" href="
+https://tails.net/torrents/files/tails-amd64-7.7.2.iso.sig
+">OpenPGP
+signature</a>
+    </p>
+
+    <p>If you don&#39;t know how to use the OpenPGP signature, select instead the
+button <b>Select your download</b> to verify your download with JavaScript.</p>
+
+    <p><span class="createlink">OpenPGP signing key</span></p>
+
+    <p><a href="../contribute/design/download_verification.html">Security analysis of the different verification
+techniques</a></p>
+
+    
+    </div>
+    </div>
+  </div>
+  <div class="display-as-block" id="verifying-download">
+    <p>Verificando <em><span class="verify-filename">$FILENAME</span></em>&hellip;</p>
+    <div class="progress">
+      <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" class="progress-bar" id="progress-bar" role="progressbar" style="width: 0%"></div>
+    </div>
+  </div>
+  <div class="display-as-block" id="verification-successful">
+    <p><img alt="" class="icon" height="20" src="../lib/check.png" width="24" /><b>&iexcl;Verificaci&oacute;n
+exitosa!</b> (<em><span class="verify-filename">$FILENAME</span></em>)</p>
+  </div>
+  <div class="display-as-block" id="verification-failed">
+    <p><img alt="" class="icon" height="22" src="../lib/cross.png" width="23" /><b>&iexcl;Ha fallado la
+verificaci&oacute;n!</b> (<em><span class="verify-filename">$FILENAME</span></em>)</p>
+    <p class="why-failed-link"><a class="toggle" href="#install-inc-steps-verify.inline.es.why-failed">&iquest;Por qu&eacute;?</a></p>
+    <div class="floating-toggleable" id="why-failed">
+    <div class="toggleable" id="install-inc-steps-verify.inline.es.why-failed">
+
+ <a class="toggle" href="#install-inc-steps-verify.inline.es.why-failed"></a>
+    <p>Lo m&aacute;s probable es que la verificaci&oacute;n falle debido a un error o
+interrupci&oacute;n durante la descarga.</p>
+
+    <p>La verificaci&oacute;n tambi&eacute;n falla si intentas verificar una descarga distinta a
+la &uacute;ltima versi&oacute;n de Tails: 
+7.7.2
+.</p>
+
+    <p>Tambi&eacute;n podr&iacute;a ser, aunque es menos probable, que la verificaci&oacute;n haya
+fallado a causa de una descarga malintencionada de alguno de nuestros
+mirrors, o a causa de un ataque en tu red local o pa&iacute;s.</p>
+
+    <p>Una nueva descarga es normalmente suficiente para solucionar este
+problema. Tambi&eacute;n puedes intentar descargar con otro ordenador.</p>
+
+    <p><a href="../contribute/design/download_verification.html">&iquest;C&oacute;mo funciona la verificaci&oacute;n?</a></p>
+    
+    </div>
+    </div>
+    <p class="usb upgrade download-only-img"><a href="
+https://download.tails.net/tails/stable/tails-amd64-7.7.2/tails-amd64-7.7.2.img
+" id="download-img-again">Por favor, intenta la descarga
+nuevamente&hellip;</a></p>
+    <p class="dvd download-only-iso"><a href="
+https://download.tails.net/tails/stable/tails-amd64-7.7.2/tails-amd64-7.7.2.iso
+" id="download-iso-again">Por favor, intenta la descarga
+nuevamente&hellip;</a></p>
+  </div>
+  <div class="display-as-block" id="verification-error-file">
+    <p><img alt="" class="icon" height="22" src="../lib/cross.png" width="23" /><b>Error seleccionando
+imagen.</b></p>
+    <p class="usb upgrade download-only-img">Aseg&uacute;rate de que eliges una imagen USB que tu navegador pueda leer.</p>
+    <p class="dvd download-only-iso">Aseg&uacute;rate de que eliges una imagen ISO que tu navegador pueda leer.</p>
+    <p><a id="retry-json">Reintentar&hellip;</a></p>
+  </div>
+  <div class="display-as-block" id="verification-error-json">
+    <p><img alt="" class="icon" height="22" src="../lib/cross.png" width="23" /><b>Error al descargar el
+<a href="" id="checksum-file">archivo de verificaci&oacute;n</a> de nuestro sitio
+web.</b></p>
+    <p>Aseg&uacute;rate de que tu navegador est&aacute; conectado a Internet.</p>
+    <p><a id="retry-json">Reintentar&hellip;</a></p>
+  </div>
+  <div class="display-as-block" id="verification-error-image">
+    <p><img alt="" class="icon" height="22" src="../lib/cross.png" width="23" /><b>Error al leer la
+imagen <em><span class="verify-filename">$FILENAME</span></em>.</b></p>
+    <p>Aseg&uacute;rate de que <em><span class="verify-filename">$FILENAME</span></em>
+puede ser le&iacute;do por tu navegador.</p>
+    <p><a id="retry-image">Reintenta&hellip;</a></p>
+  </div>
+</div>
+
+
+
+
+<h1 class="step" id="rufus">Descargar <i>Rufus</i></h1>
+
+
+
+
+<div class="step-image usb"><img alt="" class="img" height="200" src="./inc/infography/install-rufus.png" width="200" /></div>
+
+
+<div class="step-image upgrade"><img alt="" class="img" height="200" src="./inc/infography/install-rufus-with-intermediary.png" width="200" /></div>
+
+
+
+
+<p class="upgrade">In the following steps, you will install an intermediary Tails using the Tails USB
+image that you downloaded earlier.</p>
+
+
+
+
+<p><a href="https://rufus.ie/"><i>Rufus</i></a> is the Free Software tool that we recommend to install Tails from Windows.</p>
+
+
+<ol>
+<li><p>Click on the following button to download <em>Rufus</em>:</p>
+
+<p class="button"><a href="https://tails.net/rufus/rufus-portable.exe">Download <i>Rufus</i> for Windows</a></p>
+
+
+<p>Save your download to your usual <em>Downloads</em> folder and not to the USB stick.</p></li>
+</ol>
+
+
+<div class="attack">
+
+<p>We <a href="../news/rufus.html">stopped recommending</a> <i>balenaEtcher</i> to install Tails
+from Windows in 2025 because <i>balenaEtcher</i> shares <a href="https://gitlab.tails.boum.org/tails/tails/-/issues/16381">sensitive information</a> to the Balena company that allows identifying
+who is installing Tails.</p>
+
+</div>
+
+
+
+
+<h1 class="step" id="install">Install <span class="upgrade">an intermediary</span> Tails using <i>Rufus</i></h1>
+
+
+
+
+<div class="step-image usb"><img alt="" class="img" height="200" src="./inc/infography/install-tails.png" width="200" /></div>
+
+
+<div class="step-image upgrade"><img alt="" class="img" height="200" src="./inc/infography/install-upgrade-usb-only.png" width="200" /></div>
+
+
+<ol>
+<li><p>Open the <em>Rufus</em> download.</p>
+
+<p>At the security warning, confirm that you want to open <em>Rufus</em>.</p></li>
+<li><p>In the update policy dialog, click <strong>No</strong>.</p>
+
+<p><span class="createlink">rufus-update.png</span></p>
+
+<p><em>Rufus</em> starts.</p>
+
+<p><span class="createlink">rufus.png</span></p></li>
+<li><p>Plug in the USB stick on which you want to install <span class="usb">Tails.</span> <span class="upgrade">the intermediary
+Tails.</span></p>
+
+<div class="caution">
+
+<p>All the data on this USB stick will be lost.</p>
+
+<p>Some data might still be recovered using advanced forensics tools.</p>
+
+</div>
+
+
+<div class="note upgrade"><p>The Persistent Storage of your Tails USB stick will not be
+copied to the temporary Tails.</p></div>
+
+
+<p>Wait a few seconds until <em>Rufus</em> detects your USB stick.</p></li>
+<li><p>Choose your USB stick in the <strong>Device</strong> menu.</p>
+
+<p>If your USB stick doesn&#39;t appear in the <strong>Device</strong> menu, make sure that you
+saved <em>Rufus</em> to your usual <em>Downloads</em> folder and not to the USB stick
+itself.</p></li>
+<li><p>Click the <strong>Select</strong> button.</p>
+
+<p>Choose the USB image that you downloaded earlier.</p>
+
+<div class="note">
+<p>Make sure that the USB image is called <i>
+tails-amd64-7.7.2.img
+</i> and has an
+<i>.img</i> file extension.</p>
+
+<p>If the image has an <i>.iso</i> file
+extension, it is the wrong image. Please go back to the
+<span class="windows"><a href="./windows.es.html#download">download step</a>.</span>
+<span class="upgrade-windows"><a href="../doc/upgrade/windows.es.html#download">download step</a>.</span></p>
+</div>
+</li>
+<li><p>Click <strong>Start</strong>.</p>
+
+<p>Enter your password if you are asked for it.</p>
+
+<p>The installation takes a few minutes.</p></li>
+<li><p>Close <em>Rufus</em>.</p>
+
+<p></p><div class="tip">
+
+<p>After installing Tails, the USB stick no longer appears in the <i>File
+Explorer</i> app of Windows.</p>
+
+
+<p></p><p>You can still see the USB stick in the <i>Settings</i> app. Choose
+<b>System&nbsp;&#x25B8; Storage&nbsp;&#x25B8; Advanced storage settings&nbsp;&#x25B8; Disk &amp;
+volumes</b>.</p>
+
+<p>See also how to <a href="../doc/first_steps/uninstall/windows.es.html">uninstall Tails from Windows</a>.</p>
+</div></li>
+</ol>
+
+
+<p> </p>
+
+<p>   </p>
+
+<div class="windows linux mac expert">
+
+<div class="success">
+
+<video autoplay="autoplay" height="200" loop="loop" muted="muted" poster="https://tails.net/install/inc/success/install.png" width="200">
+  <source src="https://tails.net/install/inc/success/install.mp4" type="video/mp4">
+</source></video>
+
+<div>
+  <p class="big">&iexcl;Bien hecho!</p>
+
+  <p>You have installed Tails on your USB stick.</p>
+
+  <p>En el siguiente paso, har&aacute;s que tu computadora se inicie en esta memoria USB.</p>
+
+  <p>Tails might not work on your computer, so good luck!</p>
+</div>
+
+</div>
+
+</div>
+
+
+
+
+<div class="note clone">
+
+<p>If you already started on the other Tails, go directly to step 3:
+<a href="#verify-other">Verify that the other Tails is up-to-date</a>.</p>
+
+</div>
+
+
+
+
+<h1 class="step" id="back"> Abre estas instrucciones en otro dispositivo</h1>
+
+
+
+
+<div class="step-image"><img alt="" class="img" height="200" src="./inc/infography/switch-context.png" width="200" /></div>
+
+
+<p>In the next step, you will shut down the computer. To be able to follow the
+rest of the instructions afterwards, you can either:</p>
+
+<ul>
+<li><p> Scan this QR code on your smartphone or tablet:</p>
+
+<p> <img alt="" class="windows" height="185" src="./inc/qrcodes/tails_net_install_windows_back_1.png" width="185" />
+ <img alt="" class="mac" height="185" src="./inc/qrcodes/tails_net_install_mac_back_1.png" width="185" />
+ <img alt="" class="linux" height="185" src="./inc/qrcodes/tails_net_install_linux_back_1.png" width="185" />
+ <img alt="" class="expert" height="185" src="./inc/qrcodes/tails_net_install_expert_back_1.png" width="185" />
+ <img alt="" class="pc-clone" height="185" src="./inc/qrcodes/tails_net_install_clone_pc_back_1.png" width="185" />
+ <img alt="" class="mac-clone" height="185" src="./inc/qrcodes/tails_net_install_clone_mac_back_1.png" width="185" />
+ <img alt="" class="upgrade-tails" height="185" src="./inc/qrcodes/tails_net_doc_upgrade_tails_back_1.png" width="185" />
+ <img alt="" class="upgrade-windows" height="185" src="./inc/qrcodes/tails_net_doc_upgrade_windows_back_1.png" width="185" />
+ <img alt="" class="upgrade-mac" height="185" src="./inc/qrcodes/tails_net_doc_upgrade_mac_back_1.png" width="185" />
+ <img alt="" class="upgrade-linux" height="185" src="./inc/qrcodes/tails_net_doc_upgrade_linux_back_1.png" width="185" />
+ <img alt="" class="upgrade-clone" height="185" src="./inc/qrcodes/tails_net_doc_upgrade_clone_back_1.png" width="185" /></p></li>
+<li><p> Print these instructions on paper.</p></li>
+<li><p> Take note of the URL of this page:</p>
+
+<p> </p><p class="code windows">https://tails.net/install/windows/index.es.html?back=1</p>
+ <p class="code mac">https://tails.net/install/mac/index.es.html?back=1</p>
+ <p class="code linux">https://tails.net/install/linux/index.es.html?back=1</p>
+ <p class="code expert">https://tails.net/install/expert/index.es.html?back=1</p>
+ <p class="code pc-clone">https://tails.net/install/clone/pc/index.es.html?back=1</p>
+ <p class="code mac-clone">https://tails.net/install/clone/mac/index.es.html?back=1</p>
+ <p class="code upgrade-tails">https://tails.net/doc/upgrade/tails/index.es.html?back=1</p>
+ <p class="code upgrade-windows">https://tails.net/doc/upgrade/windows/index.es.html?back=1</p>
+ <p class="code upgrade-mac">https://tails.net/doc/upgrade/mac/index.es.html?back=1</p>
+ <p class="code upgrade-linux">https://tails.net/doc/upgrade/linux/index.es.html?back=1</p>
+ <p class="code upgrade-clone">https://tails.net/doc/upgrade/clone/index.es.html?back=1</p></li>
+</ul>
+
+
+<h1 class="step upgrade-tails upgrade-os" id="intermediary">Restart on the intermediary Tails</h1>
+
+
+<h1 class="step clone" id="other">Restart on the other Tails</h1>
+
+
+<h1 class="step windows linux mac expert" id="restart">Restart on your Tails USB stick</h1>
+
+
+
+
+<div class="step-image">
+<img alt="" class="windows linux mac expert" height="200" src="./inc/infography/restart-on-tails.png" width="200" />
+<img alt="" class="clone upgrade-os" height="200" src="./inc/infography/restart-on-other-tails.png" width="200" />
+<img alt="" class="upgrade-tails" height="200" src="./inc/infography/restart-on-upgrade-usb.png" width="200" />
+</div>
+
+
+
+
+<h2>Hacer que la computadora inicie en la memoria USB.</h2>
+
+
+
+
+<div class="windows upgrade-windows">
+
+
+
+<ol>
+
+<li class="standalone">
+  <p>Aseg&uacute;rate de haber instalado Tails usando alguno de los siguientes:</p>
+  <ul>
+    <li><a href="./windows.es.html#rufus"><i>Rufus</i> from Windows</a></li>
+    <li><a href="./mac.es.html#etcher"><i>balenaEtcher</i> para macOS</a></li>
+    <li><a href="./linux.es.html#install"><i>Discos de GNOME</i> para Linux</a></li>
+    <li><a href="./expert.es.html#install">la l&iacute;nea de comandos de Linux</a></li>
+  </ul>
+</li>
+
+<li><p>Select the <b>Start <img alt="" class="symbolic" height="16" src="../lib/start.png" width="16" /></b> button.</p></li>
+
+<li><p>Press and hold the <b>Shift</b> key while you select the <b>Power</b> <img alt="" class="symbolic" height="16" src="../lib/system-shutdown.png" width="16" /> button and then
+<b>Restart</b>.</p>
+
+    <p>Windows shuts down and restarts on the <b>Choose an option</b> screen.</p>
+
+</li>
+
+<li><p>En la pantalla <strong>Elegir una opci&oacute;n</strong>, elige <strong>Usar un
+dispositivo</strong>.</p>
+
+    <span class="createlink">choose an option.png</span>
+
+    <div class="bug">
+    <p>If the <strong>Choose an option</strong> screen or the <strong>Use a
+device</strong> option don&#39;t appear, refer to the <a href="../doc/first_steps/start/pc.es.html#boot-menu-key">instructions on starting
+Tails using the Boot Menu key</a>.</p>
+    </div>
+</li>
+
+<li><p>In the <b>Use a device</b> screen, select <b>USB HDD</b>.</p>
+
+    <div class="windows upgrade-windows standalone">
+
+    <p>Windows shuts down and the computer restarts on your Tails USB stick.</p>
+
+    </div>
+
+    <div class="attack upgrade">
+
+    <p>
+      <span class="windows upgrade-windows">En el futuro, te</span> <span class="standalone">Te</span> recomendamos que s&oacute;lo conectes tu memoria USB
+de Tails mientras Windows se est&eacute; apagando. De otra manera, un virus en
+Windows podr&iacute;a infectar tu memoria USB de Tails y romper su seguridad.</p>
+
+    <p>Un ataque como esos es posible en teor&iacute;a pero poco probable en la
+pr&aacute;ctica. No conocemos de ning&uacute;n virus capaz de infectar Tails. <span class="standalone">Lee nuestras <a href="../doc/about/warnings/computer.es.html#software">advertencias sobre conectar Tails en
+sistemas no confiables</a>.</span></p>
+
+    </div>
+</li>
+
+<li><p>Si la computadora inicia en Tails, aparece el Gestor de Arranque y Tails
+arranca autom&aacute;ticamente luego de 4 segundos.</p>
+
+    <p><span class="createlink">grub.png</span></p>
+
+    <ul>
+
+    <li><p>The <b>Troubleshooting Mode</b> entry disables some features of the Linux
+kernel and might work better on some computers. You can try this option if
+you think you are experiencing hardware compatibility errors while starting
+Tails.</p></li>
+
+    <li><p>The <b>External Hard Disk</b> entry makes it possible to <a href="../doc/advanced_topics/external_hard_disk.es.html">start from an
+external hard disk</a> and some
+<a href="../support/known_issues.es.html#problematic-usb-stick">problematic USB sticks</a>.</p></li>
+
+    </ul>
+
+</li></ol>
+
+</div>
+
+
+
+
+<div class="linux expert pc-clone upgrade-clone upgrade-tails upgrade-linux">
+
+
+
+<p>Most computers do not start automatically on the Tails USB stick, but you
+can press a Boot Menu key to display a list of possible devices to start
+from.</p>
+
+<div class="tip">
+
+<p>If Windows is <span class="linux upgrade-linux">also</span> installed on the
+computer, you can refer instead to the <a href="../doc/first_steps/start/pc.es.html#windows-restart">instructions on starting Tails from
+Windows</a>.  Starting Tails from
+Windows is easier than using the Boot Menu key.</p>
+
+</div>
+
+<p>La captura de pantalla siguiente es un ejemplo de Men&uacute; de Arranque:</p>
+
+<p><span class="createlink">boot menu.png</span></p>
+
+<p id="animation">Esta animaci&oacute;n muestra c&oacute;mo usar la tecla del Men&uacute; de Arranque para iniciar
+desde la memoria USB:</p>
+
+<p>
+  <video controls="true" height="360" poster="https://tails.net/install/inc/videos/boot-menu-key.png" width="640">
+    <source src="https://tails.net/install/inc/videos/boot-menu-key.webm" type="video/webm">
+    <source src="https://tails.net/install/inc/videos/boot-menu-key.mp4" type="video/mp4">
+  </source></source></video>
+</p>
+
+<p>Las instrucciones siguientes explican en detalle c&oacute;mo usar la tecla del Men&uacute;
+de Arranque para arrancar desde la memoria USB:</p>
+
+<ol>
+
+<li class="standalone">
+  <p>Aseg&uacute;rate de haber instalado Tails usando alguno de los siguientes:</p>
+  <ul>
+    <li><a href="./windows.es.html#rufus"><i>Rufus</i> from Windows</a></li>
+    <li><a href="./mac.es.html#etcher"><i>balenaEtcher</i> para macOS</a></li>
+    <li><a href="./linux.es.html#install"><i>Discos de GNOME</i> para Linux</a></li>
+    <li><a href="./expert.es.html#install">la l&iacute;nea de comandos de Linux</a></li>
+  </ul>
+</li>
+
+<li>
+  <p class="usb upgrade-linux">Apaga la computadora mientras dejas la memoria USB conectada.</p>
+  <p class="standalone">Apaga la computadora y conecta la memoria USB de Tails.</p>
+  <p class="clone upgrade-tails">Apaga la computadora.</p>
+  <p class="clone">Inserta la otra memoria USB de Tails desde la que quieres <span class="pc-clone">instalar</span><span class="upgrade">actualizar</span>.</p>
+  <p class="upgrade-tails">Desconecta tu memoria USB y deja conectada la memoria USB intermedia.</p>
+</li>
+
+<li>
+  <p>Identifica las teclas del Men&uacute; de Arranque de tu computadora de acuerdo a su
+fabricante en la lista siguiente:</p>
+
+  <table>
+    <tr><th>Fabricante</th><th>Tecla</th></tr>
+    <tr><td>Acer</td><td>F12, F9, F2, Esc</td></tr>
+    <tr><td>Apple</td><td>Opci&oacute;n</td></tr>
+    <tr><td>Asus</td><td>Esc</td></tr>
+    <tr><td>Clevo</td><td>F7</td></tr>
+    <tr><td>Dell</td><td>F12</td></tr>
+    <tr><td>Fujitsu</td><td>F12, Esc</td></tr>
+    <tr><td>HP</td><td>F9</td></tr>
+    <tr><td>Huawei</td><td>F12</td></tr>
+    <tr><td>Intel</td><td>F10</td></tr>
+    <tr><td>Lenovo</td><td>F12, <a href="https://support.lenovo.com/solutions/ht062552">Novo</a></td></tr>
+    <tr><td>MSI</td><td>F11</td></tr>
+    <tr><td>Samsung</td><td>Esc, F12, F2</td></tr>
+    <tr><td>Sony</td><td>F11, Esc, F10</td></tr>
+    <tr><td>Toshiba</td><td>F12</td></tr>
+    <tr><td>Otros&hellip;</td><td>F12, Esc</td></tr>
+  </table>
+
+  <div class="tip">
+  <p>En muchas computadoras, cuando se encienden, se muestra un mensaje
+brevemente que tambi&eacute;n explica c&oacute;mo llegar al Men&uacute; de Arranque o editar la
+configuraci&oacute;n de la BIOS.</p>
+  </div>
+</li>
+
+<li>
+  <p>Enciende la computadora.</p>
+
+  <p>Presiona repetidamente la primera tecla posible identificada en el paso 2 de
+manera inmediata.</p>
+</li>
+
+<li>
+  <p>SI la computadora arranca en otro sistema operativo, o te da un mensaje de
+error, ap&aacute;gala y enci&eacute;ndela de nuevo, repitiendo el paso 3 con todas las
+teclas posibles para acceder al Men&uacute; de Arranque que has identificado en el
+paso 2.</p>
+
+  <p>Si aparece un Men&uacute; de Arranque con una lista de dispositivos, selecciona tu
+memoria USB y presiona <b>Enter</b>.</p>
+</li>
+
+<li><p>Si la computadora inicia en Tails, aparece el Gestor de Arranque y Tails
+arranca autom&aacute;ticamente luego de 4 segundos.</p>
+
+    <p><span class="createlink">grub.png</span></p>
+
+</li></ol>
+
+</div>
+
+
+
+
+<div class="mac mac-clone upgrade-mac">
+
+
+
+<p>
+  <video controls="true" height="360" poster="https://tails.net/install/inc/videos/mac.png" width="640">
+    <source src="https://tails.net/install/inc/videos/mac.mp4" type="video/mp4">
+  </source></video>
+</p>
+
+<ol>
+
+<li class="standalone">
+  <p>Aseg&uacute;rate de haber instalado Tails usando alguno de los siguientes:</p>
+  <ul>
+    <li><a href="./mac.es.html#etcher"><i>balenaEtcher</i> para macOS</a></li>
+    <li><a href="./windows.es.html#rufus"><i>Rufus</i> from Windows</a></li>
+    <li><a href="./linux.es.html#install"><i>Discos de GNOME</i> para Linux</a></li>
+    <li><a href="./expert.es.html#install">la l&iacute;nea de comandos de Linux</a></li>
+  </ul>
+</li>
+
+<li>
+   <p class="standalone">Apaga la computadora.</p>
+   <p class="usb upgrade">Apaga la computadora mientras dejas la memoria USB conectada.</p>
+   <p class="mac-clone">Conecta la otra memoria USB de Tails desde la que deseas instalar.</p>
+</li>
+
+<li class="standalone">
+   <p>Conecta tu memoria USB de Tails.</p>
+</li>
+
+<li>
+   <p>Enciende la computadora.</p>
+
+   <p>Immediately press-and-hold the <b>Option</b> key (<b>&#x2325;</b> or <b>Alt</b>
+key) when the startup sound is played.</p>
+
+   <p>Hold the key pressed until a list of possible startup disks appears.</p>
+
+   <p><span class="createlink">mac option key.png</span></p>
+</li>
+
+<li>
+   <p>Elige la memoria USB y presiona <b>Enter</b>. La memoria USB aparece como un
+disco duro externo y puede estar catalogada como <b>EFI Boot</b> o <span class="guilabel">Windows</span> como en las siguientes capturas de pantalla:</p>
+
+   <p><span class="createlink">mac startup usb.png</span></p>
+
+   <div class="bug">
+   <p>Si el USB no aparece en la lista de discos de arranque:</p>
+
+   
+
+
+<ol>
+  
+  
+<li class="mac mac-clone standalone"><p>Wait 2&ndash;3 minutes and try again. Some USB sticks need some rest after
+installing.</p></li>
+  <li class="mac mac-clone standalone"><p>Try all other USB ports on the computer. Some USB ports cannot be used to
+start from.</p></li>
+  <li class="standalone"><p>Aseg&uacute;rate de haber instalado Tails usando alguno de los siguientes:</p>
+    <ul>
+      <li><a href="./windows.es.html#rufus"><i>Rufus</i> from Windows</a></li>
+      <li><a href="./mac.es.html#etcher"><i>balenaEtcher</i> para macOS</a></li>
+      <li><a href="./linux.es.html#install"><i>Discos de GNOME</i> para Linux</a></li>
+      <li><a href="./expert.es.html#install">la l&iacute;nea de comandos de Linux</a></li>
+    </ul>
+  </li>
+  <li class="standalone"><p>Make sure that you have <a href="./download.es.html">verified your download of
+Tails</a>.</p></li>
+  <li class="windows linux mac expert upgrade-tails upgrade-windows upgrade-linux upgrade-mac"><p>Make sure that you have <a href="#verify">verified your download</a>.</p></li>
+  <li>
+    <p class="windows">Try to <a href="./windows.es.html#install">install again</a> on the same USB stick.</p>
+    <p class="mac">Try to <a href="./mac.es.html#install">install again</a> on the same USB stick.</p>
+    <p class="linux">Try to <a href="./linux.es.html#install">install again</a> on the same USB stick.</p>
+    <p class="expert">Try to <a href="./expert.es.html#install">install again</a> on the same USB stick.</p>
+    <p class="pc-clone">Try to <a href="./clone/pc.es.html#install">install again</a> on the same USB stick.</p>
+    <p class="mac-clone">Try to <a href="./clone/mac.es.html#install">install again</a> on the same USB stick.</p>
+    <p class="upgrade-clone">Try to <a href="../install.es.html">install again</a> on the same USB stick.</p>
+    <p class="upgrade-tails">Try to <a href="../doc/upgrade/tails.es.html#install">install again</a> on the same USB stick.</p>
+    <p class="upgrade-windows">Try to <a href="../doc/upgrade/windows.es.html#install">install again</a> on the same USB stick.</p>
+    <p class="upgrade-mac">Try to <a href="../doc/upgrade/mac.es.html#install">install again</a> on the same USB stick.</p>
+    <p class="upgrade-linux">Try to <a href="../doc/upgrade/linux.es.html#install">install again</a> on the same USB stick.</p>
+    <p class="standalone">Try to <a href="../install.es.html">install again</a> on the same USB stick.</p>
+  </li>
+  <li><p>Try to install on a different USB stick.</p></li>
+  <li><p>Try to use the same USB stick to start on a different computer.</p></li>
+</ol>
+<p></p>
+
+
+   <p>If your computer still does not display the Boot Loader, it might currently
+be impossible to start Tails on your computer.</p>
+
+   </div>
+
+</li>
+
+<li id="startup security">
+
+   <p>Si tu Mac muestra el siguiente error:</p>
+
+   <p class="code">La configuraci&oacute;n de seguridad no permite que este Mac use un disco de
+arranque externo.</p>
+
+   <p>Tendr&aacute;s que cambiar la configuraci&oacute;n de la <em>Startup Security Utility</em>
+de tu Mac para permitir que arranque desde Tails.</p>
+
+   <p>To open <em>Startup Security Utility</em>:</p>
+
+   <ol>
+
+     
+
+     
+<li><p>Turn on your Mac, then press and hold <strong>Command(&#x2318;)+R</strong>
+immediately after you see the Apple logo. Your Mac starts up from <a href="https://support.apple.com/kb/HT201314">macOS Recovery</a>.</p></li>
+
+     <li><p>When you see the macOS <em>Utilities</em> window, choose
+<strong>Utilities&nbsp;&#x25B8; Startup Security Utility</strong> from the menu
+bar.</p></li>
+
+     <li><p>When you are asked to authenticate, click <strong>Enter macOS
+Password</strong>, then choose an administrator account and enter its
+password.</p></li>
+
+   </ol>
+
+   <p><span class="createlink">startup-security-utility.png</span></p>
+
+   <p>In the <em>Startup Security Utility</em>:</p>
+
+   <ul>
+
+     <li><p>Choose <strong>No Security</strong> in the <strong>Secure Boot</strong>
+section.</p></li>
+
+     <li><p>Choose <strong>Allow booting from external media</strong> in the
+<strong>External Boot</strong>.</p></li>
+
+   </ul>
+
+   <div class="tip">
+
+   <p>To still protect your Mac from starting on untrusted external media, you can
+set a firmware password, available on macOS Mountain Lion or later. A
+firmware password prevents users who do not have the password from starting
+up from any media other than the designated startup disk.</p>
+
+   <p><strong>If you forget your firmware password you will require an in-person
+service appointment with an Apple Store or Apple Authorized Service
+Provider.</strong></p>
+
+   </div>
+
+   <p>Lee m&aacute;s en Ayuda de Apple acerca de:</p>
+
+   <ul>
+
+     <li><a href="https://support.apple.com/en-us/HT208198">Startup Security
+Utility</a></li>
+     <li><a href="https://support.apple.com/en-us/HT204455">Como configurar una
+contrase&ntilde;a de firmware en tu Mac</a></li>
+
+   </ul>
+
+</li>
+
+<li><p>Si la computadora inicia en Tails, aparece el Gestor de Arranque y Tails
+arranca autom&aacute;ticamente luego de 4 segundos.</p>
+
+    <p><span class="createlink">grub.png</span></p>
+
+    <ul>
+
+    <li><p>The <b>Troubleshooting Mode</b> entry disables some features of the Linux
+kernel and might work better on some computers. You can try this option if
+you think you are experiencing hardware compatibility errors while starting
+Tails.</p></li>
+
+    <li><p>The <b>External Hard Disk</b> entry makes it possible to <a href="../doc/advanced_topics/external_hard_disk.es.html">start from an
+external hard disk</a> and some
+<a href="../support/known_issues.es.html#problematic-usb-stick">problematic USB sticks</a>.</p></li>
+
+    </ul>
+
+</li></ol>
+
+</div>
+
+
+
+
+<h2 id="troubleshoot-start">Troubleshoot Tails not starting</h2>
+
+
+
+
+<ul>
+
+<li class="windows upgrade-windows">
+<p>If the computer doesn&#39;t restart on your Tails USB stick:</p>
+  <ol>
+    <li><p>Wait 2&ndash;3 minutes and try again. Some USB sticks need some rest after installing.</p></li>
+    <li><p>Try other options in the <b>Use a device</b> screen, for example <b>USB FDD</b> if available.</p></li>
+    <li><p>Try all other USB ports on the computer. Some USB ports cannot be used to start from.</p></li>
+    <li><p>Refer to the <a href="../doc/first_steps/start/pc.es.html#boot-menu-key">instructions on starting Tails using the Boot Menu key</a>.</p></li>
+  </ol>
+</li>
+
+<li class="linux expert pc-clone upgrade-clone upgrade-tails upgrade-linux">
+<p>If none of the possible Boot Menu keys from the previous technique work,
+refer to the <a href="../doc/first_steps/start/pc.es.html#not-at-all">troubleshooting instructions about Tails not starting at
+all</a>.</p>
+</li>
+
+<li class="linux expert pc-clone upgrade-clone upgrade-tails upgrade-linux">
+<p>If the Boot Menu appears, but your USB stick is not listed in the Boot Menu:</p>
+  <ol>
+  <li><p>Wait 2&ndash;3 minutes and try again. Some USB sticks need some rest after installing.</p></li>
+  <li><p>Try all other USB ports on the computer. Some USB ports cannot be used to start from.</p></li>
+  </ol>
+</li>
+
+<li>
+<p class="windows upgrade-windows">If the computer restarts on your Tails USB stick, but the Boot Loader doesn&#39;t appear:</p>
+<p class="linux expert pc-clone upgrade-clone upgrade-tails upgrade-linux">If your USB stick is listed in the Boot Menu, but the Boot Loader doesn&#39;t appear:</p>
+<p class="mac mac-clone upgrade-mac">If your USB stick appears in the list of startup disks, but the Boot Loader doesn&#39;t appear:</p>
+
+
+
+<ol>
+  
+  
+<li class="mac mac-clone standalone"><p>Wait 2&ndash;3 minutes and try again. Some USB sticks need some rest after
+installing.</p></li>
+  <li class="mac mac-clone standalone"><p>Try all other USB ports on the computer. Some USB ports cannot be used to
+start from.</p></li>
+  <li class="standalone"><p>Aseg&uacute;rate de haber instalado Tails usando alguno de los siguientes:</p>
+    <ul>
+      <li><a href="./windows.es.html#rufus"><i>Rufus</i> from Windows</a></li>
+      <li><a href="./mac.es.html#etcher"><i>balenaEtcher</i> para macOS</a></li>
+      <li><a href="./linux.es.html#install"><i>Discos de GNOME</i> para Linux</a></li>
+      <li><a href="./expert.es.html#install">la l&iacute;nea de comandos de Linux</a></li>
+    </ul>
+  </li>
+  <li class="standalone"><p>Make sure that you have <a href="./download.es.html">verified your download of
+Tails</a>.</p></li>
+  <li class="windows linux mac expert upgrade-tails upgrade-windows upgrade-linux upgrade-mac"><p>Make sure that you have <a href="#verify">verified your download</a>.</p></li>
+  <li>
+    <p class="windows">Try to <a href="./windows.es.html#install">install again</a> on the same USB stick.</p>
+    <p class="mac">Try to <a href="./mac.es.html#install">install again</a> on the same USB stick.</p>
+    <p class="linux">Try to <a href="./linux.es.html#install">install again</a> on the same USB stick.</p>
+    <p class="expert">Try to <a href="./expert.es.html#install">install again</a> on the same USB stick.</p>
+    <p class="pc-clone">Try to <a href="./clone/pc.es.html#install">install again</a> on the same USB stick.</p>
+    <p class="mac-clone">Try to <a href="./clone/mac.es.html#install">install again</a> on the same USB stick.</p>
+    <p class="upgrade-clone">Try to <a href="../install.es.html">install again</a> on the same USB stick.</p>
+    <p class="upgrade-tails">Try to <a href="../doc/upgrade/tails.es.html#install">install again</a> on the same USB stick.</p>
+    <p class="upgrade-windows">Try to <a href="../doc/upgrade/windows.es.html#install">install again</a> on the same USB stick.</p>
+    <p class="upgrade-mac">Try to <a href="../doc/upgrade/mac.es.html#install">install again</a> on the same USB stick.</p>
+    <p class="upgrade-linux">Try to <a href="../doc/upgrade/linux.es.html#install">install again</a> on the same USB stick.</p>
+    <p class="standalone">Try to <a href="../install.es.html">install again</a> on the same USB stick.</p>
+  </li>
+  <li><p>Try to install on a different USB stick.</p></li>
+  <li><p>Try to use the same USB stick to start on a different computer.</p></li>
+</ol>
+<p></p>
+
+<p>If your computer still does not display the Boot Loader, it might currently be impossible to start Tails on your computer.</p>
+</li>
+
+<li>
+<p>If the Boot Loader appears, but Tails fails to start after the Boot Loader,
+refer to
+<span class="windows upgrade-windows linux expert pc-clone upgrade-clone upgrade-tails upgrade-linux"><a href="../doc/first_steps/start/pc.es.html#not-entirely">the troubleshooting section about Tails not starting after the Boot Loader</a>.</span>
+<span class="mac mac-clone upgrade-mac"><a href="../doc/first_steps/start/mac.es.html#not-entirely">the troubleshooting section about Tails not starting after the Boot Loader</a>.</span></p>
+</li>
+
+</ul>
+
+
+
+
+<div class="tip windows upgrade-windows">
+<p>Starting the computer using a Boot Menu key can be faster than
+starting the computer on Windows first and then on Tails. We
+recommend you learn how to <a href="../doc/first_steps/start/pc.es.html#boot-menu-key">start Tails using the Boot Menu
+key</a> if you use Tails
+regularly.</p>
+</div>
+
+
+
+
+<div class="tip mac upgrade-mac">
+
+<p>Apple does not prioritize collaborating with Free Software projects. Their
+newest hardware is usually very hard for Free Software developers to get
+working with Linux, and thus Tails. PC hardware tends to be more open and work
+better with Linux.</p>
+
+</div>
+
+
+
+
+<h1 class="step windows linux mac" id="tails">&iexcl;Te damos la bienvenida a Tails!</h1>
+
+
+
+
+<div class="step-image windows linux mac"><img alt="" class="img" height="200" src="./inc/infography/tails.png" width="200" /></div>
+
+
+
+
+<h2 class="upgrade-os upgrade-tails">Starting the intermediary Tails</h2>
+
+
+
+
+<h2 class="clone upgrade-clone">Starting the other Tails</h2>
+
+
+<ol>
+<li><p>After the Boot Menu, a loading screen appears.</p>
+
+<p><span class="createlink">plymouth.png</span></p></li>
+<li><p>One to two minutes after the Boot Loader and the loading screen, the
+Welcome Screen appears.</p>
+
+<div class="bug windows linux mac upgrade-tails">
+
+<p>If the following message about partitioning errors appears in the Welcome
+Screen, please start again from step 2: <a href="#verify">Verify your
+download</a>.</p>
+
+<p class="code">Errors were detected in the partitioning of your Tails USB stick.</p>
+
+<p>If the error persists, reinstall Tails on one of our <a href="../doc/about/requirements.es.html">recommended USB
+sticks</a>.</p>
+
+</div>
+
+
+<p><a href="../doc/first_steps/welcome_screen/welcome_screen.png"><img alt="&iexcl;Bienvenido a Tails!" class="screenshot" height="768" src="../doc/first_steps/welcome_screen/welcome_screen.png" width="1024" /></a></p></li>
+<li><p>In the Welcome Screen, select your language and keyboard layout in the
+<b>Language and Formats</b> section.  Click <b>Start Tails</b>.</p>
+
+<div class="bug mac upgrade-mac">
+<p>If your keyboard or touchpad doesn&#39;t work, try using a USB keyboard or mouse.</p>
+</div>
+</li>
+<li><p>Luego de 15&ndash;30 segundos, el escritorio de Tails aparecer&aacute;.</p>
+
+<p><span class="createlink">desktop.png</span></p></li>
+</ol>
+
+
+<h1 class="pc-clone mac-clone" id="new">Te damos la bienvenida a tu nuevo Tails!</h1>
+
+
+
+
+<div class="step-image pc-clone mac-clone"><img alt="" class="img" height="200" src="./inc/infography/tails.png" width="200" /></div>
+
+
+
+
+<div class="success">
+
+<video autoplay="autoplay" height="200" loop="loop" muted="muted" poster="https://tails.net/install/inc/success/start.png" width="200">
+  <source src="https://tails.net/install/inc/success/start.mp4" type="video/mp4">
+</source></video>
+
+<div>
+  <p class="big">You made it!</p>
+
+  <p>You managed to start <span class="pc-clone mac-clone">your new</span> Tails on your computer!</p>
+
+  <p>Congratulations on staying safe :)</p>
+
+  <p>To continue discovering Tails, read our <a href="../doc.es.html">documentation</a>.</p>
+
+</div>
+
+</div>
+
+
+
+
+<h1 class="step" id="wi-fi">Test your Wi-Fi</h1>
+
+
+<p>Problemas con Wi-Fi son desafortunadamente muy comunes en Tails y Linux en
+general. Para probar si tu interfaz Wi-Fi funciona en Tails:</p>
+
+<ol>
+<li><p>Abre el men&uacute; del sistema en la esquina superior derecha:</p>
+
+<p><a href="../doc/first_steps/desktop/system-with-wifi-only.png"><img alt="" class="screenshot" height="507" src="../doc/first_steps/desktop/system-with-wifi-only.png" width="444" /></a></p></li>
+<li><p>Click <img alt="" class="symbolic" height="16" src="../lib/go-next.png" width="16" /> on the
+right of the <strong>Wi-Fi</strong> button.</p>
+
+<p>A list of available Wi-Fi networks appears below the <strong>Wi-Fi</strong> button.</p></li>
+<li><p>After establishing a connection to a local network, the <em>Tor Connection</em>
+assistant appears to help you connect to the Tor network.</p>
+
+<p><a href="../doc/anonymous_internet/tor/tor-connection.png"><img alt="" class="screenshot" height="585" src="../doc/anonymous_internet/tor/tor-connection.png" width="1011" /></a></p>
+
+<div class="next">
+
+<p>To learn more about the Tor network, go to <a href="../doc/anonymous_internet/tor.es.html">Connecting to the Tor
+network</a>.</p>
+
+</div>
+</li>
+</ol>
+
+
+<h2>Troubleshooting Wi-Fi not working</h2>
+
+<p>Si tu interfaz Wi-Fi no est&aacute; funcionando, puede que experimentes lo
+siguiente:</p>
+
+<ul>
+<li><p>No hay ning&uacute;n men&uacute; de <strong>Wi-Fi</strong> en el men&uacute; del sistema:</p>
+
+<p><a href="../doc/anonymous_internet/no-wifi/system_without_wifi.png"><img alt="" class="screenshot" height="508" src="../doc/anonymous_internet/no-wifi/system_without_wifi.png" width="444" /></a></p></li>
+<li><p>Hay un men&uacute; <strong>Wi-Fi</strong> en el men&uacute; del sistema, pero la conexi&oacute;n a una red
+Wi-Fi falla.</p></li>
+<li><p>La interfaz est&aacute; desactivada porque la anonimizaci&oacute;n de la direcci&oacute;n MAC
+fall&oacute;:</p>
+
+<p><a href="../doc/anonymous_internet/no-wifi/mac_spoofing_disabled.png"><img alt="Notification: MAC address anonymization failed" class="screenshot" height="206" src="../doc/anonymous_internet/no-wifi/mac_spoofing_disabled.png" width="571" /></a></p>
+
+<p>In this case, you can disable MAC address anonymization in the Welcome
+Screen. Doing so has security implications, so read carefully our
+<a href="../doc/first_steps/welcome_screen/mac_spoofing.es.html">documentation about MAC address
+anonymization</a>.</p></li>
+<li><p>Aparece la siguiente notificaci&oacute;n:</p>
+
+<pre><code>La activaci&oacute;n de la conexi&oacute;n de red fall&oacute;
+</code></pre></li>
+</ul>
+
+
+<p>Para conectarte a Internet, puedes probar de:</p>
+
+<ul>
+<li><p>Usar un cable Ethernet en vez de Wi-Fi si es posible. Los adaptadores por
+cable funcionan mejor en Tails.</p></li>
+<li><p>Compartir la conexi&oacute;n de datos m&oacute;viles o Wi-Fi de tu tel&eacute;fono con un cable
+USB. Compartir una conexi&oacute;n de esta manera se denomina <em>Anclaje a red
+USB</em>.</p>
+
+<p><img alt="" class="svg" height="95" src="../doc/anonymous_internet/no-wifi/usb-tethering.png" width="375" /></p>
+
+<p>Consulta las instrucciones para:</p>
+
+<ul>
+<li><p><a href="https://support.apple.com/es-es/HT204023">iPhones o iPads</a></p>
+
+<p>Solo compartir datos m&oacute;viles funciona en iPhones y iPads; compartir Wi-Fi no funciona.</p></li>
+<li><p><a href="https://support.google.com/android/answer/9059108?hl=es">Android</a></p></li>
+</ul>
+
+
+<div class="caution">
+<p>Tails cannot hide the information that identifies your phone on the local
+network. If you connect your phone to a:</p>
+<ul>
+<li><p>Wi-Fi network: the network can see the MAC
+address of your phone.</p>
+<p>This has security implications that we explain in our <a href="../doc/first_steps/welcome_screen/mac_spoofing.es.html">documentation on
+MAC address anonymization</a>.  Some
+phones have a feature to hide the MAC address of the phone.</p></li>
+<li><p>Mobile data network: the network is able to know the identifier of
+your SIM card (IMSI) and the serial number of your phone (IMEI).</p></li>
+</ul>
+</div>
+</li>
+</ul>
+
+
+<p><a id="wifi-adapters"></a></p>
+
+<ul>
+<li><p>Compra un adaptador USB Wi-Fi que funcione en Tails:</p>
+
+<ul>
+<li><p>Panda Wireless Ultra ($25)</p>
+
+<p><a href="https://www.amazon.com/d/B00762YNMG">Buy on Amazon</a></p></li>
+<li><p>ThinkPenguin TPE-N150USB ($64)</p>
+
+<p><a href="https://www.thinkpenguin.com/gnu-linux/penguin-wireless-n-usb-adapter-gnu-linux-tpe-n150usb">Buy on ThinkPenguin</a></p></li>
+</ul>
+</li>
+</ul>
+
+
+
+
+
+<ul>
+<li>Consulta nuestra lista de <a href="../support/known_issues.es.html#problematic-wifi">problemas conocidos de
+Wi-Fi</a> si existe una soluci&oacute;n
+alternativa para que tu interfaz de Wi-Fi funcione en Tails.</li>
+</ul>
+
+
+
+
+    </section>
+  </article>
+
+</main>
+
+<footer id="footer" class="pagefooter">
+  <div id="footer-container">
+
+    <div id="language-switcher-bottom">
+      
+      <nav class="language-switcher" aria-label="Languages">
+        <div class="current-language">Español</div>
+        <ul class="other-languages">
+          
+          <li>
+            <a href="./windows.en.html">English</a>
+          </li>
+          
+          <li>
+            <a href="./windows.ca.html">Català</a>
+          </li>
+          
+          <li>
+            <a href="./windows.de.html">Deutsch</a>
+          </li>
+          
+          <li>
+            <a href="./windows.fr.html">Français</a>
+          </li>
+          
+          <li>
+            <a href="./windows.it.html">Italiano</a>
+          </li>
+          
+          <li>
+            <a href="./windows.pt.html">Português</a>
+          </li>
+          
+          <li>
+            <a href="./windows.ru.html">Русский</a>
+          </li>
+          
+          
+        </ul>
+      </nav>
+      
+    </div>
+
+    <div id="footer-columns">
+      <div>
+
+<h5>Tails</h5>
+
+<ul>
+<li><a href="../index.es.html">Inicio</a></li>
+<li><a href="../about.es.html">C&oacute;mo funciona Tails</a></li>
+<li><a href="../install.es.html">Instalar Tails</a></li>
+<li><a href="../nav/doc.es.html">Documentaci&oacute;n</a></li>
+<li><a href="../support.es.html">Soporte</a></li>
+<li><a href="../news.es.html">Noticias</a></li>
+</ul>
+
+</div>
+
+<div>
+
+<h5>Soporte</h5>
+
+<ul>
+<li><a href="../support/faq.es.html">FAQs</a></li>
+<li><a href="../support/known_issues.es.html">Problemas conocidos</a></li>
+<li><a href="../doc/about/warnings.es.html">Advertencias</a></li>
+<li><a href="../security.es.html">Consejos de seguridad</a></li>
+<li><a href="../doc/first_steps/accessibility.es.html">Accesibilidad</a></li>
+<li><a href="../doc/upgrade.es.html">Upgrade</a></li>
+</ul>
+
+</div>
+
+<div>
+
+<h5>Colabora</h5>
+
+<ul>
+<li><a href="../contribute.es.html">Colabora</a></li>
+<li><a href="../doc/first_steps/whisperback.es.html">Report an error</a></li>
+<li><a href="../contribute/how/translate.html">Traducir</a></li>
+<li><a href="../contribute/how/code.html">C&oacute;digo fuente</a></li>
+<li><a href="https://gitlab.tails.boum.org/tails/tails/-/issues">GitLab</a></li>
+<li><a href="../donate.es.html">Donar</a></li>
+</ul>
+
+</div>
+
+<div>
+
+<h5>Acerca de</h5>
+
+<ul>
+<li><a href="../doc/about/contact.es.html">Contacto</a></li>
+<li><a href="../contribute/mission.html">Mission and values</a></li>
+<li><a href="https://community.torproject.org/policies/social_contract/">Social
+contract</a></li>
+<li><a href="https://www.torproject.org/es/about/supporters/">Seguidores</a></li>
+<li><a href="https://community.torproject.org/policies/code_of_conduct/">Code of
+conduct</a></li>
+<li><a href="../doc/about/license.es.html">Licencia</a></li>
+<li><a href="../jobs.html">Jobs</a></li>
+</ul>
+
+</div>
+
+<div>
+
+<h5>Noticias</h5>
+
+<p>Subscribe to our <a href="../news.es.html">newsletter</a></p>
+
+<form action="https://www.autistici.org/mailman/subscribe/amnesia-news" method="POST">
+  <input aria-label="Email" name="email" value="" /> <button aria-label="Subscribe" type="submit">Subscribe</button>
+</form>
+
+<div id="social-media">
+  <div><a href="https://forum.torproject.org" target="_blank"><i class="fab
+fa-discourse"></i></a></div>
+  <div><a href="https://www.facebook.com/TorProject/" target="_blank"><i class="fab
+fa-facebook"></i></a></div>
+  <div><a href="https://mastodon.social/@torproject" rel="me" target="_blank"><i class="fab fa-mastodon"></i></a></div>
+  <div><a href="https://www.instagram.com/torproject" target="_blank"><i class="fab
+fa-instagram"></i></a></div>
+  <div><a href="https://twitter.com/Tails_live" target="_blank"><i class="fab
+fa-twitter"></i></a></div>
+  <div><a href="https://www.linkedin.com/company/tor-project" target="_blank"><i class="fab fa-linkedin"></i></a></div>
+  <div><a href="https://github.com/torproject" target="_blank"><i class="fab
+fa-github"></i></a></div>
+  <div><a href="https://t.me/torproject" target="_blank"><i class="fab
+fa-telegram"></i></a></div>
+  <div><a href="https://gitlab.torproject.org/" target="_blank"><i class="fab
+fa-gitlab"></i></a></div>
+</div>
+
+</div>
+
+<div id="made-by">
+
+<img alt="" class="svg" height="91" src="../lib/tor-black.png" width="151" />
+
+<p>Tails is made by the <a href="https://torproject.org/">Tor Project</a>.</p>
+
+</div>
+
+    </div>
+
+  </div>
+</footer>
+<script src="../ikiwiki/ikiwiki.js" type="text/javascript" charset="utf-8"></script>
+<script src="../ikiwiki/toggle.js" type="text/javascript" charset="utf-8"></script>
+</body>
+</html>

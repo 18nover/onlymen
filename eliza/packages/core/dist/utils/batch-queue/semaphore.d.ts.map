@@ -1,0 +1,1 @@
+{"version":3,"file":"semaphore.d.ts","sourceRoot":"","sources":["../../../src/utils/batch-queue/semaphore.ts"],"names":[],"mappings":"AAAA;;;;;;;;;GASG;AACH,qBAAa,SAAS;IACrB,OAAO,CAAC,OAAO,CAAS;IACxB,OAAO,CAAC,OAAO,CAAyB;gBAE5B,KAAK,EAAE,MAAM;IAInB,OAAO,IAAI,OAAO,CAAC,IAAI,CAAC;IAW9B,OAAO,IAAI,IAAI;CAQf"}

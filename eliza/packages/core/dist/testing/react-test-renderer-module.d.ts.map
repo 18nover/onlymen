@@ -1,0 +1,1 @@
+{"version":3,"file":"react-test-renderer-module.d.ts","sourceRoot":"","sources":["../../src/testing/react-test-renderer-module.ts"],"names":[],"mappings":"AAAA;;;GAGG;AACH,OAAO,QAAQ,qBAAqB,CAAC;IACpC,SAAgB,GAAG,CAAC,CAAC,EAAE,QAAQ,EAAE,MAAM,CAAC,GAAG,OAAO,CAAC,CAAC,CAAC,GAAG,OAAO,CAAC,OAAO,CAAC,CAAC,CAAC,CAAC,CAAC;CAC5E"}

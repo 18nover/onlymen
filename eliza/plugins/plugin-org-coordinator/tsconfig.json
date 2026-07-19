@@ -1,0 +1,35 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "composite": false,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "types": ["node"],
+    "typeRoots": [
+      "./node_modules/@types",
+      "../../node_modules/@types",
+      "../../node_modules/.bun/node_modules/@types"
+    ],
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "paths": {
+      "@elizaos/cloud-routing": ["../../packages/cloud/routing/src/index.ts"],
+      "@elizaos/cloud-routing/*": ["../../packages/cloud/routing/src/*"],
+      "@elizaos/contracts": ["../../packages/contracts/src/index.ts"],
+      "@elizaos/contracts/*": ["../../packages/contracts/src/*"],
+      "@elizaos/core": ["../../packages/core/src/index.node.ts"],
+      "@elizaos/core/*": ["../../packages/core/src/*"],
+      "@elizaos/logger": ["../../packages/logger/src/index.ts"],
+      "@elizaos/logger/*": ["../../packages/logger/src/*"],
+      "@elizaos/shared": ["../../packages/shared/src/index.ts"],
+      "@elizaos/shared/*": ["../../packages/shared/src/*"]
+    }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

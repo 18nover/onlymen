@@ -1,0 +1,9 @@
+import type { Memory } from "../../../types/memory.js";
+import type { State } from "../../../types/state.js";
+export declare const PLUGIN_MANAGER_BASE_KEYWORDS: readonly ["plugin", "plugins", "plugin manager", "plugin-manager", "extension", "extensions", "module", "modules", "addon", "add-on", "add-ons", "integration", "integrations", "integrate", "integrated", "connect", "connected", "connection", "connector", "connectors", "adapter", "adapters", "bridge", "bridges", "interoperability", "orchestration", "compatibility", "ecosystem", "registry", "catalog", "directory", "marketplace", "index", "search", "discover", "install", "installed", "installation", "uninstall", "remove", "removed", "load", "loaded", "unload", "unloaded", "enable", "enabled", "disable", "disabled", "configure", "configuration", "config", "settings", "setup", "status", "state", "health", "available", "availability", "error", "errors", "package", "packages", "repo", "repository", "dependencies", "runtime", "provider", "providers", "service", "services", "tool", "tools", "workflow", "workflows"];
+export declare const COMMON_CONNECTOR_KEYWORDS: readonly ["discord", "telegram", "slack", "whatsapp", "twitter", "github", "farcaster", "nostr", "line", "matrix", "google chat", "msteams", "teams", "twilio", "imessage", "bluebubbles", "bluesky", "twitch", "instagram", "zalo", "nextcloud", "gmail", "openai", "anthropic", "groq", "ollama", "xai", "solana", "evm", "mcp", "rss", "s3", "sql"];
+export declare function buildProviderKeywords(...groups: Array<readonly string[] | string[] | undefined>): string[];
+export declare function keywordsFromPluginNames(pluginNames: Iterable<string>): string[];
+export declare function buildKeywordRegex(keywords: readonly string[]): RegExp;
+export declare function isProviderRelevant(message: Memory, state: State | undefined, keywords: readonly string[]): boolean;
+//# sourceMappingURL=relevance.d.ts.map

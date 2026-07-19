@@ -1,0 +1,1 @@
+{"version":3,"file":"adminContext.d.ts","sourceRoot":"","sources":["../../../../src/features/trust/services/adminContext.ts"],"names":[],"mappings":"AAQA,OAAO,EAEN,KAAK,aAAa,EAClB,KAAK,MAAM,EAEX,KAAK,KAAK,EAEV,MAAM,yBAAyB,CAAC;AAEjC,wBAAsB,mBAAmB,CACxC,OAAO,EAAE,aAAa,EACtB,OAAO,EAAE,MAAM,EACf,KAAK,CAAC,EAAE,KAAK,GACX,OAAO,CAAC,OAAO,CAAC,CAqClB"}

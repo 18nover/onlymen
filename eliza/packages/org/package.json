@@ -1,0 +1,25 @@
+{
+  "name": "@onlymen/org",
+  "version": "0.1.0",
+  "description": "onlymen AI Engineering Organization \u2014 13 specialized agents built on elizaOS",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "validate": "bun run scripts/validate-characters.ts",
+    "lint": "biome lint .",
+    "format": "biome format .",
+    "verify": "bun run validate && bun run lint",
+    "docs": "bun run scripts/generate-agent-docs.ts",
+    "org": "bun run bin/org"
+  },
+  "dependencies": {
+    "@elizaos/core": "workspace:*",
+    "@onlymen/plugin-org-coordinator": "workspace:*"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "latest"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

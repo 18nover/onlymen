@@ -1,0 +1,1 @@
+{"version":3,"file":"oauth-role.d.ts","sourceRoot":"","sources":["../../src/connectors/oauth-role.ts"],"names":[],"mappings":"AAAA;;;;;;;;;;;;;GAaG;AAGH,OAAO,KAAK,EAAE,oBAAoB,EAAE,MAAM,mBAAmB,CAAC;AAQ9D;;;;;;;;;GASG;AACH,wBAAgB,0BAA0B,CACzC,QAAQ,EAAE,MAAM,CAAC,MAAM,EAAE,OAAO,CAAC,GAAG,IAAI,GAAG,SAAS,EACpD,GAAG,EAAE,MAAM,GACT,oBAAoB,CAsBtB"}

@@ -1,0 +1,16 @@
+// Provides shared support logic for the Clone Ur Crush cloud example.
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export function generateSessionId(): string {
+  return crypto.randomUUID();
+}
+
+export function validateEmail(email: string): boolean {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+}

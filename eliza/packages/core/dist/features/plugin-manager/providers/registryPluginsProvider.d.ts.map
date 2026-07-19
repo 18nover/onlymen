@@ -1,0 +1,1 @@
+{"version":3,"file":"registryPluginsProvider.d.ts","sourceRoot":"","sources":["../../../../src/features/plugin-manager/providers/registryPluginsProvider.ts"],"names":[],"mappings":"AASA,OAAO,KAAK,EAAE,QAAQ,EAAkB,MAAM,8BAA8B,CAAC;AAsC7E,eAAO,MAAM,uBAAuB,EAAE,QAAQ,GAAG;IAChD,iBAAiB,EAAE,MAAM,EAAE,CAAC;CAmH5B,CAAC"}
