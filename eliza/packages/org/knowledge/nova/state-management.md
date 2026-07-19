@@ -2,7 +2,23 @@
 
 ## Overview
 
-Effective state management in React Native requires separating state by its source and lifetime. This guide covers TanStack Query for server state, React Context for UI state, Zustand for complex local state, and principles for organizing state in the onlymen codebase.
+Effective state management in React Native requires separating state by its
+source and lifetime. **In this codebase the stack is TanStack Query (server
+state) + React Context (UI/preferences) + a persisted storage layer — there
+is no Zustand and no client WebSocket layer**; sections covering those are
+general background, not house patterns.
+
+### In this codebase (`app/`)
+- Server state: `app/src/state/queries/` — `createQueryKey(root, args)`,
+  `use[Name]Query`/`Mutation`/`CacheMutation` naming, `STALE` constants,
+  cursor pagination via `useInfiniteQuery`. Canonical file:
+  `src/state/queries/feed.ts`. Full pattern: see `client.md`.
+- Session: `#/state/session` (`useSession`, `useAgent`).
+- Preferences: paired hooks from `#/state/preferences`
+  (`useAutoplayDisabled()` / `useSetAutoplayDisabled()`).
+- Persistence: `app/src/state/persisted/` and query `persistedVersion`.
+- React Compiler is enabled — don't add `useMemo`/`useCallback`
+  proactively.
 
 ---
 

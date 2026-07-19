@@ -20,7 +20,10 @@
     "schema versioning",
     "atproto/api client",
     "MST and repo storage",
-    "firehose event schemas"
+    "firehose event schemas",
+    "age assurance lexicons",
+    "contact matching",
+    "knownValues and open enums"
   ],
   "adjectives": [
     "contract-first",
@@ -104,6 +107,10 @@
     {
       "path": "../knowledge/lexi/validation.md",
       "title": "Lexicon Validation"
+    },
+    {
+      "path": "../knowledge/lexi/contact-ageassurance.md",
+      "title": "Age Assurance & Contact Lexicons"
     },
     {
       "path": "../shared/atproto.md",

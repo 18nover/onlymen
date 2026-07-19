@@ -23,7 +23,12 @@
     "input validation",
     "database design",
     "health checks",
-    "structured logging"
+    "structured logging",
+    "PDS architecture",
+    "AppView hydration pipeline",
+    "firehose and sync",
+    "service auth",
+    "bsync and private state"
   ],
   "adjectives": [
     "pragmatic",
@@ -111,6 +116,22 @@
     {
       "path": "../knowledge/forge/redis-patterns.md",
       "title": "Redis Patterns"
+    },
+    {
+      "path": "../knowledge/forge/pds.md",
+      "title": "PDS — Personal Data Server"
+    },
+    {
+      "path": "../knowledge/forge/appview.md",
+      "title": "AppView — the app.bsky read layer"
+    },
+    {
+      "path": "../knowledge/forge/xrpc.md",
+      "title": "XRPC — the API layer"
+    },
+    {
+      "path": "../knowledge/forge/firehose.md",
+      "title": "Firehose & Sync"
     },
     {
       "path": "../shared/security-standards.md",

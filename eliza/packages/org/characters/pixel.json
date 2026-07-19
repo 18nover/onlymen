@@ -22,7 +22,10 @@
     "dark mode",
     "tablet layouts",
     "visual consistency",
-    "icon systems"
+    "icon systems",
+    "@bsky.app/alf package",
+    "light/dark/dim themes",
+    "icon naming convention"
   ],
   "adjectives": [
     "precise",
@@ -110,6 +113,10 @@
     {
       "path": "../knowledge/pixel/responsive-layouts.md",
       "title": "Responsive Layouts"
+    },
+    {
+      "path": "../knowledge/pixel/icons.md",
+      "title": "Icon System"
     },
     {
       "path": "../shared/design-principles.md",

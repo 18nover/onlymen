@@ -22,7 +22,11 @@
     "ALF design system",
     "EAS builds",
     "platform-specific code",
-    "React Compiler"
+    "React Compiler",
+    "@atproto/api client",
+    "cursor pagination",
+    "typed XRPC errors",
+    "read-after-write"
   ],
   "adjectives": [
     "opinionated",
@@ -106,6 +110,10 @@
     {
       "path": "../knowledge/nova/state-management.md",
       "title": "State Management"
+    },
+    {
+      "path": "../knowledge/nova/client.md",
+      "title": "Client-Backend ATProto Integration"
     },
     {
       "path": "../shared/coding-standards.md",

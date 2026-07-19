@@ -2,7 +2,20 @@
 
 ## Overview
 
-React Navigation 7 is the primary navigation library for onlymen. This guide covers patterns for stack, tab, and drawer navigation, deep linking, and Expo Router integration.
+React Navigation 7 is the navigation library for OnlyMen. **The app does
+NOT use Expo Router** — treat any Expo Router material below as general
+background only.
+
+### In this codebase (`app/`)
+- Config: `app/src/Navigation.tsx`; route strings: `app/src/routes.ts`;
+  param types: `app/src/lib/routes/types.ts`.
+- Type a screen with
+  `NativeStackScreenProps<CommonNavigatorParams, 'X'>`; navigate with
+  `useNavigation()` or the `navigate` helper from `#/Navigation`.
+- New screens go in `app/src/screens/` (not the legacy `view/screens/`);
+  complex screens use a `ScreenName/` directory with `index.tsx` +
+  `components/`.
+- Shell (tabs, nav bars) lives in `app/src/view/shell/`.
 
 ---
 

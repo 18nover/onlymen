@@ -2,7 +2,24 @@
 
 ## Overview
 
-Expo SDK 54 is the foundation for the onlymen mobile application. This guide covers key modules, development workflows, and best practices for working with the SDK.
+Expo SDK 54 (React Native 0.81, React 19.1) is the foundation for the
+OnlyMen mobile application.
+
+### In this codebase (`app/`)
+- **Expo Go is not a shipping mechanism.** The app uses custom native
+  modules (`app/modules/`: bottom-sheet, expo-bluesky-swiss-army, video
+  compress, receive-android-intents, …) so real builds go through
+  `eas build` / development builds (`pnpm android` on a dev build). Web
+  runs via `pnpm web`.
+- Platform-specific files (`.web.tsx`, `.native.tsx`, `.ios.tsx`,
+  `.android.tsx`) are resolved by the bundler — import the base path,
+  never conditional `require()`. Runtime detection: `IS_WEB`/`IS_NATIVE`
+  from `#/env`.
+- i18n is Lingui 5 — all user-facing strings wrapped (`l\`\`` /
+  `<Trans>`); extraction/compilation is CI-only, never run locally.
+- Camera usage in this app is limited to standard permission-gated flows
+  (QR scanning, media capture) — there is no vision/object-detection
+  product surface.
 
 ---
 

@@ -4,6 +4,27 @@
 
 The authentication system is built on AT Protocol OAuth, providing decentralized identity with standard OAuth 2.0 flows. It handles token lifecycle, secure storage, session management, and multi-device support across iOS, Android, and web.
 
+## The four server-side auth surfaces (where they live in our fork)
+
+1. **Session JWTs** — `com.atproto.server.createSession` issues a
+   short-lived access token + rotating refresh token; verified by
+   `atproto/packages/pds/src/auth-verifier.ts`. This is what the app uses
+   today (`app/src/state/session/`).
+2. **App passwords** — scoped credentials for third-party clients; scope
+   enforcement in `pds/src/auth-scope.ts`.
+3. **Service auth** — short-lived JWTs signed with the *user's repo key*,
+   audience-bound, used for PDS→AppView proxied reads (`pipethrough.ts`);
+   verified by `atproto/packages/bsky/src/auth-verifier.ts`. The AppView
+   has no sessions of its own — this is the only identity it trusts.
+4. **OAuth (DPoP + PAR)** — the PDS is an OAuth authorization server
+   (`pds/src/account-manager/oauth-store.ts`, `pds/src/auth-routes.ts`,
+   built on `atproto/packages/oauth*`). The client flow below rides on
+   this. Protocol details: Sentinel's `oauth.md`.
+
+Role auth exists per-method for system endpoints (e.g.
+`app.bsky.contact.sendNotification`) — auth is chosen per XRPC method,
+never per namespace (see `xrpc.md`).
+
 ---
 
 ## AT Protocol OAuth Flow
