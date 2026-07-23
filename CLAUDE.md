@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 OnlyMen is a decentralized social platform for gay men (18+), built on the AT Protocol (the open, federated protocol behind Bluesky). This is a monorepo with four top-level areas, each independently developed and **each carrying its own `CLAUDE.md`** — read that file before working inside the directory; this root file is only the map.
 
-```
+```json
 app/        bsky.app — OnlyMen client, forked from the Bluesky social app (React Native + Expo, web/Android/iOS)
 atproto/    atp — AT Protocol infrastructure fork (PDS, AppView, Ozone moderation, bsync, lexicons)
 eliza/      elizaOS framework fork — the AI engineering organization runs on top of this (packages/org/)

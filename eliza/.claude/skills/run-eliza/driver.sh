@@ -26,7 +26,7 @@ BASE="http://127.0.0.1:$PORT"
 
 agent_id() {
   curl -s --max-time 5 "$BASE/api/agents" \
-    | python3 -c 'import json,sys; print(json.load(sys.stdin)["agents"][0]["id"])'
+    | node -e 'let d="";process.stdin.on("data",c=>d+=c);process.stdin.on("end",()=>console.log(JSON.parse(d).agents[0].id))'
 }
 
 case "${1:-help}" in
@@ -77,7 +77,7 @@ EOF
     # a couple of minutes while the session spins up.
     curl -s --max-time 300 -X POST "$BASE/api/agents/$ID/message" \
       -H 'Content-Type: application/json' \
-      -d "$(python3 -c 'import json,sys; print(json.dumps({"userId":"driver","text":sys.argv[1]}))' "$2")"
+      -d "$(node -e 'console.log(JSON.stringify({userId:"driver",text:process.argv[1]}))' "$2")"
     echo
     ;;
   logs)

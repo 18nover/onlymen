@@ -8,7 +8,7 @@ A standalone, dependency-light CLI (only `@clack/prompts`, `commander`, `picocol
 
 ## Layout
 
-```
+```json
 src/
   cli.ts               #!/usr/bin/env node — Commander program; default action = interactive @clack menu
   index.ts             Library exports (create, info, upgrade, version, registerPluginsCommand, submitPluginToRegistry, loadManifest, types)
@@ -120,6 +120,7 @@ explicitly mark it N/A with a reason — never leave it blank. If `develop` move
 behavior, **re-capture** evidence; stale proof is worse than none.
 
 **Capture & manually review for this package — CLI / tooling:**
+
 - The real command/flow invocation transcript (args in, stdout/stderr, exit code) and the artifacts it generated (files, scaffolds, manifests, screenshots/recordings).
 - Failure paths: bad args, missing deps, partial state, permission/network errors.
 - A recording/log of the actual run end to end — not a unit test of one helper.
