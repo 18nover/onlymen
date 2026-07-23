@@ -1,9 +1,9 @@
 ---
 name: technical-writing
-description: "Technical writing skill for Scribe. README templates, API docs, architecture docs, deployment guides, runbooks, release notes, incident post-mortems, audience adaptation, doc tooling."
+description: "Technical writing skill for Penelope. README templates, API docs, architecture docs, deployment guides, runbooks, release notes, incident post-mortems, audience adaptation, doc tooling."
 version: 1.0.0
 author: OnlyMen Engineering
-agent: Scribe
+agent: Penelope
 category: documentation
 tags:
   - technical-writing
@@ -109,7 +109,7 @@ Proprietary -- OnlyMen Engineering
 ### Endpoint Documentation Template
 
 The API surface here is **XRPC**, driven by lexicon schemas (see Lexi's
-`lexicon-schema.md`) — Scribe documents the method in narrative form, but
+`lexicon-schema.md`) — Penelope documents the method in narrative form, but
 the contract itself is the lexicon JSON, not a hand-written spec:
 
 ```markdown
@@ -162,7 +162,7 @@ Create a new record in the authenticated user's repo.
 
 Don't hand-maintain an OpenAPI spec — `atproto/packages/lex-cli`'s `lex
 gen-md` generates a Markdown API reference directly from lexicon JSON,
-regenerated via `pnpm codegen`. Scribe's job is the narrative doc layer on
+regenerated via `pnpm codegen`. Penelope's job is the narrative doc layer on
 top (guides, gotchas, migration notes), not re-deriving the contract by
 hand — see `api-doc-standards.md` for the full pipeline.
 
@@ -557,10 +557,10 @@ If the above steps do not resolve the issue:
 | DID           | Decentralized identifier — an account's permanent identity |
 | PDS           | Personal Data Server — hosts a user's repo             |
 | Lexi          | The lexicon/schema-design agent                         |
-| Vision        | The moderation-tooling agent (Ozone, labels, reports)   |
-| Circuit       | The infrastructure agent (DevOps, deployment)           |
-| Compass       | The quality agent (testing, QA)                         |
-| Scribe        | The documentation agent                                 |
+| Karen        | The moderation-tooling agent (Ozone, labels, reports)   |
+| Devon       | The infrastructure agent (DevOps, deployment)           |
+| Quinn       | The quality agent (testing, QA)                         |
+| Penelope        | The documentation agent                                 |
 
 ---
 
@@ -584,7 +584,7 @@ If the above steps do not resolve the issue:
 graph TD
     A[Client] -->|HTTPS| B[API Gateway]
     B --> C[API Service]
-    B --> D[Vision Service]
+    B --> D[Karen Service]
     C --> E[(PostgreSQL)]
     C --> F[(Redis)]
     D --> G[Edge Device]

@@ -13,14 +13,35 @@ add it to CHANGELOG.md and update only the still-current facts here.
 
 ---
 
+## Recap of Most Recent Session (2026-07-22, agent rename + Custom OS)
+
+- Renamed all 13 agent character files from code-style names (Atlas, Circuit,
+  etc.) to the human-name roster in `AGENTS.md` (Andrew, Devon, etc.) —
+  files, folders, cross-references, `ORG_AGENTS`, and generated docs all
+  updated and regenerated. See `CHANGELOG.md` for the full file list.
+- Added Custom OS grounding for Devon, Morgan, Seth, Parker, Audrey, Quinn,
+  and Penelope (new `shared/custom-os.md` primer + one knowledge file each) —
+  the other 6 agents remain OnlyMen/Bluesky-only.
+- Discovered `custom-os/` is checked into this tree as a **nested git
+  repository** (own `.git`, own GitHub remote `jerry-lockard/custom-os`),
+  not a submodule — see the "Repo state" note below and Audrey's
+  `custom-os-audit.md`. **Correction (later same session): this was wrong.**
+  Re-investigated — no `.git` exists under `custom-os/`; it's a plain
+  tracked subdirectory, added whole in commit `053149171`. All docs/
+  knowledge files written on the false premise were corrected — see the
+  "Custom OS repo-reconciliation" entry in `CHANGELOG.md`.
+
+---
+
 ## Recap of Most Recent Session (2026-07-19, docs pass)
 
 - **FIREWALL.md**: Created — SSH rate-limit, Docker/UFW bypass warning, IPv6
   rules, spec-based deletes, RDP removed from core services.
 - **CHANGELOG.md**: Created with full session history.
 - **AGENTS.md**: Created with 13 human names for the engineering org (see
-  roster below). **Names are documented here but not yet applied to the
-  actual `characters/*.json` files or ORG_AGENTS list.**
+  roster below). Applied to the codebase on 2026-07-22 — see the rename
+  entry in `CHANGELOG.md`. `characters/*.json`, `ORG_AGENTS`, knowledge
+  folders, docs, and skills all now use the human-name roster.
 - **HANDOFF.md**: This section added; domain branding added.
 - **Makefile**: Created at project root (`make handoff`, `make changelog`,
   `make log`, `make update`, `make help`).
@@ -121,10 +142,18 @@ graph TD
 
 - One git repo, root `/home/jerry/onlymen`, remote `origin` =
   `https://github.com/18nover/onlymen.git`, branch `main`.
-- `app/`, `atproto/`, `eliza/` are plain tracked subdirectories in this one
-  repo — not separate nested repos with their own history/remotes (that
-  changed early in this repo's history: `eliza cloned into onlymen`,
-  `atproto cloned into onlymen`, `bsky cloned as app`).
+- `app/`, `atproto/`, `eliza/`, and `custom-os/` are all plain tracked
+  subdirectories in this one repo — not separate nested repos with their
+  own history/remotes (that changed early in this repo's history: `eliza
+  cloned into onlymen`, `atproto cloned into onlymen`, `bsky cloned as
+  app`; `custom-os/` was added whole later, in commit `053149171` "custom
+  os was added", 2026-07-22).
+- **Correction**: an earlier pass through this repo (same day) concluded
+  `custom-os/` was a separate nested git repo with its own `.git` and
+  remote, and wrote several docs/knowledge files on that basis. That was
+  re-investigated and found false — no `.git` exists under `custom-os/`,
+  it's tracked as plain blobs same as everything else. All references to a
+  separate repo have been corrected; see `docs/CHANGELOG.md`.
 - `node_modules` is absent in all three sub-projects in this environment —
   install before running/building anything (`bun install` for eliza,
   `pnpm install` for app/atproto).
@@ -140,12 +169,13 @@ livestreaming product vision the org was originally (wrongly) built around.
 
 | Agent | `ORG_ROLE` | Knowledge files (bold = added in the Bluesky retraining) |
 
-All 13 agents currently use code-style names (Atlas, Circuit, Compass, Echo,
-Forge, Lexi, Nova, Pixel, Prism, Pulse, Scribe, Sentinel, Vision) in their
-character files, ORG_AGENTS list, and knowledge paths. A proposal to rename
-them to human names (Andrew, Devon, Quinn, Audrey, Morgan, Lexi, Nadia,
-Desiree, Ethan, Parker, Penelope, Seth, Karen) is documented in `docs/AGENTS.md`
-but has not yet been applied to the codebase.
+**Update (2026-07-22): renamed.** All 13 agents now use the human-name
+roster (Andrew, Devon, Quinn, Audrey, Morgan, Lexi, Nadia, Desiree, Ethan,
+Parker, Penelope, Seth, Karen) documented in `docs/AGENTS.md`, applied
+across character files, `ORG_AGENTS`, knowledge paths, docs, and skills.
+The table below is kept for historical mapping context (old code-style name
+→ current role); read the "Agent (current)" column as **stale** — see
+`docs/AGENTS.md` for the current names.
 
 | Agent (current) | `ORG_ROLE` | Knowledge files (bold = added in the Bluesky retraining) |
 |---|---|---|
@@ -227,10 +257,8 @@ for (const f of fs.readdirSync("characters")) {
 
 ## Known not-yet-done / lower priority
 
-- **Agent character files not yet renamed to human names** — see roster note
-  above. 13 `characters/*.json` files, the ORG_AGENTS list, and knowledge
-  file paths still use code-style names. Rename files *and* references in the
-  same pass, then re-run the verification script.
+- ~~Agent character files not yet renamed to human names~~ — done
+  2026-07-22, see `CHANGELOG.md`.
 - **"NottyBoi" → "OnlyMen" branding sweep: DONE for `eliza/packages/org/`**
   (was actually 45 files, not the 34 previously counted — the count had
   gone stale). All characters, knowledge, shared docs, skills, and script

@@ -1,13 +1,13 @@
 ---
 name: backend-dev
 description: >
-  Backend development skill for Forge. Covers API design with REST and XRPC
+  Backend development skill for Morgan. Covers API design with REST and XRPC
   patterns, PostgreSQL schema design and migrations, Redis caching strategies,
   authentication via AT Protocol OAuth, rate limiting, input validation with
   Zod, Docker configuration, health checks, and structured logging.
 metadata:
   author: OnlyMen Engineering
-  team: Forge
+  team: Morgan
   version: 1.0.0
   tags:
     - backend
@@ -23,7 +23,7 @@ metadata:
 # Backend Development
 
 Skill for building and maintaining backend services within the OnlyMen
-engineering organization. Targets Forge's API layer and infrastructure.
+engineering organization. Targets Morgan's API layer and infrastructure.
 
 ---
 
@@ -558,7 +558,7 @@ Use JSON-structured logs for machine parsing. Every log entry must include:
 {
   "level": "info",
   "ts": "2025-01-15T10:30:00.000Z",
-  "service": "forge-api",
+  "service": "morgan-api",
   "msg": "Request completed",
   "requestId": "req-abc-123",
   "method": "GET",

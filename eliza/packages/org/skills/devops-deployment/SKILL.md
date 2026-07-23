@@ -1,9 +1,9 @@
 ---
 name: devops-deployment
-description: "DevOps deployment skill for Circuit. Docker multi-stage builds, Docker Compose, GitHub Actions CI/CD, EAS builds, monitoring (Datadog dd-trace + pino), logging, secret rotation, backups, SSL/TLS."
+description: "DevOps deployment skill for Devon. Docker multi-stage builds, Docker Compose, GitHub Actions CI/CD, EAS builds, monitoring (Datadog dd-trace + pino), logging, secret rotation, backups, SSL/TLS."
 version: 1.0.0
 author: OnlyMen Engineering
-agent: Circuit
+agent: Devon
 category: infrastructure
 tags:
   - devops
@@ -416,7 +416,7 @@ verified by grep. Real observability stack:
 | Client crashes             | Sentry (app/)                                     |
 | Client-side perf/logs      | Bitdrift (app/)                                   |
 
-Don't propose adding Prometheus/Grafana without first confirming with Circuit
+Don't propose adding Prometheus/Grafana without first confirming with Devon
 whether the deploy target already has a metrics-scraping story — the
 existing stack is trace- and log-based, not metrics-scraping-based.
 

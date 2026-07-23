@@ -23,7 +23,7 @@ Build OnlyMen — a decentralized social media platform forked from Bluesky, pow
 
 ## How We Work
 
-- **Sprints:** 1-week cycles. Atlas plans on Monday, reviews on Friday.
+- **Sprints:** 1-week cycles. Andrew plans on Monday, reviews on Friday.
 - **PRs:** Every change goes through review by the relevant domain agent.
 - **Architecture Decision Records (ADRs):** Major decisions are documented in `docs/adrs/`.
 - **Incidents:** Severity-based response. Post-mortems for all Sev1/Sev2 incidents.

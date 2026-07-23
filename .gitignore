@@ -120,6 +120,10 @@ temp/
 Thumbs.db
 Desktop.ini
 
+# Windows filesystem metadata (e.g. from mounting an SD card/disk image)
+System Volume Information/
+**/System Volume Information/
+
 # --------------------------------------------
 # IDE
 # --------------------------------------------
@@ -157,6 +161,7 @@ eliza/packages/os/linux/tails/chroot/
 # --------------------------------------------
 *.iso
 *.img
+!custom-os/current/initrd.img
 *.qcow2
 *.vmdk
 
@@ -168,5 +173,5 @@ eliza/packages/os/linux/tails/chroot/
 *.tar.gz
 *.tgz
 *.7z
-*.rareliza/packages/os/linux/tails/chroot/
+*.rar
 eliza/.eliza/*

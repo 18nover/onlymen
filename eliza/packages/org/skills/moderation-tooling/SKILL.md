@@ -1,12 +1,12 @@
 ---
 name: moderation-tooling
 description: >
-  Ozone moderation system design skill for Vision. Covers the moderation
+  Ozone moderation system design skill for Karen. Covers the moderation
   event model, subject status state machine, label taxonomy design, report
   triage/queue routing, appeals, and strikes.
 version: 1.0.0
 authors:
-  - Vision
+  - Karen
 tags:
   - ozone
   - moderation
@@ -14,9 +14,9 @@ tags:
   - trust-and-safety
   - at-protocol
 applicable_agents:
-  - Vision
-  - Forge
-  - Sentinel
+  - Karen
+  - Morgan
+  - Seth
 ---
 
 # Moderation Tooling Skill
@@ -63,7 +63,7 @@ designing a new event's effect on `subjectStatusView.reviewState`:
 4. **`defaultSetting`**: most harm categories default to `hide`; disclosures
    default to `warn` or `ignore`.
 5. Write the `labelValueDefinitionStrings` copy (name + description per
-   locale) before shipping — hand to Scribe, never ship a placeholder.
+   locale) before shipping — hand to Penelope, never ship a placeholder.
 6. Never redefine a `!`-prefixed system label's semantics (`!hide`, `!warn`,
    `!no-unauthenticated`) — those exist specifically to bypass user overrides.
 
@@ -103,4 +103,4 @@ feature, not two.
 3. Strike interaction decided explicitly (carries a count? expires?).
 4. Client rendering spec handed off, not left implicit.
 5. Anything CSAM-adjacent or involving blob diversion routes through
-   Sentinel review before merging — no exceptions.
+   Seth review before merging — no exceptions.

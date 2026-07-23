@@ -32,7 +32,7 @@ computes/fetches state, and gates UI by access level.
   to an `#access` level.
 - `#event`: the stash-stored audit record of an assurance attempt
   (`attemptId` UUID, status, access, country/region, email, init/complete
-  IP + UA). High-sensitivity data — retention and access need Sentinel
+  IP + UA). High-sensitivity data — retention and access need Seth
   review.
 
 ### Methods
@@ -89,7 +89,7 @@ matching — raw phone numbers are not stored). Flow:
 
 ### OnlyMen sensitivity note
 Phone numbers + a social graph of gay men is outing-risk data. Any change
-touching this surface requires Sentinel review; `removeData` behavior is a
+touching this surface requires Seth review; `removeData` behavior is a
 hard product guarantee. Matching stays hash-based and mutual-only; never
 propose designs that store raw numbers or reveal one-sided imports.
 

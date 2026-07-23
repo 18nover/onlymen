@@ -15,8 +15,8 @@ tags:
   - at-protocol
 applicable_agents:
   - Lexi
-  - Forge
-  - Nova
+  - Morgan
+  - Nadia
 ---
 
 # Lexicon Design Skill

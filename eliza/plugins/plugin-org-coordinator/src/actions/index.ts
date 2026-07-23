@@ -11,8 +11,8 @@ import type { OrgReview, OrgTask } from '../types/index.ts'
 
 /** Short names the planner may use for org agents (usernames also accepted). */
 const ORG_AGENTS = [
-  'atlas', 'circuit', 'compass', 'echo', 'forge', 'lexi', 'nova', 'pixel',
-  'prism', 'pulse', 'scribe', 'sentinel', 'vision',
+  'andrew', 'devon', 'quinn', 'audrey', 'morgan', 'lexi', 'nadia', 'desiree',
+  'ethan', 'parker', 'penelope', 'seth', 'karen',
 ] as const
 
 const REVIEW_TYPES = [
@@ -37,7 +37,7 @@ export const requestReviewAction: Action = {
       description: 'The org agent who should perform the review',
       required: true,
       schema: { type: 'string', enum: [...ORG_AGENTS] },
-      examples: ['sentinel', 'prism'],
+      examples: ['seth', 'ethan'],
     },
     {
       name: 'type',
@@ -84,8 +84,8 @@ export const requestReviewAction: Action = {
     return { success: true, text: response }
   },
   examples: [[
-    { name: 'User', content: { text: 'Nova, please review the auth flow implementation.' } },
-    { name: 'Atlas', content: { text: 'REQUEST_REVIEW for the auth flow. Assigning to Sentinel for security review.' } },
+    { name: 'User', content: { text: 'Nadia, please review the auth flow implementation.' } },
+    { name: 'Andrew', content: { text: 'REQUEST_REVIEW for the auth flow. Assigning to Seth for security review.' } },
   ]],
 }
 
@@ -99,7 +99,7 @@ export const assignWorkAction: Action = {
       description: 'The org agent who should own the task',
       required: true,
       schema: { type: 'string', enum: [...ORG_AGENTS] },
-      examples: ['nova'],
+      examples: ['nadia'],
     },
     {
       name: 'title',
@@ -148,7 +148,7 @@ export const assignWorkAction: Action = {
       title: paramString(params, 'title') ?? extractTaskTitle(text),
       description: paramString(params, 'description') ?? text,
       assignee: paramString(params, 'assignee') ?? extractAssignee(text),
-      assigner: message.agentId || 'atlas-pm',
+      assigner: message.agentId || 'andrew-pm',
       status: 'pending',
       priority: (paramString(params, 'priority') as OrgTask['priority'] | null) ?? extractPriority(text),
       deadline: paramString(params, 'deadline') ?? undefined,
@@ -162,13 +162,13 @@ export const assignWorkAction: Action = {
     return { success: true, text: response }
   },
   examples: [[
-    { name: 'Atlas', content: { text: 'ASSIGN_WORK to Nova: Implement the new settings screen. Priority: high.' } },
+    { name: 'Andrew', content: { text: 'ASSIGN_WORK to Nadia: Implement the new settings screen. Priority: high.' } },
   ]],
 }
 
 export const escalateAction: Action = {
   name: 'ESCALATE',
-  description: 'Escalate a blocker or issue to Atlas',
+  description: 'Escalate a blocker or issue to Andrew',
   similes: ['escalate', 'raise blocker', 'need help'],
   parameters: [
     {
@@ -222,7 +222,7 @@ export const escalateAction: Action = {
     return { success: true, text: response }
   },
   examples: [[
-    { name: 'Nova', content: { text: "ESCALATE: I'm blocked on the Expo SDK upgrade. Need Atlas to prioritize." } },
+    { name: 'Nadia', content: { text: "ESCALATE: I'm blocked on the Expo SDK upgrade. Need Andrew to prioritize." } },
   ]],
 }
 
@@ -274,7 +274,7 @@ export const reportCompleteAction: Action = {
     return { success: Boolean(task), text: response }
   },
   examples: [[
-    { name: 'Forge', content: { text: 'TASK-001 is done. Auth flow implemented and tested.' } },
+    { name: 'Morgan', content: { text: 'TASK-001 is done. Auth flow implemented and tested.' } },
   ]],
 }
 
@@ -315,7 +315,7 @@ export const summarizeAction: Action = {
     return { success: true, text: response }
   },
   examples: [[
-    { name: 'Atlas', content: { text: 'Give me a summary of the org status.' } },
+    { name: 'Andrew', content: { text: 'Give me a summary of the org status.' } },
   ]],
 }
 
@@ -328,7 +328,7 @@ function extractTaskId(text: string): string {
 
 function extractReviewer(text: string): string {
   for (const agent of ORG_AGENTS) {
-    if (agent !== 'atlas' && text.toLowerCase().includes(agent)) return agent
+    if (agent !== 'andrew' && text.toLowerCase().includes(agent)) return agent
   }
   return 'unknown'
 }
@@ -344,7 +344,7 @@ function extractReviewType(text: string): OrgReview['type'] {
 
 function extractAssignee(text: string): string {
   for (const agent of ORG_AGENTS) {
-    if (agent !== 'atlas' && text.toLowerCase().includes(agent)) return agent
+    if (agent !== 'andrew' && text.toLowerCase().includes(agent)) return agent
   }
   return 'unknown'
 }

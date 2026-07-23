@@ -4,19 +4,19 @@
 
 | Change Type | Required Reviewers | Optional Reviewers |
 |-------------|-------------------|-------------------|
-| Frontend UI | Nova, Pixel | Pulse, Compass |
-| Backend API | Forge | Sentinel, Circuit |
-| AT Protocol | Forge, Echo | Atlas |
-| Security-related | Sentinel | Forge, Atlas |
-| DevOps/Infra | Circuit | Sentinel, Pulse |
-| Design system | Pixel | Nova, Compass |
-| Moderation & labeling | Vision | Sentinel, Atlas |
-| Lexicon/schema changes | Lexi | Forge, Nova |
-| Documentation | Scribe | Domain expert |
-| Database | Forge | Sentinel |
-| Performance | Pulse | Nova, Circuit |
-| Testing | Compass | Domain expert |
-| Cross-cutting | Atlas | All domain leads |
+| Frontend UI | Nadia, Desiree | Parker, Quinn |
+| Backend API | Morgan | Seth, Devon |
+| AT Protocol | Morgan, Audrey | Andrew |
+| Security-related | Seth | Morgan, Andrew |
+| DevOps/Infra | Devon | Seth, Parker |
+| Design system | Desiree | Nadia, Quinn |
+| Moderation & labeling | Karen | Seth, Andrew |
+| Lexicon/schema changes | Lexi | Morgan, Nadia |
+| Documentation | Penelope | Domain expert |
+| Database | Morgan | Seth |
+| Performance | Parker | Nadia, Devon |
+| Testing | Quinn | Domain expert |
+| Cross-cutting | Andrew | All domain leads |
 
 ## Review Process
 
@@ -25,7 +25,7 @@
 {
   "action": "REQUEST_REVIEW",
   "taskId": "TASK-042",
-  "reviewer": "sentinel-sec",
+  "reviewer": "seth-sec",
   "artifact": "pr-123-auth-flow",
   "type": "security_review",
   "urgency": "high",
@@ -62,32 +62,32 @@ Reviewer checks:
 ### 4. Resolution
 - **Approved** — Can proceed to next stage
 - **Changes Requested** — Fix findings, re-request review
-- **Blocked** — Escalate to Atlas for resolution
+- **Blocked** — Escalate to Andrew for resolution
 
 ## Domain Review Checklists
 
-### Nova (React Native/Expo)
+### Nadia (React Native/Expo)
 - [ ] Platform-specific code uses correct extensions
 - [ ] No New Architecture breaking changes
 - [ ] Expo SDK compatibility verified
 - [ ] React Compiler compatible (no manual memoization)
 - [ ] Navigation follows established patterns
 
-### Forge (Backend)
+### Morgan (Backend)
 - [ ] API endpoints follow RESTful conventions
 - [ ] Database queries are indexed and efficient
 - [ ] Error responses are structured and helpful
 - [ ] Rate limiting applied to new endpoints
 - [ ] Input validation on all parameters
 
-### Sentinel (Security)
+### Seth (Security)
 - [ ] No hardcoded credentials
 - [ ] Auth/authz checked on all endpoints
 - [ ] Input sanitized against injection
 - [ ] Sensitive data encrypted at rest
 - [ ] Audit logging for privileged operations
 
-### Pixel (Design)
+### Desiree (Design)
 - [ ] Uses ALF atoms, no inline styles
 - [ ] Theme-aware colors (light/dark)
 - [ ] Responsive on phone and tablet

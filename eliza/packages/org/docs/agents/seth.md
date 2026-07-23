@@ -1,0 +1,94 @@
+# Seth — `seth`
+
+> Security Engineer for the OnlyMen engineering organization.
+
+| | |
+|---|---|
+| **Username** | `seth-sec` |
+| **Role** | `security_engineer` |
+| **Org permissions** | request review, raise blocker, approve releases |
+| **Skills** | [`security-audit`](../../skills/security-audit/SKILL.md) |
+| **Review type** | `security_review` |
+
+- The last line of defense before production. Paranoid in the best way possible.
+- OWASP expert, threat modeler, and guardian of user privacy.
+- No production release happens without your approval.
+
+**Expertise:** security engineering, OWASP, threat modeling, mobile security, backend security, API security, cryptography, secret management, authentication, authorization, privacy, compliance, penetration testing, incident response, DID and key rotation, ATProto OAuth (DPoP, PAR), outing-risk threat model, contact matching privacy
+
+## Knowledge base
+
+- [OWASP Mobile Top 10](../../knowledge/seth/owasp-mobile.md)
+- [Threat Modeling](../../knowledge/seth/threat-modeling.md)
+- [Secret Management](../../knowledge/seth/secret-management.md)
+- [Encryption Guide](../../knowledge/seth/encryption-guide.md)
+- [Identity — DIDs, Handles, Keys](../../knowledge/seth/identity.md)
+- [ATProto OAuth Profile](../../knowledge/seth/oauth.md)
+- [Security Standards](../../shared/security-standards.md)
+- [AT Protocol Primer](../../shared/atproto.md)
+- [Custom OS — Boot & Provisioning Security](../../knowledge/seth/custom-os-boot-security.md)
+- [Custom OS Primer](../../shared/custom-os.md)
+
+## Commands
+
+All commands run from `packages/org/` (or put `packages/org/bin` on your
+PATH). The server must be running for everything except `start`/`agents`.
+
+### Run Seth
+
+```bash
+./bin/org start seth     # boot the agent server as Seth on :2139
+./bin/org status            # health + running agent
+./bin/org logs 40           # tail the server log
+./bin/org stop
+```
+
+### Talk to Seth (LLM chat — 1–3 min per turn)
+
+```bash
+./bin/org say "Seth, Review the auth flow for token leakage risks"
+```
+
+### Board commands involving Seth (instant REST, no LLM)
+
+```bash
+# Assign work to Seth
+./bin/org assign seth "Threat-model the OAuth login flow" --priority high
+
+# Request a review from Seth
+./bin/org review seth --type security_review --task TASK-001
+
+# Progress a task Seth owns
+./bin/org task TASK-001 in_progress
+./bin/org task TASK-001 done
+
+# Raise a blocker on Seth's behalf
+./bin/org escalate "Blocked on upstream API change" --severity high --task TASK-001
+
+# Board state
+./bin/org summary
+./bin/org board
+```
+
+REST equivalents (the CLI is a thin wrapper over these):
+
+```bash
+curl -s localhost:2139/api/org/summary
+curl -s localhost:2139/api/org/board
+curl -s -X POST localhost:2139/api/org/tasks \
+  -H 'content-type: application/json' \
+  -d '{"assignee":"seth","title":"Threat-model the OAuth login flow","priority":"high"}'
+```
+
+### Chat actions Seth can trigger
+
+When you chat (via `org say` or the dashboard), the planner can route to
+these org actions — parameters are extracted from your message:
+
+| Action | Parameters | Example message |
+|---|---|---|
+| `ASSIGN_WORK` | assignee, title, priority?, description?, deadline? | "Assign nadia the search screen, high priority" |
+| `REQUEST_REVIEW` | reviewer, type?, taskId? | "Request a security review from ethan on TASK-001" |
+| `ESCALATE` | description, severity?, taskId? | "Escalate: blocked on the SDK upgrade, critical" |
+| `REPORT_COMPLETE` | taskId, summary? | "TASK-001 is done — shipped and tested" |
+| `SUMMARIZE` | — | "Give me the org status" |

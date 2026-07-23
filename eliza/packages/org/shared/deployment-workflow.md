@@ -15,11 +15,11 @@ Code Push → Lint → TypeCheck → Unit Tests → Integration Tests → Build 
 | Unit Tests | Vitest | CI | Block merge |
 | Integration Tests | Vitest + Docker | CI | Block merge |
 | E2E Tests | Maestro | CI | Block merge (main) |
-| Build (Web) | Vite | Circuit | Block deploy |
-| Build (iOS) | EAS | Circuit | Block deploy |
-| Build (Android) | EAS | Circuit | Block deploy |
-| Deploy (Staging) | EAS Submit | Circuit | Alert Atlas |
-| Deploy (Production) | EAS Submit | Atlas + Circuit | Full review |
+| Build (Web) | Vite | Devon | Block deploy |
+| Build (iOS) | EAS | Devon | Block deploy |
+| Build (Android) | EAS | Devon | Block deploy |
+| Deploy (Staging) | EAS Submit | Devon | Alert Andrew |
+| Deploy (Production) | EAS Submit | Andrew + Devon | Full review |
 
 ## Platform Builds
 
@@ -60,14 +60,14 @@ Development → Preview → TestFlight/Play Store Beta → Production
 |-------------|---------------|-------------------|
 | Development | `development` | None |
 | Preview | `preview` | Domain agent |
-| Beta | `testflight` | Domain agent + Atlas |
-| Production | `production` | Atlas + Sentinel + Compass |
+| Beta | `testflight` | Domain agent + Andrew |
+| Production | `production` | Andrew + Seth + Quinn |
 
 ## Rollback
 
 1. Detect issue via monitoring or user reports
-2. Circuit triggers rollback to previous stable build
-3. Atlas convenes incident review
+2. Devon triggers rollback to previous stable build
+3. Andrew convenes incident review
 4. Fix forward or rollback decision within 1 hour
 5. Post-mortem for any Sev1/Sev2 incident
 

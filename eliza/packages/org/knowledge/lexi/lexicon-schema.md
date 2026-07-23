@@ -97,7 +97,7 @@ schema's `maxGraphemes`, not `maxLength`.
   "deprecated" flag; note it in the def's description and in your own docs).
 - Unions (`refs: [...]`) can gain new members additively; consumers that
   don't recognize a new union member should degrade gracefully, not crash —
-  confirm this with Nova/Forge before adding a union variant.
+  confirm this with Nadia/Morgan before adding a union variant.
 
 ## Review checklist before shipping a new lexicon
 

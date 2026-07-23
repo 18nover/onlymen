@@ -20,7 +20,7 @@ A task is "done" when ALL of the following are true:
 - [ ] Coverage meets minimum thresholds
 
 ### Security
-- [ ] Sentinel has reviewed security implications
+- [ ] Seth has reviewed security implications
 - [ ] No hardcoded secrets
 - [ ] Input validation at all runtime boundaries
 - [ ] OWASP Mobile Top 10 checked
@@ -50,7 +50,7 @@ A task is "done" when ALL of the following are true:
 - [ ] Domain agent has reviewed
 - [ ] All review comments addressed
 - [ ] No unresolved discussions
-- [ ] Atlas has approved (for architectural changes)
+- [ ] Andrew has approved (for architectural changes)
 
 ### Evidence
 - [ ] Screenshots/video for UI changes
@@ -73,8 +73,8 @@ A PR is "done" when:
 A release is "done" when:
 1. All PRs in the release meet PR DoD
 2. E2E tests pass on all platforms
-3. Sentinel has signed off on security
-4. Compass has signed off on QA
-5. Scribe has updated release notes
-6. Atlas has approved the release
+3. Seth has signed off on security
+4. Quinn has signed off on QA
+5. Penelope has updated release notes
+6. Andrew has approved the release
 7. Changelog is complete

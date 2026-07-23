@@ -1,13 +1,13 @@
 ---
 name: expo-dev
 description: >
-  Expo development skill for Nova and Circuit. Covers Expo SDK 54, Expo Router
+  Expo development skill for Nadia and Devon. Covers Expo SDK 54, Expo Router
   for file-based routing, development builds vs Expo Go, EAS Build and Update
   workflows, Expo Modules API for native code, platform APIs, environment
   configuration, prebuild customization, and expo-updates for OTA delivery.
 metadata:
   author: OnlyMen Engineering
-  team: Nova, Circuit
+  team: Nadia, Devon
   version: 1.0.0
   tags:
     - expo
@@ -21,7 +21,7 @@ metadata:
 # Expo Development
 
 Skill for building, configuring, and deploying Expo-based applications within
-the OnlyMen engineering organization. Targets Nova and Circuit projects on
+the OnlyMen engineering organization. Targets Nadia and Devon projects on
 Expo SDK 54.
 
 ---
@@ -140,7 +140,7 @@ Handle incoming links in `app/_layout.tsx` via the `LinkingContext`.
 
 ### Expo Go vs Development Builds
 
-Expo Go is for prototyping only. All Nova and Circuit development must use
+Expo Go is for prototyping only. All Nadia and Devon development must use
 custom development builds for access to native modules and configuration.
 
 ### Creating a Development Build

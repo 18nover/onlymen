@@ -83,7 +83,7 @@ What other options were evaluated?
 
 ## Documentation Review
 
-Scribe reviews all documentation for:
+Penelope reviews all documentation for:
 - Accuracy against implementation
 - Completeness of examples
 - Clarity for target audience

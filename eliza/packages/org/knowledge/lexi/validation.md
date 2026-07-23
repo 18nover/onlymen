@@ -18,7 +18,7 @@ input.
 ## Where validation must happen
 
 - **PDS write path** — every record written to a repo is validated against
-  its lexicon before being accepted. This is Forge's implementation surface,
+  its lexicon before being accepted. This is Morgan's implementation surface,
   but the validation rules themselves come from your schema's constraints
   (`required`, `maxLength`, `format`, `enum`).
 - **AppView ingestion** — firehose events from any PDS (including third-party
@@ -55,5 +55,5 @@ input.
 - **Cross-record reference integrity** — a `strongRef` (uri + cid) pointing
   to a deleted or nonexistent record is a valid *shape* but an invalid
   *reference*; decide explicitly whether this is a validation-layer concern
-  or a business-logic concern, and document which, so Forge doesn't
+  or a business-logic concern, and document which, so Morgan doesn't
   duplicate or skip the check.
