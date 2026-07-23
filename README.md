@@ -38,6 +38,9 @@ onlymen/
 ├── eliza/
 │   └── OnlyMen AI Engineering Organization
 │
+├── custom-os/
+│   └── Ubuntu-based Raspberry Pi OS
+│
 ├── .devcontainer/
 │   └── Reproducible development container configuration
 │
@@ -188,6 +191,16 @@ The coordinator enables agents to:
 * Report project status.
 
 The coordinator is intended to function as the operational layer connecting the individual engineering agents into a cohesive development organization.
+
+---
+
+### `custom-os/`
+
+The `custom-os/` directory contains **Custom OS**, an Ubuntu 26.04-based operating system for Raspberry Pi (Pi 3, 4, and 5 families), maintained by the same AI engineering organization defined in `eliza/`.
+
+Like `app/`, `atproto/`, and `eliza/`, this directory is a plain tracked subdirectory of the single OnlyMen repo — added in commit `053149171` ("custom os was added"); commits and history for Custom OS are part of this repo's normal history.
+
+Seven of the thirteen engineering agents (Devon, Morgan, Seth, Parker, Audrey, Quinn, Penelope) are additionally grounded in Custom OS knowledge alongside their OnlyMen work; the remaining six stay scoped to OnlyMen only. See `custom-os/README.md` for the project's own architecture, hardware support, and roadmap.
 
 ---
 

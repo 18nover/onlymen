@@ -1,9 +1,9 @@
 ---
 name: qa-testing
-description: "QA testing skill for Compass. Test plans, edge cases, manual QA, automated testing (Maestro), accessibility, tablet/responsive, offline/network, permission flows, bug reports."
+description: "QA testing skill for Quinn. Test plans, edge cases, manual QA, automated testing (Maestro), accessibility, tablet/responsive, offline/network, permission flows, bug reports."
 version: 1.0.0
 author: OnlyMen Engineering
-agent: Compass
+agent: Quinn
 category: quality-assurance
 tags:
   - qa

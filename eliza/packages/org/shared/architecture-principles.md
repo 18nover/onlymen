@@ -14,7 +14,7 @@ OnlyMen is built on AT Protocol. Every design decision must preserve:
 - OnlyMen currently ships no custom lexicons — the fork inherits upstream namespaces (`com.atproto.*`, `app.bsky.*` including `app.bsky.ageassurance.*` and `app.bsky.contact.*`, `tools.ozone.*`)
 - If OnlyMen ever needs its own lexicon, reserve a distinct reverse-DNS root first (open decision — domain/trademark not settled); never add non-upstream NSIDs inside `app.bsky.*`
 - Never break backward compatibility without a migration path
-- Lexicon changes require Atlas approval before implementation
+- Lexicon changes require Andrew approval before implementation
 
 ### 3. Layered Architecture
 ```
@@ -66,4 +66,4 @@ When facing architectural decisions:
 6. Does it meet performance budgets?
 7. Is it accessible?
 
-If any answer is "no", document the trade-off in an ADR and get Atlas + domain agent approval.
+If any answer is "no", document the trade-off in an ADR and get Andrew + domain agent approval.

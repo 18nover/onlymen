@@ -18,67 +18,67 @@ interface CharacterFile {
 
 /** Per-agent curation the character file does not carry. */
 const AGENT_META: Record<string, { skills: string[]; reviewType: string; exampleTask: string; exampleAsk: string }> = {
-  atlas: {
+  andrew: {
     skills: ['architecture-review'],
     reviewType: 'architecture_review',
     exampleTask: 'Plan the sprint for the notifications feature',
     exampleAsk: 'Give me the org status and current blockers',
   },
-  circuit: {
+  devon: {
     skills: ['devops-deployment'],
     reviewType: 'code_review',
     exampleTask: 'Set up the staging deployment pipeline',
     exampleAsk: 'Walk me through the release deployment checklist',
   },
-  compass: {
+  quinn: {
     skills: ['qa-testing'],
     reviewType: 'qa_review',
     exampleTask: 'Write the E2E test plan for the settings flow',
     exampleAsk: 'What is our test coverage strategy for the feed?',
   },
-  echo: {
+  audrey: {
     skills: ['code-audit'],
     reviewType: 'code_review',
     exampleTask: 'Audit the atproto packages for dead code',
     exampleAsk: 'Audit the repository for dependency drift',
   },
-  forge: {
+  morgan: {
     skills: ['backend-dev'],
     reviewType: 'code_review',
     exampleTask: 'Implement the notifications API endpoint',
     exampleAsk: 'How should we shape the PDS notification lexicon?',
   },
-  nova: {
+  nadia: {
     skills: ['react-native-dev', 'expo-dev'],
     reviewType: 'code_review',
     exampleTask: 'Implement the notifications settings screen',
     exampleAsk: 'What is the right navigation pattern for the new tab?',
   },
-  pixel: {
+  desiree: {
     skills: ['accessibility-review'],
     reviewType: 'design_review',
     exampleTask: 'Define tokens for the new badge component',
     exampleAsk: 'Which spacing tokens should the settings rows use?',
   },
-  prism: {
+  ethan: {
     skills: ['accessibility-review'],
     reviewType: 'accessibility_review',
     exampleTask: 'Run the accessibility audit on the media viewer',
     exampleAsk: 'Audit the notifications screen for WCAG AA compliance',
   },
-  pulse: {
+  parker: {
     skills: ['performance-review'],
     reviewType: 'code_review',
     exampleTask: 'Profile feed scroll performance on Android',
     exampleAsk: 'Where are our worst render bottlenecks right now?',
   },
-  scribe: {
+  penelope: {
     skills: ['technical-writing'],
     reviewType: 'code_review',
     exampleTask: 'Document the org coordination API',
     exampleAsk: 'Draft the release notes for this sprint',
   },
-  sentinel: {
+  seth: {
     skills: ['security-audit'],
     reviewType: 'security_review',
     exampleTask: 'Threat-model the OAuth login flow',
@@ -90,7 +90,7 @@ const AGENT_META: Record<string, { skills: string[]; reviewType: string; example
     exampleTask: 'Design the lexicon for the new pinned-post feature',
     exampleAsk: 'Is this schema change additive or breaking?',
   },
-  vision: {
+  karen: {
     skills: ['moderation-tooling'],
     reviewType: 'code_review',
     exampleTask: 'Design the label taxonomy for AI-generated content',
@@ -198,8 +198,8 @@ these org actions — parameters are extracted from your message:
 
 | Action | Parameters | Example message |
 |---|---|---|
-| \`ASSIGN_WORK\` | assignee, title, priority?, description?, deadline? | "Assign ${slug === 'nova' ? 'forge' : 'nova'} the search screen, high priority" |
-| \`REQUEST_REVIEW\` | reviewer, type?, taskId? | "Request a ${meta.reviewType.replace('_', ' ')} from ${slug === 'sentinel' ? 'prism' : 'sentinel'} on TASK-001" |
+| \`ASSIGN_WORK\` | assignee, title, priority?, description?, deadline? | "Assign ${slug === 'nadia' ? 'morgan' : 'nadia'} the search screen, high priority" |
+| \`REQUEST_REVIEW\` | reviewer, type?, taskId? | "Request a ${meta.reviewType.replace('_', ' ')} from ${slug === 'seth' ? 'ethan' : 'seth'} on TASK-001" |
 | \`ESCALATE\` | description, severity?, taskId? | "Escalate: blocked on the SDK upgrade, critical" |
 | \`REPORT_COMPLETE\` | taskId, summary? | "TASK-001 is done — shipped and tested" |
 | \`SUMMARIZE\` | — | "Give me the org status" |

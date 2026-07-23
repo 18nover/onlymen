@@ -4,21 +4,21 @@
 
 | Gate | Approver | When Required |
 |------|----------|---------------|
-| Architecture decision | Atlas + domain lead | New patterns, major refactors |
-| Security change | Sentinel | Any auth, crypto, permission changes |
-| Design change | Pixel | New components, layout changes |
-| API change | Forge | New endpoints, breaking changes |
-| Release | Atlas + Sentinel + Compass | Every production release |
-| Dependency update | Echo + Sentinel | New or major version updates |
-| Infrastructure | Circuit | Docker, CI/CD, deployment changes |
+| Architecture decision | Andrew + domain lead | New patterns, major refactors |
+| Security change | Seth | Any auth, crypto, permission changes |
+| Design change | Desiree | New components, layout changes |
+| API change | Morgan | New endpoints, breaking changes |
+| Release | Andrew + Seth + Quinn | Every production release |
+| Dependency update | Audrey + Seth | New or major version updates |
+| Infrastructure | Devon | Docker, CI/CD, deployment changes |
 
 ## Approval Request Format
 
 ```json
 {
   "taskId": "TASK-042",
-  "requester": "nova-rn",
-  "approver": "sentinel-sec",
+  "requester": "nadia-rn",
+  "approver": "seth-sec",
   "type": "architecture_approval",
   "title": "OAuth integration for login flow",
   "summary": "Implementing AT Protocol OAuth for the new login flow...",
@@ -41,7 +41,7 @@
 ```json
 {
   "taskId": "TASK-042",
-  "approver": "sentinel-sec",
+  "approver": "seth-sec",
   "decision": "approved | denied | conditional",
   "conditions": [
     "Store tokens in secure enclave only",
@@ -62,8 +62,8 @@
 ## Auto-Approval Criteria
 
 Some changes can be auto-approved without human review:
-- Documentation-only changes (Scribe approval)
-- Test additions (Compass approval)
+- Documentation-only changes (Penelope approval)
+- Test additions (Quinn approval)
 - Minor bug fixes (domain agent approval)
 - Formatting/linting fixes
 
@@ -71,6 +71,6 @@ Some changes can be auto-approved without human review:
 
 If approval is denied and the requester disagrees:
 1. First: Direct discussion between requester and approver
-2. Second: Atlas convenes a review with additional domain agents
-3. Third: Atlas makes final decision with documented rationale
+2. Second: Andrew convenes a review with additional domain agents
+3. Third: Andrew makes final decision with documented rationale
 4. Fourth: Escalate to human operator (if available)

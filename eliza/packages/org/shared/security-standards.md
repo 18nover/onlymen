@@ -58,7 +58,7 @@ Every feature must be reviewed against OWASP Mobile Top 10:
 
 ## Release Gate
 
-**No production release without Sentinel's approval.** Sentinel reviews:
+**No production release without Seth's approval.** Seth reviews:
 - All code changes for security implications
 - Dependency updates for vulnerabilities
 - Configuration changes for security impact

@@ -91,7 +91,7 @@ switch (command) {
     break
   }
   case 'start': {
-    const agent = positional[0] ?? 'atlas'
+    const agent = positional[0] ?? 'andrew'
     if (!agentRoster().includes(agent)) fail(`unknown agent "${agent}" — see \`org agents\``)
     await exec(['bash', driver, 'start', agent])
     break

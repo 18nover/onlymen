@@ -7,7 +7,7 @@ description: >
   monitoring, bundle size analysis, and Hermes engine optimization.
 version: 1.0.0
 authors:
-  - Pulse
+  - Parker
 tags:
   - performance
   - profiling
@@ -17,7 +17,7 @@ tags:
   - memory
   - battery
 applicable_agents:
-  - Pulse
+  - Parker
 ---
 
 # Performance Review Skill
@@ -577,11 +577,11 @@ adb pull /sdcard/hermes-profile.trace
 
 | Issue Type | Severity | Response Time | Escalation |
 |---|---|---|---|
-| App crash / ANR | Critical | Immediate | Pulse + Engineering Lead |
-| Major frame drops (>50% drops) | High | 24 hours | Pulse |
-| Startup time > 5s | High | 48 hours | Pulse |
-| Memory leak (monotonic growth) | Medium | 1 sprint | Pulse |
-| Minor performance improvement | Low | Backlog | Pulse |
+| App crash / ANR | Critical | Immediate | Parker + Engineering Lead |
+| Major frame drops (>50% drops) | High | 24 hours | Parker |
+| Startup time > 5s | High | 48 hours | Parker |
+| Memory leak (monotonic growth) | Medium | 1 sprint | Parker |
+| Minor performance improvement | Low | Backlog | Parker |
 
 ### Escalation Process
 

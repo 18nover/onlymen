@@ -7,7 +7,7 @@ description: >
   Mobile Top 10 and privacy regulations.
 version: 1.0.0
 authors:
-  - Sentinel
+  - Seth
 tags:
   - security
   - audit
@@ -15,7 +15,7 @@ tags:
   - compliance
   - threat-modeling
 applicable_agents:
-  - Sentinel
+  - Seth
 ---
 
 # Security Audit Skill

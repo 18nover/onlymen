@@ -1,13 +1,13 @@
 ---
 name: react-native-dev
 description: >
-  React Native development skill for Nova. Covers component patterns, hooks,
+  React Native development skill for Nadia. Covers component patterns, hooks,
   state management with TanStack Query, platform-specific code via file
   extensions (.native.tsx/.web.tsx), ALF design system atoms, React Compiler
   compatibility, performance patterns, and debugging.
 metadata:
   author: OnlyMen Engineering
-  team: Nova
+  team: Nadia
   version: 1.0.0
   tags:
     - react-native
@@ -21,7 +21,7 @@ metadata:
 # React Native Development
 
 Skill for building and maintaining React Native applications within the OnlyMen
-engineering organization. Targets Nova's mobile and cross-platform codebase.
+engineering organization. Targets Nadia's mobile and cross-platform codebase.
 
 ---
 
@@ -233,7 +233,7 @@ const containerStyles = {
 ### What the Compiler Handles
 
 React Compiler (React 19+) automatically memoizes components, hooks, and
-callbacks. Assume it is active in all Nova builds.
+callbacks. Assume it is active in all Nadia builds.
 
 ### Implications
 

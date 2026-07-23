@@ -7,10 +7,10 @@ description: >
   scalability review, and maintainability evaluation.
 version: 1.0.0
 authors:
-  - Atlas
-  - Echo
-  - Nova
-  - Forge
+  - Andrew
+  - Audrey
+  - Nadia
+  - Morgan
 tags:
   - architecture
   - system-design
@@ -19,10 +19,10 @@ tags:
   - at-protocol
   - design-patterns
 applicable_agents:
-  - Atlas
-  - Echo
-  - Nova
-  - Forge
+  - Andrew
+  - Audrey
+  - Nadia
+  - Morgan
 ---
 
 # Architecture Review Skill
@@ -580,11 +580,11 @@ Prefetched Data → Preloaded during idle time
 
 | Issue Type | Severity | Response Time | Escalation |
 |---|---|---|---|
-| Architecture blocker (feature cannot proceed) | Critical | Immediate | Atlas + Engineering Lead |
-| Security architecture vulnerability | Critical | Immediate | Atlas + Sentinel |
-| Scalability concern (production impact) | High | 24 hours | Atlas + Pulse |
-| Maintainability degradation | Medium | 1 sprint | Atlas + Tech Lead |
-| Architecture documentation gaps | Low | Backlog | Atlas |
+| Architecture blocker (feature cannot proceed) | Critical | Immediate | Andrew + Engineering Lead |
+| Security architecture vulnerability | Critical | Immediate | Andrew + Seth |
+| Scalability concern (production impact) | High | 24 hours | Andrew + Parker |
+| Maintainability degradation | Medium | 1 sprint | Andrew + Tech Lead |
+| Architecture documentation gaps | Low | Backlog | Andrew |
 
 ### Architecture Escalation Process
 

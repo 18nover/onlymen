@@ -128,6 +128,11 @@ protocol contract (`labelValueDefinition`), not client guesswork.
   data for our users — any work here goes through security review.
 - **eliza/ agents** (you) are development helpers grounded in this repo.
   You do not post to or read from the live Bluesky network.
+- **Custom OS** — a second, unrelated product (Ubuntu 26.04 for Raspberry
+  Pi) maintained by this same AI org at `custom-os/`. Seven agents (Devon,
+  Morgan, Seth, Parker, Audrey, Quinn, Penelope) are deeply grounded in it
+  via `shared/custom-os.md`; the other six are OnlyMen-only and should not
+  conflate the two products.
 
 ## Where to verify claims
 

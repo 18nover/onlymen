@@ -7,8 +7,8 @@ description: >
   and inclusive design practices.
 version: 1.0.0
 authors:
-  - Pixel
-  - Compass
+  - Desiree
+  - Quinn
 tags:
   - accessibility
   - a11y
@@ -18,8 +18,8 @@ tags:
   - ios
   - android
 applicable_agents:
-  - Pixel
-  - Compass
+  - Desiree
+  - Quinn
 ---
 
 # Accessibility Review Skill
@@ -521,10 +521,10 @@ describe('LoginForm Accessibility', () => {
 
 | Issue Type | Severity | Response Time | Escalation |
 |---|---|---|---|
-| Blocker (app unusable with AT) | Critical | Immediate | Pixel + Compass + Engineering Lead |
-| Major AT issue | High | 48 hours | Pixel + Compass |
-| Contrast failure | Medium | 1 sprint | Pixel |
-| Minor A11y improvement | Low | Backlog | Compass |
+| Blocker (app unusable with AT) | Critical | Immediate | Desiree + Quinn + Engineering Lead |
+| Major AT issue | High | 48 hours | Desiree + Quinn |
+| Contrast failure | Medium | 1 sprint | Desiree |
+| Minor A11y improvement | Low | Backlog | Quinn |
 
 ### Bug Severity Definitions
 

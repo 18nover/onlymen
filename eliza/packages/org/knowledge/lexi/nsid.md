@@ -15,7 +15,7 @@ parties may already depend on it the moment it's public.
   `contact` families). OnlyMen inherits this namespace wholesale from the
   fork; we build product behavior on top of these upstream schemas rather
   than adding our own NSIDs to the namespace.
-- **`tools.ozone.*`** — moderation tooling namespace (Vision's domain model,
+- **`tools.ozone.*`** — moderation tooling namespace (Karen's domain model,
   reviewed by you for schema mechanics).
 - **Custom OnlyMen namespace** (if we ever ship an NSID that isn't upstream
   Bluesky) — reserve a distinct reverse-DNS root before defining anything;
@@ -50,6 +50,6 @@ is the specific def name. Sub-defs within a file use a `#fragment`:
 2. Confirm the namespace root matches who conceptually owns the feature
    (product feature → `app.bsky.*` extension; moderation → `tools.ozone.*`;
    truly custom → a reserved distinct root).
-3. Get sign-off from whichever agent owns the consuming domain (Vision for
-   moderation, Forge for backend-only internal methods) before publishing —
+3. Get sign-off from whichever agent owns the consuming domain (Karen for
+   moderation, Morgan for backend-only internal methods) before publishing —
    once shipped, the name is permanent.

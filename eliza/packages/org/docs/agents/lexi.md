@@ -83,8 +83,8 @@ these org actions — parameters are extracted from your message:
 
 | Action | Parameters | Example message |
 |---|---|---|
-| `ASSIGN_WORK` | assignee, title, priority?, description?, deadline? | "Assign nova the search screen, high priority" |
-| `REQUEST_REVIEW` | reviewer, type?, taskId? | "Request a architecture review from sentinel on TASK-001" |
+| `ASSIGN_WORK` | assignee, title, priority?, description?, deadline? | "Assign nadia the search screen, high priority" |
+| `REQUEST_REVIEW` | reviewer, type?, taskId? | "Request a architecture review from seth on TASK-001" |
 | `ESCALATE` | description, severity?, taskId? | "Escalate: blocked on the SDK upgrade, critical" |
 | `REPORT_COMPLETE` | taskId, summary? | "TASK-001 is done — shipped and tested" |
 | `SUMMARIZE` | — | "Give me the org status" |
