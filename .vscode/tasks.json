@@ -2,39 +2,59 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Docker: Build",
+      "label": "OnlyMen: Bootstrap WSL",
       "type": "shell",
-      "command": "docker build -t onlymen ${workspaceFolder}",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
+      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "args": ["bootstrap"],
       "problemMatcher": []
     },
     {
-      "label": "Docker: Run",
+      "label": "OnlyMen: Doctor",
       "type": "shell",
-      "command": "docker run --rm -it onlymen",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
+      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "args": ["doctor"],
       "problemMatcher": []
     },
     {
-      "label": "Docker: Compose Up",
+      "label": "OnlyMen: Start full stack",
       "type": "shell",
-      "command": "docker compose up",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
+      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "args": ["start"],
       "problemMatcher": []
     },
     {
-      "label": "Docker: Compose Down",
+      "label": "OnlyMen: Status",
       "type": "shell",
-      "command": "docker compose down",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
+      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "args": ["status"],
+      "problemMatcher": []
+    },
+    {
+      "label": "OnlyMen: Attach",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "args": ["attach"],
+      "problemMatcher": []
+    },
+    {
+      "label": "OnlyMen: Stack logs",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "args": ["logs", "atproto-stack"],
+      "problemMatcher": []
+    },
+    {
+      "label": "OnlyMen: Stop",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "args": ["stop"],
+      "problemMatcher": []
+    },
+    {
+      "label": "OnlyMen: Verify",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "args": ["verify"],
       "problemMatcher": []
     }
   ]

@@ -193,21 +193,26 @@ The coordinator is intended to function as the operational layer connecting the 
 
 ## Development Environment
 
-OnlyMen is designed to use a reproducible development environment based on **VS Code Dev Containers**.
+OnlyMen's primary development environment is **Ubuntu 26.04 on WSL 2**. The
+authoritative checkout lives at `/home/jerry/onlymen`; Node, pnpm, Docker,
+Expo, Git, and the AT Protocol services all run in Linux. Windows PowerShell,
+VS Code, and the browser remain the desktop control surface.
 
-The development container provides the core tooling required by the project, including:
+From a Windows PowerShell prompt:
 
-* Node.js
-* Python
-* Bun
-* Git
-* Docker
-* VS Code development tooling
+```powershell
+code --remote wsl+Ubuntu-26.04 /home/jerry/onlymen
+$OnlyMen = '\\wsl.localhost\Ubuntu-26.04\home\jerry\onlymen\scripts\dev\onlymen.ps1'
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File $OnlyMen doctor
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File $OnlyMen start
+```
 
-The primary development environment is defined in:
+The workflow starts the seeded ATProto developer stack and Expo web app, then
+makes both available to Windows through `localhost`. Setup, daily commands,
+ports, test accounts, and troubleshooting are documented in:
 
 ```text
-.devcontainer/devcontainer.json
+docs/WSL_DEVELOPMENT.md
 ```
 
 VS Code workspace configuration is maintained in:

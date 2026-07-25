@@ -1,0 +1,584 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+readonly SCRIPT_PATH="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/$(basename -- "${BASH_SOURCE[0]}")"
+readonly REPO_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
+readonly SESSION_NAME="onlymen-dev"
+readonly NODE_VERSION="24.18.0"
+readonly ATPROTO_PNPM_VERSION="11.11.0"
+readonly APP_PNPM_VERSION="11.13.1"
+readonly PNPM_ROOT="${HOME}/.local/share/onlymen/pnpm"
+
+log() {
+  printf '[onlymen] %s\n' "$*"
+}
+
+fail() {
+  printf '[onlymen] ERROR: %s\n' "$*" >&2
+  exit 1
+}
+
+load_node() {
+  export NVM_DIR="${HOME}/.nvm"
+  [[ -s "${NVM_DIR}/nvm.sh" ]] || fail "NVM is missing at ${NVM_DIR}; run bootstrap."
+  # shellcheck source=/dev/null
+  source "${NVM_DIR}/nvm.sh"
+  nvm use --silent "${NODE_VERSION}" >/dev/null ||
+    fail "Node ${NODE_VERSION} is not installed; run bootstrap."
+}
+
+pnpm_bin() {
+  local version="$1"
+  printf '%s/%s/node_modules/.bin/pnpm\n' "${PNPM_ROOT}" "${version}"
+}
+
+run_pnpm() {
+  local version="$1"
+  local directory="$2"
+  shift 2
+
+  load_node
+  local executable
+  executable="$(pnpm_bin "${version}")"
+  [[ -x "${executable}" ]] ||
+    fail "pnpm ${version} is missing at ${executable}; run bootstrap."
+
+  (
+    cd -- "${directory}"
+    PATH="$(dirname -- "${executable}"):${PATH}" "${executable}" "$@"
+  )
+}
+
+install_pnpm() {
+  local version="$1"
+  local prefix="${PNPM_ROOT}/${version}"
+  local executable="${prefix}/node_modules/.bin/pnpm"
+
+  if [[ -x "${executable}" ]] && [[ "$("${executable}" --version)" == "${version}" ]]; then
+    log "pnpm ${version} is already installed."
+    return
+  fi
+
+  mkdir -p -- "${prefix}"
+  npm install --prefix "${prefix}" --no-save --ignore-scripts "pnpm@${version}"
+  [[ "$("${executable}" --version)" == "${version}" ]] ||
+    fail "pnpm ${version} installation did not verify."
+}
+
+require_linux_repo() {
+  [[ "${REPO_ROOT}" == /home/* ]] ||
+    fail "The authoritative checkout must live in the WSL filesystem, not ${REPO_ROOT}."
+  [[ "${REPO_ROOT}" != /mnt/* ]] ||
+    fail "Refusing to run the development workflow from a Windows-mounted path."
+}
+
+bootstrap() {
+  require_linux_repo
+  if [[ "${ONLYMEN_SKIP_APT:-0}" == "1" ]]; then
+    log "Skipping Ubuntu package installation because ONLYMEN_SKIP_APT=1."
+  else
+    log "Installing Ubuntu prerequisites sequentially."
+    sudo apt-get update
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
+      build-essential \
+      ca-certificates \
+      curl \
+      jq \
+      make \
+      pkg-config \
+      postgresql-client \
+      redis-tools \
+      tmux
+  fi
+
+  export NVM_DIR="${HOME}/.nvm"
+  [[ -s "${NVM_DIR}/nvm.sh" ]] || fail "NVM is missing at ${NVM_DIR}."
+  # shellcheck source=/dev/null
+  source "${NVM_DIR}/nvm.sh"
+  nvm install "${NODE_VERSION}"
+  nvm alias default "${NODE_VERSION}"
+  nvm use "${NODE_VERSION}"
+
+  install_pnpm "${ATPROTO_PNPM_VERSION}"
+  install_pnpm "${APP_PNPM_VERSION}"
+
+  log "Installing ATProto dependencies."
+  run_pnpm "${ATPROTO_PNPM_VERSION}" "${REPO_ROOT}/atproto" \
+    install --frozen-lockfile --network-concurrency=4
+
+  log "Generating and building ATProto."
+  run_pnpm "${ATPROTO_PNPM_VERSION}" "${REPO_ROOT}/atproto" codegen
+  run_pnpm "${ATPROTO_PNPM_VERSION}" "${REPO_ROOT}/atproto" build --force
+
+  log "Installing app dependencies."
+  # Lingui starts one worker per catalog. On this 4 GB VM, Node 24 can need
+  # longer than threads.js's 10-second default while pnpm is finalizing links.
+  export THREADS_WORKER_INIT_TIMEOUT="${THREADS_WORKER_INIT_TIMEOUT:-60000}"
+  run_pnpm "${APP_PNPM_VERSION}" "${REPO_ROOT}/app" \
+    install --frozen-lockfile --network-concurrency=4
+
+  log "Bootstrap complete. Start Docker Desktop, then run: scripts/dev/onlymen doctor"
+}
+
+check_command() {
+  local command_name="$1"
+  if command -v "${command_name}" >/dev/null 2>&1; then
+    printf '  %-20s %s\n' "${command_name}" "$(command -v "${command_name}")"
+  else
+    printf '  %-20s MISSING\n' "${command_name}"
+    return 1
+  fi
+}
+
+doctor() {
+  local failures=0
+  require_linux_repo
+
+  log "Environment"
+  printf '  %-20s %s\n' "user" "$(id -un)"
+  printf '  %-20s %s\n' "repo" "${REPO_ROOT}"
+  printf '  %-20s %s\n' "filesystem" "$(stat -f -c %T "${REPO_ROOT}")"
+  printf '  %-20s %s\n' "Ubuntu" "$(. /etc/os-release && printf '%s' "${VERSION_ID}")"
+  [[ "$(id -un)" == "jerry" ]] || failures=$((failures + 1))
+  [[ "$(stat -f -c %T "${REPO_ROOT}")" != "9p" ]] ||
+    failures=$((failures + 1))
+  [[ "$(. /etc/os-release && printf '%s' "${VERSION_ID}")" == "26.04" ]] ||
+    failures=$((failures + 1))
+
+  log "Linux tools"
+  for command_name in git make gcc python3 jq psql redis-cli tmux curl ss docker; do
+    check_command "${command_name}" || failures=$((failures + 1))
+  done
+
+  if [[ "${PATH}" == *"/mnt/c/"* ]]; then
+    printf '  %-20s %s\n' "Windows PATH" "PRESENT (restart WSL after updating /etc/wsl.conf)"
+    failures=$((failures + 1))
+  else
+    printf '  %-20s %s\n' "Windows PATH" "not imported"
+  fi
+
+  if [[ -s "${HOME}/.nvm/nvm.sh" ]]; then
+    load_node
+    printf '  %-20s %s\n' "node" "$(node --version)"
+    [[ "$(node --version)" == "v${NODE_VERSION}" ]] || failures=$((failures + 1))
+  else
+    printf '  %-20s %s\n' "node" "MISSING"
+    failures=$((failures + 1))
+  fi
+
+  local atproto_pnpm app_pnpm
+  atproto_pnpm="$(pnpm_bin "${ATPROTO_PNPM_VERSION}")"
+  app_pnpm="$(pnpm_bin "${APP_PNPM_VERSION}")"
+  if [[ -x "${atproto_pnpm}" ]]; then
+    printf '  %-20s %s\n' "atproto pnpm" "$("${atproto_pnpm}" --version)"
+    [[ "$("${atproto_pnpm}" --version)" == "${ATPROTO_PNPM_VERSION}" ]] ||
+      failures=$((failures + 1))
+  else
+    printf '  %-20s %s\n' "atproto pnpm" "MISSING"
+    failures=$((failures + 1))
+  fi
+  if [[ -x "${app_pnpm}" ]]; then
+    printf '  %-20s %s\n' "app pnpm" "$("${app_pnpm}" --version)"
+    [[ "$("${app_pnpm}" --version)" == "${APP_PNPM_VERSION}" ]] ||
+      failures=$((failures + 1))
+  else
+    printf '  %-20s %s\n' "app pnpm" "MISSING"
+    failures=$((failures + 1))
+  fi
+
+  log "Linux Git configuration"
+  local git_autocrlf git_filemode git_symlinks
+  git_autocrlf="$(git -C "${REPO_ROOT}" config --get core.autocrlf || true)"
+  git_filemode="$(git -C "${REPO_ROOT}" config --get core.filemode || true)"
+  git_symlinks="$(git -C "${REPO_ROOT}" config --get core.symlinks || true)"
+  printf '  %-20s %s\n' "core.autocrlf" "${git_autocrlf:-unset}"
+  printf '  %-20s %s\n' "core.filemode" "${git_filemode:-unset}"
+  printf '  %-20s %s\n' "core.symlinks" "${git_symlinks:-unset}"
+  [[ "${git_autocrlf}" == "input" ]] || failures=$((failures + 1))
+  [[ "${git_filemode}" == "true" ]] || failures=$((failures + 1))
+  [[ "${git_symlinks}" == "true" ]] || failures=$((failures + 1))
+
+  log "Docker Desktop integration"
+  if docker version --format '{{.Server.Version}}' >/dev/null 2>&1; then
+    printf '  %-20s %s\n' "engine" "$(docker version --format '{{.Server.Version}}')"
+    printf '  %-20s %s\n' "compose" "$(docker compose version --short)"
+  else
+    printf '  %-20s %s\n' "engine" "UNAVAILABLE"
+    failures=$((failures + 1))
+  fi
+
+  log "Repository hygiene"
+  if [[ -n "$(git -C "${REPO_ROOT}" ls-files |
+    awk '/(^|\/)node_modules\// { found = 1 } END { if (found) print "found" }')" ]]; then
+    printf '  %-20s %s\n' "tracked node_modules" "FOUND"
+    failures=$((failures + 1))
+  else
+    printf '  %-20s %s\n' "tracked node_modules" "none"
+  fi
+  if [[ -n "$(git -C "${REPO_ROOT}" ls-files |
+    awk '/\.(sqlite-(wal|shm)|db-(wal|shm))$/ { found = 1 } END { if (found) print "found" }')" ]]; then
+    printf '  %-20s %s\n' "tracked DB runtime" "FOUND"
+    failures=$((failures + 1))
+  else
+    printf '  %-20s %s\n' "tracked DB runtime" "none"
+  fi
+  printf '  %-20s %s\n' "working tree" \
+    "$(git -C "${REPO_ROOT}" status --porcelain | wc -l | tr -d ' ') change(s)"
+
+  log "Fixed ports"
+  local port
+  for port in 2581 2582 2583 2584 2587 8081; do
+    if [[ -n "$(ss -H -ltn "sport = :${port}")" ]]; then
+      if session_exists; then
+        printf '  %-20s %s\n' "${port}" "in use (OnlyMen session active)"
+      else
+        printf '  %-20s %s\n' "${port}" "IN USE"
+        failures=$((failures + 1))
+      fi
+    else
+      printf '  %-20s %s\n' "${port}" "available"
+    fi
+  done
+
+  if ((failures > 0)); then
+    fail "Doctor found ${failures} blocking issue(s)."
+  fi
+  log "Doctor passed."
+}
+
+wait_http() {
+  local label="$1"
+  local url="$2"
+  local attempts="${3:-180}"
+
+  for ((attempt = 1; attempt <= attempts; attempt++)); do
+    if curl --fail --silent --show-error --max-time 2 "${url}" >/dev/null 2>&1; then
+      log "${label} is ready at ${url}"
+      return
+    fi
+    sleep 1
+  done
+  fail "Timed out waiting for ${label} at ${url}."
+}
+
+test_compose_file() {
+  printf '%s\n' "${REPO_ROOT}/atproto/packages/dev-infra/docker-compose.yaml"
+}
+
+cleanup_test_containers() {
+  docker version --format '{{.Server.Version}}' >/dev/null 2>&1 || return
+  docker compose --file "$(test_compose_file)" \
+    rm --force --stop --volumes db_test redis_test
+}
+
+prepare_test_containers() {
+  local compose_file
+  compose_file="$(test_compose_file)"
+
+  log "Starting disposable Postgres and Redis containers."
+  docker compose --file "${compose_file}" \
+    up --detach --force-recreate db_test redis_test
+
+  local attempt
+  for ((attempt = 1; attempt <= 120; attempt++)); do
+    if PGPASSWORD=password pg_isready \
+      --host 127.0.0.1 --port 5433 --username pg --dbname postgres \
+      >/dev/null 2>&1 &&
+      [[ "$(redis-cli -h 127.0.0.1 -p 6380 ping 2>/dev/null)" == "PONG" ]]; then
+      log "Disposable Postgres and Redis are ready."
+      return
+    fi
+    sleep 1
+  done
+
+  cleanup_test_containers
+  fail "Timed out waiting for disposable Postgres and Redis."
+}
+
+internal_atproto_watch() {
+  run_pnpm "${ATPROTO_PNPM_VERSION}" "${REPO_ROOT}/atproto" dev:ts
+}
+
+internal_atproto_stack() {
+  prepare_test_containers
+  run_pnpm "${ATPROTO_PNPM_VERSION}" "${REPO_ROOT}/atproto/packages/dev-env" dev
+}
+
+internal_app_web() {
+  wait_http "PDS" \
+    "http://localhost:2583/xrpc/com.atproto.server.describeServer" 300
+  export EXPO_PUBLIC_DEFAULT_SERVICE_URL="http://localhost:2583"
+  export EXPO_PUBLIC_ENV="development"
+  load_node
+  cd -- "${REPO_ROOT}/app"
+  node "${REPO_ROOT}/scripts/dev/expo-web.cjs" 8081
+}
+
+session_exists() {
+  tmux has-session -t "${SESSION_NAME}" 2>/dev/null
+}
+
+create_tmux_window() {
+  local window_name="$1"
+  local internal_command="$2"
+
+  if session_exists; then
+    tmux new-window -d -t "${SESSION_NAME}" -n "${window_name}"
+  else
+    tmux new-session -d -s "${SESSION_NAME}" -n "${window_name}"
+  fi
+
+  tmux set-window-option -t "${SESSION_NAME}:${window_name}" remain-on-exit on
+  tmux send-keys -t "${SESSION_NAME}:${window_name}" -l \
+    "${SCRIPT_PATH} ${internal_command}"
+  tmux send-keys -t "${SESSION_NAME}:${window_name}" Enter
+}
+
+start_stack() {
+  require_linux_repo
+  command -v tmux >/dev/null 2>&1 || fail "tmux is missing; run bootstrap."
+  docker version --format '{{.Server.Version}}' >/dev/null 2>&1 ||
+    fail "Docker Desktop is not available in Ubuntu. Start Docker Desktop and enable WSL integration."
+  [[ -f "${REPO_ROOT}/atproto/packages/dev-env/dist/bin.js" ]] ||
+    fail "ATProto has not been built; run bootstrap."
+  [[ -d "${REPO_ROOT}/app/node_modules" ]] ||
+    fail "App dependencies are missing; run bootstrap."
+
+  if session_exists; then
+    log "The ${SESSION_NAME} session is already running."
+    status_stack
+    return
+  fi
+
+  create_tmux_window "atproto-watch" "__atproto-watch"
+  create_tmux_window "atproto-stack" "__atproto-stack"
+  create_tmux_window "app-web" "__app-web"
+
+  log "Started ${SESSION_NAME}. Use 'scripts/dev/onlymen attach' to watch it."
+  log "The app will be available at http://localhost:8081 after ATProto finishes seeding."
+}
+
+probe() {
+  local label="$1"
+  local url="$2"
+  if curl --fail --silent --max-time 2 "${url}" >/dev/null 2>&1; then
+    printf '  %-20s UP  %s\n' "${label}" "${url}"
+  else
+    printf '  %-20s DOWN %s\n' "${label}" "${url}"
+  fi
+}
+
+probe_port() {
+  local label="$1"
+  local port="$2"
+  if ss -H -ltn "sport = :${port}" | grep -q .; then
+    printf '  %-20s UP  tcp://localhost:%s\n' "${label}" "${port}"
+  else
+    printf '  %-20s DOWN tcp://localhost:%s\n' "${label}" "${port}"
+  fi
+}
+
+status_stack() {
+  if session_exists; then
+    log "tmux session ${SESSION_NAME}"
+    tmux list-windows -t "${SESSION_NAME}" \
+      -F '  #{window_name}: #{pane_current_command} (dead=#{pane_dead}, status=#{pane_dead_status})'
+  else
+    log "tmux session ${SESSION_NAME} is not running."
+  fi
+
+  log "Endpoints"
+  probe_port "introspection" "2581"
+  probe_port "PLC" "2582"
+  probe "PDS" "http://localhost:2583/xrpc/com.atproto.server.describeServer"
+  probe "AppView" "http://localhost:2584/xrpc/_health"
+  probe "Ozone" "http://localhost:2587/xrpc/_health"
+  probe "Expo web" "http://localhost:8081"
+}
+
+logs_stack() {
+  local target="${1:-all}"
+  session_exists || fail "The ${SESSION_NAME} session is not running."
+
+  if [[ "${target}" == "all" ]]; then
+    for target in atproto-watch atproto-stack app-web; do
+      printf '\n===== %s =====\n' "${target}"
+      tmux capture-pane -p -S -200 -t "${SESSION_NAME}:${target}"
+    done
+    return
+  fi
+
+  case "${target}" in
+    atproto-watch | atproto-stack | app-web)
+      tmux capture-pane -p -S -300 -t "${SESSION_NAME}:${target}"
+      ;;
+    *)
+      fail "Unknown log target '${target}'. Use atproto-watch, atproto-stack, app-web, or all."
+      ;;
+  esac
+}
+
+stop_stack() {
+  if session_exists; then
+    for target in app-web atproto-stack atproto-watch; do
+      tmux send-keys -t "${SESSION_NAME}:${target}" C-c 2>/dev/null || true
+    done
+
+    log "Waiting for OnlyMen processes and disposable containers to stop."
+    sleep 8
+    tmux kill-session -t "${SESSION_NAME}" 2>/dev/null || true
+  else
+    log "The ${SESSION_NAME} session is not running."
+  fi
+
+  cleanup_test_containers
+  log "Stopped ${SESSION_NAME}. Docker Desktop and unrelated containers were left running."
+}
+
+api_smoke() {
+  local session_json access_jwt did post_json uri cid feed_json report_body
+  session_json="$(
+    curl --fail --silent --show-error \
+      -H 'Content-Type: application/json' \
+      --data '{"identifier":"alice.test","password":"hunter2"}' \
+      'http://localhost:2583/xrpc/com.atproto.server.createSession'
+  )"
+  access_jwt="$(jq -er '.accessJwt' <<<"${session_json}")"
+  did="$(jq -er '.did' <<<"${session_json}")"
+
+  post_json="$(
+    jq -n \
+      --arg repo "${did}" \
+      --arg created_at "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)" \
+      '{
+        repo: $repo,
+        collection: "app.bsky.feed.post",
+        record: {
+          "$type": "app.bsky.feed.post",
+          text: "OnlyMen WSL workflow smoke test",
+          createdAt: $created_at
+        }
+      }' |
+      curl --fail --silent --show-error \
+        -H 'Content-Type: application/json' \
+        -H "Authorization: Bearer ${access_jwt}" \
+        --data-binary @- \
+        'http://localhost:2583/xrpc/com.atproto.repo.createRecord'
+  )"
+  uri="$(jq -er '.uri' <<<"${post_json}")"
+  cid="$(jq -er '.cid' <<<"${post_json}")"
+
+  for _ in {1..30}; do
+    feed_json="$(
+      curl --fail --silent --show-error \
+        -H "Authorization: Bearer ${access_jwt}" \
+        'http://localhost:2583/xrpc/app.bsky.feed.getAuthorFeed?actor=alice.test&limit=20'
+    )"
+    if jq -e --arg uri "${uri}" \
+      '.feed[]?.post.uri == $uri' <<<"${feed_json}" >/dev/null; then
+      break
+    fi
+    sleep 1
+  done
+  jq -e --arg uri "${uri}" \
+    '.feed[]?.post.uri == $uri' <<<"${feed_json}" >/dev/null ||
+    fail "The smoke-test post did not reach AppView."
+
+  report_body="$(
+    jq -n \
+      --arg uri "${uri}" \
+      --arg cid "${cid}" \
+      '{
+        reasonType: "com.atproto.moderation.defs#reasonSpam",
+        reason: "Automated local workflow smoke test",
+        subject: {
+          "$type": "com.atproto.repo.strongRef",
+          uri: $uri,
+          cid: $cid
+        }
+      }'
+  )"
+  curl --fail --silent --show-error \
+    -H 'Content-Type: application/json' \
+    -H "Authorization: Bearer ${access_jwt}" \
+    --data-binary "${report_body}" \
+    'http://localhost:2583/xrpc/com.atproto.moderation.createReport' \
+    >/dev/null
+  log "API smoke test passed: login, post, AppView indexing, and moderation report."
+}
+
+verify_stack() {
+  doctor
+  log "Checking app web types."
+  run_pnpm "${APP_PNPM_VERSION}" "${REPO_ROOT}/app" typecheck:web
+  log "Testing the default-service configuration."
+  run_pnpm "${APP_PNPM_VERSION}" "${REPO_ROOT}/app" \
+    test src/lib/__tests__/default-service.test.ts --runInBand
+  log "Running ATProto style and lint verification."
+  run_pnpm "${ATPROTO_PNPM_VERSION}" "${REPO_ROOT}/atproto" verify
+
+  local started_here=0
+  if ! session_exists; then
+    start_stack
+    started_here=1
+  fi
+
+  if ((started_here == 1)); then
+    trap stop_stack EXIT
+  fi
+  wait_http "PDS" \
+    "http://localhost:2583/xrpc/com.atproto.server.describeServer" 300
+  wait_http "AppView" "http://localhost:2584/xrpc/_health" 120
+  wait_http "Ozone" "http://localhost:2587/xrpc/_health" 120
+  # This app's first Webpack compile can take several minutes on the 4 GB WSL
+  # allocation. Subsequent starts use its persistent cache.
+  wait_http "Expo web" "http://localhost:8081" 900
+  api_smoke
+  log "Verification passed."
+}
+
+usage() {
+  cat <<'EOF'
+Usage: scripts/dev/onlymen <command> [argument]
+
+Commands:
+  bootstrap             Install Linux tools, exact Node/pnpm versions, and dependencies
+  doctor                Check the WSL, toolchain, Docker, and repository setup
+  start                 Start ATProto and Expo web in a managed tmux session
+  status                Show process and endpoint status
+  logs [target]         Show logs for all, atproto-watch, atproto-stack, or app-web
+  attach                Attach interactively to the tmux session
+  stop                  Gracefully stop OnlyMen processes and test containers
+  restart               Stop and start the stack
+  verify                Run code checks and the cross-stack API smoke test
+EOF
+}
+
+command_name="${1:-}"
+shift || true
+
+case "${command_name}" in
+  bootstrap) bootstrap "$@" ;;
+  doctor) doctor "$@" ;;
+  start) start_stack "$@" ;;
+  status) status_stack "$@" ;;
+  logs) logs_stack "$@" ;;
+  attach)
+    session_exists || fail "The ${SESSION_NAME} session is not running."
+    exec tmux attach-session -t "${SESSION_NAME}"
+    ;;
+  stop) stop_stack "$@" ;;
+  restart)
+    stop_stack
+    start_stack
+    ;;
+  verify) verify_stack "$@" ;;
+  __atproto-watch) internal_atproto_watch ;;
+  __atproto-stack) internal_atproto_stack ;;
+  __app-web) internal_app_web ;;
+  -h | --help | help | "") usage ;;
+  *)
+    usage >&2
+    fail "Unknown command '${command_name}'."
+    ;;
+esac
