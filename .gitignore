@@ -161,7 +161,6 @@ eliza/packages/os/linux/tails/chroot/
 # --------------------------------------------
 *.iso
 *.img
-!custom-os/current/initrd.img
 *.qcow2
 *.vmdk
 

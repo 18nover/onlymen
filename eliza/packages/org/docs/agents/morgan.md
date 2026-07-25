@@ -30,8 +30,6 @@
 - [Security Standards](../../shared/security-standards.md)
 - [Architecture Principles](../../shared/architecture-principles.md)
 - [AT Protocol Primer](../../shared/atproto.md)
-- [Custom OS — System & Kernel Configuration](../../knowledge/morgan/custom-os-system-services.md)
-- [Custom OS Primer](../../shared/custom-os.md)
 
 ## Commands
 

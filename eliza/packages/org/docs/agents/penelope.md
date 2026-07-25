@@ -24,8 +24,6 @@
 - [Release Notes Template](../../knowledge/penelope/release-notes-template.md)
 - [Documentation Standards](../../shared/documentation-standards.md)
 - [AT Protocol Primer](../../shared/atproto.md)
-- [Custom OS — Documentation Standards](../../knowledge/penelope/custom-os-docs.md)
-- [Custom OS Primer](../../shared/custom-os.md)
 
 ## Commands
 

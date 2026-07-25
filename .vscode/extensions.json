@@ -14,6 +14,7 @@
     "EditorConfig.EditorConfig",
     "mikestead.dotenv",
     "GitHub.vscode-github-actions",
-    "ms-vscode.makefile-tools"
+    "ms-vscode.makefile-tools",
+    "openai.chatgpt"
   ]
 }

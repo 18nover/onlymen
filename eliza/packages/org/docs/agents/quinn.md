@@ -25,8 +25,6 @@
 - [E2E Mock-PDS Testing](../../knowledge/quinn/mock-pds.md)
 - [Testing Standards](../../shared/testing-standards.md)
 - [AT Protocol Primer](../../shared/atproto.md)
-- [Custom OS — Hardware Compatibility Testing](../../knowledge/quinn/custom-os-testing.md)
-- [Custom OS Primer](../../shared/custom-os.md)
 
 ## Commands
 

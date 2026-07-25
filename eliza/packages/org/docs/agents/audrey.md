@@ -25,8 +25,6 @@
 - [Coding Standards](../../shared/coding-standards.md)
 - [Security Standards](../../shared/security-standards.md)
 - [AT Protocol Primer](../../shared/atproto.md)
-- [Custom OS — Repository & Dependency Auditing](../../knowledge/audrey/custom-os-audit.md)
-- [Custom OS Primer](../../shared/custom-os.md)
 
 ## Commands
 

@@ -26,8 +26,6 @@
 - [ATProto OAuth Profile](../../knowledge/seth/oauth.md)
 - [Security Standards](../../shared/security-standards.md)
 - [AT Protocol Primer](../../shared/atproto.md)
-- [Custom OS — Boot & Provisioning Security](../../knowledge/seth/custom-os-boot-security.md)
-- [Custom OS Primer](../../shared/custom-os.md)
 
 ## Commands
 

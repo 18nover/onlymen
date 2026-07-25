@@ -25,8 +25,6 @@
 - [Backup & Restore](../../knowledge/devon/backup-restore.md)
 - [Service Topology](../../knowledge/devon/services.md)
 - [AT Protocol Primer](../../shared/atproto.md)
-- [Custom OS — Boot & Provisioning](../../knowledge/devon/custom-os-boot-provisioning.md)
-- [Custom OS Primer](../../shared/custom-os.md)
 
 ## Commands
 

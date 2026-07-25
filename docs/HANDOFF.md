@@ -13,23 +13,12 @@ add it to CHANGELOG.md and update only the still-current facts here.
 
 ---
 
-## Recap of Most Recent Session (2026-07-22, agent rename + Custom OS)
+## Recap of Most Recent Session (2026-07-22, agent rename)
 
 - Renamed all 13 agent character files from code-style names (Atlas, Circuit,
   etc.) to the human-name roster in `AGENTS.md` (Andrew, Devon, etc.) —
   files, folders, cross-references, `ORG_AGENTS`, and generated docs all
   updated and regenerated. See `CHANGELOG.md` for the full file list.
-- Added Custom OS grounding for Devon, Morgan, Seth, Parker, Audrey, Quinn,
-  and Penelope (new `shared/custom-os.md` primer + one knowledge file each) —
-  the other 6 agents remain OnlyMen/Bluesky-only.
-- Discovered `custom-os/` is checked into this tree as a **nested git
-  repository** (own `.git`, own GitHub remote `jerry-lockard/custom-os`),
-  not a submodule — see the "Repo state" note below and Audrey's
-  `custom-os-audit.md`. **Correction (later same session): this was wrong.**
-  Re-investigated — no `.git` exists under `custom-os/`; it's a plain
-  tracked subdirectory, added whole in commit `053149171`. All docs/
-  knowledge files written on the false premise were corrected — see the
-  "Custom OS repo-reconciliation" entry in `CHANGELOG.md`.
 
 ---
 
@@ -142,18 +131,11 @@ graph TD
 
 - One git repo, root `/home/jerry/onlymen`, remote `origin` =
   `https://github.com/18nover/onlymen.git`, branch `main`.
-- `app/`, `atproto/`, `eliza/`, and `custom-os/` are all plain tracked
+- `app/`, `atproto/`, and `eliza/` are all plain tracked
   subdirectories in this one repo — not separate nested repos with their
   own history/remotes (that changed early in this repo's history: `eliza
   cloned into onlymen`, `atproto cloned into onlymen`, `bsky cloned as
-  app`; `custom-os/` was added whole later, in commit `053149171` "custom
-  os was added", 2026-07-22).
-- **Correction**: an earlier pass through this repo (same day) concluded
-  `custom-os/` was a separate nested git repo with its own `.git` and
-  remote, and wrote several docs/knowledge files on that basis. That was
-  re-investigated and found false — no `.git` exists under `custom-os/`,
-  it's tracked as plain blobs same as everything else. All references to a
-  separate repo have been corrected; see `docs/CHANGELOG.md`.
+  app`).
 - `node_modules` is absent in all three sub-projects in this environment —
   install before running/building anything (`bun install` for eliza,
   `pnpm install` for app/atproto).

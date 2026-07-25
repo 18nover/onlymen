@@ -23,8 +23,6 @@
 - [Network Optimization](../../knowledge/parker/network-optimization.md)
 - [Bundle Analysis](../../knowledge/parker/bundle-analysis.md)
 - [AT Protocol Primer](../../shared/atproto.md)
-- [Custom OS — Boot & Runtime Performance](../../knowledge/parker/custom-os-performance.md)
-- [Custom OS Primer](../../shared/custom-os.md)
 
 ## Commands
 
