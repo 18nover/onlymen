@@ -5,7 +5,7 @@
 # over the REST chat endpoint.
 #
 # Usage (from the eliza/ repo root):
-#   .claude/skills/run-eliza/driver.sh start [character]   # default: atlas
+#   .claude/skills/run-eliza/driver.sh start [character]   # default: andrew
 #   .claude/skills/run-eliza/driver.sh health
 #   .claude/skills/run-eliza/driver.sh agents
 #   .claude/skills/run-eliza/driver.sh say "message text"
@@ -18,7 +18,7 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 PORT="${ELIZA_RUN_PORT:-2139}"
-STATE_DIR="${ELIZA_RUN_STATE:-/tmp/eliza-run-state}"
+STATE_DIR="${ELIZA_RUN_STATE:-${XDG_STATE_HOME:-$HOME/.local/state}/onlymen/driver}"
 BACKEND="${ELIZA_RUN_BACKEND:-claude-sdk}"
 PID_FILE="$STATE_DIR/driver-server.pid"
 LOG_FILE="$STATE_DIR/driver-server.log"
@@ -31,7 +31,7 @@ agent_id() {
 
 case "${1:-help}" in
   start)
-    CHARACTER="${2:-atlas}"
+    CHARACTER="${2:-andrew}"
     CHAR_FILE="$REPO_ROOT/packages/org/characters/$CHARACTER.json"
     [ -f "$CHAR_FILE" ] || { echo "no such character: $CHAR_FILE" >&2; exit 1; }
     mkdir -p "$STATE_DIR"

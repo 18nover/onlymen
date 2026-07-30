@@ -1,5 +1,5 @@
 /**
- * NottyBoi Engineering Organization coordination plugin. Registers the
+ * OnlyMen Engineering Organization coordination plugin. Registers the
  * coordination service plus the actions and providers that let org agents
  * assign work, request reviews, escalate blockers, and report status.
  */
@@ -11,7 +11,7 @@ import { OrgCoordinationServiceRuntime } from './services/index.ts'
 
 export const orgCoordinatorPlugin: Plugin = {
   name: 'plugin-org-coordinator',
-  description: 'NottyBoi Engineering Organization coordination plugin. Manages task assignment, reviews, blockers, and inter-agent communication.',
+  description: 'OnlyMen Engineering Organization coordination plugin. Manages task assignment, reviews, blockers, and inter-agent communication.',
   actions: [
     requestReviewAction,
     assignWorkAction,

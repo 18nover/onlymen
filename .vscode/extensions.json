@@ -6,6 +6,7 @@
     "biomejs.biome",
     "ms-python.python",
     "ms-python.vscode-pylance",
+    "ms-vscode-remote.remote-wsl",
     "expo.vscode-expo-tools",
     "redhat.vscode-yaml",
     "DavidAnson.vscode-markdownlint",

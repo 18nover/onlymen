@@ -4,11 +4,15 @@
   "description": "onlymen AI Engineering Organization \u2014 13 specialized agents built on elizaOS",
   "type": "module",
   "private": true,
+  "bin": {
+    "org": "./bin/org"
+  },
   "scripts": {
     "validate": "bun run scripts/validate-characters.ts",
+    "test:office": "bun test tools/chat-ui/control-plane.test.mjs",
     "lint": "biome lint .",
     "format": "biome format .",
-    "verify": "bun run validate && bun run lint",
+    "verify": "bun run validate && bun run test:office && bun run lint",
     "docs": "bun run scripts/generate-agent-docs.ts",
     "org": "bun run bin/org"
   },

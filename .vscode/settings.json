@@ -15,10 +15,49 @@
     "**/.next": true
   },
 
-  "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll": "explicit"
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/.bun/**": true,
+    "**/.pnpm-store/**": true,
+    "**/__pycache__/**": true,
+    "**/dist/**": true,
+    "**/build/**": true,
+    "**/coverage/**": true,
+    "**/.expo/**": true,
+    "**/.next/**": true,
+    "**/.turbo/**": true
   },
+
+  "python.analysis.exclude": [
+    "**/node_modules",
+    "**/.git",
+    "**/__pycache__",
+    "**/.venv",
+    "**/venv",
+    "**/.pytest_cache",
+    "**/.mypy_cache",
+    "**/.ruff_cache",
+    "**/.tox",
+    "**/.nox",
+    "**/.cache",
+    "**/dist",
+    "**/build",
+    "**/coverage",
+    "**/.expo",
+    "**/.next",
+    "**/.turbo",
+    "**/.bun",
+    "**/.yarn",
+    "**/.pnpm-store",
+    "eliza/packages/benchmarks/**",
+    "eliza/packages/training/**"
+  ],
+  "python.analysis.diagnosticMode": "openFilesOnly",
+  "python.analysis.indexing": false,
+
+  "editor.formatOnSave": true,
 
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
@@ -30,5 +69,8 @@
 
   "docker.languageserver.formatter.ignoreMultilineInstructions": true,
 
-  "git.autofetch": true
+  "git.autofetch": true,
+  "biome.requireConfiguration": true,
+  "eslint.workingDirectories": [{"mode": "auto"}],
+  "chatgpt.runCodexInWindowsSubsystemForLinux": true
 }

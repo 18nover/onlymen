@@ -47,11 +47,11 @@ export const reviewQueueProvider: Provider = {
 
 export const projectContextProvider: Provider = {
   name: 'PROJECT_CONTEXT',
-  description: 'Provides NottyBoi project context and repository structure',
+  description: 'Provides OnlyMen project context and repository structure',
   position: 2,
   get: async (_runtime: IAgentRuntime, _message: Memory, _state: State): Promise<ProviderResult> => {
     const text = [
-      '## NottyBoi Project Context',
+      '## OnlyMen Project Context',
       '',
       '**Repositories:**',
       '- `app/` — Bluesky Social App fork (React Native + Expo)',

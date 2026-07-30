@@ -1,9 +1,9 @@
 ---
 name: run-eliza
-description: Run, start, boot, or smoke-test the elizaOS agent server with a onlymen org character (Atlas, Nova, Forge, …) and drive it over HTTP — send chat messages, check health, exercise org-coordinator actions. No API keys needed; chat is served by the local claude CLI subscription.
+description: Run, start, boot, or smoke-test the elizaOS agent server with an OnlyMen org character and drive it over HTTP to chat, inspect health, and exercise coordination actions.
 ---
 
-# Run elizaOS with a onlymen org agent
+# Run elizaOS with an OnlyMen org agent
 
 All paths are relative to the `eliza/` repo root. The driver is
 `.claude/skills/run-eliza/driver.sh` — a curl-based smoke harness around the
@@ -21,22 +21,23 @@ screenshot (the dashboard UI is a separate unbuilt Vite app).
 ## Run (agent path) — the driver
 
 ```bash
-.claude/skills/run-eliza/driver.sh start atlas   # boot Atlas on :2139 (~30s to ready)
+.claude/skills/run-eliza/driver.sh start andrew  # boot Andrew on :2139 (~30s to ready)
 .claude/skills/run-eliza/driver.sh health        # {"ready":true,...,"plugins":{"loaded":25,"failed":0}}
-.claude/skills/run-eliza/driver.sh agents        # [{"id":"8bd2...","name":"Atlas","status":"running"}]
-.claude/skills/run-eliza/driver.sh say "Atlas, run SUMMARIZE and report the org status."
+.claude/skills/run-eliza/driver.sh agents        # [{"id":"8bd2...","name":"Andrew","status":"running"}]
+.claude/skills/run-eliza/driver.sh say "Andrew, run SUMMARIZE and report the org status."
 .claude/skills/run-eliza/driver.sh logs 40       # tail the server log
 .claude/skills/run-eliza/driver.sh stop
 ```
 
-`start <name>` takes any character from `packages/org/characters/`
-(atlas, nova, forge, sentinel, pixel, compass, circuit, echo, pulse,
-lexi, vision, scribe, prism). Overrides: `ELIZA_RUN_PORT` (default 2139),
-`ELIZA_RUN_STATE` (default `/tmp/eliza-run-state`), `ELIZA_RUN_BACKEND`
+`start <name>` takes any human-named character from
+`packages/org/characters/` (andrew, audrey, desiree, devon, ethan, karen,
+lexi, morgan, nadia, parker, penelope, quinn, or seth). Overrides:
+`ELIZA_RUN_PORT` (default 2139),
+`ELIZA_RUN_STATE` (default `~/.local/state/onlymen/driver`), `ELIZA_RUN_BACKEND`
 (`claude-sdk` default; `claude` = cold-spawn per call, much slower).
 
 `say` posts to `POST /api/agents/<id>/message` with `{userId, text}` and
-returns `{"response": "...", "agentName": "Atlas"}`. A chat turn takes
+returns `{"response": "...", "agentName": "Andrew"}`. A chat turn takes
 **1–3 minutes** (warm Claude SDK session; first turn is the slowest). The
 org-coordinator actions (ASSIGN_WORK, REQUEST_REVIEW, ESCALATE,
 REPORT_COMPLETE, SUMMARIZE) are exercised through normal chat — name the
@@ -52,7 +53,7 @@ ELIZA_STATE_DIR=/tmp/eliza-run-state \
 ELIZA_API_PORT=2139 \
 ELIZA_CHAT_VIA_CLI=claude-sdk \
 ELIZA_PLANNER_NATIVE_TOOLS=0 \
-ELIZA_AGENT_CHARACTER_JSON="$(cat ../org/characters/atlas.json)" \
+ELIZA_AGENT_CHARACTER_JSON="$(cat ../org/characters/andrew.json)" \
 bun --conditions=eliza-source src/bin.ts serve
 ```
 
@@ -76,9 +77,9 @@ routes. Board writes are instant (no LLM); `say` is the chat path:
 
 ```bash
 cd packages/org
-./bin/org start prism && ./bin/org status
-./bin/org assign nova "Implement the settings screen" --priority high
-./bin/org review prism --type accessibility_review --task TASK-001
+./bin/org start andrew && ./bin/org status
+./bin/org assign nadia "Implement the settings screen" --priority high
+./bin/org review ethan --type accessibility_review --task TASK-001
 ./bin/org task TASK-001 done
 ./bin/org summary && ./bin/org board
 ./bin/org stop
