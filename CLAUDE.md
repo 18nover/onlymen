@@ -28,9 +28,9 @@ The root `Makefile` only wraps `docs/HANDOFF.md` and `docs/CHANGELOG.md` editing
 
 OnlyMen is developed with the help of a 13-agent AI engineering organization built on elizaOS, coordinated through `eliza/plugins/plugin-org-coordinator/`. The agents are defined in `eliza/packages/org/characters/*.json`, with per-agent grounding in `eliza/packages/org/knowledge/<agent>/` and shared standards in `eliza/packages/org/shared/*.md` (coding standards, security standards, review process, escalation matrix, etc.).
 
-The current agent roster (character files as they exist in `characters/`) is: **Atlas** (Engineering Director/PM — coordinates, never implements), **Circuit** (deployment/DevOps), **Compass** (QA/testing), **Echo**, **Forge** (implementation), **Lexi** (schema/lexicon design), **Nova** (implementation), **Pixel** (design system), **Prism**, **Pulse**, **Scribe** (docs), **Sentinel** (security), **Vision**.
+The current agent roster (character files as they exist in `characters/`, roles per `eliza/packages/org/docs/README.md`) is: **Andrew** (`engineering_director`), **Audrey** (`repository_auditor`), **Desiree** (`design_system_architect`), **Devon** (`devops_engineer`), **Ethan** (`accessibility_engineer`), **Karen** (`moderation_specialist`), **Lexi** (`lexicon_specialist`), **Morgan** (`backend_architect`), **Nadia** (`react_native_architect`), **Parker** (`performance_engineer`), **Penelope** (`technical_writer`), **Quinn** (`qa_engineer`), **Seth** (`security_engineer`).
 
-> **Known inconsistency:** the root `README.md` and the user's global `~/.claude/CLAUDE.md` commit-signature table describe a *different, older* 13-name roster (Andrew, Audrey, Desiree, Devon, Ethan, Karen, Lexi, Morgan, Nadia, Parker, Penelope, Quinn, Seth). Only "Lexi" is common to both lists. Treat `eliza/packages/org/characters/*.json` as the source of truth for agent names/roles — the docs above are stale and should be reconciled before relying on them for commit-signature agent selection.
+This matches the user's global `~/.claude/CLAUDE.md` commit-signature table — use that table directly for commit-signature agent selection. (The root `README.md` doesn't list a roster, so there's nothing to reconcile there.)
 
 `eliza/` itself is the upstream elizaOS framework (runtime, CLI, plugins, cloud backend) — most of `eliza/CLAUDE.md` describes generic elizaOS conventions (error-handling policy, comment style, evidence-based "definition of done") that apply repo-wide within `eliza/`, not just to `packages/org/`.
 
@@ -38,4 +38,4 @@ The current agent roster (character files as they exist in `characters/`) is: **
 
 - `app/` and `atproto/` are under active upstream-fork maintenance — check each package's own docs before assuming OnlyMen has diverged from Bluesky/AT Protocol upstream behavior.
 - Global secret/credential conventions (`.env` gitignored, no hardcoded tokens) apply across all three directories; `eliza/` additionally runs `.gitleaks.toml`/`.gitleaksignore` secret scanning that the other two areas don't have configured.
-- When committing, use the agent signature convention from the user's global `~/.claude/CLAUDE.md` — but verify the agent name against the current roster above, since that table is out of sync with `eliza/packages/org/characters/`.
+- When committing, use the agent signature convention from the user's global `~/.claude/CLAUDE.md`; the roster there now matches `eliza/packages/org/characters/*.json`.

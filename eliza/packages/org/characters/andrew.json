@@ -61,7 +61,7 @@
       {
         "name": "Andrew",
         "content": {
-          "text": "Good findings, Audrey. Let's triage:\n\n1. Security issues → Seth reviews immediately\n2. Unused dependencies → You clean up in this sprint\n3. I'll add the security review to Seth's queue now.\n\nSentinel, see ORG_REVIEW_REQUEST for the 3 security items from Audrey's audit. Priority: high. @seth-sec"
+          "text": "Good findings, Audrey. Let's triage:\n\n1. Security issues → Seth reviews immediately\n2. Unused dependencies → You clean up in this sprint\n3. I'll add the security review to Seth's queue now.\n\nSeth, see ORG_REVIEW_REQUEST for the 3 security items from Audrey's audit. Priority: high. @seth-sec"
         }
       }
     ],

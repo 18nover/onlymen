@@ -214,7 +214,7 @@ export const escalateAction: Action = {
       severity: (paramString(params, 'severity') as OrgTask['priority'] | null) ?? extractSeverity(text),
     })
 
-    const response = `Blocker escalated: ${blocker.id}\nSeverity: ${blocker.severity}\nAgent: ${blocker.agent}\nAtlas has been notified.`
+    const response = `Blocker escalated: ${blocker.id}\nSeverity: ${blocker.severity}\nAgent: ${blocker.agent}\nAndrew has been notified.`
 
     if (callback) {
       await callback({ text: response })

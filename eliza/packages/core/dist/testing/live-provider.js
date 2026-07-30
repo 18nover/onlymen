@@ -70,7 +70,7 @@ function asRecordOrUndefined(value) {
   return asRecord(value) ?? undefined;
 }
 
-// ../../node_modules/.bun/vitest@4.1.5+2ba94b5cc489aebc/node_modules/vitest/index.cjs
+// ../../node_modules/.bun/vitest@4.1.5+2f9c8e6d76373049/node_modules/vitest/index.cjs
 var require_vitest = __commonJS(() => {
   throw new Error('Vitest cannot be imported in a CommonJS module using require(). Please use "import" instead.' + `
 
@@ -411,5 +411,5 @@ export {
   CLI_SUBSCRIPTION_SENTINEL_API_KEY
 };
 
-//# debugId=D2EAF7D2787C89F064756E2164756E21
+//# debugId=EA4868F4976BAEB964756E2164756E21
 //# sourceMappingURL=live-provider.js.map

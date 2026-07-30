@@ -12,7 +12,7 @@ const STATE_CACHE_KEY = 'org-coordination:state:v1'
 export class OrgCoordinationServiceRuntime extends Service {
   static serviceType = 'org_coordination'
   static allowsMultiple = false
-  capabilityDescription = 'Manages agent coordination, task assignment, reviews, and blockers for the NottyBoi engineering organization'
+  capabilityDescription = 'Manages agent coordination, task assignment, reviews, and blockers for the OnlyMen engineering organization'
   private coordinationService: OrgCoordinationService
 
   constructor(runtime?: IAgentRuntime) {

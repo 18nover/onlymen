@@ -1,0 +1,20 @@
+{
+  "client_id": "https://onlymen.gay/oauth/client-metadata.json",
+  "client_name": "18nover",
+  "client_uri": "https://onlymen.gay",
+  "redirect_uris": [
+    "https://onlymen.gay/oauth/callback",
+    "gay.onlymen.app:/oauth/callback"
+  ],
+  "scope": "atproto transition:generic transition:email",
+  "grant_types": [
+    "authorization_code",
+    "refresh_token"
+  ],
+  "response_types": [
+    "code"
+  ],
+  "application_type": "native",
+  "token_endpoint_auth_method": "none",
+  "dpop_bound_access_tokens": true
+}

@@ -1,7 +1,7 @@
 {
   "name": "@onlymen/plugin-org-coordinator",
   "version": "0.1.0",
-  "description": "NottyBoi Engineering Organization coordination plugin",
+  "description": "OnlyMen Engineering Organization coordination plugin",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

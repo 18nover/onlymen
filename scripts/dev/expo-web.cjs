@@ -5,7 +5,7 @@ const { createRequire } = require("node:module");
 
 async function main() {
   const projectRoot = process.cwd();
-  const requestedPort = Number.parseInt(process.argv[2] || "8081", 10);
+  const requestedPort = Number.parseInt(process.argv[2] || "8082", 10);
   if (!Number.isInteger(requestedPort) || requestedPort < 1 || requestedPort > 65535) {
     throw new Error(`Invalid Expo web port: ${process.argv[2]}`);
   }
@@ -40,7 +40,9 @@ async function main() {
 
   const options = await resolveOptionsAsync(projectRoot, {
     "--localhost": true,
-    "--max-workers": 2,
+    // One worker avoids swap thrashing while ATProto and the warm engineering
+    // director are running in the 4.8 GB WSL VM.
+    "--max-workers": 1,
     "--port": requestedPort,
     "--web": true,
   });

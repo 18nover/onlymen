@@ -16,10 +16,31 @@
       "problemMatcher": []
     },
     {
+      "label": "OnlyMen: Auth status",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "args": ["auth"],
+      "problemMatcher": []
+    },
+    {
       "label": "OnlyMen: Start full stack",
       "type": "shell",
       "command": "${workspaceFolder}/scripts/dev/onlymen",
       "args": ["start"],
+      "problemMatcher": []
+    },
+    {
+      "label": "OnlyMen: Start engineering office",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "args": ["start", "agents"],
+      "problemMatcher": []
+    },
+    {
+      "label": "OnlyMen: Open engineering office",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "args": ["open", "agents"],
       "problemMatcher": []
     },
     {
@@ -55,6 +76,13 @@
       "type": "shell",
       "command": "${workspaceFolder}/scripts/dev/onlymen",
       "args": ["verify"],
+      "problemMatcher": []
+    },
+    {
+      "label": "OnlyMen: Verify engineering office",
+      "type": "shell",
+      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "args": ["verify", "org"],
       "problemMatcher": []
     }
   ]

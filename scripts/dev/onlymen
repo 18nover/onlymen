@@ -1,13 +1,23 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-readonly SCRIPT_PATH="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/$(basename -- "${BASH_SOURCE[0]}")"
-readonly REPO_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
+export PATH="${HOME}/.local/bin:${PATH}"
+
+readonly SCRIPT_PATH="$(readlink -f -- "${BASH_SOURCE[0]}")"
+readonly REPO_ROOT="$(cd -- "$(dirname -- "${SCRIPT_PATH}")/../.." && pwd)"
 readonly SESSION_NAME="onlymen-dev"
 readonly NODE_VERSION="24.18.0"
+# eliza/package.json currently names an unreleased Bun 1.4.0 package-manager
+# version. Keep the workflow on the newest available verified runtime until
+# that release exists, then advance this pin with a successful org verification.
+readonly BUN_VERSION="1.3.14"
 readonly ATPROTO_PNPM_VERSION="11.11.0"
 readonly APP_PNPM_VERSION="11.13.1"
 readonly PNPM_ROOT="${HOME}/.local/share/onlymen/pnpm"
+readonly STATE_ROOT="${XDG_STATE_HOME:-${HOME}/.local/state}/onlymen"
+readonly WORKTREE_ROOT="${HOME}/.local/share/onlymen/worktrees"
+readonly ORG_CONSOLE_PORT="4173"
+readonly APP_WEB_PORT="${ONLYMEN_APP_WEB_PORT:-8082}"
 
 log() {
   printf '[onlymen] %s\n' "$*"
@@ -25,6 +35,13 @@ load_node() {
   source "${NVM_DIR}/nvm.sh"
   nvm use --silent "${NODE_VERSION}" >/dev/null ||
     fail "Node ${NODE_VERSION} is not installed; run bootstrap."
+}
+
+load_bun() {
+  export BUN_INSTALL="${HOME}/.bun"
+  export PATH="${BUN_INSTALL}/bin:${PATH}"
+  command -v bun >/dev/null 2>&1 ||
+    fail "Bun ${BUN_VERSION} is missing; run bootstrap."
 }
 
 pnpm_bin() {
@@ -88,7 +105,10 @@ bootstrap() {
       pkg-config \
       postgresql-client \
       redis-tools \
-      tmux
+      bubblewrap \
+      gh \
+      tmux \
+      unzip
   fi
 
   export NVM_DIR="${HOME}/.nvm"
@@ -99,8 +119,32 @@ bootstrap() {
   nvm alias default "${NODE_VERSION}"
   nvm use "${NODE_VERSION}"
 
+  if ! command -v claude >/dev/null 2>&1; then
+    log "Installing the WSL-native Claude Code CLI."
+    npm install --global @anthropic-ai/claude-code
+  fi
+
+  if ! command -v codex >/dev/null 2>&1; then
+    log "Installing the WSL-native Codex CLI."
+    curl --fail --silent --show-error --location \
+      https://chatgpt.com/codex/install.sh | sh
+    export PATH="${HOME}/.local/bin:${PATH}"
+  fi
+
   install_pnpm "${ATPROTO_PNPM_VERSION}"
   install_pnpm "${APP_PNPM_VERSION}"
+
+  export BUN_INSTALL="${HOME}/.bun"
+  export PATH="${BUN_INSTALL}/bin:${PATH}"
+  if ! command -v bun >/dev/null 2>&1 ||
+    [[ "$(bun --version)" != "${BUN_VERSION}" ]]; then
+    log "Installing Bun ${BUN_VERSION} for elizaOS."
+    curl --fail --silent --show-error --location https://bun.sh/install |
+      bash -s "bun-v${BUN_VERSION}"
+    export PATH="${BUN_INSTALL}/bin:${PATH}"
+  fi
+  [[ "$(bun --version)" == "${BUN_VERSION}" ]] ||
+    fail "Bun ${BUN_VERSION} did not install correctly."
 
   log "Installing ATProto dependencies."
   run_pnpm "${ATPROTO_PNPM_VERSION}" "${REPO_ROOT}/atproto" \
@@ -117,7 +161,21 @@ bootstrap() {
   run_pnpm "${APP_PNPM_VERSION}" "${REPO_ROOT}/app" \
     install --frozen-lockfile --network-concurrency=4
 
+  if [[ "${ONLYMEN_SKIP_ELIZA_INSTALL:-0}" == "1" ]]; then
+    log "Skipping elizaOS dependencies because ONLYMEN_SKIP_ELIZA_INSTALL=1."
+  else
+    log "Installing elizaOS dependencies."
+    (
+      cd -- "${REPO_ROOT}/eliza"
+      bun install --frozen-lockfile
+    )
+  fi
+
+  mkdir -p -- "${HOME}/.local/bin" "${STATE_ROOT}" "${WORKTREE_ROOT}"
+  ln -sfn -- "${SCRIPT_PATH}" "${HOME}/.local/bin/om"
+
   log "Bootstrap complete. Start Docker Desktop, then run: scripts/dev/onlymen doctor"
+  log "The WSL launcher is available as ~/.local/bin/om."
 }
 
 check_command() {
@@ -165,6 +223,20 @@ doctor() {
     printf '  %-20s %s\n' "node" "MISSING"
     failures=$((failures + 1))
   fi
+
+  export BUN_INSTALL="${HOME}/.bun"
+  export PATH="${BUN_INSTALL}/bin:${PATH}"
+  if command -v bun >/dev/null 2>&1; then
+    printf '  %-20s %s\n' "bun" "$(bun --version)"
+    [[ "$(bun --version)" == "${BUN_VERSION}" ]] || failures=$((failures + 1))
+  else
+    printf '  %-20s %s\n' "bun" "MISSING"
+    failures=$((failures + 1))
+  fi
+
+  for command_name in claude codex gh bwrap; do
+    check_command "${command_name}" || failures=$((failures + 1))
+  done
 
   local atproto_pnpm app_pnpm
   atproto_pnpm="$(pnpm_bin "${ATPROTO_PNPM_VERSION}")"
@@ -227,7 +299,7 @@ doctor() {
 
   log "Fixed ports"
   local port
-  for port in 2581 2582 2583 2584 2587 8081; do
+  for port in 2140 2581 2582 2583 2584 2587 4173 "${APP_WEB_PORT}"; do
     if [[ -n "$(ss -H -ltn "sport = :${port}")" ]]; then
       if session_exists; then
         printf '  %-20s %s\n' "${port}" "in use (OnlyMen session active)"
@@ -259,6 +331,31 @@ wait_http() {
     sleep 1
   done
   fail "Timed out waiting for ${label} at ${url}."
+}
+
+wait_expo_web() {
+  local url="http://localhost:${APP_WEB_PORT}"
+  local attempt
+
+  for ((attempt = 1; attempt <= 120; attempt++)); do
+    if [[ -n "$(ss -H -ltn "sport = :${APP_WEB_PORT}")" ]]; then
+      log "Expo is listening on ${APP_WEB_PORT}; waiting for the first Webpack compile."
+      break
+    fi
+    sleep 1
+  done
+  [[ -n "$(ss -H -ltn "sport = :${APP_WEB_PORT}")" ]] ||
+    fail "Timed out waiting for Expo to listen on ${APP_WEB_PORT}."
+
+  for ((attempt = 1; attempt <= 12; attempt++)); do
+    if curl --fail --silent --show-error --max-time 45 "${url}" >/dev/null 2>&1; then
+      log "Expo web is ready at ${url}"
+      return
+    fi
+    log "Expo first compile is still running (${attempt}/12)."
+    sleep 15
+  done
+  fail "Timed out waiting for the first Expo web bundle at ${url}."
 }
 
 test_compose_file() {
@@ -311,27 +408,62 @@ internal_app_web() {
   export EXPO_PUBLIC_ENV="development"
   load_node
   cd -- "${REPO_ROOT}/app"
-  node "${REPO_ROOT}/scripts/dev/expo-web.cjs" 8081
+  node "${REPO_ROOT}/scripts/dev/expo-web.cjs" "${APP_WEB_PORT}"
+}
+
+internal_org_console() {
+  load_node
+  load_bun
+  mkdir -p -- "${STATE_ROOT}/agents"
+  cd -- "${REPO_ROOT}/eliza/packages/org"
+  export ONLYMEN_REPO_ROOT="${REPO_ROOT}"
+  export ONLYMEN_ORG_STATE_ROOT="${STATE_ROOT}/agents"
+  export ONLYMEN_WORKTREE_ROOT="${WORKTREE_ROOT}"
+  export CHAT_UI_PORT="${ORG_CONSOLE_PORT}"
+  exec bun run tools/chat-ui/server.mjs
 }
 
 session_exists() {
   tmux has-session -t "${SESSION_NAME}" 2>/dev/null
 }
 
+window_exists() {
+  local window_name="$1"
+  session_exists &&
+    tmux list-windows -t "${SESSION_NAME}" -F '#{window_name}' |
+      grep -Fxq "${window_name}"
+}
+
 create_tmux_window() {
   local window_name="$1"
   local internal_command="$2"
+  local service_command="${SCRIPT_PATH} ${internal_command}"
 
   if session_exists; then
-    tmux new-window -d -t "${SESSION_NAME}" -n "${window_name}"
+    tmux new-window -d -t "${SESSION_NAME}" -n "${window_name}" \
+      "${service_command}" \; \
+      set-window-option -t "${SESSION_NAME}:${window_name}" remain-on-exit on
   else
-    tmux new-session -d -s "${SESSION_NAME}" -n "${window_name}"
+    tmux new-session -d -s "${SESSION_NAME}" -n "${window_name}" \
+      "${service_command}" \; \
+      set-window-option -t "${SESSION_NAME}:${window_name}" remain-on-exit on
   fi
+}
 
-  tmux set-window-option -t "${SESSION_NAME}:${window_name}" remain-on-exit on
-  tmux send-keys -t "${SESSION_NAME}:${window_name}" -l \
-    "${SCRIPT_PATH} ${internal_command}"
-  tmux send-keys -t "${SESSION_NAME}:${window_name}" Enter
+ensure_tmux_window() {
+  local window_name="$1"
+  local internal_command="$2"
+  if window_exists "${window_name}"; then
+    if [[ "$(tmux display-message -p -t "${SESSION_NAME}:${window_name}" '#{pane_dead}')" == "1" ]]; then
+      log "Restarting stopped ${window_name} window."
+      tmux respawn-window -k -t "${SESSION_NAME}:${window_name}" \
+        "${SCRIPT_PATH} ${internal_command}"
+    else
+      log "${window_name} is already managed by ${SESSION_NAME}."
+    fi
+  else
+    create_tmux_window "${window_name}" "${internal_command}"
+  fi
 }
 
 start_stack() {
@@ -344,18 +476,31 @@ start_stack() {
   [[ -d "${REPO_ROOT}/app/node_modules" ]] ||
     fail "App dependencies are missing; run bootstrap."
 
-  if session_exists; then
-    log "The ${SESSION_NAME} session is already running."
-    status_stack
-    return
-  fi
+  ensure_tmux_window "atproto-stack" "__atproto-stack"
+  wait_http "PDS" \
+    "http://localhost:2583/xrpc/com.atproto.server.describeServer" 300
+  ensure_tmux_window "atproto-watch" "__atproto-watch"
+  ensure_tmux_window "app-web" "__app-web"
 
-  create_tmux_window "atproto-watch" "__atproto-watch"
-  create_tmux_window "atproto-stack" "__atproto-stack"
-  create_tmux_window "app-web" "__app-web"
+  log "Started the OnlyMen application stack in ${SESSION_NAME}."
+  log "The app will be available at http://localhost:${APP_WEB_PORT} after ATProto finishes seeding."
+}
 
-  log "Started ${SESSION_NAME}. Use 'scripts/dev/onlymen attach' to watch it."
-  log "The app will be available at http://localhost:8081 after ATProto finishes seeding."
+start_agents() {
+  require_linux_repo
+  command -v tmux >/dev/null 2>&1 || fail "tmux is missing; run bootstrap."
+  load_node
+  load_bun
+  [[ -d "${REPO_ROOT}/eliza/node_modules" ]] ||
+    fail "elizaOS dependencies are missing; run bootstrap."
+
+  ensure_tmux_window "org-console" "__org-console"
+  log "Started the OnlyMen Engineering Office at http://localhost:${ORG_CONSOLE_PORT}."
+}
+
+start_all() {
+  start_stack
+  start_agents
 }
 
 probe() {
@@ -393,7 +538,8 @@ status_stack() {
   probe "PDS" "http://localhost:2583/xrpc/com.atproto.server.describeServer"
   probe "AppView" "http://localhost:2584/xrpc/_health"
   probe "Ozone" "http://localhost:2587/xrpc/_health"
-  probe "Expo web" "http://localhost:8081"
+  probe "Expo web" "http://localhost:${APP_WEB_PORT}"
+  probe "Team console" "http://localhost:${ORG_CONSOLE_PORT}/api/health"
 }
 
 logs_stack() {
@@ -401,7 +547,8 @@ logs_stack() {
   session_exists || fail "The ${SESSION_NAME} session is not running."
 
   if [[ "${target}" == "all" ]]; then
-    for target in atproto-watch atproto-stack app-web; do
+    for target in atproto-watch atproto-stack app-web org-console; do
+      window_exists "${target}" || continue
       printf '\n===== %s =====\n' "${target}"
       tmux capture-pane -p -S -200 -t "${SESSION_NAME}:${target}"
     done
@@ -409,18 +556,21 @@ logs_stack() {
   fi
 
   case "${target}" in
-    atproto-watch | atproto-stack | app-web)
+    atproto-watch | atproto-stack | app-web | org-console)
+      window_exists "${target}" ||
+        fail "The ${target} service is not running in ${SESSION_NAME}."
       tmux capture-pane -p -S -300 -t "${SESSION_NAME}:${target}"
       ;;
     *)
-      fail "Unknown log target '${target}'. Use atproto-watch, atproto-stack, app-web, or all."
+      fail "Unknown log target '${target}'. Use atproto-watch, atproto-stack, app-web, org-console, or all."
       ;;
   esac
 }
 
 stop_stack() {
   if session_exists; then
-    for target in app-web atproto-stack atproto-watch; do
+    for target in org-console app-web atproto-stack atproto-watch; do
+      window_exists "${target}" || continue
       tmux send-keys -t "${SESSION_NAME}:${target}" C-c 2>/dev/null || true
     done
 
@@ -475,13 +625,13 @@ api_smoke() {
         'http://localhost:2583/xrpc/app.bsky.feed.getAuthorFeed?actor=alice.test&limit=20'
     )"
     if jq -e --arg uri "${uri}" \
-      '.feed[]?.post.uri == $uri' <<<"${feed_json}" >/dev/null; then
+      'any(.feed[]?; .post.uri == $uri)' <<<"${feed_json}" >/dev/null; then
       break
     fi
     sleep 1
   done
   jq -e --arg uri "${uri}" \
-    '.feed[]?.post.uri == $uri' <<<"${feed_json}" >/dev/null ||
+    'any(.feed[]?; .post.uri == $uri)' <<<"${feed_json}" >/dev/null ||
     fail "The smoke-test post did not reach AppView."
 
   report_body="$(
@@ -530,11 +680,110 @@ verify_stack() {
     "http://localhost:2583/xrpc/com.atproto.server.describeServer" 300
   wait_http "AppView" "http://localhost:2584/xrpc/_health" 120
   wait_http "Ozone" "http://localhost:2587/xrpc/_health" 120
-  # This app's first Webpack compile can take several minutes on the 4 GB WSL
-  # allocation. Subsequent starts use its persistent cache.
-  wait_http "Expo web" "http://localhost:8081" 900
+  # The first Webpack compile can take several minutes on this WSL allocation.
+  # Avoid the generic one-second HTTP poll because it creates repeated compile
+  # requests and makes the memory-bound first build slower.
+  wait_expo_web
   api_smoke
   log "Verification passed."
+}
+
+verify_area() {
+  local area="${1:-all}"
+  case "${area}" in
+    org | agents)
+      load_node
+      load_bun
+      (
+        cd -- "${REPO_ROOT}/eliza"
+        bun run --cwd packages/org verify
+        bun run --cwd plugins/plugin-org-coordinator typecheck
+        bun run --cwd plugins/plugin-org-coordinator lint
+      )
+      ;;
+    app)
+      run_pnpm "${APP_PNPM_VERSION}" "${REPO_ROOT}/app" typecheck:web
+      run_pnpm "${APP_PNPM_VERSION}" "${REPO_ROOT}/app" \
+        test src/lib/__tests__/default-service.test.ts --runInBand
+      ;;
+    atproto)
+      run_pnpm "${ATPROTO_PNPM_VERSION}" "${REPO_ROOT}/atproto" verify
+      ;;
+    smoke)
+      wait_http "PDS" \
+        "http://localhost:2583/xrpc/com.atproto.server.describeServer" 300
+      wait_http "AppView" "http://localhost:2584/xrpc/_health" 120
+      wait_http "Ozone" "http://localhost:2587/xrpc/_health" 120
+      api_smoke
+      ;;
+    all)
+      verify_stack
+      ;;
+    *)
+      fail "Unknown verification area '${area}'. Use org, app, atproto, smoke, or all."
+      ;;
+  esac
+}
+
+auth_status() {
+  local failures=0
+  load_node
+  export BUN_INSTALL="${HOME}/.bun"
+  export PATH="${HOME}/.local/bin:${BUN_INSTALL}/bin:${PATH}"
+
+  log "Agent authentication"
+  if command -v claude >/dev/null 2>&1 &&
+    [[ -s "${HOME}/.claude/.credentials.json" ]]; then
+    printf '  %-20s %s\n' "Claude CLI" "authenticated"
+  else
+    printf '  %-20s %s\n' "Claude CLI" "MISSING OR NOT AUTHENTICATED"
+    failures=$((failures + 1))
+  fi
+
+  if command -v codex >/dev/null 2>&1 &&
+    [[ -s "${HOME}/.codex/auth.json" ]]; then
+    printf '  %-20s %s\n' "Codex CLI" "authenticated"
+  else
+    printf '  %-20s %s\n' "Codex CLI" "MISSING OR NOT AUTHENTICATED"
+    failures=$((failures + 1))
+  fi
+
+  if command -v gh >/dev/null 2>&1 &&
+    gh auth status --hostname github.com >/dev/null 2>&1; then
+    printf '  %-20s %s\n' "GitHub CLI" "authenticated"
+  else
+    printf '  %-20s %s\n' "GitHub CLI" "MISSING OR NOT AUTHENTICATED"
+    failures=$((failures + 1))
+  fi
+
+  if ((failures > 0)); then
+    fail "Authentication needs attention. Run claude, codex login, and gh auth login inside WSL."
+  fi
+  log "Authentication is ready."
+}
+
+open_desktop() {
+  local target="${1:-code}"
+  local cmd_exe="/mnt/c/Windows/System32/cmd.exe"
+  [[ -x "${cmd_exe}" ]] ||
+    fail "Windows interop is unavailable; open the target manually."
+
+  case "${target}" in
+    code)
+      "${cmd_exe}" /c start "" code --remote wsl+Ubuntu-26.04 \
+        /home/jerry/onlymen >/dev/null 2>&1
+      ;;
+    app)
+      "${cmd_exe}" /c start "" "http://localhost:${APP_WEB_PORT}" >/dev/null 2>&1
+      ;;
+    agents | console)
+      "${cmd_exe}" /c start "" "http://localhost:${ORG_CONSOLE_PORT}" \
+        >/dev/null 2>&1
+      ;;
+    *)
+      fail "Unknown open target '${target}'. Use code, app, or agents."
+      ;;
+  esac
 }
 
 usage() {
@@ -542,15 +791,22 @@ usage() {
 Usage: scripts/dev/onlymen <command> [argument]
 
 Commands:
-  bootstrap             Install Linux tools, exact Node/pnpm versions, and dependencies
-  doctor                Check the WSL, toolchain, Docker, and repository setup
-  start                 Start ATProto and Expo web in a managed tmux session
+  bootstrap             Install WSL tools, launchers, and project dependencies
+  doctor                Check WSL, tools, auth prerequisites, Docker, ports, and Git
+  auth                  Check WSL-native Claude, Codex, and GitHub authentication
+  start [all|stack|agents]
+                        Start the full office, app stack only, or agents only
   status                Show process and endpoint status
-  logs [target]         Show logs for all, atproto-watch, atproto-stack, or app-web
+  logs [target]         Show logs for a managed service or all services
   attach                Attach interactively to the tmux session
   stop                  Gracefully stop OnlyMen processes and test containers
-  restart               Stop and start the stack
-  verify                Run code checks and the cross-stack API smoke test
+  restart [all|stack|agents]
+                        Stop and restart the selected profile
+  verify [all|org|app|atproto|smoke]
+                        Run focused checks or the cross-stack smoke test
+  open [code|app|agents]
+                        Open VS Code Remote WSL or a Windows browser
+  shell                 Open a login shell at the canonical repository
 EOF
 }
 
@@ -560,7 +816,16 @@ shift || true
 case "${command_name}" in
   bootstrap) bootstrap "$@" ;;
   doctor) doctor "$@" ;;
-  start) start_stack "$@" ;;
+  auth) auth_status "$@" ;;
+  start)
+    profile="${1:-all}"
+    case "${profile}" in
+      all) start_all ;;
+      stack) start_stack ;;
+      agents) start_agents ;;
+      *) fail "Unknown start profile '${profile}'. Use all, stack, or agents." ;;
+    esac
+    ;;
   status) status_stack "$@" ;;
   logs) logs_stack "$@" ;;
   attach)
@@ -569,13 +834,25 @@ case "${command_name}" in
     ;;
   stop) stop_stack "$@" ;;
   restart)
+    profile="${1:-all}"
     stop_stack
-    start_stack
+    case "${profile}" in
+      all) start_all ;;
+      stack) start_stack ;;
+      agents) start_agents ;;
+      *) fail "Unknown restart profile '${profile}'. Use all, stack, or agents." ;;
+    esac
     ;;
-  verify) verify_stack "$@" ;;
+  verify) verify_area "$@" ;;
+  open) open_desktop "$@" ;;
+  shell)
+    cd -- "${REPO_ROOT}"
+    exec bash --login
+    ;;
   __atproto-watch) internal_atproto_watch ;;
   __atproto-stack) internal_atproto_stack ;;
   __app-web) internal_app_web ;;
+  __org-console) internal_org_console ;;
   -h | --help | help | "") usage ;;
   *)
     usage >&2

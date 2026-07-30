@@ -194,25 +194,25 @@ The coordinator is intended to function as the operational layer connecting the 
 ## Development Environment
 
 OnlyMen's primary development environment is **Ubuntu 26.04 on WSL 2**. The
-authoritative checkout lives at `/home/jerry/onlymen`; Node, pnpm, Docker,
-Expo, Git, and the AT Protocol services all run in Linux. Windows PowerShell,
-VS Code, and the browser remain the desktop control surface.
+authoritative checkout lives at `/home/jerry/onlymen`; Git and all development
+tools run in Linux. Windows PowerShell, VS Code, Docker Desktop, and the browser
+remain the desktop control surface.
 
-From a Windows PowerShell prompt:
+After bootstrap, the same short launcher works in PowerShell and WSL:
 
-```powershell
-code --remote wsl+Ubuntu-26.04 /home/jerry/onlymen
-$OnlyMen = '\\wsl.localhost\Ubuntu-26.04\home\jerry\onlymen\scripts\dev\onlymen.ps1'
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File $OnlyMen doctor
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File $OnlyMen start
+```text
+om doctor
+om start
+om open agents
 ```
 
-The workflow starts the seeded ATProto developer stack and Expo web app, then
-makes both available to Windows through `localhost`. Setup, daily commands,
-ports, test accounts, and troubleshooting are documented in:
+The workflow supervises the seeded ATProto stack, Expo web app, and local
+engineering office, then makes them available to Windows through `localhost`.
+Setup, commands, ports, and troubleshooting are documented in:
 
 ```text
 docs/WSL_DEVELOPMENT.md
+docs/ENGINEERING_OFFICE.md
 ```
 
 VS Code workspace configuration is maintained in:
