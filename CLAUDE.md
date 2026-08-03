@@ -16,13 +16,24 @@ eliza/      elizaOS framework fork — the AI engineering organization runs on t
 
 ## Where to find commands
 
-There is no root-level build/test runner across all three areas — each has its own toolchain:
+Run `make help` from the repository root for the supported cross-project and
+focused commands. The root launcher pins and selects the correct package
+manager, so normal work should not require changing directories:
+
+- `make start PROFILE=stack`, `make status`, `make stop` — local services.
+- `make app-build`, `make atproto-build`, `make pds-test`, `make org-verify` — focused work.
+- `make install`, `make build`, `make test`, `make lint` — intentionally broad aggregate checks.
+- `om run app ...`, `om run atproto ...`, `om run eliza ...` — direct package-manager escape hatch.
+
+Each area still owns its toolchain and detailed command documentation:
 
 - **`app/`** — pnpm, Expo/React Native. See `app/CLAUDE.md` (`pnpm start`, `pnpm test`, `pnpm lint`, `pnpm typecheck`, `pnpm build-web`, etc.)
 - **`atproto/`** — pnpm monorepo, `tsgo` build. See `atproto/CLAUDE.md` (`pnpm verify`, `pnpm build --force`, `pnpm codegen`, or the `Makefile` wrapper — `make build`, `make test`, `make lint`, `make run-dev-env`).
 - **`eliza/`** — Bun + Turbo monorepo. See `eliza/CLAUDE.md` (`bun install`, `bun run dev`, `bun run verify`, `bun run test`, etc.)
 
-The root `Makefile` only wraps `docs/HANDOFF.md` and `docs/CHANGELOG.md` editing (`make handoff`, `make changelog`, `make update`, `make log`) — it is not a build entry point.
+The production PDS is documented in `docs/PDS.md`; deployment assets live in
+`deploy/pds/`. Production mutation remains an explicit operator or CI action,
+not a root Makefile side effect.
 
 ## The AI engineering organization (`eliza/packages/org/`)
 

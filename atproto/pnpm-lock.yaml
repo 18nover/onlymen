@@ -2308,6 +2308,12 @@ importers:
         specifier: ^5.103.0
         version: 5.103.0(@openfeature/server-sdk@1.21.0(@openfeature/core@1.10.0))
 
+  services/bsky-indexer:
+    dependencies:
+      '@atproto/bsky':
+        specifier: workspace:^
+        version: link:../../packages/bsky
+
   services/bsync:
     dependencies:
       '@atproto/bsync':
@@ -2343,6 +2349,10 @@ importers:
       opentelemetry-plugin-better-sqlite3:
         specifier: ^1.13.0
         version: 1.13.0(better-sqlite3@12.9.0)
+    devDependencies:
+      vitest:
+        specifier: ^4.0.16
+        version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@22.19.17)(jiti@2.4.2)(lightningcss@1.30.2)(terser@5.44.0)(yaml@2.8.1)
 
 packages:
 
@@ -11767,7 +11777,7 @@ snapshots:
   '@babel/helper-module-imports@7.27.1':
     dependencies:
       '@babel/traverse': 7.28.4
-      '@babel/types': 7.28.5
+      '@babel/types': 7.29.0
     transitivePeerDependencies:
       - supports-color
 
@@ -12283,7 +12293,7 @@ snapshots:
       '@babel/helper-module-imports': 7.27.1
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.29.0)
-      '@babel/types': 7.28.5
+      '@babel/types': 7.29.0
     transitivePeerDependencies:
       - supports-color
 

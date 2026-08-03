@@ -1,5 +1,6 @@
 import { PDS, envToCfg, envToSecrets, httpLogger, readEnv } from '@atproto/pds'
 import pkg from '@atproto/pds/package.json' with { type: 'json' }
+import { registerTlsCheckRoute } from './tls-check.js'
 
 const main = async () => {
   const env = readEnv()
@@ -9,6 +10,7 @@ const main = async () => {
   const pds = await PDS.create(cfg, secrets)
 
   await pds.start()
+  registerTlsCheckRoute(pds)
 
   httpLogger.info('pds is running')
   // Graceful shutdown (see also https://aws.amazon.com/blogs/containers/graceful-shutdowns-with-ecs/)

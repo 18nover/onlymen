@@ -1,0 +1,35 @@
+name: onlymen-pds
+
+services:
+  pds:
+    image: ${PDS_IMAGE:-ghcr.io/18nover/onlymen-pds:production}
+    container_name: onlymen-pds
+    restart: unless-stopped
+    env_file:
+      - ${PDS_ENV_FILE:-/srv/onlymen/pds/pds.env}
+    volumes:
+      - type: bind
+        source: ${PDS_DATA_DIR:-/srv/onlymen/pds/data}
+        target: /app/data
+    networks:
+      - caddy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          fetch('http://127.0.0.1:3000/xrpc/_health')
+          .then((response) => process.exit(response.ok ? 0 : 1))
+          .catch(() => process.exit(1))
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  caddy:
+    external: true
+    name: ${CADDY_NETWORK:-caddy}

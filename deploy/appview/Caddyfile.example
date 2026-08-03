@@ -1,0 +1,15 @@
+# Merge into the existing Caddyfile alongside deploy/pds/Caddyfile.example's
+# global block - there must be only one global options block per Caddyfile.
+#
+# Unlike the PDS (a wildcard *.pds.onlymen.gay + on-demand TLS + a
+# /tls-check callback, since it serves unpredictable per-user subdomains),
+# the AppView and Ozone are two fixed, known hostnames - plain automatic
+# HTTPS is enough, no on-demand TLS or tls-check route needed.
+
+api.onlymen.gay {
+	reverse_proxy onlymen-bsky:3000
+}
+
+mod.onlymen.gay {
+	reverse_proxy onlymen-ozone:3000
+}

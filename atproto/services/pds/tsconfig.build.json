@@ -1,0 +1,9 @@
+{
+  "extends": ["../../tsconfig/node.tsconfig.json"],
+  "include": ["./index.ts", "./tls-check.ts", "./tls-domain.ts", "./tracer.ts"],
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "./dist",
+  },
+  "references": [{ "path": "../../packages/pds/tsconfig.build.json" }],
+}

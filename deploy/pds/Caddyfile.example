@@ -1,0 +1,15 @@
+# Merge the global option into the existing Caddyfile's single global block.
+{
+	email admin@onlymen.gay
+	on_demand_tls {
+		ask http://onlymen-pds:3000/tls-check
+	}
+}
+
+# Caddy proxies WebSocket upgrades automatically, including subscribeRepos.
+*.pds.onlymen.gay, pds.onlymen.gay {
+	tls {
+		on_demand
+	}
+	reverse_proxy onlymen-pds:3000
+}

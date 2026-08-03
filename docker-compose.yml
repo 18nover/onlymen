@@ -1,0 +1,272 @@
+name: onlymen
+
+# Local development / self-hosted stack for the OnlyMen monorepo.
+#
+# Always-on: the PDS (the currently supported, documented production
+# service - see docs/PDS.md). Everything else (AppView, Ozone, Bsync, and
+# their Postgres/Redis backing stores) is real infrastructure that builds
+# and runs - start it with `docker compose --profile appview up` once
+# BSKY_SERVICE_SIGNING_KEY and BSKY_REPO_PROVIDER are set in a .env file.
+# See docs/APPVIEW.md for the production equivalent.
+#
+# The AppView is split into two containers: `bsky` (the public API, reads
+# from a dataplane over BSKY_DATAPLANE_URLS) and `bsky-indexer` (the
+# dataplane server + firehose subscription that actually populates
+# Postgres). Upstream @atproto/bsky ships a production entrypoint for only
+# the first half; `bsky-indexer` is an OnlyMen-specific addition - see
+# atproto/services/bsky-indexer/README.md.
+#
+# Build contexts intentionally point at atproto/ (not services/<name>/)
+# because each service Dockerfile copies workspace packages as well as its
+# own entrypoint - see docs/PDS.md.
+#
+# Postgres auth: local dev uses POSTGRES_HOST_AUTH_METHOD=trust (no password)
+# on the private `onlymen` network. Override BSYNC_DB_POSTGRES_URL /
+# OZONE_DB_POSTGRES_URL / BSKY_DB_POSTGRES_URL in a .env file for anything
+# beyond local dev.
+
+x-node-healthcheck: &node-healthcheck
+  interval: 10s
+  timeout: 5s
+  retries: 12
+  start_period: 30s
+
+services:
+  pds:
+    build:
+      context: ./atproto
+      dockerfile: ./services/pds/Dockerfile
+    image: onlymen-pds:dev
+    container_name: onlymen-pds
+    restart: unless-stopped
+    env_file:
+      - ./deploy/pds/pds.env
+    environment:
+      PDS_PORT: 3000
+      NODE_ENV: production
+    ports:
+      - "${PDS_HOST_PORT:-2583}:3000"
+    volumes:
+      - pds-data:/app/data
+    networks:
+      - onlymen
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          fetch('http://127.0.0.1:3000/xrpc/_health')
+          .then((r) => process.exit(r.ok ? 0 : 1))
+          .catch(() => process.exit(1))
+      <<: *node-healthcheck
+    security_opt:
+      - no-new-privileges:true
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: onlymen-postgres
+    restart: unless-stopped
+    profiles: ["appview"]
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-onlymen}
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_DB: ${POSTGRES_DB:-bsky}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./deploy/appview/init-postgres-databases.sh:/docker-entrypoint-initdb.d/init-postgres-databases.sh:ro
+    networks:
+      - onlymen
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-onlymen}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+    security_opt:
+      - no-new-privileges:true
+
+  redis:
+    image: redis:7-alpine
+    container_name: onlymen-redis
+    restart: unless-stopped
+    profiles: ["appview"]
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    volumes:
+      - redis-data:/data
+    networks:
+      - onlymen
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    security_opt:
+      - no-new-privileges:true
+
+  bsync:
+    build:
+      context: ./atproto
+      dockerfile: ./services/bsync/Dockerfile
+    image: onlymen-bsync:dev
+    container_name: onlymen-bsync
+    restart: unless-stopped
+    profiles: ["appview"]
+    environment:
+      BSYNC_PORT: 3000
+      NODE_ENV: production
+      BSYNC_DB_POSTGRES_URL: ${BSYNC_DB_POSTGRES_URL:-postgresql://onlymen@postgres:5432/bsky}
+      BSYNC_DB_MIGRATE: "1"
+    networks:
+      - onlymen
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          fetch('http://127.0.0.1:3000/xrpc/_health')
+          .then((r) => process.exit(r.ok ? 0 : 1))
+          .catch(() => process.exit(1))
+      <<: *node-healthcheck
+    security_opt:
+      - no-new-privileges:true
+
+  bsky:
+    build:
+      context: ./atproto
+      dockerfile: ./services/bsky/Dockerfile
+    image: onlymen-bsky:dev
+    container_name: onlymen-bsky
+    restart: unless-stopped
+    profiles: ["appview"]
+    environment:
+      PORT: 3000
+      NODE_ENV: production
+      BSKY_PUBLIC_URL: ${BSKY_PUBLIC_URL:-http://localhost:2584}
+      BSKY_SERVER_DID: ${BSKY_SERVER_DID:-did:example:test}
+      BSKY_DID_PLC_URL: ${PDS_DID_PLC_URL:-https://plc.directory}
+      BSKY_DATAPLANE_URLS: http://bsky-indexer:3000
+      BSKY_BSYNC_URL: http://bsync:3000
+      MOD_SERVICE_DID: ${PDS_MOD_SERVICE_DID:-did:plc:replace-with-ozone-did}
+      BSKY_ADMIN_PASSWORDS: ${BSKY_ADMIN_PASSWORDS:-replace-with-a-high-entropy-password}
+      # secp256k1 private key hex, same format as PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX.
+      # Generate with: openssl ecparam --name secp256k1 --genkey --noout --outform DER \
+      #   | tail --bytes=+8 | head --bytes=32 | xxd --plain --cols 32
+      # Soft default, not required (`:?`) - this is a profiled service, and
+      # `:?` would fail interpolation for plain `docker compose up` (the
+      # always-on PDS) too, since compose interpolates the whole file before
+      # applying profile filters. bsky's own entrypoint asserts this at boot.
+      BSKY_SERVICE_SIGNING_KEY: ${BSKY_SERVICE_SIGNING_KEY:-replace-with-a-64-character-k256-private-key}
+    ports:
+      - "${BSKY_HOST_PORT:-2584}:3000"
+    networks:
+      - onlymen
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      bsync:
+        condition: service_started
+      bsky-indexer:
+        condition: service_started
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          fetch('http://127.0.0.1:3000/xrpc/_health')
+          .then((r) => process.exit(r.ok ? 0 : 1))
+          .catch(() => process.exit(1))
+      <<: *node-healthcheck
+    security_opt:
+      - no-new-privileges:true
+
+  # Indexer half of the AppView (dataplane server + firehose subscription).
+  # Upstream @atproto/bsky ships no production entrypoint for this - only its
+  # dev-env test harness exercises it - so this is an OnlyMen-specific
+  # service; see atproto/services/bsky-indexer/README.md.
+  bsky-indexer:
+    build:
+      context: ./atproto
+      dockerfile: ./services/bsky-indexer/Dockerfile
+    image: onlymen-bsky-indexer:dev
+    container_name: onlymen-bsky-indexer
+    restart: unless-stopped
+    profiles: ["appview"]
+    environment:
+      NODE_ENV: production
+      BSKY_SERVER_DID: ${BSKY_SERVER_DID:-did:example:test}
+      BSKY_DID_PLC_URL: ${PDS_DID_PLC_URL:-https://plc.directory}
+      BSKY_DATAPLANE_URLS: http://bsky-indexer:3000
+      BSKY_BSYNC_URL: http://bsync:3000
+      MOD_SERVICE_DID: ${PDS_MOD_SERVICE_DID:-did:plc:replace-with-ozone-did}
+      BSKY_DB_POSTGRES_URL: ${BSKY_DB_POSTGRES_URL:-postgresql://onlymen@postgres:5432/bsky}
+      BSKY_DB_MIGRATE: "1"
+      BSKY_DATAPLANE_PORT: 3000
+      # The PDS (or, once one exists, a relay) whose firehose gets indexed.
+      # No relay/BGS package exists in this fork, so a small deployment
+      # subscribes to its one PDS directly. Soft default, not required
+      # (`:?`) - see the BSKY_SERVICE_SIGNING_KEY comment on `bsky` above for
+      # why. The bsky-indexer entrypoint asserts this at boot instead.
+      BSKY_REPO_PROVIDER: ${BSKY_REPO_PROVIDER:-http://pds:3000}
+    networks:
+      - onlymen
+    depends_on:
+      postgres:
+        condition: service_healthy
+    security_opt:
+      - no-new-privileges:true
+
+  ozone:
+    build:
+      context: ./atproto
+      dockerfile: ./services/ozone/Dockerfile
+    image: onlymen-ozone:dev
+    container_name: onlymen-ozone
+    restart: unless-stopped
+    profiles: ["appview"]
+    environment:
+      PORT: 3000
+      NODE_ENV: production
+      OZONE_DB_POSTGRES_URL: ${OZONE_DB_POSTGRES_URL:-postgresql://onlymen@postgres:5432/ozone}
+      OZONE_DB_MIGRATE: "1"
+      OZONE_SERVER_DID: ${OZONE_SERVER_DID:-did:example:test}
+      OZONE_APPVIEW_URL: http://bsky:3000
+      OZONE_APPVIEW_DID: ${BSKY_SERVER_DID:-did:example:test}
+      OZONE_PDS_URL: http://pds:3000
+      OZONE_PDS_DID: ${PDS_SERVICE_DID:-did:example:test}
+    ports:
+      - "${OZONE_HOST_PORT:-2585}:3000"
+    networks:
+      - onlymen
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          fetch('http://127.0.0.1:3000/xrpc/_health')
+          .then((r) => process.exit(r.ok ? 0 : 1))
+          .catch(() => process.exit(1))
+      <<: *node-healthcheck
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  onlymen:
+    name: ${ONLYMEN_NETWORK:-onlymen}
+
+volumes:
+  pds-data:
+  postgres-data:
+  redis-data:

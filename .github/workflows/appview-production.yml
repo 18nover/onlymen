@@ -1,0 +1,139 @@
+name: AppView production
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/appview-production.yml"
+      - "atproto/**"
+      - "deploy/appview/**"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/appview-production.yml"
+      - "atproto/**"
+      - "deploy/appview/**"
+  workflow_dispatch:
+
+concurrency:
+  group: appview-production
+  cancel-in-progress: false
+
+env:
+  PNPM_VERSION: 11.11.0
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: atproto
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: atproto/.nvmrc
+          cache: pnpm
+          cache-dependency-path: atproto/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      # bsky/ozone/bsync/bsky-indexer service wrappers have no build/test
+      # scripts of their own (same as upstream services/bsky, services/ozone,
+      # services/bsync - only services/pds does) - building each package and
+      # its dependencies is what proves the images will build.
+      - name: Build AppView, Ozone, and Bsync packages and transitive deps
+        run: |
+          pnpm --recursive --stream --filter '@atproto/bsky...' build
+          pnpm --recursive --stream --filter '@atproto/ozone...' build
+          pnpm --recursive --stream --filter '@atproto/bsync...' build
+
+  image:
+    if: github.event_name != 'pull_request'
+    needs: verify
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      bsky-image: ${{ steps.image-refs.outputs.bsky-image }}
+      bsky-indexer-image: ${{ steps.image-refs.outputs.bsky-indexer-image }}
+      ozone-image: ${{ steps.image-refs.outputs.ozone-image }}
+      bsync-image: ${{ steps.image-refs.outputs.bsync-image }}
+    strategy:
+      matrix:
+        service: [bsky, bsky-indexer, ozone, bsync]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: image-ref
+        name: Select immutable image reference
+        shell: bash
+        run: echo "immutable-image=ghcr.io/18nover/onlymen-${{ matrix.service }}:sha-${GITHUB_SHA}" >>"${GITHUB_OUTPUT}"
+      - uses: docker/build-push-action@v6
+        with:
+          context: atproto
+          file: atproto/services/${{ matrix.service }}/Dockerfile
+          push: true
+          tags: |
+            ${{ steps.image-ref.outputs.immutable-image }}
+            ghcr.io/18nover/onlymen-${{ matrix.service }}:production
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
+          labels: |
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+      - id: image-refs
+        name: Publish this service's image ref as a job output
+        shell: bash
+        run: echo "${{ matrix.service }}-image=${{ steps.image-ref.outputs.immutable-image }}" >>"${GITHUB_OUTPUT}"
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: image
+    runs-on: ubuntu-24.04
+    environment:
+      name: production
+    steps:
+      - name: Configure deployment SSH key
+        shell: bash
+        env:
+          SSH_KEY: ${{ secrets.APPVIEW_DEPLOY_SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.APPVIEW_DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 "${HOME}/.ssh"
+          printf '%s\n' "${SSH_KEY}" >"${HOME}/.ssh/id_ed25519"
+          chmod 600 "${HOME}/.ssh/id_ed25519"
+          printf '%s\n' "${SSH_KNOWN_HOSTS}" >"${HOME}/.ssh/known_hosts"
+          chmod 600 "${HOME}/.ssh/known_hosts"
+      - name: Deploy immutable images
+        shell: bash
+        env:
+          DEPLOY_HOST: ${{ secrets.APPVIEW_DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.APPVIEW_DEPLOY_USER }}
+          BSKY_IMAGE: ${{ needs.image.outputs.bsky-image }}
+          BSKY_INDEXER_IMAGE: ${{ needs.image.outputs.bsky-indexer-image }}
+          OZONE_IMAGE: ${{ needs.image.outputs.ozone-image }}
+          BSYNC_IMAGE: ${{ needs.image.outputs.bsync-image }}
+          APPVIEW_PUBLIC_URL: ${{ secrets.APPVIEW_PUBLIC_URL }}
+          OZONE_PUBLIC_URL: ${{ secrets.OZONE_PUBLIC_URL }}
+        run: |
+          [[ "${APPVIEW_PUBLIC_URL}" =~ ^https://[^/]+/?$ ]]
+          [[ "${OZONE_PUBLIC_URL}" =~ ^https://[^/]+/?$ ]]
+          printf -v remote_command \
+            'sudo /srv/onlymen/appview/deploy.sh %q %q %q %q %q %q' \
+            "${BSKY_IMAGE}" "${BSKY_INDEXER_IMAGE}" "${OZONE_IMAGE}" "${BSYNC_IMAGE}" \
+            "${APPVIEW_PUBLIC_URL}" "${OZONE_PUBLIC_URL}"
+          ssh \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            "${DEPLOY_USER}@${DEPLOY_HOST}" \
+            "${remote_command}"

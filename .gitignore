@@ -18,6 +18,14 @@ node_modules/
 !.env.example
 !.env.*.example
 
+# Deploy secrets (real value files, not the *.example templates)
+deploy/**/pds.env
+deploy/**/image.env
+deploy/**/bsky.env
+deploy/**/ozone.env
+deploy/**/bsync.env
+deploy/**/postgres.env
+
 # Private keys / certificates
 *.pem
 *.key

@@ -1,0 +1,151 @@
+name: onlymen-appview
+
+x-node-healthcheck: &node-healthcheck
+  interval: 10s
+  timeout: 5s
+  retries: 12
+  start_period: 30s
+
+services:
+  bsky:
+    image: ${BSKY_IMAGE:-ghcr.io/18nover/onlymen-bsky:production}
+    container_name: onlymen-bsky
+    restart: unless-stopped
+    env_file:
+      - ${BSKY_ENV_FILE:-/srv/onlymen/appview/bsky.env}
+    networks:
+      - caddy
+      - appview
+    depends_on:
+      bsky-indexer:
+        condition: service_started
+      bsync:
+        condition: service_started
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          fetch('http://127.0.0.1:3000/xrpc/_health')
+          .then((response) => process.exit(response.ok ? 0 : 1))
+          .catch(() => process.exit(1))
+      <<: *node-healthcheck
+    security_opt:
+      - no-new-privileges:true
+
+  # Indexer half of the AppView: dataplane server + firehose subscription.
+  # Not exposed to Caddy - only `bsky` (over BSKY_DATAPLANE_URLS) talks to it.
+  bsky-indexer:
+    image: ${BSKY_INDEXER_IMAGE:-ghcr.io/18nover/onlymen-bsky-indexer:production}
+    container_name: onlymen-bsky-indexer
+    restart: unless-stopped
+    env_file:
+      - ${BSKY_ENV_FILE:-/srv/onlymen/appview/bsky.env}
+    networks:
+      - appview
+    depends_on:
+      postgres:
+        condition: service_healthy
+    security_opt:
+      - no-new-privileges:true
+
+  ozone:
+    image: ${OZONE_IMAGE:-ghcr.io/18nover/onlymen-ozone:production}
+    container_name: onlymen-ozone
+    restart: unless-stopped
+    env_file:
+      - ${OZONE_ENV_FILE:-/srv/onlymen/appview/ozone.env}
+    networks:
+      - caddy
+      - appview
+    depends_on:
+      postgres:
+        condition: service_healthy
+      bsky:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          fetch('http://127.0.0.1:3000/xrpc/_health')
+          .then((response) => process.exit(response.ok ? 0 : 1))
+          .catch(() => process.exit(1))
+      <<: *node-healthcheck
+    security_opt:
+      - no-new-privileges:true
+
+  bsync:
+    image: ${BSYNC_IMAGE:-ghcr.io/18nover/onlymen-bsync:production}
+    container_name: onlymen-bsync
+    restart: unless-stopped
+    env_file:
+      - ${BSYNC_ENV_FILE:-/srv/onlymen/appview/bsync.env}
+    networks:
+      - appview
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          fetch('http://127.0.0.1:3000/xrpc/_health')
+          .then((response) => process.exit(response.ok ? 0 : 1))
+          .catch(() => process.exit(1))
+      <<: *node-healthcheck
+    security_opt:
+      - no-new-privileges:true
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: onlymen-appview-postgres
+    restart: unless-stopped
+    env_file:
+      - ${POSTGRES_ENV_FILE:-/srv/onlymen/appview/postgres.env}
+    volumes:
+      - type: bind
+        source: ${APPVIEW_DATA_DIR:-/srv/onlymen/appview/data}/postgres
+        target: /var/lib/postgresql/data
+      - ./init-postgres-databases.sh:/docker-entrypoint-initdb.d/init-postgres-databases.sh:ro
+    networks:
+      - appview
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+    security_opt:
+      - no-new-privileges:true
+
+  redis:
+    image: redis:7-alpine
+    container_name: onlymen-appview-redis
+    restart: unless-stopped
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    volumes:
+      - type: bind
+        source: ${APPVIEW_DATA_DIR:-/srv/onlymen/appview/data}/redis
+        target: /data
+    networks:
+      - appview
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  caddy:
+    external: true
+    name: ${CADDY_NETWORK:-caddy}
+  appview:
+    name: onlymen-appview

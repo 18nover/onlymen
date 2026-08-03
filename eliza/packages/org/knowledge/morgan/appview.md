@@ -65,3 +65,13 @@ repo leaks it to the whole network.
   roadmap.
 - The moderation "rules" step is where Ozone labels take effect on reads —
   coordinate changes with Karen.
+- **Production deploy path**: `deploy/appview/` (mirrors `deploy/pds/`);
+  full domain plan, layout, and go-live checklist in `docs/APPVIEW.md`.
+- **`atproto/services/bsky` only ships the API half.** The dataplane/
+  firehose-subscription half (`data-plane/server/subscription.ts` above) has
+  no upstream production entrypoint — only `dev-env` exercised it before
+  this repo added `atproto/services/bsky-indexer/` (OnlyMen-specific) to run
+  `DataPlaneServer` + `RepoSubscription` + `BsyncSubscription` as a real
+  process. Any future upstream sync of `packages/bsky` should check whether
+  this gap has since been filled upstream before assuming
+  `bsky-indexer` is still needed as-is.

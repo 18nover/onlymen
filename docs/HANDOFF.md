@@ -7,9 +7,48 @@ of completed work lives in `docs/CHANGELOG.md`. When you finish something,
 add it to CHANGELOG.md and update only the still-current facts here.
 
 **Brand / domains:**
+
 - GitHub org/user: **18nover**
 - Repo: **onlymen** (`github.com/18nover/onlymen`)
-- Live domains: **onlymen.gay** and **18nover.gay**
+- App/OAuth: **onlymen.gay**
+- Production PDS: **pds.onlymen.gay**
+- Hosted PDS handles: **\*.pds.onlymen.gay**
+- Marketing redirect (planned): **onlymen.day** → **onlymen.gay**
+- Operator/personal domain: **18nover.gay**
+
+The full domain rationale and PDS runbook are in `docs/PDS.md`. Do not change
+the PDS hostname after creating accounts without treating it as an identity
+migration.
+
+---
+
+## Recap of Most Recent Session (2026-08-02, AppView + Ozone scaffolding)
+
+- Added a production deploy path for AppView/Ozone/Bsync under
+  `deploy/appview/` (mirroring `deploy/pds/`), plus
+  `.github/workflows/appview-production.yml` and `docs/APPVIEW.md`.
+- Found that upstream `@atproto/bsky` has no production entrypoint for the
+  dataplane/firehose-indexing half of the AppView — only its `dev-env` test
+  harness exercises it. Deploying just the existing `bsky`/`ozone`/`bsync`
+  images would have produced an AppView that boots and passes health checks
+  but never indexes anything. Closed the gap with a new OnlyMen-specific
+  `atproto/services/bsky-indexer/` entrypoint.
+- Fixed the local-dev `docker-compose.yml --profile appview` profile, which
+  could not previously boot (missing `BSKY_SERVICE_SIGNING_KEY`,
+  self-referencing `BSKY_DATAPLANE_URLS`, and no `ozone` database ever
+  created in Postgres).
+- See `docs/CHANGELOG.md`'s "AppView + Ozone production scaffolding" entry
+  for the full file list.
+
+---
+
+## Recap of Most Recent Session (2026-07-31, root commands and PDS)
+
+- Added a root command surface for app, AT Protocol, PDS, and engineering-org
+  work while preserving each subsystem's own package manager and layout.
+- Added `docs/PDS.md` and production deployment templates under `deploy/pds/`.
+- Assigned `pds.onlymen.gay` to the production PDS and documented the distinct
+  roles of `onlymen.gay`, `onlymen.day`, and `18nover.gay`.
 
 ---
 
@@ -160,7 +199,7 @@ The table below is kept for historical mapping context (old code-style name
 `docs/AGENTS.md` for the current names.
 
 | Agent (current) | `ORG_ROLE` | Knowledge files (bold = added in the Bluesky retraining) |
-|---|---|---|
+| --- | --- | --- |
 | Atlas | `engineering_director` | `project-management.md`, `onlymen-roadmap.md` (rewritten — real ATProto roadmap), + shared: `engineering-handbook.md`, `communication-protocol.md`, `definition-of-done.md` |
 | Circuit | `devops_engineer` | **`services.md`**, `docker-compose.md`, `github-actions.md`, `eas-builds.md`, `monitoring.md`, `backup-restore.md` |
 | Compass | `qa_engineer` | `test-plan-template.md`, `edge-case-catalog.md` (+ ATProto edge-case table), `accessibility-testing.md`, `interop.md`, `mock-pds.md`, + shared `testing-standards.md` |

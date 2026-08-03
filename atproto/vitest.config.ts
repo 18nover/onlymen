@@ -18,6 +18,7 @@ export default defineConfig({
       'packages/oauth/oauth-client',
       'packages/syntax',
       'packages/tap',
+      'services/pds',
 
       // The following packages use vitest but require dev-infra to be started &
       // stopped between runs, we don't enable it here (when running "pnpm

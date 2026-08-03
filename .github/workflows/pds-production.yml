@@ -1,0 +1,123 @@
+name: PDS production
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/pds-production.yml"
+      - "atproto/**"
+      - "deploy/pds/**"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/pds-production.yml"
+      - "atproto/**"
+      - "deploy/pds/**"
+  workflow_dispatch:
+
+concurrency:
+  group: pds-production
+  cancel-in-progress: false
+
+env:
+  IMAGE_NAME: ghcr.io/18nover/onlymen-pds
+  PNPM_VERSION: 11.11.0
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: atproto
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: atproto/.nvmrc
+          cache: pnpm
+          cache-dependency-path: atproto/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - name: Test PDS service wrapper
+        run: pnpm --filter pds-service test
+      - name: Build PDS and transitive workspace packages
+        run: |
+          pnpm --filter '@atproto/jwk' build
+          pnpm --recursive --stream --filter '@atproto/pds...' build
+      - name: Type-check the PDS service wrapper
+        run: pnpm --filter pds-service build
+
+  image:
+    if: github.event_name != 'pull_request'
+    needs: verify
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      immutable-image: ${{ steps.image-ref.outputs.immutable-image }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: image-ref
+        name: Select immutable image reference
+        shell: bash
+        run: echo "immutable-image=${IMAGE_NAME}:sha-${GITHUB_SHA}" >>"${GITHUB_OUTPUT}"
+      - uses: docker/build-push-action@v6
+        with:
+          context: atproto
+          file: atproto/services/pds/Dockerfile
+          push: true
+          tags: |
+            ${{ steps.image-ref.outputs.immutable-image }}
+            ${{ env.IMAGE_NAME }}:production
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          labels: |
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: image
+    runs-on: ubuntu-24.04
+    environment:
+      name: production
+    steps:
+      - name: Configure deployment SSH key
+        shell: bash
+        env:
+          SSH_KEY: ${{ secrets.PDS_DEPLOY_SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.PDS_DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 "${HOME}/.ssh"
+          printf '%s\n' "${SSH_KEY}" >"${HOME}/.ssh/id_ed25519"
+          chmod 600 "${HOME}/.ssh/id_ed25519"
+          printf '%s\n' "${SSH_KNOWN_HOSTS}" >"${HOME}/.ssh/known_hosts"
+          chmod 600 "${HOME}/.ssh/known_hosts"
+      - name: Deploy immutable image
+        shell: bash
+        env:
+          DEPLOY_HOST: ${{ secrets.PDS_DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.PDS_DEPLOY_USER }}
+          PDS_IMAGE: ${{ needs.image.outputs.immutable-image }}
+          PDS_PUBLIC_URL: ${{ secrets.PDS_PUBLIC_URL }}
+        run: |
+          [[ "${PDS_PUBLIC_URL}" =~ ^https://[^/]+/?$ ]]
+          printf -v remote_command \
+            'sudo /srv/onlymen/pds/deploy.sh %q %q' \
+            "${PDS_IMAGE}" "${PDS_PUBLIC_URL}"
+          ssh \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            "${DEPLOY_USER}@${DEPLOY_HOST}" \
+            "${remote_command}"

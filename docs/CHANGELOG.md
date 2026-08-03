@@ -6,6 +6,53 @@ so entries are grouped by date instead of version number. Newest first.
 
 ## Unreleased
 
+### AppView + Ozone production scaffolding — 2026-08-02
+- Added a production deploy path for the AppView (`bsky`), Ozone
+  (moderation), and Bsync under `deploy/appview/` — compose, per-service
+  `.env.example` files, a Caddyfile, `deploy.sh`/`verify.sh`, and a README —
+  mirroring `deploy/pds/`'s pattern exactly. Added
+  `.github/workflows/appview-production.yml` (verify/build/deploy, four
+  immutable GHCR images) and `docs/APPVIEW.md` (domain plan, layout,
+  identity bootstrap order, go-live checklist).
+- **Found and fixed a real architecture gap discovered while doing this**:
+  upstream `@atproto/bsky` ships a production entrypoint for only the
+  read-API half of the AppView (`services/bsky`); the dataplane/firehose-
+  indexing half (`DataPlaneServer` + `RepoSubscription` +
+  `BsyncSubscription`) was previously exercised only by the `dev-env` test
+  harness, with no way to run it in production. Deploying just the existing
+  `bsky`/`ozone`/`bsync` images would have booted cleanly and passed health
+  checks while never indexing anything — a "live" AppView that stays
+  permanently empty. Added `atproto/services/bsky-indexer/` (new
+  OnlyMen-specific entrypoint + Dockerfile + README) to close the gap.
+- Fixed the local-dev `docker-compose.yml --profile appview` profile so it
+  actually boots: added the missing `BSKY_SERVICE_SIGNING_KEY`, pointed
+  `BSKY_DATAPLANE_URLS` at the new `bsky-indexer` service instead of at
+  itself, added the `bsky-indexer` service, and added
+  `deploy/appview/init-postgres-databases.sh` (bind-mounted into the
+  Postgres container) so the `ozone` database actually gets created — the
+  local Postgres service only created a `bsky` database by default, which
+  would have made `ozone` fail to connect.
+- Added pointer updates to `eliza/packages/org/knowledge/morgan/appview.md`
+  and `eliza/packages/org/knowledge/karen/ozone.md` referencing the new
+  `deploy/appview/` and `docs/APPVIEW.md` paths, and updated
+  `docs/HANDOFF.md`'s recap and "Known not-yet-done" section.
+
+### Root command surface and production PDS — 2026-07-31
+- Consolidated the WSL launcher, PowerShell bridge, Windows shim, and Expo web
+  helper into the universal `bin/om` CLI plus the required `bin/om.cmd`
+  Windows entrypoint.
+- Added root `make` targets and `om run` routing so app, AT Protocol, PDS, and
+  elizaOS commands can be run from `~/onlymen` without moving the existing
+  subsystem directories.
+- Added `docs/PDS.md` as the PDS architecture, domains, local workflow, and
+  production-readiness source of truth.
+- Assigned `onlymen.gay` to the app/OAuth site, `pds.onlymen.gay` and its
+  wildcard to the production PDS, `onlymen.day` to a future marketing
+  redirect, and `18nover.gay` to the operator identity.
+- Added production PDS Compose, Caddy, environment, account, verification,
+  backup/rollback, and GitHub Actions deployment assets under `deploy/pds/`
+  and `.github/workflows/`.
+
 ### Agent rename — 2026-07-22
 - **Renamed all 13 agent character files** from code-style names to the
   human-name roster documented in `AGENTS.md`: Atlas→Andrew, Circuit→Devon,

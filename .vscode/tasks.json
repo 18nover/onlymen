@@ -4,84 +4,84 @@
     {
       "label": "OnlyMen: Bootstrap WSL",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "command": "${workspaceFolder}/bin/om",
       "args": ["bootstrap"],
       "problemMatcher": []
     },
     {
       "label": "OnlyMen: Doctor",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "command": "${workspaceFolder}/bin/om",
       "args": ["doctor"],
       "problemMatcher": []
     },
     {
       "label": "OnlyMen: Auth status",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "command": "${workspaceFolder}/bin/om",
       "args": ["auth"],
       "problemMatcher": []
     },
     {
       "label": "OnlyMen: Start full stack",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "command": "${workspaceFolder}/bin/om",
       "args": ["start"],
       "problemMatcher": []
     },
     {
       "label": "OnlyMen: Start engineering office",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "command": "${workspaceFolder}/bin/om",
       "args": ["start", "agents"],
       "problemMatcher": []
     },
     {
       "label": "OnlyMen: Open engineering office",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "command": "${workspaceFolder}/bin/om",
       "args": ["open", "agents"],
       "problemMatcher": []
     },
     {
       "label": "OnlyMen: Status",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "command": "${workspaceFolder}/bin/om",
       "args": ["status"],
       "problemMatcher": []
     },
     {
       "label": "OnlyMen: Attach",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "command": "${workspaceFolder}/bin/om",
       "args": ["attach"],
       "problemMatcher": []
     },
     {
       "label": "OnlyMen: Stack logs",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "command": "${workspaceFolder}/bin/om",
       "args": ["logs", "atproto-stack"],
       "problemMatcher": []
     },
     {
       "label": "OnlyMen: Stop",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "command": "${workspaceFolder}/bin/om",
       "args": ["stop"],
       "problemMatcher": []
     },
     {
       "label": "OnlyMen: Verify",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "command": "${workspaceFolder}/bin/om",
       "args": ["verify"],
       "problemMatcher": []
     },
     {
       "label": "OnlyMen: Verify engineering office",
       "type": "shell",
-      "command": "${workspaceFolder}/scripts/dev/onlymen",
+      "command": "${workspaceFolder}/bin/om",
       "args": ["verify", "org"],
       "problemMatcher": []
     }

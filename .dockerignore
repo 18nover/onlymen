@@ -1,0 +1,14 @@
+.git
+.github
+.vscode
+.devcontainer
+docs
+node_modules
+**/node_modules
+**/dist
+**/.turbo
+**/*.tsbuildinfo
+**/*.log
+.DS_Store
+eliza/.eliza
+eliza/.elizadb

@@ -38,6 +38,15 @@ onlymen/
 ├── eliza/
 │   └── OnlyMen AI Engineering Organization
 │
+├── deploy/
+│   └── Production deployment templates and host scripts
+│
+├── docs/
+│   └── Architecture, operations, and project handoff documentation
+│
+├── bin/
+│   └── Universal OnlyMen command-line entrypoints
+│
 ├── .devcontainer/
 │   └── Reproducible development container configuration
 │
@@ -198,21 +207,35 @@ authoritative checkout lives at `/home/jerry/onlymen`; Git and all development
 tools run in Linux. Windows PowerShell, VS Code, Docker Desktop, and the browser
 remain the desktop control surface.
 
-After bootstrap, the same short launcher works in PowerShell and WSL:
+Run the project from `~/onlymen`. The root Makefile is the command catalog;
+`om` is the service launcher and direct package-manager escape hatch:
 
-```text
-om doctor
-om start
-om open agents
+```bash
+make help
+make doctor
+make start PROFILE=stack
+make status
+make pds-test
+make stop
 ```
 
-The workflow supervises the seeded ATProto stack, Expo web app, and local
+Focused commands are also available from the root:
+
+```bash
+make app-build
+make atproto-build
+make org-verify
+om run atproto --filter pds-service test
+```
+
+The launcher supervises the seeded ATProto stack, Expo web app, and local
 engineering office, then makes them available to Windows through `localhost`.
-Setup, commands, ports, and troubleshooting are documented in:
+Setup, commands, ports, troubleshooting, and PDS operations are documented in:
 
 ```text
 docs/WSL_DEVELOPMENT.md
 docs/ENGINEERING_OFFICE.md
+docs/PDS.md
 ```
 
 VS Code workspace configuration is maintained in:

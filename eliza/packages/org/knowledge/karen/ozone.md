@@ -53,6 +53,15 @@ of PDS/AppView deploys. In local dev, part of the `dev-infra` compose stack
 on port 2587. Devon owns the container/deploy pipeline; this doc covers
 what the service does, not how it ships.
 
+**Production**: deployed alongside the AppView from `deploy/appview/` (one
+directory, since they share Postgres and are coupled by `appviewUrl`/
+`pdsUrl`) — see `docs/APPVIEW.md`. Ozone's own service identity
+(`OZONE_SERVER_DID`) must be a real `did:plc` account created on the
+production PDS first, not a static keypair like the AppView's `did:web` —
+Ozone publishes moderation actions/labels as its own repo. That account
+creation has to happen before Ozone can start with its real DID configured;
+`deploy/appview/README.md` documents the exact order.
+
 ## Data model boundary
 
 Ozone's database holds moderation events and derived subject status — it

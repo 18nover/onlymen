@@ -18,8 +18,8 @@ From PowerShell, bootstrap the Linux tools and install the short Windows
 launcher:
 
 ```powershell
-$OnlyMen = '\\wsl.localhost\Ubuntu-26.04\home\jerry\onlymen\scripts\dev\onlymen.ps1'
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File $OnlyMen bootstrap
+& '\\wsl.localhost\Ubuntu-26.04\home\jerry\onlymen\bin\om.cmd' install-shell
+om bootstrap
 ```
 
 Bootstrap installs or validates the project toolchain, WSL-native Claude and
@@ -28,6 +28,11 @@ the launchers:
 
 - PowerShell or Command Prompt: `om`
 - WSL Bash: `om`
+
+The repository has one implementation in `bin/om`. The small `bin/om.cmd`
+file is only the Windows-to-WSL bridge; it forwards the command and every
+argument to that implementation. Expo web startup is embedded in `bin/om`, so
+there is no separate PowerShell launcher or Expo helper to keep synchronized.
 
 Open a WSL shell and complete the interactive logins once:
 
@@ -45,9 +50,23 @@ Codex authentication is also checked by `om auth`; run `codex login` if it
 reports missing credentials. Credentials stay native to WSL and are never
 copied from Windows.
 
-## Daily workflow
+## Daily workflow from the repository root
 
-The same commands work from PowerShell and WSL:
+From WSL, use the root Makefile as the command catalog:
+
+```bash
+cd /home/jerry/onlymen
+make help
+make doctor
+make start PROFILE=all
+make status
+make logs TARGET=org-console
+make verify AREA=org
+make stop
+```
+
+The `om` launcher remains available from PowerShell and WSL, and is useful for
+interactive commands or commands that are not Make targets:
 
 ```text
 om doctor
@@ -59,6 +78,14 @@ om logs org-console
 om attach
 om verify org
 om stop
+```
+
+Run package-manager commands without changing directories:
+
+```bash
+om run app test src/path/to/test.ts
+om run atproto --filter pds-service test
+om run eliza run --cwd packages/org docs
 ```
 
 Useful start profiles:
