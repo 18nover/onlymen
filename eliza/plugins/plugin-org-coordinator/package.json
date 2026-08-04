@@ -22,6 +22,7 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "typecheck": "tsc --noEmit",
+    "test": "bun test tests",
     "lint": "biome lint src/",
     "format": "biome format src/"
   },

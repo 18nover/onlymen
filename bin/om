@@ -820,6 +820,7 @@ verify_area() {
         cd -- "${REPO_ROOT}/eliza"
         bun run --cwd packages/org verify
         bun run --cwd plugins/plugin-org-coordinator typecheck
+        bun run --cwd plugins/plugin-org-coordinator test
         bun run --cwd plugins/plugin-org-coordinator lint
       )
       ;;
