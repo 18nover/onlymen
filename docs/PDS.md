@@ -102,3 +102,8 @@ instructions live in [`../deploy/pds/README.md`](../deploy/pds/README.md).
 - A test record reaches ingestion, the OnlyMen AppView, and Ozone reporting.
 - Container recreation preserves accounts, repositories, sequences, and blobs.
 - A restore rehearsal succeeds before a larger beta.
+- 18+ gating is accounted for: invites remain required, and the AppView's
+  age-assurance configuration (`BSKY_KWS_*` in
+  `deploy/appview/bsky.env.example`) plus an Ozone adult-content labeling
+  policy are in place before any invite goes to someone outside the
+  operator's direct control - see `docs/APPVIEW.md`'s go-live checklist.

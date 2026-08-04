@@ -119,5 +119,13 @@ live in [`../deploy/appview/README.md`](../deploy/appview/README.md).
 - A test report reaches Ozone's moderation queue at
   `https://mod.onlymen.gay`.
 - Container recreation preserves Postgres and Redis data.
+- Age assurance is live: every `BSKY_KWS_*` variable in
+  `deploy/appview/bsky.env.example` is set (they are all-or-nothing), a test
+  account completes the age-assurance flow, and an unverified account is
+  actually gated. OnlyMen is 18+; without this the platform has no age
+  check at all.
+- An adult-content labeling policy exists in Ozone: label values chosen,
+  `OZONE_ADMIN_DIDS` set to real moderator accounts, and a test label
+  applied from `https://mod.onlymen.gay` is visible through the AppView.
 - A restore rehearsal succeeds before onboarding a second real PDS user -
   `deploy/pds/README.md` already gates on this.
