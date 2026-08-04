@@ -22,13 +22,14 @@ pds.onlymen.gay
 ## 2. Install the host files
 
 Copy `compose.yaml`, `deploy.sh`, `create-account.sh`, and `verify.sh` to
-`/srv/onlymen/pds`. Copy the two examples without their `.example` suffixes.
-Do not commit the resulting `pds.env` or `image.env`.
+`/srv/onlymen/pds`. Copy the two example templates from `docs/pds/` without
+their `.example` suffixes. Do not commit the resulting `pds.env` or
+`image.env`.
 
 ```bash
 sudo install -d -m 700 /srv/onlymen/pds/{data,backups}
-sudo install -m 600 deploy/pds/pds.env.example /srv/onlymen/pds/pds.env
-sudo install -m 600 deploy/pds/image.env.example /srv/onlymen/pds/image.env
+sudo install -m 600 docs/pds/pds.env.example /srv/onlymen/pds/pds.env
+sudo install -m 600 docs/pds/image.env.example /srv/onlymen/pds/image.env
 sudo install -m 600 deploy/pds/compose.yaml /srv/onlymen/pds/compose.yaml
 sudo install -m 700 deploy/pds/{deploy,create-account,verify}.sh /srv/onlymen/pds/
 sudo chown -R 1000:1000 /srv/onlymen/pds/data
@@ -57,10 +58,10 @@ docker network inspect caddy
 
 ## 3. Merge the Caddy configuration
 
-Merge `Caddyfile.example` into the existing Caddyfile, changing the contact
-email if necessary. There must be only one global options block. Both Caddy and
-`onlymen-pds` must join the configured external Docker network. Caddy handles
-WebSocket upgrades automatically.
+Merge `docs/pds/Caddyfile.example` into the existing Caddyfile, changing the
+contact email if necessary. There must be only one global options block. Both
+Caddy and `onlymen-pds` must join the configured external Docker network.
+Caddy handles WebSocket upgrades automatically.
 
 Validate and reload Caddy before deploying the PDS. Do not install a second
 Caddy, Watchtower, or the standalone PDS systemd unit.

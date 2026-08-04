@@ -52,13 +52,14 @@ need on-demand TLS.
 ## 3. Install the host files
 
 Copy `compose.yaml`, `init-postgres-databases.sh`, `deploy.sh`, and
-`verify.sh` to `/srv/onlymen/appview`. Copy the four examples without their
-`.example` suffixes. Do not commit the resulting `bsky.env`, `ozone.env`,
-`bsync.env`, `postgres.env`, or `image.env`.
+`verify.sh` to `/srv/onlymen/appview`. Copy the five example templates from
+`docs/appview/` without their `.example` suffixes. Do not commit the
+resulting `bsky.env`, `ozone.env`, `bsync.env`, `postgres.env`, or
+`image.env`.
 
 ```bash
 sudo install -d -m 700 /srv/onlymen/appview/{data/postgres,data/redis,backups}
-sudo install -m 600 deploy/appview/{bsky,ozone,bsync,postgres,image}.env.example \
+sudo install -m 600 docs/appview/{bsky,ozone,bsync,postgres,image}.env.example \
   /srv/onlymen/appview/  # then drop the .example suffix from each copy
 sudo install -m 644 deploy/appview/compose.yaml /srv/onlymen/appview/
 sudo install -m 755 deploy/appview/init-postgres-databases.sh /srv/onlymen/appview/
@@ -69,9 +70,9 @@ sudo chown -R 1000:1000 /srv/onlymen/appview/data
 Generate every secret independently, same as `deploy/pds/`: a Postgres
 password, a `BSKY_SERVICE_SIGNING_KEY`, an `OZONE_SIGNING_KEY_HEX`, an
 `OZONE_ADMIN_PASSWORD`, and a shared `BSYNC_API_KEYS` / `BSKY_BSYNC_API_KEY`
-secret. Each `.env.example` file documents the exact generation command and
-which other file needs the same value. Keep a secure off-host copy of all of
-them.
+secret. Each `docs/appview/*.env.example` file documents the exact
+generation command and which other file needs the same value. Keep a
+secure off-host copy of all of them.
 
 Log the host into GHCR with a read-only package token if it isn't already
 (shared with the PDS deployment):
@@ -83,8 +84,8 @@ docker network inspect caddy
 
 ## 4. Merge the Caddy configuration
 
-Merge `Caddyfile.example` into the existing Caddyfile alongside
-`deploy/pds/Caddyfile.example` - there must be only one global options block
+Merge `docs/appview/Caddyfile.example` into the existing Caddyfile alongside
+`docs/pds/Caddyfile.example` - there must be only one global options block
 across the whole file. Both Caddy and the `bsky`/`ozone` containers must
 join the configured external Docker network. Validate and reload Caddy
 before deploying.
@@ -127,4 +128,4 @@ Then, manually: create a test record through the PDS, confirm it becomes
 visible through `https://api.onlymen.gay`, file a test report, and confirm
 it reaches the moderation queue at `https://mod.onlymen.gay`. Do not invite
 a second real user to the PDS pilot until both of those succeed - see
-`docs/APPVIEW.md`'s go-live checklist.
+`docs/appview/APPVIEW.md`'s go-live checklist.

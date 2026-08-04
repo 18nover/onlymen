@@ -6,6 +6,8 @@ directory has been removed while other options for running these agents are
 evaluated; the full agent definitions, knowledge base, shared standards, and
 tooling source are preserved here for reference.
 
+- [`AGENTS.md`](AGENTS.md) — the roster spec (naming/personality requirements, team structure) this org was built to
+- [`ENGINEERING_OFFICE.md`](ENGINEERING_OFFICE.md) — the archived local control-plane doc (console, approval workflow)
 - `*.md` (this directory) — one profile per agent (generated from `characters/*.json`)
 - `characters/` — raw agent configs: bio, full system prompt, personality, topics, style
 - `knowledge/<agent>/` — per-agent domain grounding docs

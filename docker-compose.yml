@@ -3,11 +3,11 @@ name: onlymen
 # Local development / self-hosted stack for the OnlyMen monorepo.
 #
 # Always-on: the PDS (the currently supported, documented production
-# service - see docs/PDS.md). Everything else (AppView, Ozone, Bsync, and
+# service - see docs/pds/PDS.md). Everything else (AppView, Ozone, Bsync, and
 # their Postgres/Redis backing stores) is real infrastructure that builds
 # and runs - start it with `docker compose --profile appview up` once
 # BSKY_SERVICE_SIGNING_KEY and BSKY_REPO_PROVIDER are set in a .env file.
-# See docs/APPVIEW.md for the production equivalent.
+# See docs/appview/APPVIEW.md for the production equivalent.
 #
 # The AppView is split into two containers: `bsky` (the public API, reads
 # from a dataplane over BSKY_DATAPLANE_URLS) and `bsky-indexer` (the
@@ -18,7 +18,7 @@ name: onlymen
 #
 # Build contexts intentionally point at atproto/ (not services/<name>/)
 # because each service Dockerfile copies workspace packages as well as its
-# own entrypoint - see docs/PDS.md.
+# own entrypoint - see docs/pds/PDS.md.
 #
 # Postgres auth: local dev uses POSTGRES_HOST_AUTH_METHOD=trust (no password)
 # on the private `onlymen` network. Override BSYNC_DB_POSTGRES_URL /

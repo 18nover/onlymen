@@ -1,4 +1,4 @@
-# Merge into the existing Caddyfile alongside deploy/pds/Caddyfile.example's
+# Merge into the existing Caddyfile alongside docs/pds/Caddyfile.example's
 # global block - there must be only one global options block per Caddyfile.
 #
 # Unlike the PDS (a wildcard *.pds.onlymen.gay + on-demand TLS + a

@@ -160,7 +160,7 @@ log: ## Append ENTRY to the Unreleased changelog section
 	@sed -i "/^## Unreleased/a $(ENTRY)" docs/CHANGELOG.md
 
 pds-docs: ## Open the PDS architecture and deployment documentation
-	@$(EDITOR) docs/PDS.md deploy/pds/README.md
+	@$(EDITOR) docs/pds/PDS.md deploy/pds/README.md
 
 appview-docs: ## Open the AppView/Ozone architecture and deployment documentation
-	@$(EDITOR) docs/APPVIEW.md deploy/appview/README.md
+	@$(EDITOR) docs/appview/APPVIEW.md deploy/appview/README.md

@@ -9,7 +9,7 @@ OnlyMen.
 ## Team Structure
 
 | Agent | Role | Responsibilities | Knowledge |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Andrew | engineering_director | Leads engineering organization and coordinates overall technical direction. Project management, roadmap alignment, technical priorities, architecture decisions, engineering standards, cross-specialist communication, and Definition of Done. | `project-management.md`, `onlymen-roadmap.md`, + shared `engineering-handbook.md`, `communication-protocol.md`, `definition-of-done.md` |
 | Devon | devops_engineer | Owns infrastructure and deployment systems. Docker, CI/CD, GitHub Actions, EAS builds, monitoring, backups, disaster recovery, and deployment automation. | `services.md`, `docker-compose.md`, `github-actions.md`, `eas-builds.md`, `monitoring.md`, `backup-restore.md` |
 | Quinn | qa_engineer | Ensures OnlyMen works correctly before changes reach users. Skeptical and methodical, looking for edge cases and unexpected behavior. Test planning, regression testing, accessibility testing coordination, AT Protocol interoperability, mock PDS testing, release quality. | `test-plan-template.md`, `edge-case-catalog.md`, `accessibility-testing.md`, `interop.md`, `mock-pds.md`, + shared `testing-standards.md` |

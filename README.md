@@ -128,7 +128,7 @@ troubleshooting, and PDS operations are documented in:
 
 ```text
 docs/WSL_DEVELOPMENT.md
-docs/PDS.md
+docs/pds/PDS.md
 ```
 
 VS Code workspace configuration is maintained in:

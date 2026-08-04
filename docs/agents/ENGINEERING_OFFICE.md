@@ -7,7 +7,7 @@ evaluated.
 
 The agent definitions, per-agent knowledge base, shared engineering
 standards, and skill playbooks are preserved at
-[`docs/agents/`](agents/README.md). The console, `om start agents` /
+[`docs/agents/`](README.md). The console, `om start agents` /
 `om open agents` / `om verify org` commands, and the approval-gated
 proposal → execution → publication workflow described by the old version of
 this document no longer exist — `bin/om` and the root `Makefile` were

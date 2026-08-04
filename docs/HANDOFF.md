@@ -16,9 +16,9 @@ add it to CHANGELOG.md and update only the still-current facts here.
 - Marketing redirect (planned): **onlymen.day** → **onlymen.gay**
 - Operator/personal domain: **18nover.gay**
 
-The full domain rationale and PDS runbook are in `docs/PDS.md`. Do not change
-the PDS hostname after creating accounts without treating it as an identity
-migration.
+The full domain rationale and PDS runbook are in `docs/pds/PDS.md`. Do not
+change the PDS hostname after creating accounts without treating it as an
+identity migration.
 
 ---
 
@@ -248,7 +248,7 @@ Parker, Penelope, Seth, Karen) documented in `docs/AGENTS.md`, applied
 across character files, `ORG_AGENTS`, knowledge paths, docs, and skills.
 The table below is kept for historical mapping context (old code-style name
 → current role); read the "Agent (current)" column as **stale** — see
-`docs/AGENTS.md` for the current names.
+`docs/agents/AGENTS.md` for the current names.
 
 | Agent (current) | `ORG_ROLE` | Knowledge files (bold = added in the Bluesky retraining) |
 | --- | --- | --- |

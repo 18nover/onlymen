@@ -1,10 +1,37 @@
 # Changelog
 
-Notable changes to the OnlyMen repo (`app/`, `atproto/`, `eliza/`, docs). No
-version tags have been cut yet (`v0.1.0-web-launch` is planned, not shipped),
-so entries are grouped by date instead of version number. Newest first.
+Notable changes to the OnlyMen repo (`app/`, `atproto/`, docs). No version
+tags have been cut yet (`v0.1.0-web-launch` is planned, not shipped), so
+entries are grouped by date instead of version number. Newest first.
 
 ## Unreleased
+
+### Reorganize docs/ by topic (pds/, appview/, agents/) — 2026-08-04
+
+- **`docs/PDS.md` -> `docs/pds/PDS.md`**, **`docs/APPVIEW.md` ->
+  `docs/appview/APPVIEW.md`**, **`docs/AGENTS.md` ->
+  `docs/agents/AGENTS.md`**, **`docs/ENGINEERING_OFFICE.md` ->
+  `docs/agents/ENGINEERING_OFFICE.md`** — grouping each doc with its topic,
+  mirroring the `docs/agents/` archive from earlier today.
+- Moved the **config templates** out of the live deploy directories: the 3
+  PDS examples (`Caddyfile.example`, `image.env.example`,
+  `pds.env.example`) from `deploy/pds/` to `docs/pds/`, and the 6 AppView
+  examples (`Caddyfile.example`, `bsky.env.example`, `bsync.env.example`,
+  `image.env.example`, `ozone.env.example`, `postgres.env.example`) from
+  `deploy/appview/` to `docs/appview/`. `deploy/pds/` and `deploy/appview/`
+  keep only the operational files (`compose.yaml`, `deploy.sh`,
+  `verify.sh`, `create-account.sh`, `README.md`, and the real gitignored
+  `Caddyfile`/`*.env`) — those stay put since the production GitHub
+  Actions workflows and the root `docker-compose.yml` reference them
+  directly, and the Pi already has a live dev PDS depending on those
+  paths not moving.
+- Updated every cross-reference: `deploy/pds/README.md` and
+  `deploy/appview/README.md`'s install commands and Caddyfile-merge steps
+  now point at `docs/pds/*.example` / `docs/appview/*.example`; the deploy
+  layout tables in `PDS.md`/`APPVIEW.md`; `CLAUDE.md`, `README.md`,
+  `Makefile`'s `pds-docs`/`appview-docs` targets, `docker-compose.yml`'s
+  comments, and `docs/HANDOFF.md`'s live-state pointers (its dated
+  historical recaps were left alone, same as the eliza removal).
 
 ### Remove eliza/, archive the AI engineering org — 2026-08-04
 

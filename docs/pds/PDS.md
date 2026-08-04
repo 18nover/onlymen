@@ -30,7 +30,8 @@ registrar changes are made by repository commands.
 | --- | --- |
 | `atproto/packages/pds/` | Reusable PDS implementation and configuration |
 | `atproto/services/pds/` | Production entrypoint, `/tls-check`, and Docker image |
-| `deploy/pds/` | Compose, Caddy, environment, verification, and rollback templates |
+| `deploy/pds/` | Compose, deploy/verify/create-account scripts, and the live `Caddyfile`/`pds.env`/`image.env` (gitignored, not templates) |
+| `docs/pds/*.example` | Config templates - copy to `deploy/pds/` or straight to the production host, dropping the `.example` suffix (see the runbook below) |
 | `.github/workflows/pds-production.yml` | Test, build, publish, and SSH deployment workflow |
 
 Keep both AT Protocol PDS directories. The Docker build context is
@@ -85,7 +86,7 @@ the JWT secret, DPoP secret, admin password, and PLC rotation key. Do not add
 read it.
 
 Detailed host setup, deployment, account creation, health checks, and rollback
-instructions live in [`../deploy/pds/README.md`](../deploy/pds/README.md).
+instructions live in [`../../deploy/pds/README.md`](../../deploy/pds/README.md).
 
 ## Go-live checklist
 

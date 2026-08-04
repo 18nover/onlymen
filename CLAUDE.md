@@ -31,9 +31,10 @@ Each area still owns its toolchain and detailed command documentation:
 - **`app/`** — pnpm, Expo/React Native. See `app/CLAUDE.md` (`pnpm start`, `pnpm test`, `pnpm lint`, `pnpm typecheck`, `pnpm build-web`, etc.)
 - **`atproto/`** — pnpm monorepo, `tsgo` build. See `atproto/CLAUDE.md` (`pnpm verify`, `pnpm build --force`, `pnpm codegen`, or the `Makefile` wrapper — `make build`, `make test`, `make lint`, `make run-dev-env`).
 
-The production PDS is documented in `docs/PDS.md`; deployment assets live in
-`deploy/pds/`. Production mutation remains an explicit operator or CI action,
-not a root Makefile side effect.
+The production PDS is documented in `docs/pds/PDS.md`; deployment assets live
+in `deploy/pds/` (config templates at `docs/pds/*.example`). Production
+mutation remains an explicit operator or CI action, not a root Makefile side
+effect.
 
 ## The AI engineering organization (archived — `docs/agents/`)
 

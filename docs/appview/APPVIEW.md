@@ -3,7 +3,7 @@
 This is the source of truth for the OnlyMen AppView (read-side indexing and
 API) and Ozone (moderation): where the code lives, which domains it uses,
 how to work with it from the repository root, and how it is deployed. It
-assumes the production PDS (`docs/PDS.md`) is already live - the identity
+assumes the production PDS (`docs/pds/PDS.md`) is already live - the identity
 bootstrap below depends on it.
 
 ## Domain plan
@@ -47,11 +47,12 @@ that's the entire crawl topology for now.
 | `atproto/packages/{bsky,ozone,bsync}/` | Reusable service implementations and configuration |
 | `atproto/services/{bsky,ozone,bsync}/` | Production entrypoints and Docker images (upstream) |
 | `atproto/services/bsky-indexer/` | Dataplane/indexer production entrypoint (OnlyMen-specific) |
-| `deploy/appview/` | Compose, Caddy, environment, verification, and rollback templates |
+| `deploy/appview/` | Compose, deploy/verify scripts, and the live env files (gitignored, not templates) |
+| `docs/appview/*.example` | Config templates - copy to `deploy/appview/` or straight to the production host, dropping the `.example` suffix (see the runbook below) |
 | `.github/workflows/appview-production.yml` | Test, build, publish, and SSH deployment workflow |
 
 Keep all four AT Protocol service directories under `atproto/services/`,
-matching the PDS's layout (`docs/PDS.md`). The Docker build context for
+matching the PDS's layout (`docs/pds/PDS.md`). The Docker build context for
 every image is `atproto/`, for the same reason as the PDS: each image copies
 workspace packages as well as its own entrypoint.
 
@@ -101,11 +102,11 @@ Before starting the production stack:
 4. Generate every secret independently (Postgres password,
    `BSKY_SERVICE_SIGNING_KEY`, `OZONE_SIGNING_KEY_HEX`,
    `OZONE_ADMIN_PASSWORD`, a shared `BSYNC_API_KEYS` /
-   `BSKY_BSYNC_API_KEY`) - see each `deploy/appview/*.env.example` file for
+   `BSKY_BSYNC_API_KEY`) - see each `docs/appview/*.env.example` file for
    the exact command and which other file needs the same value.
 
 Detailed host setup, deployment, verification, and rollback instructions
-live in [`../deploy/appview/README.md`](../deploy/appview/README.md).
+live in [`../../deploy/appview/README.md`](../../deploy/appview/README.md).
 
 ## Go-live checklist
 
