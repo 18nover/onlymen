@@ -40,7 +40,13 @@ services:
     container_name: onlymen-pds
     restart: unless-stopped
     env_file:
-      - ./deploy/pds/pds.env
+      # Copy deploy/pds/pds.env.example to deploy/pds/pds.env (gitignored)
+      # and fill in real values before starting the PDS. required: false so
+      # a fresh clone can still parse and run the other services without it;
+      # the PDS entrypoint fails fast at boot when required settings are
+      # missing.
+      - path: ./deploy/pds/pds.env
+        required: false
     environment:
       PDS_PORT: 3000
       NODE_ENV: production
