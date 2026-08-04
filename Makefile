@@ -22,25 +22,23 @@ help: ## Show the root command catalog
 		'    make logs [TARGET=all]      Read a tmux service log' \
 		'    make stop                   Stop managed services' \
 		'    make restart [PROFILE=all]  Restart all, stack, backend, or agents' \
-		'    make verify [AREA=all]      Verify all, app, atproto, org, or smoke' \
+		'    make verify [AREA=all]      Verify all, app, atproto, or smoke' \
 		'' \
 		'  Aggregate project commands' \
-		'    make install                Install app, atproto, and eliza dependencies' \
-		'    make build                  Build app web, atproto, and eliza' \
-		'    make test                   Test app, atproto, and eliza' \
-		'    make lint                   Lint/type-check app, atproto, and eliza org' \
+		'    make install                Install app and atproto dependencies' \
+		'    make build                  Build app web and atproto' \
+		'    make test                   Test app and atproto' \
+		'    make lint                   Lint/type-check app and atproto' \
 		'' \
 		'  Focused commands' \
 		'    make app-{install,build,test,lint,typecheck,format}' \
 		'    make atproto-{install,codegen,build,test,lint,format}' \
 		'    make pds-{build,test}' \
 		'    make appview-build' \
-		'    make org-{install,build,test,lint,verify,docs}' \
 		'' \
 		'  Direct escape hatch' \
 		'    om run app <pnpm arguments>' \
 		'    om run atproto <pnpm arguments>' \
-		'    om run eliza <bun arguments>' \
 		'' \
 		'  Documentation' \
 		'    make handoff | make changelog | make pds-docs | make appview-docs'
@@ -73,7 +71,7 @@ stop: ## Stop managed services
 restart: ## Restart PROFILE=all, stack, backend, or agents
 	$(OM) restart $(PROFILE)
 
-verify: ## Verify AREA=all, app, atproto, org, or smoke
+verify: ## Verify AREA=all, app, atproto, or smoke
 	$(OM) verify $(AREA)
 
 open: ## Open OPEN=code, app, or agents
@@ -83,13 +81,13 @@ shell: ## Open a login shell in the repository root
 	$(OM) shell
 
 .PHONY: install build test lint
-install: atproto-install app-install org-install ## Install every project
+install: atproto-install app-install ## Install every project
 
-build: atproto-build app-build org-build ## Build every project
+build: atproto-build app-build ## Build every project
 
-test: app-test atproto-test org-test ## Test every project
+test: app-test atproto-test ## Test every project
 
-lint: app-lint app-typecheck atproto-lint org-lint ## Check every project
+lint: app-lint app-typecheck atproto-lint ## Check every project
 
 .PHONY: app-install app-build app-test app-lint app-typecheck app-format
 app-install: ## Install app dependencies
@@ -147,26 +145,6 @@ appview-build: ## Build the AppView, Ozone, and Bsync packages and transitive de
 # No appview-test target: unlike pds-service, the bsky/ozone/bsync/bsky-indexer
 # service wrappers have no test scripts of their own (upstream precedent) -
 # their package-level tests already run as part of `make atproto-test`.
-
-.PHONY: org-install org-build org-test org-lint org-verify org-docs
-org-install: ## Install elizaOS dependencies
-	$(OM) run eliza install --frozen-lockfile
-
-org-build: ## Build elizaOS
-	$(OM) run eliza run build
-
-org-test: ## Run elizaOS tests
-	$(OM) run eliza run test
-
-org-lint: ## Lint and type-check the OnlyMen engineering office
-	$(OM) run eliza run --cwd packages/org lint
-	$(OM) run eliza run --cwd plugins/plugin-org-coordinator typecheck
-
-org-verify: ## Verify the OnlyMen engineering office
-	$(OM) verify org
-
-org-docs: ## Regenerate engineering-office documentation
-	$(OM) run eliza run --cwd packages/org docs
 
 .PHONY: handoff changelog log update pds-docs appview-docs
 handoff: ## Edit the project handoff

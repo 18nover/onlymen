@@ -50,9 +50,7 @@
     "**/.turbo",
     "**/.bun",
     "**/.yarn",
-    "**/.pnpm-store",
-    "eliza/packages/benchmarks/**",
-    "eliza/packages/training/**"
+    "**/.pnpm-store"
   ],
   "python.analysis.diagnosticMode": "openFilesOnly",
   "python.analysis.indexing": false,

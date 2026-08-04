@@ -2,8 +2,6 @@
 # OnlyMen Monorepo
 # ============================================
 
-eliza/packages/os/linux/tails/chroot/
-
 # --------------------------------------------
 # Dependencies
 # --------------------------------------------
@@ -153,18 +151,6 @@ System Volume Information/
 .claude/settings.local.json
 
 # --------------------------------------------
-# ElizaOS Local Data
-# --------------------------------------------
-.elizadb
-**/.elizadb
-
-# --------------------------------------------
-# Generated Linux / OS Artifacts
-# --------------------------------------------
-# Tails Linux generated chroot filesystem
-eliza/packages/os/linux/tails/chroot/
-
-# --------------------------------------------
 # Generated / Large Local Artifacts
 # --------------------------------------------
 *.iso
@@ -181,4 +167,3 @@ eliza/packages/os/linux/tails/chroot/
 *.tgz
 *.7z
 *.rar
-eliza/.eliza/*

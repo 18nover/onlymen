@@ -159,8 +159,7 @@ graph TD
     subgraph repo["onlymen (single git repo, branch: main only)"]
         app["app/<br/>Bluesky social-app fork<br/>being rebranded to OnlyMen"]
         atproto["atproto/<br/>AT Protocol backend fork"]
-        eliza["eliza/<br/>elizaOS + AI engineering org"]
-        docs_["docs/<br/>this file"]
+        docs_["docs/<br/>this file + archived agents/"]
         readme["README.md"]
     end
 
@@ -182,27 +181,16 @@ graph TD
         lexicons["lexicons/<br/>*.json schema contracts"]
     end
 
-    subgraph orgsrc["eliza/packages/org/"]
-        characters["characters/<br/>13 agent JSON files"]
-        knowledge["knowledge/<br/>per-agent grounded docs"]
-        skills["skills/"]
-        shared_["shared/<br/>(not 'standards/')"]
-    end
-
-    coordinator["eliza/plugins/plugin-org-coordinator/<br/>ASSIGN_WORK, REQUEST_REVIEW,<br/>ESCALATE, REPORT_COMPLETE, SUMMARIZE"]
-
     app --> appsrc
     atproto --> atprotosrc
-    eliza --> orgsrc
-    orgsrc --> coordinator
-
-    characters -.grounded in.-> app
-    characters -.grounded in.-> atproto
-    knowledge -.references real code in.-> appsrc
-    knowledge -.references real code in.-> atprotosrc
 
     app -.talks to via XRPC.-> atproto
 ```
+
+`eliza/` (elizaOS + the 13-agent AI engineering org) was removed 2026-08-04
+while other options for running these agents are evaluated; the archived
+agent definitions, knowledge base, and shared standards live at
+`docs/agents/`. See the CHANGELOG entry for that date.
 
 ## Project conventions (as of this handoff)
 
@@ -211,9 +199,9 @@ graph TD
   → PR → merge to `main`, per the user's global `~/.claude/CLAUDE.md`
   rules — short `type/topic` names (`feat/oauth`, `fix/pds-hostname`),
   delete after merge, `dev` branch allowed for multi-feature integration.
-  There's still no CI verify gate on this repo, so run `bun run verify`
-  (eliza) / `pnpm verify` (atproto) yourself before opening a PR. `git tag`
-  still used for release/rollback checkpoints (e.g. `v0.1.0-web-launch`).
+  There's still no CI verify gate on this repo, so run `pnpm verify`
+  (atproto) yourself before opening a PR. `git tag` still used for
+  release/rollback checkpoints (e.g. `v0.1.0-web-launch`).
 - **Naming (confirmed by the user)**: prefer one clear word for files/
   directories (`labels.md`, `ozone.md`); when a second word is genuinely
   needed, **one hyphen**, two words max (`lexicon-schema.md`) — don't stack
@@ -235,14 +223,13 @@ graph TD
 
 - One git repo, root `/home/jerry/onlymen`, remote `origin` =
   `https://github.com/18nover/onlymen.git`, branch `main`.
-- `app/`, `atproto/`, and `eliza/` are all plain tracked
-  subdirectories in this one repo — not separate nested repos with their
-  own history/remotes (that changed early in this repo's history: `eliza
-  cloned into onlymen`, `atproto cloned into onlymen`, `bsky cloned as
-  app`).
-- `node_modules` is absent in all three sub-projects in this environment —
-  install before running/building anything (`bun install` for eliza,
-  `pnpm install` for app/atproto).
+- `app/` and `atproto/` are plain tracked subdirectories in this one repo —
+  not separate nested repos with their own history/remotes (that changed
+  early in this repo's history: `eliza cloned into onlymen`, `atproto cloned
+  into onlymen`, `bsky cloned as app`). `eliza/` itself was removed
+  2026-08-04 — see the "AI engineering organization" note above.
+- `node_modules` is absent in both sub-projects in this environment — install
+  before running/building anything (`pnpm install` for app/atproto).
 - `github.com/18nover/onlygay` is a different, unrelated repo the user
   created themselves — don't confuse it with this one.
 
@@ -383,50 +370,21 @@ for (const f of fs.readdirSync("characters")) {
 - Things flagged for the user's own follow-up (not yet acted on by anyone):
   App Store/Play Store 18+ UGC policy compliance (moderation, block/report,
   EULA — required for approval, not optional), trademark/name-collision
-  check for "OnlyMen", extending `eliza/.gitleaks.toml`-style secret
-  scanning repo-wide (currently only covers `eliza/`), license reconciliation
-  (both forks are MIT — keep their notices, decide OnlyMen's own license for
-  original code), no CI currently runs against the unified repo itself.
+  check for "OnlyMen", adding gitleaks-style secret scanning repo-wide (the
+  only config that existed, `eliza/.gitleaks.toml`, was removed with
+  `eliza/` on 2026-08-04 — nothing currently scans `app/` or `atproto/`),
+  license reconciliation (both forks are MIT — keep their notices, decide
+  OnlyMen's own license for original code), no CI currently runs against
+  the unified repo itself.
 
-## Running the agents for real — model backend (DECIDED: claude CLI)
+## Running the agents for real — model backend (retired 2026-08-04)
 
-**The default backend is now the local `claude` CLI subscription** via
-elizaOS's `plugin-cli-inference` — no API keys, no GPU. This is what the
-`run-eliza` skill (`eliza/.claude/skills/run-eliza/`) and `bin/org` already
-did; `.env.example` now documents it as the default:
-
-```
-ELIZA_RUN_BACKEND=claude-sdk       # exported as ELIZA_CHAT_VIA_CLI at boot
-ELIZA_PLANNER_NATIVE_TOOLS=0       # required with a CLI backend
-```
-
-Prerequisite: a logged-in claude CLI (`~/.claude/.credentials.json`).
-Boot an agent with `eliza/.claude/skills/run-eliza/driver.sh start <name>`
-or `packages/org/bin/org start <name>`; a chat turn takes 1–3 minutes.
-
-Verified after the retraining (in a remote sandbox): `bun install` (after
-the `@onlymen/` plugin rename), `bun run --cwd packages/org verify` (all 13
-characters valid + lint clean), the knowledge broken-ref checker (0 broken),
-`bun run docs` regeneration, and headless boots of Lexi and Pixel
-(ready+settled, 24 plugins loaded, 0 failed). The **LLM chat turn itself
-could not be exercised there** (no claude CLI credentials in that sandbox —
-`no_provider` fallback). First person on a logged-in machine: boot lexi and
-ask *"What lexicon families does the age gate depend on and where do the
-schemas live?"* — the answer should name `app.bsky.ageassurance.*` /
-`app.bsky.contact.*` under `atproto/lexicons/app/bsky/` and say they are
-upstream, not custom. Ask pixel *"How do I apply spacing with ALF?"* — the
-answer should use `#/alf` atoms (`a.p_md`), not `@alf/core`.
-
-The previous **Ollama** config (llama3.1:70b / codellama:34b per-agent
-overrides) is preserved as a commented-out alternative block in
-`.env.example` for a future GPU machine — the hardware warning still
-applies: it will not run on the Raspberry Pi below. Important detail
-discovered while making this change: nothing in the run path ever read the
-Ollama variables (`driver.sh` only sets `ELIZA_CHAT_VIA_CLI`/
-`ELIZA_PLANNER_NATIVE_TOOLS`), so the Ollama block was aspirational
-config, and commenting it out changed no runtime behavior. The characters'
-`settings.model: "local"` field is likewise unread by this path and was
-left untouched.
+This section used to document the elizaOS `claude` CLI backend
+(`ELIZA_RUN_BACKEND=claude-sdk`), the `run-eliza` skill, and `bin/org` for
+booting individual agent characters. `eliza/` has been removed — none of
+that runtime exists anymore. The agent character files themselves (which
+recorded which knowledge docs each one loaded, verified working at the time)
+are archived at `docs/agents/characters/*.json`.
 
 ## Raspberry Pi — backend host (ACTIVE as of 2026-08-03)
 

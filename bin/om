@@ -7,16 +7,10 @@ readonly SCRIPT_PATH="$(readlink -f -- "${BASH_SOURCE[0]}")"
 readonly REPO_ROOT="$(cd -- "$(dirname -- "${SCRIPT_PATH}")/.." && pwd)"
 readonly SESSION_NAME="onlymen-dev"
 readonly NODE_VERSION="24.18.0"
-# eliza/package.json currently names an unreleased Bun 1.4.0 package-manager
-# version. Keep the workflow on the newest available verified runtime until
-# that release exists, then advance this pin with a successful org verification.
-readonly BUN_VERSION="1.3.14"
 readonly ATPROTO_PNPM_VERSION="11.11.0"
 readonly APP_PNPM_VERSION="11.13.1"
 readonly PNPM_ROOT="${HOME}/.local/share/onlymen/pnpm"
 readonly STATE_ROOT="${XDG_STATE_HOME:-${HOME}/.local/state}/onlymen"
-readonly WORKTREE_ROOT="${HOME}/.local/share/onlymen/worktrees"
-readonly ORG_CONSOLE_PORT="4173"
 readonly APP_WEB_PORT="${ONLYMEN_APP_WEB_PORT:-8082}"
 
 log() {
@@ -35,13 +29,6 @@ load_node() {
   source "${NVM_DIR}/nvm.sh"
   nvm use --silent "${NODE_VERSION}" >/dev/null ||
     fail "Node ${NODE_VERSION} is not installed; run bootstrap."
-}
-
-load_bun() {
-  export BUN_INSTALL="${HOME}/.bun"
-  export PATH="${BUN_INSTALL}/bin:${PATH}"
-  command -v bun >/dev/null 2>&1 ||
-    fail "Bun ${BUN_VERSION} is missing; run bootstrap."
 }
 
 pnpm_bin() {
@@ -69,7 +56,7 @@ run_pnpm() {
 run_area() {
   local area="${1:-}"
   shift || true
-  (($# > 0)) || fail "Usage: om run <app|atproto|eliza> <command> [arguments]"
+  (($# > 0)) || fail "Usage: om run <app|atproto> <command> [arguments]"
 
   case "${area}" in
     app)
@@ -78,16 +65,8 @@ run_area() {
     atproto)
       run_pnpm "${ATPROTO_PNPM_VERSION}" "${REPO_ROOT}/atproto" "$@"
       ;;
-    eliza | org)
-      load_node
-      load_bun
-      (
-        cd -- "${REPO_ROOT}/eliza"
-        bun "$@"
-      )
-      ;;
     *)
-      fail "Unknown project '${area}'. Use app, atproto, or eliza."
+      fail "Unknown project '${area}'. Use app or atproto."
       ;;
   esac
 }
@@ -244,18 +223,6 @@ bootstrap() {
   install_pnpm "${ATPROTO_PNPM_VERSION}"
   install_pnpm "${APP_PNPM_VERSION}"
 
-  export BUN_INSTALL="${HOME}/.bun"
-  export PATH="${BUN_INSTALL}/bin:${PATH}"
-  if ! command -v bun >/dev/null 2>&1 ||
-    [[ "$(bun --version)" != "${BUN_VERSION}" ]]; then
-    log "Installing Bun ${BUN_VERSION} for elizaOS."
-    curl --fail --silent --show-error --location https://bun.sh/install |
-      bash -s "bun-v${BUN_VERSION}"
-    export PATH="${BUN_INSTALL}/bin:${PATH}"
-  fi
-  [[ "$(bun --version)" == "${BUN_VERSION}" ]] ||
-    fail "Bun ${BUN_VERSION} did not install correctly."
-
   log "Installing ATProto dependencies."
   run_pnpm "${ATPROTO_PNPM_VERSION}" "${REPO_ROOT}/atproto" \
     install --frozen-lockfile --network-concurrency=4
@@ -271,17 +238,7 @@ bootstrap() {
   run_pnpm "${APP_PNPM_VERSION}" "${REPO_ROOT}/app" \
     install --frozen-lockfile --network-concurrency=4
 
-  if [[ "${ONLYMEN_SKIP_ELIZA_INSTALL:-0}" == "1" ]]; then
-    log "Skipping elizaOS dependencies because ONLYMEN_SKIP_ELIZA_INSTALL=1."
-  else
-    log "Installing elizaOS dependencies."
-    (
-      cd -- "${REPO_ROOT}/eliza"
-      bun install --frozen-lockfile
-    )
-  fi
-
-  mkdir -p -- "${STATE_ROOT}" "${WORKTREE_ROOT}"
+  mkdir -p -- "${STATE_ROOT}"
   install_shell
 
   log "Bootstrap complete. Start Docker Desktop, then run: bin/om doctor"
@@ -331,16 +288,6 @@ doctor() {
     [[ "$(node --version)" == "v${NODE_VERSION}" ]] || failures=$((failures + 1))
   else
     printf '  %-20s %s\n' "node" "MISSING"
-    failures=$((failures + 1))
-  fi
-
-  export BUN_INSTALL="${HOME}/.bun"
-  export PATH="${BUN_INSTALL}/bin:${PATH}"
-  if command -v bun >/dev/null 2>&1; then
-    printf '  %-20s %s\n' "bun" "$(bun --version)"
-    [[ "$(bun --version)" == "${BUN_VERSION}" ]] || failures=$((failures + 1))
-  else
-    printf '  %-20s %s\n' "bun" "MISSING"
     failures=$((failures + 1))
   fi
 
@@ -409,7 +356,7 @@ doctor() {
 
   log "Fixed ports"
   local port
-  for port in 2140 2581 2582 2583 2584 2587 4173 "${APP_WEB_PORT}"; do
+  for port in 2140 2581 2582 2583 2584 2587 "${APP_WEB_PORT}"; do
     if [[ -n "$(ss -H -ltn "sport = :${port}")" ]]; then
       if session_exists; then
         printf '  %-20s %s\n' "${port}" "in use (OnlyMen session active)"
@@ -522,18 +469,6 @@ internal_app_web() {
   run_expo_web "${APP_WEB_PORT}"
 }
 
-internal_org_console() {
-  load_node
-  load_bun
-  mkdir -p -- "${STATE_ROOT}/agents"
-  cd -- "${REPO_ROOT}/eliza/packages/org"
-  export ONLYMEN_REPO_ROOT="${REPO_ROOT}"
-  export ONLYMEN_ORG_STATE_ROOT="${STATE_ROOT}/agents"
-  export ONLYMEN_WORKTREE_ROOT="${WORKTREE_ROOT}"
-  export CHAT_UI_PORT="${ORG_CONSOLE_PORT}"
-  exec bun run tools/chat-ui/server.mjs
-}
-
 session_exists() {
   tmux has-session -t "${SESSION_NAME}" 2>/dev/null
 }
@@ -604,21 +539,8 @@ start_stack() {
   log "The app will be available at http://localhost:${APP_WEB_PORT} after ATProto finishes seeding."
 }
 
-start_agents() {
-  require_linux_repo
-  command -v tmux >/dev/null 2>&1 || fail "tmux is missing; run bootstrap."
-  load_node
-  load_bun
-  [[ -d "${REPO_ROOT}/eliza/node_modules" ]] ||
-    fail "elizaOS dependencies are missing; run bootstrap."
-
-  ensure_tmux_window "org-console" "__org-console"
-  log "Started the OnlyMen Engineering Office at http://localhost:${ORG_CONSOLE_PORT}."
-}
-
 start_all() {
   start_stack
-  start_agents
 }
 
 probe() {
@@ -657,7 +579,6 @@ status_stack() {
   probe "AppView" "http://localhost:2584/xrpc/_health"
   probe "Ozone" "http://localhost:2587/xrpc/_health"
   probe "Expo web" "http://localhost:${APP_WEB_PORT}"
-  probe "Team console" "http://localhost:${ORG_CONSOLE_PORT}/api/health"
 }
 
 logs_stack() {
@@ -665,7 +586,7 @@ logs_stack() {
   session_exists || fail "The ${SESSION_NAME} session is not running."
 
   if [[ "${target}" == "all" ]]; then
-    for target in atproto-watch atproto-stack app-web org-console; do
+    for target in atproto-watch atproto-stack app-web; do
       window_exists "${target}" || continue
       printf '\n===== %s =====\n' "${target}"
       tmux capture-pane -p -S -200 -t "${SESSION_NAME}:${target}"
@@ -674,20 +595,20 @@ logs_stack() {
   fi
 
   case "${target}" in
-    atproto-watch | atproto-stack | app-web | org-console)
+    atproto-watch | atproto-stack | app-web)
       window_exists "${target}" ||
         fail "The ${target} service is not running in ${SESSION_NAME}."
       tmux capture-pane -p -S -300 -t "${SESSION_NAME}:${target}"
       ;;
     *)
-      fail "Unknown log target '${target}'. Use atproto-watch, atproto-stack, app-web, org-console, or all."
+      fail "Unknown log target '${target}'. Use atproto-watch, atproto-stack, app-web, or all."
       ;;
   esac
 }
 
 stop_stack() {
   if session_exists; then
-    for target in org-console app-web atproto-stack atproto-watch; do
+    for target in app-web atproto-stack atproto-watch; do
       window_exists "${target}" || continue
       tmux send-keys -t "${SESSION_NAME}:${target}" C-c 2>/dev/null || true
     done
@@ -809,16 +730,6 @@ verify_stack() {
 verify_area() {
   local area="${1:-all}"
   case "${area}" in
-    org | agents)
-      load_node
-      load_bun
-      (
-        cd -- "${REPO_ROOT}/eliza"
-        bun run --cwd packages/org verify
-        bun run --cwd plugins/plugin-org-coordinator typecheck
-        bun run --cwd plugins/plugin-org-coordinator lint
-      )
-      ;;
     app)
       run_pnpm "${APP_PNPM_VERSION}" "${REPO_ROOT}/app" typecheck:web
       run_pnpm "${APP_PNPM_VERSION}" "${REPO_ROOT}/app" \
@@ -838,7 +749,7 @@ verify_area() {
       verify_stack
       ;;
     *)
-      fail "Unknown verification area '${area}'. Use org, app, atproto, smoke, or all."
+      fail "Unknown verification area '${area}'. Use app, atproto, smoke, or all."
       ;;
   esac
 }
@@ -894,12 +805,8 @@ open_desktop() {
     app)
       "${cmd_exe}" /c start "" "http://localhost:${APP_WEB_PORT}" >/dev/null 2>&1
       ;;
-    agents | console)
-      "${cmd_exe}" /c start "" "http://localhost:${ORG_CONSOLE_PORT}" \
-        >/dev/null 2>&1
-      ;;
     *)
-      fail "Unknown open target '${target}'. Use code, app, or agents."
+      fail "Unknown open target '${target}'. Use code or app."
       ;;
   esac
 }
@@ -913,20 +820,19 @@ Commands:
   bootstrap             Install WSL tools, launchers, and project dependencies
   doctor                Check WSL, tools, auth prerequisites, Docker, ports, and Git
   auth                  Check WSL-native Claude, Codex, and GitHub authentication
-  start [all|stack|backend|agents]
-                        Start the full office, app stack, ATProto backend
-                        only, or agents only
+  start [all|stack|backend]
+                        Start the full app stack or the ATProto backend only
   status                Show process and endpoint status
   logs [target]         Show logs for a managed service or all services
   attach                Attach interactively to the tmux session
   stop                  Gracefully stop OnlyMen processes and test containers
-  restart [all|stack|backend|agents]
+  restart [all|stack|backend]
                         Stop and restart the selected profile
-  verify [all|org|app|atproto|smoke]
+  verify [all|app|atproto|smoke]
                         Run focused checks or the cross-stack smoke test
-  run <app|atproto|eliza> <command> [arguments]
+  run <app|atproto> <command> [arguments]
                         Run a project command from anywhere using its pinned toolchain
-  open [code|app|agents]
+  open [code|app]
                         Open VS Code Remote WSL or a Windows browser
   shell                 Open a login shell at the canonical repository
 EOF
@@ -946,8 +852,7 @@ case "${command_name}" in
       all) start_all ;;
       stack) start_stack ;;
       backend) start_backend ;;
-      agents) start_agents ;;
-      *) fail "Unknown start profile '${profile}'. Use all, stack, backend, or agents." ;;
+      *) fail "Unknown start profile '${profile}'. Use all, stack, or backend." ;;
     esac
     ;;
   status) status_stack "$@" ;;
@@ -964,8 +869,7 @@ case "${command_name}" in
       all) start_all ;;
       stack) start_stack ;;
       backend) start_backend ;;
-      agents) start_agents ;;
-      *) fail "Unknown restart profile '${profile}'. Use all, stack, backend, or agents." ;;
+      *) fail "Unknown restart profile '${profile}'. Use all, stack, or backend." ;;
     esac
     ;;
   verify) verify_area "$@" ;;
@@ -978,7 +882,6 @@ case "${command_name}" in
   __atproto-watch) internal_atproto_watch ;;
   __atproto-stack) internal_atproto_stack ;;
   __app-web) internal_app_web ;;
-  __org-console) internal_org_console ;;
   -h | --help | help | "") usage ;;
   *)
     usage >&2

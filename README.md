@@ -35,9 +35,6 @@ onlymen/
 ├── atproto/
 │   └── AT Protocol infrastructure
 │
-├── eliza/
-│   └── OnlyMen AI Engineering Organization
-│
 ├── deploy/
 │   └── Production deployment templates and host scripts
 │
@@ -90,113 +87,11 @@ OnlyMen-specific infrastructure and services may be added as the platform evolve
 
 ---
 
-### `eliza/`
+### AI engineering organization (archived)
 
-The `eliza/` directory contains the **OnlyMen AI Engineering Organization**, built using elizaOS.
+OnlyMen was developed with the help of a 13-agent AI engineering organization built on the elizaOS framework, previously living in `eliza/`. It was not a collection of generic chatbot personas — each agent was a specialist grounded in the actual OnlyMen codebase, organized around engineering disciplines including backend, React Native/Expo frontend, AT Protocol/Lexicon design, moderation, DevOps, QA, security, performance, documentation, project management, accessibility, and design.
 
-This is not intended to be a collection of generic chatbot personas. It is an AI-assisted engineering organization designed around the actual OnlyMen codebase and development workflow.
-
-The organization consists of specialized agents that collaborate on real engineering work across the `app/` and `atproto/` codebases.
-
-Agents are organized around engineering disciplines including:
-
-* Backend engineering
-* React Native / Expo frontend engineering
-* AT Protocol and Lexicon design
-* Moderation systems
-* DevOps and infrastructure
-* Quality assurance
-* Security
-* Performance
-* Documentation
-* Project management
-* Accessibility
-* Product and UX design
-* Code review and engineering oversight
-
-The goal is for agents to **challenge, review, and improve each other's work** rather than blindly agreeing with proposed solutions.
-
-The AI organization is intended to follow an engineering workflow similar to a real software company:
-
-```text
-Plan
-  ↓
-Research
-  ↓
-Design
-  ↓
-Implement
-  ↓
-Review
-  ↓
-Test
-  ↓
-Security Audit
-  ↓
-Performance Review
-  ↓
-Document
-  ↓
-Deploy
-  ↓
-Monitor
-  ↓
-Iterate
-```
-
-#### AI Organization Structure
-
-```text
-eliza/
-├── packages/
-│   └── org/
-│       ├── characters/
-│       │   └── 13 specialized agent characters
-│       ├── knowledge/
-│       │   └── Per-agent and shared engineering knowledge
-│       ├── shared/
-│       │   └── Shared engineering standards and policies
-│       └── skills/
-│           └── Reusable engineering capabilities
-│
-└── plugins/
-    └── plugin-org-coordinator/
-        └── Agent coordination and workflow system
-```
-
-### `eliza/packages/org/`
-
-Contains the 13 specialized agent characters, per-agent knowledge bases, shared engineering standards, and reusable engineering skills.
-
-Each agent has a defined area of responsibility and is grounded in the actual OnlyMen architecture and codebase.
-
-Agents are expected to:
-
-* Inspect the real repository before making recommendations.
-* Understand existing architecture before proposing changes.
-* Collaborate with other specialized agents.
-* Request reviews from appropriate experts.
-* Challenge questionable technical decisions.
-* Escalate blockers and unresolved disagreements.
-* Validate changes through testing and verification.
-* Document important architectural decisions.
-
-### `eliza/plugins/plugin-org-coordinator/`
-
-Provides the coordination layer for the AI engineering organization.
-
-The coordinator enables agents to:
-
-* Assign engineering tasks.
-* Delegate work to specialized agents.
-* Request code and architecture reviews.
-* Track task ownership and progress.
-* Request additional expertise.
-* Escalate blockers.
-* Coordinate multi-agent engineering workflows.
-* Report project status.
-
-The coordinator is intended to function as the operational layer connecting the individual engineering agents into a cohesive development organization.
+That framework has been removed while other options for running these agents are evaluated. The agent definitions (personalities, system prompts, expertise), per-agent knowledge base, shared engineering standards, and skill playbooks are archived at [`docs/agents/`](docs/agents/README.md) for reference.
 
 ---
 
@@ -224,17 +119,15 @@ Focused commands are also available from the root:
 ```bash
 make app-build
 make atproto-build
-make org-verify
 om run atproto --filter pds-service test
 ```
 
-The launcher supervises the seeded ATProto stack, Expo web app, and local
-engineering office, then makes them available to Windows through `localhost`.
-Setup, commands, ports, troubleshooting, and PDS operations are documented in:
+The launcher supervises the seeded ATProto stack and Expo web app, then makes
+them available to Windows through `localhost`. Setup, commands, ports,
+troubleshooting, and PDS operations are documented in:
 
 ```text
 docs/WSL_DEVELOPMENT.md
-docs/ENGINEERING_OFFICE.md
 docs/PDS.md
 ```
 

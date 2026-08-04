@@ -6,7 +6,39 @@ so entries are grouped by date instead of version number. Newest first.
 
 ## Unreleased
 
+### Remove eliza/, archive the AI engineering org — 2026-08-04
+
+- **Removed `eliza/` entirely** (the elizaOS framework fork) while other
+  options for running the 13-agent AI engineering organization are
+  evaluated. It carried too much weight for what it was giving back.
+- Archived everything that defines the agents — `characters/*.json` (full
+  system prompts, personality, topics, style), the generated per-agent docs,
+  `knowledge/<agent>/` (~70 files), `shared/*.md` standards, `skills/`
+  playbooks, and the elizaOS-era tooling (`bin/org`, doc generator,
+  chat-ui control plane) — to `docs/agents/`, with relative links fixed for
+  the new flattened layout. Deleted the redundant, incomplete hand-written
+  `ONLYMEN_AI_AGENTS_BACKUP.md` (was missing Audrey) now that the full
+  source data is preserved.
+- Stripped the eliza/org/Bun integration out of `bin/om` (bootstrap no
+  longer installs Bun or eliza's dependencies; removed `load_bun`,
+  `run area eliza`, `start agents`, `internal_org_console`, the `org`/`agents`
+  verify and open targets) and the `Makefile` (removed `org-install`,
+  `org-build`, `org-test`, `org-lint`, `org-verify`, `org-docs`; aggregate
+  `install`/`build`/`test`/`lint` now cover only `app` + `atproto`).
+- Deleted `.github/workflows/engineering-office.yml` (CI for the removed
+  org) and cleared eliza-specific entries from `.gitignore`,
+  `.vscode/settings.json`, and `.devcontainer/devcontainer.json` (including
+  the Bun devcontainer feature, unused now that nothing in the repo needs
+  it).
+- Updated root `CLAUDE.md`, `README.md`, `docs/WSL_DEVELOPMENT.md`, and
+  `docs/HANDOFF.md`'s live-state sections (repo structure diagram, repo
+  state, running-agents section) to match; rewrote
+  `docs/ENGINEERING_OFFICE.md` as a short archival stub. Left dated
+  historical recap sections in `HANDOFF.md` untouched — they're a journal,
+  not live documentation.
+
 ### Pi backend + PDS build fix — 2026-08-03
+
 - **WSL retired as the dev environment** (repeated crashes). New split:
   Windows (`C:\onlymen`) for all app development, the Raspberry Pi
   (`lockard-tech`) for the ATProto backend at `/home/admin/onlymen`.
@@ -44,6 +76,7 @@ so entries are grouped by date instead of version number. Newest first.
   stale facts (old Pi IP, old SSH key path, old GitHub auth method).
 
 ### AppView + Ozone production scaffolding — 2026-08-02
+
 - Added a production deploy path for the AppView (`bsky`), Ozone
   (moderation), and Bsync under `deploy/appview/` — compose, per-service
   `.env.example` files, a Caddyfile, `deploy.sh`/`verify.sh`, and a README —
@@ -75,6 +108,7 @@ so entries are grouped by date instead of version number. Newest first.
   `docs/HANDOFF.md`'s recap and "Known not-yet-done" section.
 
 ### Root command surface and production PDS — 2026-07-31
+
 - Consolidated the WSL launcher, PowerShell bridge, Windows shim, and Expo web
   helper into the universal `bin/om` CLI plus the required `bin/om.cmd`
   Windows entrypoint.
@@ -91,6 +125,7 @@ so entries are grouped by date instead of version number. Newest first.
   and `.github/workflows/`.
 
 ### Agent rename — 2026-07-22
+
 - **Renamed all 13 agent character files** from code-style names to the
   human-name roster documented in `AGENTS.md`: Atlas→Andrew, Circuit→Devon,
   Compass→Quinn, Echo→Audrey, Forge→Morgan, Nova→Nadia, Pixel→Desiree,
@@ -112,6 +147,7 @@ so entries are grouped by date instead of version number. Newest first.
   longer holds.
 
 ### Docs — 2026-07-19 session (FIREWALL, CHANGELOG, AGENTS, HANDOFF, Makefile)
+
 - **FIREWALL.md**: Created — SSH rate-limiting (`ufw limit`), Docker/UFW
   bypass warning, IPv6 rules, spec-based deletes, No RDP in core services.
 - **CHANGELOG.md**: Created this file.
@@ -124,6 +160,7 @@ so entries are grouped by date instead of version number. Newest first.
   `make log`, `make update`, `make help`.
 
 ### Discovered
+
 - The `claude/bluesky-agents-planning-mpzmvd` branch was merged to main
   (PR #1) — contains full NottyBoi branding sweep, agent retraining to
   ATProto/Bluesky stack, and `@nottyboi` plugin-name fix. Done. The branch
@@ -157,12 +194,13 @@ vision.
 Merged via PR #1 (`claude/bluesky-agents-planning-mpzmvd`):
 
 | Tier | Agents |
-|---|---|
+| --- | --- |
 | A (Tier 1) | Lexi, Forge, Nova, Pixel |
 | B (Tier 2) | Sentinel, Vision, Circuit, Compass |
 | C (Tier 3) | Atlas, Echo, Pulse, Prism, Scribe |
 
 All 13 agents updated with:
+
 - Shared `shared/atproto.md` primer
 - Standard `## Project` section anchoring them to OnlyMen-on-ATProto
 - Knowledge files grounded in real codebase paths

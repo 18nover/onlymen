@@ -1,9 +1,9 @@
 # WSL Development
 
 OnlyMen has one authoritative checkout: `/home/jerry/onlymen` in the
-`Ubuntu-26.04` WSL 2 distribution. Git, Node, pnpm, Bun, Claude, Codex,
-elizaOS, Expo, and AT Protocol commands run in WSL. Windows is the desktop
-surface for PowerShell, VS Code, the browser, and Docker Desktop.
+`Ubuntu-26.04` WSL 2 distribution. Git, Node, pnpm, Claude, Codex, Expo, and
+AT Protocol commands run in WSL. Windows is the desktop surface for
+PowerShell, VS Code, the browser, and Docker Desktop.
 
 Do not run Windows Git or JavaScript tooling against the UNC path. The older
 `C:\Users\jerry\projects\onlymen` checkout must remain untouched until its
@@ -60,8 +60,8 @@ make help
 make doctor
 make start PROFILE=all
 make status
-make logs TARGET=org-console
-make verify AREA=org
+make logs
+make verify
 make stop
 ```
 
@@ -72,11 +72,10 @@ interactive commands or commands that are not Make targets:
 om doctor
 om start
 om status
-om open agents
 om open app
-om logs org-console
+om logs
 om attach
-om verify org
+om verify
 om stop
 ```
 
@@ -85,14 +84,13 @@ Run package-manager commands without changing directories:
 ```bash
 om run app test src/path/to/test.ts
 om run atproto --filter pds-service test
-om run eliza run --cwd packages/org docs
 ```
 
 Useful start profiles:
 
-- `om start agents` starts only the engineering office.
 - `om start stack` starts AT Protocol and the app.
-- `om start all` or `om start` starts both.
+- `om start backend` starts AT Protocol only.
+- `om start all` or `om start` is currently equivalent to `om start stack`.
 
 `om open code` opens the canonical checkout through VS Code Remote - WSL.
 `om shell` opens Bash directly in `/home/jerry/onlymen`.
@@ -102,7 +100,6 @@ Useful start profiles:
 The launcher owns a detached tmux session named `onlymen-dev`. Depending on the
 selected profile, it contains:
 
-- `org-console` - engineering office and agent supervisor.
 - `atproto-watch` - AT Protocol TypeScript watcher.
 - `atproto-stack` - seeded PDS, AppView, Ozone, bsync, PLC, Postgres, and Redis.
 - `app-web` - Expo web pointed at the local PDS.
@@ -115,8 +112,6 @@ containers.
 
 | Service | URL |
 | --- | --- |
-| Engineering office | `http://localhost:4173` |
-| Agent API base | `http://localhost:2140` |
 | Introspection | `http://localhost:2581` |
 | PLC placeholder | `http://localhost:2582` |
 | PDS | `http://localhost:2583` |
