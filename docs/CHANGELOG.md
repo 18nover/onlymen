@@ -6,6 +6,43 @@ so entries are grouped by date instead of version number. Newest first.
 
 ## Unreleased
 
+### Pi backend + PDS build fix — 2026-08-03
+- **WSL retired as the dev environment** (repeated crashes). New split:
+  Windows (`C:\onlymen`) for all app development, the Raspberry Pi
+  (`lockard-tech`) for the ATProto backend at `/home/admin/onlymen`.
+- Set up Docker Desktop ↔ Pi connectivity: Tailscale, mutual TLS on 2376,
+  `ufw` restricted to LAN + Tailscale ranges only.
+- Added a `backend` start profile to `bin/om`/`Makefile` (`start`/`restart
+  [all|stack|backend|agents]`) so the ATProto stack can run without Expo.
+- Committed and pushed `docker-compose.yml`, `deploy/{pds,appview}/`,
+  `docs/{PDS,APPVIEW}.md`, the PDS `tls-check` endpoint, the
+  `bsky-indexer` service, and both production GitHub Actions workflows —
+  all pre-existing, uncommitted work found sitting only on the WSL
+  machine's working tree.
+- **Fixed a `tsgo` (`@typescript/native-preview`) concurrency bug**:
+  parallel `pnpm run --recursive` builds could silently produce an
+  incomplete `dist/` for a package (missing declaration files) while its
+  cached `.tsbuildinfo` still claimed success, breaking dependents with
+  spurious "Cannot find module" errors. Broke the PDS Docker build
+  locally and in CI. Bumped `7.0.0-dev.20260614.1` → `7.0.0-dev.20260707.2`
+  and pinned exactly instead of the previous floating `^7.0.0-beta` range.
+- Stood up a dev-only PDS on the Pi (`lockard-tech.tail43a815.ts.net`,
+  invites/rate-limits off, throwaway secrets) — separate from and not a
+  substitute for the still-outstanding production `pds.onlymen.gay`
+  deployment.
+- Removed a hardcoded, expired GitHub PAT from `.bashrc` (four env vars:
+  `GITHUB_TOKEN`, `GH_TOKEN`, `GITHUB_PAT`, `GH_PAT`) that was shadowing
+  `gh`'s real stored credentials; switched to `gh auth login` +
+  `gh auth setup-git` for HTTPS push auth.
+- Added a global rules file at `~/.claude/CLAUDE.md` (branch naming,
+  commit style, agent commit signatures, PR format, naming, code style,
+  dependency pinning, credential handling, dev/prod separation,
+  session-handoff discipline). Branch strategy changes from
+  direct-to-`main` to feature-branch → PR → merge starting after this
+  entry.
+- See `docs/HANDOFF.md`'s recap for the full narrative and corrected
+  stale facts (old Pi IP, old SSH key path, old GitHub auth method).
+
 ### AppView + Ozone production scaffolding — 2026-08-02
 - Added a production deploy path for the AppView (`bsky`), Ozone
   (moderation), and Bsync under `deploy/appview/` — compose, per-service

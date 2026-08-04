@@ -22,6 +22,68 @@ migration.
 
 ---
 
+## Recap of Most Recent Session (2026-08-03, Pi backend + PDS build fix)
+
+- **Strategic pivot: WSL abandoned as the dev environment.** WSL kept
+  crashing; new split is Windows (`C:\onlymen`) for all app development —
+  UI, rebranding, `pnpm web`, Android via `adb` — and the Raspberry Pi
+  (`lockard-tech`) as the backend host for ATProto services. `bin/om`'s
+  WSL-oriented tmux orchestration (added last session) still works but is
+  no longer the primary path; a `backend` start profile was added to it
+  regardless (`om start backend` / `make start PROFILE=backend`) for
+  anyone still using WSL.
+- **Docker Desktop ↔ Pi connectivity established**: Tailscale (MagicDNS
+  suffix `tail43a815.ts.net`) + mutual TLS on port 2376 + `ufw` restricting
+  2376/22 to LAN (`192.168.1.0/24`) and Tailscale (`100.64.0.0/10`) only —
+  never exposed to the public internet. Docker Desktop's context dropdown
+  now shows the Pi's containers directly. See the corrected "Raspberry Pi"
+  section below (old IP and SSH key path were both stale).
+- **PDS/AppView production deploy infrastructure (already built, just
+  uncommitted) was found and pushed**: `docker-compose.yml`, `deploy/pds/`,
+  `deploy/appview/`, `docs/PDS.md`, `docs/APPVIEW.md`, the `tls-check`
+  endpoint, the `bsky-indexer` service, and both production GitHub Actions
+  workflows had existed only on the WSL machine's working tree, never
+  committed. All committed and pushed in one batch (61 files) since the Pi
+  needs it and the CI workflows need it on GitHub to function at all.
+- **Found and fixed a real build-reliability bug**: the pinned `tsgo`
+  nightly (`@typescript/native-preview` `7.0.0-dev.20260614.1`, resolved
+  from a floating `^7.0.0-beta` range) has a concurrency bug — under
+  parallel `pnpm run --recursive` builds it intermittently writes a
+  "succeeded" `.tsbuildinfo` for a package without finishing emission of
+  all its declaration files, breaking dependents with spurious "Cannot
+  find module" errors. Broke the PDS Docker build both locally and in the
+  new CI workflow. Reproduced deterministically (isolated single-package
+  builds always succeeded; concurrent ones failed unpredictably on
+  whichever package's emit lost the race). Fixed by bumping to
+  `7.0.0-dev.20260707.2` and pinning it exactly instead of floating.
+- **Stood up a dev-only PDS on the Pi** at `/home/admin/onlymen` —
+  hostname `lockard-tech.tail43a815.ts.net`, invites/rate-limits off,
+  throwaway secrets generated on-device. Explicitly not production —
+  `pds.onlymen.gay` still needs DNS, an already-running Caddy on the host,
+  GHCR login, and the CI deploy secrets from `deploy/pds/README.md` before
+  it can go live for real, and the PLC rotation key is still a placeholder
+  in the *production* env template specifically.
+- **Fixed a recurring `gh`/git push auth break**: `.bashrc` hardcoded an
+  expired GitHub PAT four times (`GITHUB_TOKEN`, `GH_TOKEN`, `GITHUB_PAT`,
+  `GH_PAT`), which shadowed `gh`'s real stored login on every new shell.
+  Removed; see the updated "GitHub push authentication" section below.
+- **Adopted a global rules file** at `~/.claude/CLAUDE.md` (branch naming,
+  commit style, per-agent commit signatures, PR format, naming
+  conventions, code style, dependency pinning, credential handling,
+  dev/prod separation, session-handoff discipline) — applies across all of
+  the user's repos, not just this one. **Branch strategy changed**: this
+  repo flips from direct-to-`main` to feature-branch → PR → merge,
+  effective after this session's pushes (everything up to and including
+  this recap still went straight to `main`, matching how the rest of the
+  session was already done — see "Project conventions" below).
+- Still open going into next session: wire `@atproto/oauth-client-expo`
+  into `app/src/state/session/` (dependency is installed, nothing uses it
+  yet), publish `app/web/oauth/client-metadata.json` at the real
+  `onlymen.gay`, and do an end-to-end login/post/AppView-indexing/
+  moderation test from the Windows app against the Pi's dev PDS.
+
+---
+
 ## Recap of Most Recent Session (2026-08-02, AppView + Ozone scaffolding)
 
 - Added a production deploy path for AppView/Ozone/Bsync under
@@ -144,11 +206,14 @@ graph TD
 
 ## Project conventions (as of this handoff)
 
-- **Single `main` branch only** — no `dev`, no long-lived feature branches.
-  Push directly to `main`. Since there's no PR gate, run `bun run verify`
-  (eliza) / `pnpm verify` (atproto) yourself before pushing anything
-  nontrivial. Use `git tag` for release/rollback checkpoints instead of
-  branches (e.g. `v0.1.0-web-launch`).
+- **Branch strategy changed 2026-08-03**: was single-`main`-only/push-direct
+  (still true for everything pushed through that date); now feature branch
+  → PR → merge to `main`, per the user's global `~/.claude/CLAUDE.md`
+  rules — short `type/topic` names (`feat/oauth`, `fix/pds-hostname`),
+  delete after merge, `dev` branch allowed for multi-feature integration.
+  There's still no CI verify gate on this repo, so run `bun run verify`
+  (eliza) / `pnpm verify` (atproto) yourself before opening a PR. `git tag`
+  still used for release/rollback checkpoints (e.g. `v0.1.0-web-launch`).
 - **Naming (confirmed by the user)**: prefer one clear word for files/
   directories (`labels.md`, `ozone.md`); when a second word is genuinely
   needed, **one hyphen**, two words max (`lexicon-schema.md`) — don't stack
@@ -363,36 +428,68 @@ config, and commenting it out changed no runtime behavior. The characters'
 `settings.model: "local"` field is likewise unread by this path and was
 left untouched.
 
-## Raspberry Pi migration — historical assessment (STALE, re-verify)
+## Raspberry Pi — backend host (ACTIVE as of 2026-08-03)
 
-Separate thread: user's WSL kept crashing, considered migrating off WSL onto
-a home Raspberry Pi (`admin@192.168.1.91`, hostname `lockard-tech`) **as a
-place to host the repo/dev environment** — this was never about running the
-70B/34B local-inference agent stack described above, which the Pi's hardware
-can't handle regardless. Assessed, never executed. **Describes the OLD
-separate-nested-repos structure — no longer accurate, re-verify before
-acting.**
+WSL kept crashing too often to stay the dev environment. Current split:
+**Windows (`C:\onlymen`)** does all app development — UI, rebranding,
+`pnpm web`, Android via `adb`; **the Pi (`admin@192.168.1.90`, hostname
+`lockard-tech`, Tailscale IP `100.100.67.56`, MagicDNS
+`lockard-tech.tail43a815.ts.net`)** hosts the ATProto backend, checked out
+at `/home/admin/onlymen`. This supersedes the old "historical assessment"
+that used to be here — corrected facts, since several were stale/wrong:
 
-- Pi hardware (at the time): aarch64, 4 cores, ~4GB RAM, 2GB swap, 114GB disk
-  (77GB free).
-- SSH key lives on the **Windows side** of WSL, not `~/.ssh/`:
-  `/mnt/c/Users/jerry/.ssh/ssh_lockard` (+ `.pub`).
-- Feasibility (re-verify against the now-unified repo): `atproto/`'s 4
-  services are Docker-ready/ARM64-viable now; `app/`'s **web** target is
-  Pi-viable but its Dockerfile hardcoded `GOARCH=amd64` (needs `arm64`);
-  iOS/Android builds should stay off the Pi regardless. `eliza/`'s full
-  bun+Node24+embedded-Postgres stack was flagged as untested/risky on 4GB
-  RAM. Recommended: migrate `atproto/` first as a low-risk trial.
+- **SSH**: `~/.ssh/config` (on whichever machine is doing the SSH-ing) has
+  a `Host lockard-tech` alias (`HostName 192.168.1.90`, `User admin`,
+  `IdentityFile ~/.ssh/remote_server`) — passwordless, already working.
+  The old note about a Windows-side key path
+  (`/mnt/c/Users/jerry/.ssh/ssh_lockard`) and IP `.91` were both wrong.
+- **Docker**: v29.7.1, already running (used for both the dev PDS below and
+  the Docker-Desktop-over-Tailscale-TLS setup earlier in this doc's
+  history). `docker buildx` needed a manual fix once: Debian's own
+  `docker-buildx` package (0.13.1) conflicts with Docker's official
+  `docker-buildx-plugin` (0.36.0+, needed for `docker compose build`) over
+  the same file path — remove the Debian one first if this recurs
+  (`sudo apt-get remove docker-buildx && sudo apt-get install
+  docker-buildx-plugin`).
+- **No node/pnpm/bun/tmux installed** on the Pi, and none are needed — the
+  backend runs via this repo's root `docker-compose.yml`
+  (`docker compose up -d pds`), not native processes like `bin/om` uses in
+  WSL. `xxd` is also missing (minimal image) — use
+  `od -An -tx1 | tr -d ' \n'` instead if a script needs binary→hex.
+- Hardware unchanged from the original assessment: Pi 4, aarch64, 4 cores,
+  ~4GB RAM — fine for Docker-based service hosting (PDS builds/runs, if
+  slowly), still not viable for the 70B/34B local-inference agent stack
+  (unrelated concern, unchanged).
 - Never rsync `node_modules` (x86 binaries, won't run on ARM64) or live
   embedded-Postgres data without stopping the DB first.
 
-## GitHub push authentication (this environment)
+## GitHub push authentication (this environment) — updated 2026-08-03
 
-No GitHub credentials exist by default in this WSL environment. What worked:
+The SSH-agent-socket method below is stale — that's no longer how this
+works. Current method: HTTPS remote
+(`https://github.com/18nover/onlymen.git`) with `gh auth login`
+(device-flow login, account `jerry-lockard`) + `gh auth setup-git` to
+register `gh` as git's credential helper. Pushing `.github/workflows/*.yml`
+changes needs the `workflow` OAuth scope specifically —
+`gh auth refresh -h github.com -s workflow` if a push is rejected with
+"refusing to allow an OAuth App to create or update workflow ... without
+`workflow` scope".
+
+**Recurring gotcha, now fixed at the source**: `.bashrc` used to hardcode
+an expired PAT as `GITHUB_TOKEN`/`GH_TOKEN`/`GITHUB_PAT`/`GH_PAT`, which
+shadowed the real `gh` login in every new shell and made both
+`gh auth login` and plain `git push` fail with confusing errors ("The value
+of the GH_TOKEN environment variable is being used...", or "Invalid
+username or token. Password authentication is not supported"). Removed
+2026-08-03. If this resurfaces: `unset GH_TOKEN GITHUB_TOKEN GITHUB_PAT
+GH_PAT` before retrying, and `grep -n TOKEN ~/.bashrc` to check for a
+reintroduced hardcoded value. Note this only clears the *current* shell —
+a long-running session that already inherited the bad value into its
+environment keeps it until that specific session ends, even after
+`.bashrc` is fixed; new shells opened after the fix are unaffected.
+
+Old SSH-agent-socket method (kept for reference, not currently in use):
 user generated an SSH key, added it to GitHub, and an SSH agent socket
 appeared at `~/.ssh/agent/s.<random>.agent.<random>` — exporting
 `SSH_AUTH_SOCK` to that path before `git push` (remote set to the
-`git@github.com:...` SSH form, not HTTPS) let pushes succeed. That socket
-path is ephemeral — if a push fails with "Permission denied (publickey)",
-check `ls ~/.ssh/agent/` for a current socket, or have the user push
-manually from their own terminal.
+`git@github.com:...` SSH form) let pushes succeed.
