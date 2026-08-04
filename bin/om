@@ -516,6 +516,10 @@ internal_app_web() {
   wait_http "PDS" \
     "http://localhost:2583/xrpc/com.atproto.server.describeServer" 300
   export EXPO_PUBLIC_DEFAULT_SERVICE_URL="http://localhost:2583"
+  # Point the AppView constants at the local dev-env AppView too; the
+  # production defaults are the (not yet live) api.onlymen.gay endpoints.
+  export EXPO_PUBLIC_PUBLIC_APPVIEW_URL="http://localhost:2584"
+  export EXPO_PUBLIC_BLUESKY_PROXY_DID="did:plc:dw4kbjf5mn7nhenabiqpkyh3"
   export EXPO_PUBLIC_ENV="development"
   load_node
   cd -- "${REPO_ROOT}/app"

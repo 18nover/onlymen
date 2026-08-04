@@ -1,0 +1,46 @@
+name: App CI
+
+# The workflows under app/.github/workflows/ are inherited from the upstream
+# Bluesky fork and never run (GitHub Actions only reads the repository
+# root), so the app's lint/typecheck/test gate lives here.
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/app-ci.yml"
+      - "app/**"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/app-ci.yml"
+      - "app/**"
+
+permissions:
+  contents: read
+
+env:
+  PNPM_VERSION: 11.13.1
+  NODE_VERSION: 24.18.0
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        job: [lint, prettier, "typecheck:web", test]
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: app/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm ${{ matrix.job }}

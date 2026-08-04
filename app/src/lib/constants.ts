@@ -10,10 +10,18 @@ export const LOCAL_DEV_SERVICE =
 export const STAGING_SERVICE = 'https://staging.bsky.dev'
 export const BSKY_SERVICE = 'https://bsky.social'
 export const BSKY_SERVICE_DID = 'did:web:bsky.social'
-export const PUBLIC_BSKY_SERVICE = 'https://public.api.bsky.app'
+export const ONLYMEN_SERVICE = 'https://pds.onlymen.gay'
+/*
+ * Public (unauthenticated) AppView API. Upstream this is
+ * https://public.api.bsky.app; OnlyMen serves public and authed reads from
+ * the same AppView (see deploy/appview/README.md). `om start` overrides this
+ * to the local dev-env AppView.
+ */
+export const PUBLIC_BSKY_SERVICE =
+  process.env.EXPO_PUBLIC_PUBLIC_APPVIEW_URL || 'https://api.onlymen.gay'
 export const DEFAULT_SERVICE = resolveDefaultServiceUrl(
   process.env.EXPO_PUBLIC_DEFAULT_SERVICE_URL,
-  BSKY_SERVICE,
+  ONLYMEN_SERVICE,
 )
 const HELP_DESK_LANG = 'en-us'
 export const HELP_DESK_URL = `https://blueskyweb.zendesk.com/hc/${HELP_DESK_LANG}`
@@ -229,8 +237,9 @@ export const urls = {
   },
 }
 
-export const PUBLIC_APPVIEW = 'https://api.bsky.app'
-export const PUBLIC_APPVIEW_DID = 'did:web:api.bsky.app'
+export const PUBLIC_APPVIEW =
+  process.env.EXPO_PUBLIC_PUBLIC_APPVIEW_URL || 'https://api.onlymen.gay'
+export const PUBLIC_APPVIEW_DID = 'did:web:api.onlymen.gay'
 export const PUBLIC_STAGING_APPVIEW_DID = 'did:web:api.staging.bsky.dev'
 
 export const DEV_ENV_APPVIEW = `http://localhost:2584` // always the same

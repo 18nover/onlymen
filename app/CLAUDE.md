@@ -1,6 +1,39 @@
-# CLAUDE.md – Bluesky Social App Development Guide
+# CLAUDE.md – OnlyMen App Development Guide
 
-This document provides guidance for working effectively in the Bluesky Social app codebase.
+This directory is the OnlyMen client, a fork of the Bluesky Social app under
+active upstream-fork maintenance. Everything from "Project Overview" down is
+the upstream Bluesky development guide and remains accurate for day-to-day
+work in this codebase; read the OnlyMen-specific context first.
+
+## OnlyMen-specific context
+
+- Product: OnlyMen (a decentralized social platform for gay men, 18+).
+  Display name "18nover", bundle/package id `gay.onlymen.app`, Expo slug
+  `onlymen`, owner `lockard-tech`.
+- Default backends target OnlyMen infrastructure: `DEFAULT_SERVICE` falls
+  back to `https://pds.onlymen.gay` and the AppView constants to
+  `https://api.onlymen.gay` (`src/lib/constants.ts`, `src/env/common.ts`).
+  Local development overrides them via `EXPO_PUBLIC_DEFAULT_SERVICE_URL`,
+  `EXPO_PUBLIC_PUBLIC_APPVIEW_URL`, and `EXPO_PUBLIC_BLUESKY_PROXY_DID` –
+  `bin/om start stack` at the repo root sets all three for you.
+- Several Bluesky services have no OnlyMen equivalent yet (chat, video,
+  GIFs, embeds, the Bluesky labeler, push gateway, link proxy); their
+  constants still point at Bluesky infrastructure and those features will
+  not work against an OnlyMen-only backend.
+- OAuth client metadata lives at `web/oauth/client-metadata.json`
+  (client id `https://onlymen.gay/oauth/client-metadata.json`); the
+  `gay.onlymen.app` custom scheme in `app.config.js` exists for its native
+  redirect URI.
+- OTA updates are disabled in `app.config.js` until OnlyMen runs its own
+  EAS update service with its own code-signing certificate
+  (`code-signing/certificate.pem` is still Bluesky's public cert).
+- The iOS app group is still `group.app.bsky` because it is hardcoded across
+  the native code in `modules/`; rename everywhere at once when provisioning
+  real iOS builds.
+- CI for this directory runs from the repository root at
+  `.github/workflows/app-ci.yml`; the workflows in `app/.github/workflows/`
+  are inherited from upstream and do not run on GitHub (Actions only reads
+  the repo root).
 
 ## Project Overview
 

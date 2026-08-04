@@ -24,15 +24,18 @@ module.exports = _config => {
   const IS_DEV = !IS_TESTFLIGHT && !IS_PRODUCTION
 
   const ASSOCIATED_DOMAINS = [
-    'applinks:bsky.app',
-    'applinks:staging.bsky.app',
-    'appclips:bsky.app',
-    'appclips:go.bsky.app', // Allows App Clip to work when scanning QR codes
+    'applinks:onlymen.gay',
     // When testing local services, enter an ngrok (et al) domain here. It must use a standard HTTP/HTTPS port.
     ...(IS_DEV || IS_TESTFLIGHT ? [] : []),
   ]
 
-  const UPDATES_ENABLED = IS_TESTFLIGHT || IS_PRODUCTION
+  /*
+   * OTA updates are off until OnlyMen runs its own EAS update service with
+   * its own code-signing certificate. The upstream values (updates.bsky.app
+   * plus Bluesky's committed certificate.pem) would make production builds
+   * pull and verify Bluesky's bundles.
+   */
+  const UPDATES_ENABLED = false
 
   const USE_SENTRY = Boolean(process.env.SENTRY_AUTH_TOKEN)
 
@@ -48,7 +51,11 @@ module.exports = _config => {
       version: VERSION,
       name: '18nover',
       slug: 'onlymen',
-      scheme: 'bluesky',
+      /*
+       * gay.onlymen.app is required as a scheme so the native OAuth redirect
+       * declared in web/oauth/client-metadata.json can resolve.
+       */
+      scheme: ['onlymen', 'gay.onlymen.app'],
       owner: 'lockard-tech',
       runtimeVersion: {
         policy: 'appVersion',
@@ -77,7 +84,7 @@ module.exports = _config => {
             'Used to save images to your library.',
           NSPhotoLibraryUsageDescription:
             'Used for profile pictures, posts, and other kinds of content',
-          CFBundleSpokenName: 'Blue Sky',
+          CFBundleSpokenName: 'Only Men',
           CFBundleLocalizations: [
             'en',
             'an',
@@ -126,6 +133,12 @@ module.exports = _config => {
         entitlements: {
           'com.apple.developer.kernel.increased-memory-limit': true,
           'com.apple.developer.kernel.extended-virtual-addressing': true,
+          /*
+           * Still Bluesky's app group: group.app.bsky is hardcoded across the
+           * native code in modules/ (SharedPrefs, NSE, share extension), so it
+           * has to be renamed everywhere at once when real iOS builds are
+           * provisioned.
+           */
           'com.apple.security.application-groups': 'group.app.bsky',
           'com.apple.developer.usernotifications.communication': true,
           // 'com.apple.developer.device-information.user-assigned-device-name': true,
@@ -211,7 +224,7 @@ module.exports = _config => {
             data: [
               {
                 scheme: 'https',
-                host: 'bsky.app',
+                host: 'onlymen.gay',
               },
               ...(IS_DEV
                 ? [
@@ -230,18 +243,10 @@ module.exports = _config => {
         favicon: './assets/favicon.png',
       },
       updates: {
-        url: 'https://updates.bsky.app/manifest',
+        // No update URL or code-signing config until OnlyMen's own EAS
+        // update service exists - see the UPDATES_ENABLED comment above.
         enabled: UPDATES_ENABLED,
         fallbackToCacheTimeout: 30000,
-        codeSigningCertificate: UPDATES_ENABLED
-          ? './code-signing/certificate.pem'
-          : undefined,
-        codeSigningMetadata: UPDATES_ENABLED
-          ? {
-              keyid: 'main',
-              alg: 'rsa-v1_5-sha256',
-            }
-          : undefined,
         checkAutomatically: 'NEVER',
       },
       plugins: [
@@ -257,8 +262,8 @@ module.exports = _config => {
               /** @type {[string, any]} */ ([
                 '@sentry/react-native/expo',
                 {
-                  organization: 'blueskyweb',
-                  project: 'app',
+                  organization: process.env.SENTRY_ORG || 'onlymen',
+                  project: process.env.SENTRY_PROJECT || 'app',
                   url: 'https://sentry.io',
                 },
               ]),
@@ -442,7 +447,10 @@ module.exports = _config => {
                 appExtensions: [
                   {
                     targetName: 'Share-with-Bluesky',
-                    bundleIdentifier: 'xyz.blueskyweb.app.Share-with-Bluesky',
+                    // Extension bundle ids must be prefixed by the parent
+                    // app's bundle id; target names stay Bluesky's because
+                    // they match native target dirs under modules/.
+                    bundleIdentifier: 'gay.onlymen.app.Share-with-Bluesky',
                     entitlements: {
                       'com.apple.security.application-groups': [
                         'group.app.bsky',
@@ -451,7 +459,7 @@ module.exports = _config => {
                   },
                   {
                     targetName: 'BlueskyNSE',
-                    bundleIdentifier: 'xyz.blueskyweb.app.BlueskyNSE',
+                    bundleIdentifier: 'gay.onlymen.app.BlueskyNSE',
                     entitlements: {
                       'com.apple.security.application-groups': [
                         'group.app.bsky',
@@ -460,7 +468,7 @@ module.exports = _config => {
                   },
                   {
                     targetName: 'BlueskyClip',
-                    bundleIdentifier: 'xyz.blueskyweb.app.AppClip',
+                    bundleIdentifier: 'gay.onlymen.app.AppClip',
                   },
                 ],
               },
