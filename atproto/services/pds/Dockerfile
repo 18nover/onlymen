@@ -62,6 +62,11 @@ RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
 RUN pnpm --filter '@atproto/jwk' build \
   && test -f packages/oauth/jwk/dist/index.d.ts \
   && pnpm run --recursive --stream --filter '@atproto/pds...' build
+# services/pds (pds-service) is a downstream consumer of @atproto/pds, not
+# one of its dependencies, so the '@atproto/pds...' filter above never
+# builds it - it has its own tsgo build (see tsconfig.build.json), same as
+# the root Makefile's pds-build target already does as a separate step.
+RUN pnpm --filter pds-service build
 # install only prod deps, hoisted to root node_modules dir
 RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
   pnpm install --prod --shamefully-hoist --frozen-lockfile --prefer-offline --config.confirmModulesPurge=false
@@ -88,7 +93,7 @@ ENV UV_USE_IO_URING=0
 
 # https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md#non-root-user
 USER node
-CMD ["node", "--heapsnapshot-signal=SIGUSR2", "--enable-source-maps", "--import=./tracer.ts", "index.ts"]
+CMD ["node", "--heapsnapshot-signal=SIGUSR2", "--enable-source-maps", "--import=./dist/tracer.js", "dist/index.js"]
 
 LABEL org.opencontainers.image.source=https://github.com/bluesky-social/atproto
 LABEL org.opencontainers.image.description="ATP Personal Data Server (PDS)"
