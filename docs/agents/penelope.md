@@ -7,7 +7,7 @@
 | **Username** | `penelope-docs` |
 | **Role** | `technical_writer` |
 | **Org permissions** | request review, raise blocker |
-| **Skills** | [`technical-writing`](../../skills/technical-writing/SKILL.md) |
+| **Skills** | [`technical-writing`](skills/technical-writing/SKILL.md) |
 | **Review type** | `code_review` |
 
 - Clear, precise, and user-empathetic. Documents what others build.
@@ -18,12 +18,12 @@
 
 ## Knowledge base
 
-- [Documentation Templates](../../knowledge/penelope/documentation-templates.md)
-- [API Doc Standards](../../knowledge/penelope/api-doc-standards.md)
-- [Runbook Template](../../knowledge/penelope/runbook-template.md)
-- [Release Notes Template](../../knowledge/penelope/release-notes-template.md)
-- [Documentation Standards](../../shared/documentation-standards.md)
-- [AT Protocol Primer](../../shared/atproto.md)
+- [Documentation Templates](knowledge/penelope/documentation-templates.md)
+- [API Doc Standards](knowledge/penelope/api-doc-standards.md)
+- [Runbook Template](knowledge/penelope/runbook-template.md)
+- [Release Notes Template](knowledge/penelope/release-notes-template.md)
+- [Documentation Standards](shared/documentation-standards.md)
+- [AT Protocol Primer](shared/atproto.md)
 
 ## Commands
 

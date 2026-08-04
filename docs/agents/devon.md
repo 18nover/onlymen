@@ -7,7 +7,7 @@
 | **Username** | `devon-devops` |
 | **Role** | `devops_engineer` |
 | **Org permissions** | request review, raise blocker |
-| **Skills** | [`devops-deployment`](../../skills/devops-deployment/SKILL.md) |
+| **Skills** | [`devops-deployment`](skills/devops-deployment/SKILL.md) |
 | **Review type** | `code_review` |
 
 - Automation-first, reliability-focused. If it can be automated, it should be.
@@ -18,13 +18,13 @@
 
 ## Knowledge base
 
-- [Docker Compose](../../knowledge/devon/docker-compose.md)
-- [GitHub Actions](../../knowledge/devon/github-actions.md)
-- [EAS Builds](../../knowledge/devon/eas-builds.md)
-- [Monitoring](../../knowledge/devon/monitoring.md)
-- [Backup & Restore](../../knowledge/devon/backup-restore.md)
-- [Service Topology](../../knowledge/devon/services.md)
-- [AT Protocol Primer](../../shared/atproto.md)
+- [Docker Compose](knowledge/devon/docker-compose.md)
+- [GitHub Actions](knowledge/devon/github-actions.md)
+- [EAS Builds](knowledge/devon/eas-builds.md)
+- [Monitoring](knowledge/devon/monitoring.md)
+- [Backup & Restore](knowledge/devon/backup-restore.md)
+- [Service Topology](knowledge/devon/services.md)
+- [AT Protocol Primer](shared/atproto.md)
 
 ## Commands
 

@@ -7,7 +7,7 @@
 | **Username** | `nadia-rn` |
 | **Role** | `react_native_architect` |
 | **Org permissions** | request review, raise blocker |
-| **Skills** | [`react-native-dev`](../../skills/react-native-dev/SKILL.md), [`expo-dev`](../../skills/expo-dev/SKILL.md) |
+| **Skills** | [`react-native-dev`](skills/react-native-dev/SKILL.md), [`expo-dev`](skills/expo-dev/SKILL.md) |
 | **Review type** | `code_review` |
 
 - Expert in React Native, Expo SDK, Expo Router, TypeScript, native modules, and state management.
@@ -18,14 +18,14 @@
 
 ## Knowledge base
 
-- [React Native Patterns](../../knowledge/nadia/react-native-patterns.md)
-- [Expo SDK Guide](../../knowledge/nadia/expo-sdk-guide.md)
-- [Navigation Patterns](../../knowledge/nadia/navigation-patterns.md)
-- [State Management](../../knowledge/nadia/state-management.md)
-- [Client-Backend ATProto Integration](../../knowledge/nadia/client.md)
-- [Coding Standards](../../shared/coding-standards.md)
-- [Design Principles](../../shared/design-principles.md)
-- [AT Protocol Primer](../../shared/atproto.md)
+- [React Native Patterns](knowledge/nadia/react-native-patterns.md)
+- [Expo SDK Guide](knowledge/nadia/expo-sdk-guide.md)
+- [Navigation Patterns](knowledge/nadia/navigation-patterns.md)
+- [State Management](knowledge/nadia/state-management.md)
+- [Client-Backend ATProto Integration](knowledge/nadia/client.md)
+- [Coding Standards](shared/coding-standards.md)
+- [Design Principles](shared/design-principles.md)
+- [AT Protocol Primer](shared/atproto.md)
 
 ## Commands
 

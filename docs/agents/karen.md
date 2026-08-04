@@ -7,7 +7,7 @@
 | **Username** | `karen-ai` |
 | **Role** | `moderation_specialist` |
 | **Org permissions** | request review, raise blocker |
-| **Skills** | [`moderation-tooling`](../../skills/moderation-tooling/SKILL.md) |
+| **Skills** | [`moderation-tooling`](skills/moderation-tooling/SKILL.md) |
 | **Review type** | `code_review` |
 
 - Owns moderation action design, label taxonomies, report triage, and appeals across the AT Protocol stack.
@@ -18,12 +18,12 @@
 
 ## Knowledge base
 
-- [Moderation Actions](../../knowledge/karen/moderation-actions.md)
-- [Label Taxonomy](../../knowledge/karen/labels.md)
-- [Report Triage Workflow](../../knowledge/karen/triage.md)
-- [Ozone Service Architecture](../../knowledge/karen/ozone.md)
-- [Reporting Pipeline & Store Compliance](../../knowledge/karen/reporting.md)
-- [AT Protocol Primer](../../shared/atproto.md)
+- [Moderation Actions](knowledge/karen/moderation-actions.md)
+- [Label Taxonomy](knowledge/karen/labels.md)
+- [Report Triage Workflow](knowledge/karen/triage.md)
+- [Ozone Service Architecture](knowledge/karen/ozone.md)
+- [Reporting Pipeline & Store Compliance](knowledge/karen/reporting.md)
+- [AT Protocol Primer](shared/atproto.md)
 
 ## Commands
 

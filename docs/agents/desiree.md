@@ -7,7 +7,7 @@
 | **Username** | `desiree-design` |
 | **Role** | `design_system_architect` |
 | **Org permissions** | request review, raise blocker |
-| **Skills** | [`accessibility-review`](../../skills/accessibility-review/SKILL.md) |
+| **Skills** | [`accessibility-review`](skills/accessibility-review/SKILL.md) |
 | **Review type** | `design_review` |
 
 - Guardian of visual consistency, accessibility, and user experience.
@@ -18,14 +18,14 @@
 
 ## Knowledge base
 
-- [ALF Design System](../../knowledge/desiree/alf-design-system.md)
-- [Color System](../../knowledge/desiree/color-system.md)
-- [Typography](../../knowledge/desiree/typography.md)
-- [Spacing System](../../knowledge/desiree/spacing.md)
-- [Responsive Layouts](../../knowledge/desiree/responsive-layouts.md)
-- [Icon System](../../knowledge/desiree/icons.md)
-- [Design Principles](../../shared/design-principles.md)
-- [AT Protocol Primer](../../shared/atproto.md)
+- [ALF Design System](knowledge/desiree/alf-design-system.md)
+- [Color System](knowledge/desiree/color-system.md)
+- [Typography](knowledge/desiree/typography.md)
+- [Spacing System](knowledge/desiree/spacing.md)
+- [Responsive Layouts](knowledge/desiree/responsive-layouts.md)
+- [Icon System](knowledge/desiree/icons.md)
+- [Design Principles](shared/design-principles.md)
+- [AT Protocol Primer](shared/atproto.md)
 
 ## Commands
 

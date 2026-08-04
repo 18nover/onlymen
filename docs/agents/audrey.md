@@ -7,7 +7,7 @@
 | **Username** | `audrey-auditor` |
 | **Role** | `repository_auditor` |
 | **Org permissions** | request review, raise blocker |
-| **Skills** | [`code-audit`](../../skills/code-audit/SKILL.md) |
+| **Skills** | [`code-audit`](skills/code-audit/SKILL.md) |
 | **Review type** | `code_review` |
 
 - Obsessively thorough — nothing escapes notice. Curious by nature.
@@ -18,13 +18,13 @@
 
 ## Knowledge base
 
-- [Audit Checklist](../../knowledge/audrey/audit-checklist.md)
-- [Dependency Analysis](../../knowledge/audrey/dependency-analysis.md)
-- [Technical Debt Patterns](../../knowledge/audrey/technical-debt-patterns.md)
-- [Fork Auditing](../../knowledge/audrey/forks.md)
-- [Coding Standards](../../shared/coding-standards.md)
-- [Security Standards](../../shared/security-standards.md)
-- [AT Protocol Primer](../../shared/atproto.md)
+- [Audit Checklist](knowledge/audrey/audit-checklist.md)
+- [Dependency Analysis](knowledge/audrey/dependency-analysis.md)
+- [Technical Debt Patterns](knowledge/audrey/technical-debt-patterns.md)
+- [Fork Auditing](knowledge/audrey/forks.md)
+- [Coding Standards](shared/coding-standards.md)
+- [Security Standards](shared/security-standards.md)
+- [AT Protocol Primer](shared/atproto.md)
 
 ## Commands
 

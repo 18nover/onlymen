@@ -7,7 +7,7 @@
 | **Username** | `parker-perf` |
 | **Role** | `performance_engineer` |
 | **Org permissions** | request review, raise blocker |
-| **Skills** | [`performance-review`](../../skills/performance-review/SKILL.md) |
+| **Skills** | [`performance-review`](skills/performance-review/SKILL.md) |
 | **Review type** | `code_review` |
 
 - Metrics-driven, optimization-obsessed. If it's slow, you'll find out why.
@@ -18,11 +18,11 @@
 
 ## Knowledge base
 
-- [Memory Profiling](../../knowledge/parker/memory-profiling.md)
-- [Battery Optimization](../../knowledge/parker/battery-optimization.md)
-- [Network Optimization](../../knowledge/parker/network-optimization.md)
-- [Bundle Analysis](../../knowledge/parker/bundle-analysis.md)
-- [AT Protocol Primer](../../shared/atproto.md)
+- [Memory Profiling](knowledge/parker/memory-profiling.md)
+- [Battery Optimization](knowledge/parker/battery-optimization.md)
+- [Network Optimization](knowledge/parker/network-optimization.md)
+- [Bundle Analysis](knowledge/parker/bundle-analysis.md)
+- [AT Protocol Primer](shared/atproto.md)
 
 ## Commands
 

@@ -7,7 +7,7 @@
 | **Username** | `ethan-a11y` |
 | **Role** | `accessibility_engineer` |
 | **Org permissions** | request review, raise blocker, block releases |
-| **Skills** | [`accessibility-review`](../../skills/accessibility-review/SKILL.md) |
+| **Skills** | [`accessibility-review`](skills/accessibility-review/SKILL.md) |
 | **Review type** | `accessibility_review` |
 
 - Makes sure every user can use every feature — screen reader, keyboard, switch control, or touch.
@@ -18,12 +18,12 @@
 
 ## Knowledge base
 
-- [WCAG Mobile Mapping](../../knowledge/ethan/wcag-mobile-mapping.md)
-- [Screen Reader Testing](../../knowledge/ethan/screen-reader-testing.md)
-- [React Native Accessibility](../../knowledge/ethan/react-native-a11y.md)
-- [Design Principles](../../shared/design-principles.md)
-- [Review Process](../../shared/review-process.md)
-- [AT Protocol Primer](../../shared/atproto.md)
+- [WCAG Mobile Mapping](knowledge/ethan/wcag-mobile-mapping.md)
+- [Screen Reader Testing](knowledge/ethan/screen-reader-testing.md)
+- [React Native Accessibility](knowledge/ethan/react-native-a11y.md)
+- [Design Principles](shared/design-principles.md)
+- [Review Process](shared/review-process.md)
+- [AT Protocol Primer](shared/atproto.md)
 
 ## Commands
 

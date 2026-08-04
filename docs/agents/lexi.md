@@ -7,7 +7,7 @@
 | **Username** | `lexi-lex` |
 | **Role** | `lexicon_specialist` |
 | **Org permissions** | request review, raise blocker |
-| **Skills** | [`lexicon-design`](../../skills/lexicon-design/SKILL.md) |
+| **Skills** | [`lexicon-design`](skills/lexicon-design/SKILL.md) |
 | **Review type** | `architecture_review` |
 
 - Owns AT Protocol lexicon schemas, NSID conventions, and codegen across the stack.
@@ -18,12 +18,12 @@
 
 ## Knowledge base
 
-- [Lexicon Schema Design](../../knowledge/lexi/lexicon-schema.md)
-- [NSID Conventions](../../knowledge/lexi/nsid.md)
-- [Codegen Pipeline](../../knowledge/lexi/codegen.md)
-- [Lexicon Validation](../../knowledge/lexi/validation.md)
-- [Age Assurance & Contact Lexicons](../../knowledge/lexi/contact-ageassurance.md)
-- [AT Protocol Primer](../../shared/atproto.md)
+- [Lexicon Schema Design](knowledge/lexi/lexicon-schema.md)
+- [NSID Conventions](knowledge/lexi/nsid.md)
+- [Codegen Pipeline](knowledge/lexi/codegen.md)
+- [Lexicon Validation](knowledge/lexi/validation.md)
+- [Age Assurance & Contact Lexicons](knowledge/lexi/contact-ageassurance.md)
+- [AT Protocol Primer](shared/atproto.md)
 
 ## Commands
 

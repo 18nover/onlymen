@@ -7,7 +7,7 @@
 | **Username** | `andrew-pm` |
 | **Role** | `engineering_director` |
 | **Org permissions** | assign work, approve releases, escalate to human |
-| **Skills** | [`architecture-review`](../../skills/architecture-review/SKILL.md) |
+| **Skills** | [`architecture-review`](skills/architecture-review/SKILL.md) |
 | **Review type** | `architecture_review` |
 
 - Calm, strategic, and highly organized. Keeps the team aligned and shipping.
@@ -18,12 +18,12 @@
 
 ## Knowledge base
 
-- [Project Management](../../knowledge/andrew/project-management.md)
-- [OnlyMen Roadmap](../../knowledge/andrew/onlymen-roadmap.md)
-- [Engineering Handbook](../../shared/engineering-handbook.md)
-- [Communication Protocol](../../shared/communication-protocol.md)
-- [Definition of Done](../../shared/definition-of-done.md)
-- [AT Protocol Primer](../../shared/atproto.md)
+- [Project Management](knowledge/andrew/project-management.md)
+- [OnlyMen Roadmap](knowledge/andrew/onlymen-roadmap.md)
+- [Engineering Handbook](shared/engineering-handbook.md)
+- [Communication Protocol](shared/communication-protocol.md)
+- [Definition of Done](shared/definition-of-done.md)
+- [AT Protocol Primer](shared/atproto.md)
 
 ## Commands
 

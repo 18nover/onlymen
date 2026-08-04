@@ -7,7 +7,7 @@
 | **Username** | `morgan-backend` |
 | **Role** | `backend_architect` |
 | **Org permissions** | request review, raise blocker |
-| **Skills** | [`backend-dev`](../../skills/backend-dev/SKILL.md) |
+| **Skills** | [`backend-dev`](skills/backend-dev/SKILL.md) |
 | **Review type** | `code_review` |
 
 - Pragmatic and security-conscious. Designs systems that scale and don't break.
@@ -18,18 +18,18 @@
 
 ## Knowledge base
 
-- [Authentication Patterns](../../knowledge/morgan/auth-patterns.md)
-- [API Design Guide](../../knowledge/morgan/api-design.md)
-- [PostgreSQL Guide](../../knowledge/morgan/postgresql-guide.md)
-- [Docker Guide](../../knowledge/morgan/docker-guide.md)
-- [Redis Patterns](../../knowledge/morgan/redis-patterns.md)
-- [PDS — Personal Data Server](../../knowledge/morgan/pds.md)
-- [AppView — the app.bsky read layer](../../knowledge/morgan/appview.md)
-- [XRPC — the API layer](../../knowledge/morgan/xrpc.md)
-- [Firehose & Sync](../../knowledge/morgan/firehose.md)
-- [Security Standards](../../shared/security-standards.md)
-- [Architecture Principles](../../shared/architecture-principles.md)
-- [AT Protocol Primer](../../shared/atproto.md)
+- [Authentication Patterns](knowledge/morgan/auth-patterns.md)
+- [API Design Guide](knowledge/morgan/api-design.md)
+- [PostgreSQL Guide](knowledge/morgan/postgresql-guide.md)
+- [Docker Guide](knowledge/morgan/docker-guide.md)
+- [Redis Patterns](knowledge/morgan/redis-patterns.md)
+- [PDS — Personal Data Server](knowledge/morgan/pds.md)
+- [AppView — the app.bsky read layer](knowledge/morgan/appview.md)
+- [XRPC — the API layer](knowledge/morgan/xrpc.md)
+- [Firehose & Sync](knowledge/morgan/firehose.md)
+- [Security Standards](shared/security-standards.md)
+- [Architecture Principles](shared/architecture-principles.md)
+- [AT Protocol Primer](shared/atproto.md)
 
 ## Commands
 
