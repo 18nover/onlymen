@@ -44,6 +44,8 @@ The agent roster (raw configs at `docs/agents/characters/*.json`, human-readable
 
 This still matches the user's global `~/.claude/CLAUDE.md` commit-signature table — use that table directly for commit-signature agent selection; it does not depend on the elizaOS runtime being present. (The root `README.md` doesn't list a roster, so there's nothing to reconcile there.)
 
+`bin/agents.ts` (plain Node, no Bun/`@elizaos/core`) regenerates and validates the archive: `make agents-list` / `make agents-docs` / `make agents-verify` (the last also runs in `make lint`). It replaced the old `eliza`-era `bin/org` CLI and `scripts/generate-agent-docs.ts` / `validate-characters.ts` — only the parts that don't need a live agent server survived; `org`'s `start`/`say`/`board`/`assign`/`task`/`review`/`escalate` had no equivalent since the elizaOS runtime they talked to on `:2139` is gone.
+
 ## Cross-cutting notes
 
 - `app/` and `atproto/` are under active upstream-fork maintenance — check each package's own docs before assuming OnlyMen has diverged from Bluesky/AT Protocol upstream behavior.

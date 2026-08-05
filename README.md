@@ -119,6 +119,7 @@ Focused commands are also available from the root:
 ```bash
 make app-build
 make atproto-build
+make agents-verify
 om run atproto --filter pds-service test
 ```
 

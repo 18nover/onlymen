@@ -35,6 +35,7 @@ help: ## Show the root command catalog
 		'    make atproto-{install,codegen,build,test,lint,format}' \
 		'    make pds-{build,test}' \
 		'    make appview-build' \
+		'    make agents-{list,docs,verify}' \
 		'' \
 		'  Direct escape hatch' \
 		'    om run app <pnpm arguments>' \
@@ -87,7 +88,7 @@ build: atproto-build app-build ## Build every project
 
 test: app-test atproto-test ## Test every project
 
-lint: app-lint app-typecheck atproto-lint ## Check every project
+lint: app-lint app-typecheck atproto-lint agents-verify ## Check every project
 
 .PHONY: app-install app-build app-test app-lint app-typecheck app-format
 app-install: ## Install app dependencies
@@ -145,6 +146,16 @@ appview-build: ## Build the AppView, Ozone, and Bsync packages and transitive de
 # No appview-test target: unlike pds-service, the bsky/ozone/bsync/bsky-indexer
 # service wrappers have no test scripts of their own (upstream precedent) -
 # their package-level tests already run as part of `make atproto-test`.
+
+.PHONY: agents-list agents-docs agents-verify
+agents-list: ## List the archived OnlyMen agent roster
+	node bin/agents.ts list
+
+agents-docs: ## Regenerate docs/agents/*.md from docs/agents/characters/*.json
+	node bin/agents.ts docs
+
+agents-verify: ## Validate docs/agents/characters/*.json structure
+	node bin/agents.ts validate
 
 .PHONY: handoff changelog log update pds-docs appview-docs
 handoff: ## Edit the project handoff

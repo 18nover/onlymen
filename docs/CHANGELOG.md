@@ -6,6 +6,39 @@ entries are grouped by date instead of version number. Newest first.
 
 ## Unreleased
 
+### Replace the eliza-era org CLI with bin/agents.ts — 2026-08-05
+
+- Added `bin/agents.ts` (plain Node, no Bun or `@elizaos/core`) with
+  `list`/`docs`/`validate` subcommands, wired into the root `Makefile` as
+  `make agents-list` / `make agents-docs` / `make agents-verify` (the
+  latter now also runs as part of `make lint`).
+- Removed `docs/agents/bin/org` and `docs/agents/scripts/{generate-agent-docs,validate-characters}.ts`
+  - they're superseded, not just moved: `org`'s only working subcommand was
+    `agents` (list roster); everything else (`start`/`stop`/`logs`/`say`/
+    `summary`/`board`/`assign`/`task`/`review`/`escalate`) talked to the
+    `run-eliza` driver or a REST server on `:2139`, neither of which exist
+    anymore. `validate-characters.ts` imported `mergeCharacterDefaults` from
+    `@elizaos/core`, which isn't installed anywhere in this repo - it would
+    have failed immediately. `bin/agents.ts validate` reimplements the same
+    checks (name/system/bio/topics present, knowledge dir exists) without
+    the framework dependency, plus a new check that didn't exist before:
+    every `character.knowledge[].path` reference actually resolves to a
+    file on disk.
+  - `generate-agent-docs.ts` also had stale output paths left over from the
+    pre-archive nested layout (`docs/agents/docs/agents/*.md`,
+    `../../skills/` links) - running it as-is would have regenerated the
+    exact broken links the eliza-removal work fixed by hand. `bin/agents.ts
+    docs` targets the current flat `docs/agents/` layout, and drops the
+    "Commands"/"Chat actions" sections from the generated per-agent docs
+    entirely (they described the dead CLI/server) rather than regenerating
+    misleading content. It does not touch `README.md`, which stays
+    hand-maintained.
+  - Ran `make agents-docs` once to apply this to the 13 already-archived
+    docs: identity/knowledge-base content is byte-identical, only the dead
+    Commands/Chat-actions sections were dropped.
+- `docs/agents/` keeps only what's still genuinely inert reference material:
+  `tools/` (chat-ui control plane), `package.json`, `biome.json`.
+
 ### Reorganize docs/ by topic (pds/, appview/, agents/) — 2026-08-04
 
 - **`docs/PDS.md` -> `docs/pds/PDS.md`**, **`docs/APPVIEW.md` ->
