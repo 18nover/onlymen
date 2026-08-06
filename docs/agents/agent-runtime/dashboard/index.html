@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OnlyMen Engineering - Control Plane</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: linear-gradient(135deg, #0f172a 0%, #1a1f36 100%);
+        color: #e2e8f0;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+      }
+
+      h1 {
+        font-size: 28px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #00d9ff 0%, #0099ff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .status {
+        display: flex;
+        gap: 20px;
+        font-size: 14px;
+      }
+
+      .status-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #00d9ff;
+      }
+
+      .main {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 20px;
+      }
+
+      .panel {
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        backdrop-filter: blur(10px);
+      }
+
+      .panel h2 {
+        font-size: 18px;
+        margin-bottom: 15px;
+        color: #00d9ff;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .agents-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .agent-card {
+        padding: 12px;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(148, 163, 184, 0.15);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .agent-card:hover {
+        background: rgba(0, 217, 255, 0.1);
+        border-color: rgba(0, 217, 255, 0.3);
+      }
+
+      .agent-card.active {
+        background: rgba(0, 217, 255, 0.15);
+        border-color: rgba(0, 217, 255, 0.5);
+      }
+
+      .agent-name {
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .agent-role {
+        font-size: 12px;
+        color: #94a3b8;
+        margin-top: 4px;
+      }
+
+      .task-form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(148, 163, 184, 0.2);
+      }
+
+      input,
+      textarea,
+      select {
+        padding: 10px;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 6px;
+        color: #e2e8f0;
+        font-family: inherit;
+        font-size: 14px;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus {
+        outline: none;
+        border-color: #00d9ff;
+        background: rgba(0, 217, 255, 0.05);
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      button {
+        padding: 10px 16px;
+        background: linear-gradient(135deg, #00d9ff 0%, #0099ff 100%);
+        color: #0f172a;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 217, 255, 0.3);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      .tasks-panel {
+        grid-column: 1 / -1;
+      }
+
+      .tasks-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 15px;
+      }
+
+      .task-card {
+        padding: 16px;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .task-card:hover {
+        border-color: rgba(0, 217, 255, 0.3);
+      }
+
+      .task-card.in-progress {
+        border-color: rgba(0, 217, 255, 0.5);
+        background: rgba(0, 217, 255, 0.05);
+      }
+
+      .task-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 10px;
+      }
+
+      .task-title {
+        font-weight: 600;
+        font-size: 15px;
+      }
+
+      .task-status {
+        font-size: 11px;
+        padding: 4px 8px;
+        background: rgba(0, 217, 255, 0.2);
+        border-radius: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .task-status.done {
+        background: rgba(34, 197, 94, 0.2);
+        color: #86efac;
+      }
+
+      .task-status.blocked {
+        background: rgba(239, 68, 68, 0.2);
+        color: #fca5a5;
+      }
+
+      .task-meta {
+        font-size: 12px;
+        color: #94a3b8;
+        margin-bottom: 8px;
+      }
+
+      .task-desc {
+        font-size: 13px;
+        line-height: 1.4;
+        color: #cbd5e1;
+        margin-bottom: 12px;
+      }
+
+      .task-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .task-actions button {
+        flex: 1;
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+
+      .console {
+        margin-top: 30px;
+        padding: 15px;
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 8px;
+        font-family: 'Monaco', 'Menlo', monospace;
+        font-size: 12px;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+
+      .console-line {
+        margin-bottom: 6px;
+        padding: 4px 0;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+      }
+
+      .console-line.agent {
+        color: #00d9ff;
+      }
+
+      .console-line.user {
+        color: #86efac;
+      }
+
+      .console-line.system {
+        color: #94a3b8;
+      }
+
+      .loading {
+        display: inline-block;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (max-width: 1200px) {
+        .main {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🛠️ OnlyMen Engineering Control Plane</h1>
+        <div class="status">
+          <div class="status-item">
+            <span class="dot"></span>
+            <span>Connected</span>
+          </div>
+          <div class="status-item">
+            <span id="agent-count">0</span>
+            <span>Agents</span>
+          </div>
+          <div class="status-item">
+            <span id="task-count">0</span>
+            <span>Tasks</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="main">
+        <div class="panel">
+          <h2>👥 Agents</h2>
+          <div class="agents-list" id="agents-list"></div>
+          <div class="task-form">
+            <h2 style="margin-top: 0; margin-bottom: 15px">📋 Create Task</h2>
+            <input type="text" id="task-title" placeholder="Task title" />
+            <textarea id="task-description" placeholder="Task description..."></textarea>
+            <select id="task-priority">
+              <option value="low">🟢 Low Priority</option>
+              <option value="medium" selected>🟡 Medium Priority</option>
+              <option value="high">🔴 High Priority</option>
+              <option value="critical">🔥 Critical Priority</option>
+            </select>
+            <button onclick="createTask()">Create & Execute</button>
+          </div>
+        </div>
+
+        <div class="panel tasks-panel">
+          <h2>📊 Tasks</h2>
+          <div class="tasks-grid" id="tasks-grid"></div>
+        </div>
+      </div>
+
+      <div class="console">
+        <div class="console-line system">
+          <strong>System:</strong> Control plane initialized. Ready to dispatch tasks.
+        </div>
+        <div class="console-line" id="console-output"></div>
+      </div>
+    </div>
+
+    <script>
+      let ws = null
+      let selectedAgent = null
+      let tasks = []
+      let agents = []
+
+      function connectWebSocket() {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+        ws = new WebSocket(`${protocol}//${window.location.host}`)
+
+        ws.onopen = () => {
+          console.log('Connected to control plane')
+          addConsole('System', 'Connected to control plane', 'system')
+        }
+
+        ws.onmessage = (event) => {
+          const { event: eventType, data } = JSON.parse(event.data)
+
+          if (eventType === 'init') {
+            tasks = data.tasks
+            agents = data.agents
+            renderAgents()
+            renderTasks()
+          } else if (eventType === 'task:created') {
+            tasks.push(data)
+            renderTasks()
+            addConsole('System', `Task created: ${data.title}`, 'system')
+          } else if (eventType === 'task:updated') {
+            const idx = tasks.findIndex((t) => t.id === data.id)
+            if (idx >= 0) tasks[idx] = data
+            renderTasks()
+            addConsole('System', `Task ${data.id.slice(0, 8)}: ${data.status}`, 'system')
+          } else if (eventType === 'message:added') {
+            addConsole(data.agentName, data.content, data.role.toLowerCase())
+          }
+        }
+
+        ws.onerror = () => {
+          addConsole('System', 'WebSocket error', 'system')
+        }
+
+        ws.onclose = () => {
+          addConsole('System', 'Disconnected. Reconnecting in 3s...', 'system')
+          setTimeout(connectWebSocket, 3000)
+        }
+      }
+
+      function renderAgents() {
+        const list = document.getElementById('agents-list')
+        list.innerHTML = agents
+          .map(
+            (a) => `
+          <div class="agent-card" onclick="selectAgent('${a.name}')">
+            <div class="agent-name">${a.name}</div>
+            <div class="agent-role">${a.role || 'Specialist'}</div>
+          </div>
+        `,
+          )
+          .join('')
+        document.getElementById('agent-count').textContent = agents.length
+      }
+
+      function renderTasks() {
+        const grid = document.getElementById('tasks-grid')
+        grid.innerHTML = tasks
+          .map(
+            (t) => `
+          <div class="task-card ${t.status === 'in_progress' ? 'in-progress' : ''}">
+            <div class="task-header">
+              <div class="task-title">${t.title}</div>
+              <div class="task-status ${t.status}">${t.status.replace('_', ' ').toUpperCase()}</div>
+            </div>
+            <div class="task-meta">Assigned: <strong>${t.assignee}</strong></div>
+            <div class="task-desc">${t.description}</div>
+            <div class="task-actions">
+              ${t.status === 'assigned' ? `<button onclick="executeTask('${t.id}')">⚡ Execute</button>` : ''}
+              ${t.status === 'review' ? `<button onclick="approveTask('${t.id}', true)">✅ Approve</button>
+                                         <button onclick="approveTask('${t.id}', false)">❌ Reject</button>` : ''}
+            </div>
+          </div>
+        `,
+          )
+          .join('')
+        document.getElementById('task-count').textContent = tasks.length
+      }
+
+      function selectAgent(name) {
+        selectedAgent = name
+        document.querySelectorAll('.agent-card').forEach((card) => {
+          card.classList.remove('active')
+        })
+        event.target.closest('.agent-card').classList.add('active')
+      }
+
+      function createTask() {
+        if (!selectedAgent) {
+          alert('Please select an agent first')
+          return
+        }
+
+        const title = document.getElementById('task-title').value
+        const description = document.getElementById('task-description').value
+        const priority = document.getElementById('task-priority').value
+
+        if (!title || !description) {
+          alert('Please fill in all fields')
+          return
+        }
+
+        fetch('/api/tasks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            assignee: selectedAgent,
+            title,
+            description,
+            priority,
+          }),
+        })
+          .then((r) => r.json())
+          .then((task) => {
+            document.getElementById('task-title').value = ''
+            document.getElementById('task-description').value = ''
+            executeTask(task.id)
+          })
+      }
+
+      function executeTask(taskId) {
+        fetch(`/api/tasks/${taskId}/execute`, { method: 'POST' })
+          .then((r) => r.json())
+          .catch((e) => console.error(e))
+      }
+
+      function approveTask(taskId, approved) {
+        fetch(`/api/tasks/${taskId}/approve`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ approved }),
+        })
+          .then((r) => r.json())
+          .catch((e) => console.error(e))
+      }
+
+      function addConsole(agent, message, role) {
+        const output = document.getElementById('console-output')
+        const line = document.createElement('div')
+        line.className = `console-line ${role}`
+        line.innerHTML = `<strong>${agent}:</strong> ${message.slice(0, 200)}`
+        output.appendChild(line)
+        // Keep last 50 lines
+        while (output.children.length > 50) {
+          output.removeChild(output.firstChild)
+        }
+        // Auto scroll
+        const console = document.querySelector('.console')
+        console.scrollTop = console.scrollHeight
+      }
+
+      // Fetch agents on load
+      fetch('/api/agents')
+        .then((r) => r.json())
+        .then((data) => {
+          agents = data.agents
+          renderAgents()
+        })
+
+      connectWebSocket()
+    </script>
+  </body>
+</html>

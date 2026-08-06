@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  agent-runtime:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent-runtime
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=development
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - PROJECT_ROOT=/workspace
+    volumes:
+      - .:/workspace
+      - /workspace/node_modules
+    command: npm run dev
+    networks:
+      - onlymen
+
+networks:
+  onlymen:
+    driver: bridge
