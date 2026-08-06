@@ -37,7 +37,7 @@ export declare class CustomSchema<out TValue = unknown> extends Schema<TValue> {
     private readonly message;
     private readonly path?;
     readonly type: 'custom';
-    constructor(assertion: CustomAssertion<TValue>, message: string, path?: (PropertyKey | readonly PropertyKey[]) | undefined);
+    constructor(assertion: CustomAssertion<TValue>, message: string, path?: PropertyKey | readonly PropertyKey[] | undefined);
     validateInContext(input: unknown, ctx: ValidationContext): import("../core.js").LexValidationError | import("../core.js").ValidationSuccess<TValue>;
 }
 /**

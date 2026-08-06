@@ -1,0 +1,10 @@
+{
+  "name": "run-app-driver",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Standalone Puppeteer-core driver for the run-app skill. Not part of the app workspace.",
+  "type": "module",
+  "dependencies": {
+    "puppeteer-core": "23.11.1"
+  }
+}

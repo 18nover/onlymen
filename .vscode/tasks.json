@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "OnlyMen: Bootstrap WSL",
+      "label": "OnlyMen: Bootstrap",
       "type": "shell",
       "command": "${workspaceFolder}/bin/om",
       "args": ["bootstrap"],

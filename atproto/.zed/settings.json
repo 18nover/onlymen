@@ -27,7 +27,11 @@
     },
   },
   "file_types": {
-    "JSON": ["**/lexicons/**/*.json", "**/.prettierrc", "**/.eslintrc"],
+    "JSON": [
+      "**/lexicons/**/*.json",
+      "**/.prettierrc",
+      "**/.eslintrc"
+    ],
     "JSONC": [
       "**/tsconfig/*.json",
       "**/tsconfig.*.json",
@@ -42,7 +46,10 @@
         "json": {
           "schemas": [
             {
-              "fileMatch": ["**/tsconfig/*.json", "**/tsconfig.*.json"],
+              "fileMatch": [
+                "**/tsconfig/*.json",
+                "**/tsconfig.*.json"
+              ],
               "url": "https://json.schemastore.org/tsconfig",
             },
           ],

@@ -97,13 +97,21 @@ That framework has been removed while other options for running these agents are
 
 ## Development Environment
 
-OnlyMen's primary development environment is **Ubuntu 26.04 on WSL 2**. The
-authoritative checkout lives at `/home/jerry/onlymen`; Git and all development
-tools run in Linux. Windows PowerShell, VS Code, Docker Desktop, and the browser
-remain the desktop control surface.
+OnlyMen's development is split across two machines:
 
-Run the project from `~/onlymen`. The root Makefile is the command catalog;
-`om` is the service launcher and direct package-manager escape hatch:
+* **Windows (PowerShell)** — the authoritative checkout for client
+  development lives at `C:\18nover\onlymen`. UI/rebranding work, Expo web,
+  Android via `adb`, VS Code, Docker Desktop, and the browser all run here.
+  No WSL is used.
+* **Linux remote server (`lockard-tech`)** — hosts the AT Protocol backend
+  (PDS, AppView, Ozone, Bsync). The checkout currently lives at
+  `/home/admin/onlymen` and is being migrated to a new user, landing at
+  `/home/jerry/18nover/onlymen` to mirror the Windows path. Until that move
+  is complete, treat `/home/admin/onlymen` as the live path.
+
+The root Makefile is the command catalog; `om` is the service launcher and
+direct package-manager escape hatch, run from whichever machine owns that
+part of the stack:
 
 ```bash
 make help
@@ -123,12 +131,9 @@ make agents-verify
 om run atproto --filter pds-service test
 ```
 
-The launcher supervises the seeded ATProto stack and Expo web app, then makes
-them available to Windows through `localhost`. Setup, commands, ports,
-troubleshooting, and PDS operations are documented in:
+Setup, commands, ports, troubleshooting, and PDS operations are documented in:
 
 ```text
-docs/WSL_DEVELOPMENT.md
 docs/pds/PDS.md
 ```
 
