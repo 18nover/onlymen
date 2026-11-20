@@ -1,114 +1,50 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import {
+  ArrowUpDown,
   BadgeCheck,
   Coins,
   Crown,
   Eye,
   Flame,
+  LayoutGrid,
+  List,
   Lock,
   MapPin,
   MessageCircle,
   Radio,
-  ShieldCheck,
+  SlidersHorizontal,
   Sparkles,
   X,
 } from "lucide-react";
-import { company } from "@/lib/company";
-import { applyFilter, filters, models, type FilterId, type Model } from "@/lib/models";
+import { AgeGate, Footer, Header, MobileNav, Stars, StatusDot, TierBadge, CityPicker } from "@/components/onlymen-ui";
+import { useAgeGate, useCity } from "@/lib/onlymen-hooks";
+import { FilterDrawer } from "@/components/filter-drawer";
+import {
+  activeFilterCount,
+  applyFilter,
+  applySearch,
+  applySort,
+  cityLabel,
+  defaultSearch,
+  filters,
+  fmtActive,
+  fmtDistance,
+  fmtHeight,
+  models,
+  sorts,
+  type FilterId,
+  type Model,
+  type Search,
+  type SortId,
+} from "@/lib/models";
 
-const AGE_KEY = "onlymen-age-ok-v1";
-
-function Brand({ size = "md" }: { size?: "md" | "lg" }) {
-  return (
-    <span className="inline-flex items-center gap-2">
-      <span
-        className={`grid place-items-center rounded-full border-gold-grad ${size === "lg" ? "size-12" : "size-8"}`}
-      >
-        <Crown className={`text-gold-hi ${size === "lg" ? "size-5" : "size-3.5"}`} strokeWidth={1.6} />
-      </span>
-      <span
-        className={`font-display font-semibold tracking-tight text-gold ${size === "lg" ? "text-5xl" : "text-2xl"}`}
-      >
-        Only<span className="italic">Men</span>
-      </span>
-    </span>
-  );
-}
-
-function AgeGate({ onEnter }: { onEnter: () => void }) {
-  return (
-    <div className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-ink/80 p-4 backdrop-blur-xl">
-      <div className="absolute inset-0 vignette" />
-      <div className="relative w-full max-w-md animate-fade-up rounded-2xl border-gold-grad p-8 text-center glow-gold sm:p-10">
-        <div className="flex justify-center">
-          <Brand size="lg" />
-        </div>
-        <p className="mt-2 text-xs font-semibold uppercase tracking-[0.3em] text-gold/80">{company.domain}</p>
-        <div className="mx-auto mt-8 grid size-16 place-items-center rounded-full border border-ruby/60 bg-oxblood/40 glow-ruby">
-          <span className="font-display text-2xl font-bold text-ivory">18+</span>
-        </div>
-        <h2 className="mt-6 text-3xl font-semibold text-ivory">Adults only, after dark.</h2>
-        <p className="mt-3 text-sm leading-relaxed text-muted">
-          This site contains mature content for adult men. By entering you confirm you are at least 18 years old
-          (or the age of majority where you live) and agree to our Terms and Community Rules.
-        </p>
-        <div className="mt-8 grid gap-3">
-          <button
-            onClick={onEnter}
-            className="h-12 rounded-full bg-gold text-sm font-bold uppercase tracking-[0.18em] transition hover:brightness-110 active:scale-[0.99]"
-          >
-            I'm 18 or older — Enter
-          </button>
-          <a
-            href="https://www.google.com"
-            className="grid h-12 place-items-center rounded-full border border-line text-sm font-semibold text-muted transition hover:border-gold/50 hover:text-ivory"
-          >
-            Leave
-          </a>
-        </div>
-        <p className="mt-6 flex items-center justify-center gap-1.5 text-xs text-dim">
-          <ShieldCheck className="size-3.5" /> Every creator is ID- and age-verified.
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function Header() {
-  return (
-    <header className="sticky top-0 z-40 border-b border-line/60 bg-ink/75 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 sm:px-6">
-        <a href="#" aria-label="OnlyMen home">
-          <Brand />
-        </a>
-        <nav className="hidden items-center gap-1 text-sm font-medium text-muted md:flex">
-          <a href="#browse" className="rounded-full px-3 py-2 transition hover:text-gold-hi">Browse</a>
-          <a href="#live" className="flex items-center gap-1.5 rounded-full px-3 py-2 transition hover:text-gold-hi">
-            <span className="size-1.5 animate-pulse-dot rounded-full bg-ruby" /> Live
-          </a>
-          <a href="#browse" className="rounded-full px-3 py-2 transition hover:text-gold-hi">Online now</a>
-        </nav>
-        <div className="ml-auto flex items-center gap-2">
-          <button className="hidden h-10 rounded-full px-4 text-sm font-semibold text-ivory transition hover:text-gold-hi sm:block">
-            Sign in
-          </button>
-          <button className="h-10 rounded-full bg-gold px-5 text-sm font-bold transition hover:brightness-110">
-            Join free
-          </button>
-        </div>
-      </div>
-    </header>
-  );
-}
+const PAGE = 12;
 
 function Hero({ online, live }: { online: number; live: number }) {
   return (
     <section className="relative isolate overflow-hidden border-b border-line/60">
-      <img
-        src="/models/hero.webp"
-        alt=""
-        className="absolute inset-0 -z-10 size-full object-cover object-right opacity-70"
-      />
+      <img src="/models/hero.webp" alt="" className="absolute inset-0 -z-10 size-full object-cover object-right opacity-70" />
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-ink via-ink/85 to-ink/10" />
       <div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-transparent to-ink/40" />
       <div className="mx-auto max-w-7xl px-4 pt-10 pb-10 sm:px-6 sm:py-14 lg:py-16">
@@ -119,8 +55,8 @@ function Hero({ online, live }: { online: number; live: number }) {
           Men worth staying <span className="text-gold italic">up for.</span>
         </h1>
         <p className="mt-5 max-w-lg text-base leading-relaxed text-muted sm:text-lg">
-          A curated directory of verified creators and companions. Watch them live, start a conversation, and tip
-          the ones who make your night.
+          A curated directory of verified creators and companions. Watch them live, start a conversation, and tip the ones
+          who make your night.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <a href="#browse" className="grid h-12 place-items-center rounded-full bg-gold px-7 text-sm font-bold glow-gold transition hover:brightness-110">
@@ -137,11 +73,15 @@ function Hero({ online, live }: { online: number; live: number }) {
           <div className="flex items-center gap-2">
             <span className="size-2 rounded-full bg-online" />
             <dt className="sr-only">Online</dt>
-            <dd><b className="text-ivory">{online * 97 + 13}</b> <span className="text-muted">online now</span></dd>
+            <dd>
+              <b className="text-ivory">{online * 97 + 13}</b> <span className="text-muted">online now</span>
+            </dd>
           </div>
           <div className="flex items-center gap-2">
             <span className="size-2 animate-pulse-dot rounded-full bg-ruby" />
-            <dd><b className="text-ivory">{live}</b> <span className="text-muted">live right now</span></dd>
+            <dd>
+              <b className="text-ivory">{live}</b> <span className="text-muted">live right now</span>
+            </dd>
           </div>
           <div className="flex items-center gap-2 text-muted">
             <Coins className="size-4 text-gold" /> Free to join · Tips only · No subscriptions
@@ -152,23 +92,31 @@ function Hero({ online, live }: { online: number; live: number }) {
   );
 }
 
-function LiveRow({ list, onOpen }: { list: Model[]; onOpen: (m: Model) => void }) {
+function SectionHead({ kicker, title, icon, tone = "gold", right }: { kicker: string; title: string; icon: React.ReactNode; tone?: "gold" | "ruby"; right?: React.ReactNode }) {
+  return (
+    <div className="flex items-end justify-between gap-4">
+      <div>
+        <p className={`flex items-center gap-2 text-xs font-bold uppercase tracking-[0.25em] ${tone === "ruby" ? "text-ruby" : "text-gold"}`}>
+          {icon} {kicker}
+        </p>
+        <h2 className="mt-1 text-3xl font-semibold text-ivory sm:text-4xl">{title}</h2>
+      </div>
+      {right}
+    </div>
+  );
+}
+
+function LiveRow({ list }: { list: Model[] }) {
+  if (!list.length) return null;
   return (
     <section id="live" className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-10 sm:px-6">
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.25em] text-ruby">
-            <span className="size-2 animate-pulse-dot rounded-full bg-ruby" /> On air
-          </p>
-          <h2 className="mt-1 text-3xl font-semibold text-ivory sm:text-4xl">Live now</h2>
-        </div>
-        <a href="#live" className="text-sm font-semibold text-gold transition hover:text-gold-hi">See all live →</a>
-      </div>
+      <SectionHead kicker="On air" title="Live now" tone="ruby" icon={<span className="size-2 animate-pulse-dot rounded-full bg-ruby" />} />
       <div className="no-scrollbar -mx-4 mt-5 flex snap-x gap-4 overflow-x-auto px-4 pb-2 sm:-mx-6 sm:px-6">
         {list.map((m) => (
-          <button
+          <Link
             key={m.id}
-            onClick={() => onOpen(m)}
+            to="/m/$handle"
+            params={{ handle: m.handle }}
             className="group relative aspect-[4/5] w-44 shrink-0 snap-start overflow-hidden rounded-2xl text-left glow-ruby sm:w-56"
           >
             <img src={m.photo} alt={`${m.name}, live`} className="size-full object-cover transition duration-500 group-hover:scale-105" />
@@ -183,66 +131,120 @@ function LiveRow({ list, onOpen }: { list: Model[]; onOpen: (m: Model) => void }
               <p className="font-display text-2xl leading-none font-semibold text-ivory">{m.name}</p>
               <p className="mt-1 truncate text-xs text-muted">{m.tagline}</p>
             </div>
-          </button>
+          </Link>
         ))}
       </div>
     </section>
   );
 }
 
-function Tile({ m, onOpen }: { m: Model; onOpen: (m: Model) => void }) {
+function Featured({ list, onTip }: { list: Model[]; onTip: (m: Model) => void }) {
+  if (!list.length) return null;
+  const [spot, ...rest] = list;
   return (
-    <article className="group relative aspect-[3/4] overflow-hidden rounded-xl bg-surface ring-1 ring-line/70 transition duration-300 hover:-translate-y-0.5 hover:ring-gold/60 hover:shadow-[0_18px_40px_-18px_rgb(212_175_106_/_0.55)]">
-      <button onClick={() => onOpen(m)} className="absolute inset-0 z-10" aria-label={`View ${m.name}`} />
-      <img
-        src={m.photo}
-        alt={`${m.name}, ${m.age}`}
-        loading="lazy"
-        className="size-full object-cover transition duration-700 group-hover:scale-[1.06]"
+    <section id="featured" className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-14 sm:px-6">
+      <SectionHead
+        kicker="Elite & Premium"
+        title="Featured tonight"
+        icon={<Crown className="size-3.5" />}
+        right={<span className="hidden text-xs text-dim sm:block">Members who boosted their profile this week</span>}
       />
-      <div className="absolute inset-0 tile-shade" />
-      <div className="absolute inset-x-0 top-0 flex items-start justify-between p-2.5">
-        {m.live ? (
-          <span className="flex items-center gap-1 rounded-full bg-ruby px-2 py-0.5 text-xs font-bold tracking-wider text-ivory uppercase">
-            <span className="size-1.5 rounded-full bg-ivory" /> Live
+      <div className="mt-5 grid gap-3 lg:grid-cols-[1.1fr_2fr]">
+        <Link
+          to="/m/$handle"
+          params={{ handle: spot.handle }}
+          className="group relative block aspect-[4/5] overflow-hidden rounded-2xl border-gold-grad glow-gold lg:aspect-auto lg:min-h-[420px]"
+        >
+          <img src={spot.photo} alt={`${spot.name}, ${spot.age}`} className="absolute inset-0 size-full object-cover transition duration-700 group-hover:scale-105" />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
+          <span className="absolute top-4 left-4 rounded-full bg-oxblood/90 px-3 py-1 text-[11px] font-extrabold tracking-[0.18em] text-gold-hi uppercase ring-1 ring-gold/40">
+            Man of the night
           </span>
-        ) : m.isNew ? (
-          <span className="rounded-full bg-gold px-2 py-0.5 text-xs font-bold tracking-wider uppercase">New</span>
-        ) : (
-          <span />
-        )}
-        {m.verified && <BadgeCheck className="size-5 fill-ink/60 text-gold-hi" aria-label="Verified" />}
+          <div className="absolute inset-x-5 bottom-5">
+            <TierBadge tier={spot.tier} />
+            <p className="mt-2 font-display text-5xl leading-none font-semibold text-ivory">
+              {spot.name}
+              <span className="text-gold">,</span> <span className="font-normal text-ivory/80">{spot.age}</span>
+            </p>
+            <p className="mt-2 flex items-center gap-2 text-sm text-muted">
+              <MapPin className="size-3.5" /> {spot.city} · {cityLabel(spot.metro)}
+            </p>
+            <p className="mt-3 max-w-sm font-display text-xl text-ivory/90 italic">“{spot.tagline}”</p>
+            <div className="mt-3 flex items-center gap-2 text-sm">
+              <Stars value={spot.rating} />
+              <span className="text-muted">{spot.reviews.length} reviews</span>
+            </div>
+          </div>
+        </Link>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {rest.slice(0, 6).map((m) => (
+            <Tile key={m.id} m={m} onTip={onTip} featured />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Tile({ m, onTip, featured = false }: { m: Model; onTip: (m: Model) => void; featured?: boolean }) {
+  return (
+    <article
+      className={`group relative aspect-[3/4] overflow-hidden rounded-xl bg-surface ring-1 transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-18px_rgb(212_175_106_/_0.55)] ${
+        m.tier === "elite" || featured ? "ring-gold/45 hover:ring-gold" : "ring-line/70 hover:ring-gold/60"
+      }`}
+    >
+      <Link to="/m/$handle" params={{ handle: m.handle }} className="absolute inset-0 z-10" aria-label={`View ${m.name}'s profile`} />
+      <img src={m.photo} alt={`${m.name}, ${m.age}`} loading="lazy" className="size-full object-cover transition duration-700 group-hover:scale-[1.06]" />
+      <div className="absolute inset-0 tile-shade" />
+      <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-1 p-2.5">
+        <div className="flex flex-col items-start gap-1">
+          {m.live ? (
+            <span className="flex items-center gap-1 rounded-full bg-ruby px-2 py-0.5 text-[10px] font-bold tracking-wider text-ivory uppercase">
+              <span className="size-1.5 rounded-full bg-ivory" /> Live
+            </span>
+          ) : m.isNew ? (
+            <span className="rounded-full bg-ivory px-2 py-0.5 text-[10px] font-extrabold tracking-wider text-ink uppercase">New</span>
+          ) : null}
+          <TierBadge tier={m.tier} />
+        </div>
+        {m.verified && <BadgeCheck className="size-5 shrink-0 fill-ink/60 text-gold-hi" aria-label="Verified" />}
       </div>
       <div className="absolute inset-x-0 bottom-0 p-3">
+        {m.availableNow && !m.live && (
+          <span className="mb-1.5 inline-flex items-center gap-1 rounded-full bg-online/15 px-2 py-0.5 text-[10px] font-bold tracking-wide text-online uppercase ring-1 ring-online/40">
+            Available now
+          </span>
+        )}
         <div className="flex items-center gap-1.5">
-          <span
-            className={`size-2 shrink-0 rounded-full ${m.live ? "bg-ruby" : m.online ? "bg-online" : "bg-dim"}`}
-            aria-label={m.online || m.live ? "Online" : "Offline"}
-          />
+          <StatusDot m={m} />
           <p className="truncate text-base font-bold text-ivory">
             {m.name}, <span className="font-medium text-ivory/80">{m.age}</span>
           </p>
         </div>
-        <p className="mt-0.5 flex items-center gap-1 text-xs text-muted">
-          <MapPin className="size-3" /> {m.km < 1 ? `${Math.round(m.km * 1000)} m` : `${m.km.toFixed(1)} km`} · {m.city}
+        <p className="mt-0.5 flex items-center gap-1 truncate text-xs text-muted">
+          <MapPin className="size-3 shrink-0" /> {fmtDistance(m.km)} · {m.city}
         </p>
+        {m.reviews.length > 0 && (
+          <p className="mt-1 flex items-center gap-1.5 text-[11px] text-muted">
+            <Stars value={m.rating} /> <span>({m.reviews.length})</span>
+          </p>
+        )}
         <div className="grid grid-rows-[0fr] opacity-0 transition-all duration-300 group-hover:grid-rows-[1fr] group-hover:opacity-100">
           <div className="overflow-hidden">
             <p className="mt-2 line-clamp-2 text-xs leading-snug text-ivory/85">{m.tagline}</p>
             <div className="relative z-20 mt-2.5 flex gap-1.5">
-              <button
-                onClick={() => onOpen(m)}
-                className="flex h-8 flex-1 items-center justify-center gap-1 rounded-full bg-gold text-xs font-bold"
-              >
+              <button onClick={() => onTip(m)} className="flex h-8 flex-1 items-center justify-center gap-1 rounded-full bg-gold text-xs font-bold">
                 <Coins className="size-3.5" /> Tip
               </button>
-              <button
-                onClick={() => onOpen(m)}
+              <Link
+                to="/m/$handle"
+                params={{ handle: m.handle }}
+                hash="message"
                 className="grid size-8 place-items-center rounded-full border border-gold/50 bg-ink/60 text-gold-hi"
-                aria-label="Message"
+                aria-label={`Message ${m.name}`}
               >
                 <MessageCircle className="size-3.5" />
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -251,7 +253,79 @@ function Tile({ m, onOpen }: { m: Model; onOpen: (m: Model) => void }) {
   );
 }
 
-function QuickView({ m, onClose }: { m: Model; onClose: () => void }) {
+function Row({ m, onTip }: { m: Model; onTip: (m: Model) => void }) {
+  return (
+    <article className="group relative grid grid-cols-[112px_1fr] overflow-hidden rounded-2xl bg-surface/80 ring-1 ring-line/70 transition hover:ring-gold/50 sm:grid-cols-[180px_1fr]">
+      <Link to="/m/$handle" params={{ handle: m.handle }} className="relative block min-h-[150px]">
+        <img src={m.photo} alt={`${m.name}, ${m.age}`} loading="lazy" className="absolute inset-0 size-full object-cover" />
+        <span className="absolute top-2 left-2">
+          <StatusDot m={m} className="block size-2.5 ring-2 ring-ink" />
+        </span>
+        {m.live && (
+          <span className="absolute bottom-2 left-2 rounded-full bg-ruby px-2 py-0.5 text-[10px] font-bold tracking-wider text-ivory uppercase">Live</span>
+        )}
+      </Link>
+      <div className="flex min-w-0 flex-col gap-3 p-4 sm:p-5">
+        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+          <Link to="/m/$handle" params={{ handle: m.handle }} className="text-lg font-bold text-ivory hover:text-gold-hi">
+            {m.name} <span className="font-medium text-ivory/70">· {m.age}</span>
+          </Link>
+          <TierBadge tier={m.tier} />
+          {m.verified && <BadgeCheck className="size-4 text-gold-hi" aria-label="Verified" />}
+          <span className="ml-auto flex items-center gap-1 text-sm text-muted">
+            <MapPin className="size-3.5 text-gold" /> {m.city}, {cityLabel(m.metro).split(",")[0]}
+          </span>
+        </div>
+        <p className="truncate text-xs text-muted">Good company for: {m.goodCompanyFor.join(" · ")}</p>
+        <dl className="grid grid-cols-3 gap-2 text-sm sm:grid-cols-4">
+          <div>
+            <dt className="text-[11px] tracking-wide text-dim uppercase">Height</dt>
+            <dd className="text-ivory">{fmtHeight(m.heightCm).split(" · ")[0]}</dd>
+          </div>
+          <div>
+            <dt className="text-[11px] tracking-wide text-dim uppercase">Build</dt>
+            <dd className="text-ivory">{m.build}</dd>
+          </div>
+          <div>
+            <dt className="text-[11px] tracking-wide text-dim uppercase">Speaks</dt>
+            <dd className="truncate text-ivory">{m.languages.join(", ")}</dd>
+          </div>
+          <div className="hidden sm:block">
+            <dt className="text-[11px] tracking-wide text-dim uppercase">Rating</dt>
+            <dd className="flex items-center gap-1 text-ivory">
+              {m.reviews.length ? (
+                <>
+                  <b className="text-gold-hi">{m.rating.toFixed(1)}</b> <span className="text-xs text-dim">({m.reviews.length})</span>
+                </>
+              ) : (
+                <span className="text-dim">New</span>
+              )}
+            </dd>
+          </div>
+        </dl>
+        <div className="flex flex-wrap items-end gap-3">
+          <p className="line-clamp-2 min-w-0 flex-1 font-display text-lg leading-snug text-ivory/85 italic">“{m.tagline}”</p>
+          <div className="flex gap-2">
+            <button onClick={() => onTip(m)} className="flex h-10 items-center gap-1.5 rounded-full bg-gold px-4 text-xs font-bold">
+              <Coins className="size-4" /> Tip
+            </button>
+            <Link
+              to="/m/$handle"
+              params={{ handle: m.handle }}
+              hash="message"
+              className="flex h-10 items-center gap-1.5 rounded-full border border-gold/50 px-4 text-xs font-bold text-gold-hi transition hover:bg-gold/10"
+            >
+              <MessageCircle className="size-4" /> Message
+            </Link>
+          </div>
+        </div>
+        <p className="text-[11px] text-dim">{fmtActive(m)}</p>
+      </div>
+    </article>
+  );
+}
+
+export function TipSheet({ m, onClose }: { m: Model; onClose: () => void }) {
   const [tipped, setTipped] = useState<number | null>(null);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -267,156 +341,126 @@ function QuickView({ m, onClose }: { m: Model; onClose: () => void }) {
       <div
         role="dialog"
         aria-modal="true"
-        aria-label={`${m.name} profile`}
+        aria-label={`Tip ${m.name}`}
         onClick={(e) => e.stopPropagation()}
-        className="relative grid max-h-[92vh] w-full max-w-3xl animate-fade-up overflow-y-auto rounded-t-3xl border-gold-grad glow-gold sm:grid-cols-2 sm:overflow-hidden sm:rounded-3xl"
+        className="relative w-full max-w-md animate-fade-up rounded-t-3xl border-gold-grad p-6 glow-gold sm:rounded-3xl sm:p-8"
       >
-        <div className="relative aspect-[4/5] sm:aspect-auto">
-          <img src={m.photo} alt={`${m.name}, ${m.age}`} className="size-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-night via-transparent to-transparent sm:bg-gradient-to-r sm:from-transparent sm:to-night/40" />
-          {m.live && (
-            <span className="absolute top-4 left-4 flex items-center gap-1.5 rounded-full bg-ruby px-3 py-1 text-xs font-bold tracking-wider text-ivory uppercase">
-              <span className="size-1.5 animate-pulse-dot rounded-full bg-ivory" /> Live · {m.viewers} watching
-            </span>
-          )}
+        <button onClick={onClose} className="absolute top-4 right-4 grid size-10 place-items-center rounded-full bg-surface-2 text-ivory transition hover:text-gold-hi" aria-label="Close">
+          <X className="size-5" />
+        </button>
+        <div className="flex items-center gap-4">
+          <img src={m.photo} alt="" className="size-16 rounded-full object-cover ring-2 ring-gold/60" />
+          <div>
+            <p className="text-xs font-semibold text-gold">@{m.handle}</p>
+            <h3 className="text-3xl font-semibold text-ivory">Tip {m.name}</h3>
+          </div>
         </div>
-        <div className="flex flex-col p-6 sm:p-8">
-          <button onClick={onClose} className="absolute top-4 right-4 z-10 grid size-10 place-items-center rounded-full bg-ink/70 text-ivory backdrop-blur transition hover:text-gold-hi" aria-label="Close">
-            <X className="size-5" />
-          </button>
-          <p className="flex items-center gap-1.5 text-xs font-semibold text-gold">
-            @{m.handle} {m.verified && <BadgeCheck className="size-4" />}
-          </p>
-          <h3 className="mt-1 text-5xl font-semibold text-ivory">
-            {m.name}<span className="text-gold">,</span> <span className="font-normal text-ivory/80">{m.age}</span>
-          </h3>
-          <p className="mt-2 flex items-center gap-1.5 text-sm text-muted">
-            <span className={`size-2 rounded-full ${m.online || m.live ? "bg-online" : "bg-dim"}`} />
-            {m.online || m.live ? "Online now" : "Away"} · {m.km.toFixed(1)} km · {m.city}
-          </p>
-          <p className="mt-5 font-display text-2xl leading-snug text-ivory/90 italic">“{m.tagline}”</p>
-          <div className="mt-5 flex flex-wrap gap-2">
-            {m.tags.map((t) => (
-              <span key={t} className="rounded-full border border-line bg-surface-2 px-3 py-1 text-xs font-medium text-muted">{t}</span>
-            ))}
-          </div>
-          <div className="mt-auto pt-8">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-dim">Send a tip</p>
-            <div className="mt-3 grid grid-cols-3 gap-2">
-              {[5, 10, 25].map((v) => (
-                <button
-                  key={v}
-                  onClick={() => setTipped(v)}
-                  className={`h-12 rounded-xl border text-base font-bold transition ${tipped === v ? "bg-gold border-transparent" : "border-gold/40 text-gold-hi hover:border-gold"}`}
-                >
-                  ${v}
-                </button>
-              ))}
-            </div>
-            {tipped && (
-              <p className="mt-3 text-sm text-gold-hi">Join free to send ${tipped} to {m.name}. Tips go straight to him.</p>
-            )}
-            <button className="mt-3 flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-line bg-surface-2 text-sm font-semibold text-ivory transition hover:border-gold/50">
-              <Lock className="size-4 text-gold" /> Join free to message
+        <div className="mt-6 grid grid-cols-4 gap-2">
+          {[5, 10, 25, 50].map((v) => (
+            <button
+              key={v}
+              onClick={() => setTipped(v)}
+              className={`h-12 rounded-xl border text-base font-bold transition ${tipped === v ? "bg-gold border-transparent" : "border-gold/40 text-gold-hi hover:border-gold"}`}
+            >
+              ${v}
             </button>
-          </div>
+          ))}
+        </div>
+        <p className="mt-3 min-h-5 text-sm text-gold-hi">{tipped ? `Join free to send $${tipped} to ${m.name}. Tips go straight to him.` : "Tips are optional and go straight to the creator."}</p>
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <Link to="/m/$handle" params={{ handle: m.handle }} className="grid h-12 place-items-center rounded-xl border border-line bg-surface-2 text-sm font-semibold text-ivory transition hover:border-gold/50">
+            View profile
+          </Link>
+          <button className="flex h-12 items-center justify-center gap-2 rounded-xl bg-gold text-sm font-bold">
+            <Lock className="size-4" /> Join free
+          </button>
         </div>
       </div>
     </div>
   );
 }
 
-function Footer() {
-  const cols = [
-    { title: "Explore", links: ["Browse", "Live now", "New faces", "Become a creator"] },
-    { title: "Safety", links: ["18+ & age verification", "Consent policy", "Safety center", "Report a profile"] },
-    { title: "Legal", links: ["Terms of service", "Privacy", "2257 statement", "DMCA"] },
-  ];
-  return (
-    <footer className="mt-20 border-t border-line/60 bg-night/80 pb-24 md:pb-0">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.4fr_repeat(3,1fr)]">
-        <div>
-          <Brand />
-          <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted">
-            A private directory of verified adult creators and companions. {company.phase}
-          </p>
-          <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-ruby/50 bg-oxblood/30 px-3 py-1.5 text-xs font-semibold text-ivory">
-            <span className="font-display text-sm font-bold">18+</span> Adults only. Consent always.
-          </div>
-        </div>
-        {cols.map((c) => (
-          <div key={c.title}>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold">{c.title}</p>
-            <ul className="mt-4 grid gap-2.5 text-sm text-muted">
-              {c.links.map((l) => (
-                <li key={l}><a href="#" className="transition hover:text-ivory">{l}</a></li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-      <div className="border-t border-line/60">
-        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-xs leading-relaxed text-dim sm:flex-row sm:justify-between sm:px-6">
-          <p>All people on {company.domain} are 18 or older and ID-verified. Everything here is between consenting adults.</p>
-          <p>© 2026 {company.company} · {company.companyDomain}</p>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
-function MobileNav() {
-  const items = [
-    { href: "#browse", label: "Browse", icon: <Flame className="size-5" /> },
-    { href: "#live", label: "Live", icon: <Radio className="size-5" /> },
-    { href: "#browse", label: "Online", icon: <span className="grid size-5 place-items-center"><span className="size-2.5 rounded-full bg-online" /></span> },
-    { href: "#", label: "Sign in", icon: <Lock className="size-5" /> },
-  ];
-  return (
-    <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-4 rounded-2xl border-gold-grad p-1 shadow-2xl md:hidden" aria-label="Primary">
-      {items.map((i) => (
-        <a key={i.label} href={i.href} className="flex h-14 flex-col items-center justify-center gap-1 rounded-xl text-xs font-semibold text-muted transition active:bg-surface-2 active:text-gold-hi">
-          <span className="text-gold">{i.icon}</span>
-          {i.label}
-        </a>
-      ))}
-    </nav>
-  );
-}
-
 export function OnlyMenHome() {
-  const [gate, setGate] = useState<"unknown" | "show" | "ok">("unknown");
+  const { gate, enter } = useAgeGate();
+  const [city, setCity] = useCity();
   const [filter, setFilter] = useState<FilterId>("all");
-  const [open, setOpen] = useState<Model | null>(null);
+  const [search, setSearch] = useState<Search>(defaultSearch);
+  const [sort, setSort] = useState<SortId>("recommended");
+  const [view, setView] = useState<"grid" | "list">("grid");
+  const [drawer, setDrawer] = useState(false);
+  const [page, setPage] = useState(1);
+  const [tip, setTip] = useState<Model | null>(null);
 
-  useEffect(() => {
-    setGate(window.localStorage.getItem(AGE_KEY) === "1" ? "ok" : "show");
-  }, []);
-
-  const shown = useMemo(() => applyFilter(models, filter), [filter]);
-  const live = useMemo(() => models.filter((m) => m.live), []);
+  const inCity = useMemo(() => (city === "all" ? models : models.filter((m) => m.metro === city)), [city]);
+  const shown = useMemo(() => applySort(applySearch(applyFilter(inCity, filter), search), sort), [inCity, filter, search, sort]);
+  const featured = useMemo(() => applySort(inCity.filter((m) => m.tier), "recommended"), [inCity]);
+  const live = useMemo(() => inCity.filter((m) => m.live), [inCity]);
   const onlineCount = models.filter((m) => m.online || m.live).length;
+  const nFilters = activeFilterCount(search);
+
+  useEffect(() => setPage(1), [city, filter, search, sort]);
+
+  const visible = shown.slice(0, page * PAGE);
 
   return (
     <div className="min-h-screen">
-      <Header />
+      <Header city={city} onCity={setCity} q={search.q} onQ={(q) => setSearch({ ...search, q })} onOpenFilters={() => setDrawer(true)} filterCount={nFilters} />
       <main>
-        <Hero online={onlineCount} live={live.length} />
-        <LiveRow list={live} onOpen={setOpen} />
+        <Hero online={onlineCount} live={models.filter((m) => m.live).length} />
+        <LiveRow list={live} />
+        <Featured list={featured} onTip={setTip} />
 
         <section id="browse" className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-14 sm:px-6">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.25em] text-gold">
-                <Flame className="size-3.5" /> Near you tonight
-              </p>
-              <h2 className="mt-1 text-3xl font-semibold text-ivory sm:text-4xl">Browse men</h2>
+          <SectionHead
+            kicker={city === "all" ? "Everywhere tonight" : `In ${cityLabel(city)}`}
+            title="Browse men"
+            icon={<Flame className="size-3.5" />}
+          />
+
+          {/* toolbar */}
+          <div className="mt-5 flex flex-wrap items-center gap-2">
+            <div className="md:hidden">
+              <CityPicker city={city} onCity={setCity} compact />
             </div>
-            <p className="text-sm text-muted">
-              <b className="text-ivory">{shown.length}</b> {shown.length === 1 ? "man" : "men"} · sorted by distance
-            </p>
+            <button
+              onClick={() => setDrawer(true)}
+              className="flex h-10 items-center gap-2 rounded-full border border-line bg-surface/80 px-4 text-sm font-semibold text-ivory transition hover:border-gold/60"
+            >
+              <SlidersHorizontal className="size-4 text-gold" /> Filters
+              {nFilters > 0 && <span className="grid size-5 place-items-center rounded-full bg-gold text-[11px] font-extrabold">{nFilters}</span>}
+            </button>
+            <label className="relative flex h-10 items-center gap-2 rounded-full border border-line bg-surface/80 pr-3 pl-4 text-sm font-semibold text-ivory transition focus-within:border-gold/60 hover:border-gold/60">
+              <ArrowUpDown className="size-4 text-gold" />
+              <span className="sr-only">Sort by</span>
+              <select value={sort} onChange={(e) => setSort(e.target.value as SortId)} className="cursor-pointer appearance-none bg-transparent pr-1 outline-none">
+                {sorts.map((s) => (
+                  <option key={s.id} value={s.id} className="bg-night">
+                    {s.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div className="ml-auto flex items-center gap-3">
+              <p className="hidden text-sm text-muted sm:block">
+                <b className="text-ivory">{shown.length}</b> {shown.length === 1 ? "man" : "men"}
+              </p>
+              <div className="flex rounded-full border border-line bg-surface/80 p-1" role="group" aria-label="Layout">
+                {(["grid", "list"] as const).map((v) => (
+                  <button
+                    key={v}
+                    onClick={() => setView(v)}
+                    aria-pressed={view === v}
+                    aria-label={v === "grid" ? "Grid view" : "List view"}
+                    className={`grid size-8 place-items-center rounded-full transition ${view === v ? "bg-gold" : "text-muted hover:text-ivory"}`}
+                  >
+                    {v === "grid" ? <LayoutGrid className="size-4" /> : <List className="size-4" />}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
-          <div className="no-scrollbar -mx-4 mt-5 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
+
+          <div className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
             {filters.map((f) => {
               const active = filter === f.id;
               return (
@@ -424,7 +468,7 @@ export function OnlyMenHome() {
                   key={f.id}
                   onClick={() => setFilter(f.id)}
                   aria-pressed={active}
-                  className={`flex h-10 shrink-0 items-center gap-1.5 rounded-full px-4 text-sm font-semibold transition ${
+                  className={`flex h-9 shrink-0 items-center gap-1.5 rounded-full px-4 text-sm font-semibold transition ${
                     active ? "bg-gold glow-gold" : "border border-line bg-surface/80 text-muted hover:border-gold/50 hover:text-ivory"
                   }`}
                 >
@@ -436,15 +480,53 @@ export function OnlyMenHome() {
                 </button>
               );
             })}
+            {nFilters > 0 && (
+              <button onClick={() => setSearch(defaultSearch)} className="flex h-9 shrink-0 items-center gap-1 rounded-full px-3 text-sm font-semibold text-gold hover:text-gold-hi">
+                <X className="size-4" /> Clear {nFilters} filter{nFilters > 1 ? "s" : ""}
+              </button>
+            )}
           </div>
-          {shown.length ? (
-            <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7">
-              {[...shown].sort((a, b) => a.km - b.km).map((m) => (
-                <Tile key={m.id} m={m} onOpen={setOpen} />
-              ))}
-            </div>
+
+          {visible.length ? (
+            view === "grid" ? (
+              <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+                {visible.map((m) => (
+                  <Tile key={m.id} m={m} onTip={setTip} />
+                ))}
+              </div>
+            ) : (
+              <div className="mt-6 grid gap-3 lg:grid-cols-2">
+                {visible.map((m) => (
+                  <Row key={m.id} m={m} onTip={setTip} />
+                ))}
+              </div>
+            )
           ) : (
-            <p className="mt-10 text-center text-muted">Nobody matches that right now. Try another filter.</p>
+            <div className="mt-10 rounded-2xl border border-dashed border-line p-10 text-center">
+              <p className="font-display text-2xl text-ivory">Nobody matches that right now.</p>
+              <p className="mt-2 text-sm text-muted">Try another city, loosen a filter, or check back later tonight.</p>
+              <button
+                onClick={() => {
+                  setSearch(defaultSearch);
+                  setFilter("all");
+                  setCity("all");
+                }}
+                className="mt-5 h-11 rounded-full bg-gold px-6 text-sm font-bold"
+              >
+                Reset everything
+              </button>
+            </div>
+          )}
+
+          {shown.length > visible.length && (
+            <div className="mt-8 flex flex-col items-center gap-2">
+              <button onClick={() => setPage((p) => p + 1)} className="h-12 rounded-full border border-gold/50 px-8 text-sm font-bold text-gold-hi transition hover:bg-gold/10">
+                Load more men
+              </button>
+              <p className="text-xs text-dim">
+                Showing {visible.length} of {shown.length}
+              </p>
+            </div>
           )}
         </section>
 
@@ -458,31 +540,23 @@ export function OnlyMenHome() {
                   Your stage. <span className="text-gold italic">Your tips.</span>
                 </h2>
                 <p className="mt-3 max-w-lg text-muted">
-                  Go live from your own space, build your following, and keep it simple: fans tip what they want. No
-                  paywalls, no subscriptions in Phase 1.
+                  Go live from your own space, build your following, and keep it simple: fans tip what they want. No paywalls,
+                  no subscriptions in Phase 1.
                 </p>
               </div>
               <div className="flex md:justify-end">
-                <button className="h-12 rounded-full bg-gold px-8 text-sm font-bold glow-gold transition hover:brightness-110">
-                  Apply as a creator
-                </button>
+                <button className="h-12 rounded-full bg-gold px-8 text-sm font-bold glow-gold transition hover:brightness-110">Apply as a creator</button>
               </div>
             </div>
           </div>
         </section>
       </main>
       <Footer />
-      <MobileNav />
+      <MobileNav onOpenFilters={() => setDrawer(true)} />
 
-      {open && <QuickView m={open} onClose={() => setOpen(null)} />}
-      {gate !== "ok" && (
-        <AgeGate
-          onEnter={() => {
-            window.localStorage.setItem(AGE_KEY, "1");
-            setGate("ok");
-          }}
-        />
-      )}
+      <FilterDrawer open={drawer} value={search} onChange={setSearch} onClose={() => setDrawer(false)} resultCount={shown.length} />
+      {tip && <TipSheet m={tip} onClose={() => setTip(null)} />}
+      {gate !== "ok" && <AgeGate onEnter={enter} />}
     </div>
   );
 }
