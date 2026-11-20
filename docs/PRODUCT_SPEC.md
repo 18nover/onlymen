@@ -38,29 +38,57 @@ Goal: treat this like a real company from day one and see how far it can go.
 
 ## 4. Primary Users (Initial)
 
-- **Models / Escorts** — Create profiles, manage availability, receive tips, control visibility.
-- **Clients** — Browse, contact, tip.
-- **Platform owner** — Full admin, moderation, growth.
+- **Models / Escorts** — Create profiles, manage availability, receive tips, control visibility, optionally go live.
+- **Clients / Viewers** — Browse, contact, tip, watch live streams.
+- **Platform owner** — Full admin, moderation, growth. First model on the platform.
 
 (Detailed personas and flows will be expanded as we learn.)
 
 ---
 
-## 5. Non-Negotiables (so far)
+## 5. Core Features (Phase 1 + Near-term)
+
+### Must-have for first usable version
+- Model profiles (photos, bio, rates/availability, location/travel)
+- Basic tipping
+- Auth + simple onboarding (starts with platform owner as first model)
+
+### Planned differentiating feature
+- **Live streaming from the model’s space**
+  - Webcam or RTSP source
+  - Stream live to customers/viewers on the platform
+  - Tips during or after the stream
+  - Model controls who can view / when they are live
+
+This is a high-value differentiator versus classic directory sites. Technical approach (WebRTC, media server, RTSP ingest, HLS, tip overlays) will be decided in Architecture once basic profiles exist.
+
+---
+
+## 6. Non-Negotiables (so far)
 
 1. We own the product, brand, data, and infrastructure completely.
 2. Phase 1 stays free + tips only.
 3. Documentation remains chronological and living.
 4. Prefer small working increments over large unshipped plans.
+5. Start with the platform owner as the first live model, then open signups.
 
 ---
 
-## 6. Out of Scope for Phase 1
+## 7. Growth & Marketing Intent
+
+- Launch with the owner as the first model.
+- Open model/client signups after the core experience works.
+- Advertise on X (Twitter) and run a deliberate PR / launch event once there is something real to show.
+
+---
+
+## 8. Out of Scope for earliest Phase 1
 
 - Paid subscriptions or membership tiers
 - Complex payment processing beyond basic tipping
-- Advanced matching / AI recommendation engines (can come later)
+- Advanced matching / AI recommendation engines
 - Mobile native apps (web-first)
+- Full production-grade multi-region streaming infrastructure (start simple)
 
 ---
 

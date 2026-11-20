@@ -36,3 +36,8 @@ First concrete action: create and seed the documentation skeleton, then proceed 
 Deleted the previous 18nover/onlymen repository (which contained an AT Protocol / Bluesky-fork social network experiment).  
 Created a fresh private repository at https://github.com/18nover/onlymen focused solely on the RentMen-style product defined in these docs.  
 Reason: The two product directions were incompatible. We are committing to the cleaner modern escort/model platform (profiles, tips, Phase 1 free) and starting with a clean slate.
+
+**2026-11-20** — Live streaming as a core differentiator  
+Models/escorts will be able to go live from their space (webcam or RTSP source) and stream to customers/viewers on the platform, with the ability to receive tips.  
+The platform starts with the owner as the first model, then opens signups. Marketing will include X (Twitter) advertising and a deliberate PR/launch event once there is a real working experience.  
+Reason: Live + tips is a strong differentiator versus classic static directory sites. Starting with the owner keeps scope manageable and gives us a real product to show before opening the floodgates.

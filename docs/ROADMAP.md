@@ -10,45 +10,45 @@
 - [x] **2026-11-20** — Project identity locked (OnlyMen / 18nover / onlymen.gay)
 - [x] **2026-11-20** — Phase 1 rules defined (free + optional tips only)
 - [x] **2026-11-20** — Documentation skeleton created and seeded
-  - README.md
-  - docs/PRODUCT_SPEC.md
-  - docs/ARCHITECTURE.md
-  - docs/ROADMAP.md
-  - docs/DECISION_LOG.md
-- [x] **2026-11-20** — Clean GitHub start
-  - Deleted previous AT Protocol social-network attempt at 18nover/onlymen
-  - Created fresh private repo https://github.com/18nover/onlymen
-  - Pushed initial documentation
+- [x] **2026-11-20** — Clean GitHub start (fresh private repo https://github.com/18nover/onlymen)
+- [x] **2026-11-20** — Live streaming + tips direction captured in Product Spec
 
 ---
 
 ## Current Priority Order
 
 1. **Flesh out Product Spec**  
-   Expand user flows, core screens, and Phase 1 feature list so architecture and MVP work have a clear target.
+   User flows, core screens, Phase 1 feature list (including how live streaming fits). Enough clarity that we can design UI and schema without constant rework.
 
 2. **Architecture decisions + initial data model**  
-   Confirm stack choices (auth, storage, hosting) and write the first Postgres schema sketch.
+   Confirm stack (auth, storage, hosting). Sketch Postgres schema. High-level approach for live streaming (WebRTC / media server / RTSP ingest options).
 
 3. **Public landing page + waitlist**  
-   Simple onlymen.gay site that states the value proposition and collects early interest (models + clients).
+   First real UI. Simple onlymen.gay site that states the value prop and collects early interest. This is the first thing we can show and start advertising from.
 
 4. **MVP foundation**  
-   Auth + basic model profiles so real people can join under Phase 1 rules.
+   Auth + basic model profiles so the owner (and then early models) can actually have a presence. Tips at a basic level.
 
-5. **Safety & company foundations (lightweight)**  
-   High-level moderation approach, age-gate thinking, and 18nover setup notes.
+5. **Live streaming v1**  
+   Webcam (and later RTSP) → live viewers + tip capability. Start simple; harden later.
+
+6. **Safety & company foundations (lightweight)**  
+   Age-gate thinking, basic moderation, 18nover setup notes.
+
+7. **Open signups + X / PR launch push**  
+   Once there is a working experience with the owner live, open signups and run the advertising / PR event.
 
 ---
 
 ## Later / Backlog
 
-- Tip implementation details
+- Tip implementation details & payouts
 - Messaging / contact flow
 - Search & filtering
 - Admin / moderation tools
 - Pricing strategy (only after proven value)
 - Mobile considerations
+- Production-grade streaming infrastructure
 
 ---
 
