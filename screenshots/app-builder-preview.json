@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "OnlyMen Desk",
+      "hasCanvas": false,
+      "bodyTextLen": 2469,
+      "bodyTextHash": "4f3b393e3071eb676567d3c626f8ddccf964cce8ac3a7a0883c888e3d33e9742",
+      "bodyTextPrefix": "18NOVER · ONLYMEN.GAY OnlyMen Desk Phase 1 — free for everyone. ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "OnlyMen Desk",
+      "hasCanvas": false,
+      "bodyTextLen": 2469,
+      "bodyTextHash": "4f3b393e3071eb676567d3c626f8ddccf964cce8ac3a7a0883c888e3d33e9742",
+      "bodyTextPrefix": "18NOVER · ONLYMEN.GAY OnlyMen Desk Phase 1 — free for everyone. ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-preview.json"
+}
