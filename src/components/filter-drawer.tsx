@@ -21,7 +21,7 @@ function Chips<T extends string>({ options, value, onChange }: { options: readon
             key={o}
             aria-pressed={on}
             onClick={() => onChange(on ? value.filter((x) => x !== o) : [...value, o])}
-            className={`h-9 rounded-full px-3.5 text-sm font-semibold transition ${
+            className={`h-10 rounded-full px-4 text-sm font-semibold transition ${
               on ? "bg-gold" : "border border-line bg-surface-2/60 text-muted hover:border-gold/50 hover:text-ivory"
             }`}
           >
@@ -35,7 +35,7 @@ function Chips<T extends string>({ options, value, onChange }: { options: readon
 
 function Toggle({ label, icon, checked, onChange }: { label: string; icon: React.ReactNode; checked: boolean; onChange: (v: boolean) => void }) {
   return (
-    <label className="flex cursor-pointer items-center gap-3 py-2 text-sm text-ivory">
+    <label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm text-ivory">
       <span className="text-gold">{icon}</span>
       <span className="flex-1">{label}</span>
       <button
@@ -127,29 +127,29 @@ export function FilterDrawer({
   const set = <K extends keyof SearchState>(k: K, v: SearchState[K]) => onChange({ ...value, [k]: v });
 
   return (
-    <div className={`fixed inset-0 z-50 ${open ? "" : "pointer-events-none"}`} aria-hidden={!open}>
+    <div className={`fixed inset-0 z-50 ${open ? "visible" : "pointer-events-none invisible delay-300"}`} aria-hidden={!open}>
       <div onClick={onClose} className={`absolute inset-0 bg-ink/75 backdrop-blur-sm transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`} />
       <aside
         role="dialog"
         aria-modal="true"
         aria-label="Search filters"
         className={`absolute flex flex-col border-gold-grad shadow-2xl transition-transform duration-300 ease-out
-          inset-x-0 bottom-0 max-h-[90vh] rounded-t-3xl
-          md:inset-y-0 md:right-0 md:left-auto md:max-h-none md:w-[440px] md:rounded-none md:rounded-l-3xl
+          inset-x-0 bottom-0 max-h-[calc(100dvh-env(safe-area-inset-top)-1.5rem)] rounded-t-3xl
+          md:inset-y-0 md:right-0 md:left-auto md:max-h-none md:w-[min(440px,100vw)] md:rounded-none md:rounded-l-3xl
           ${open ? "translate-y-0 md:translate-x-0" : "translate-y-full md:translate-y-0 md:translate-x-full"}`}
       >
         <div className="mx-auto mt-2.5 h-1 w-10 rounded-full bg-line md:hidden" />
-        <div className="flex items-center justify-between border-b border-line/60 px-6 pt-4 pb-3">
+        <div className="flex items-center justify-between gap-4 border-b border-line/60 px-5 pt-4 pb-3 sm:px-6">
           <div>
             <p className="text-[11px] font-bold tracking-[0.25em] text-gold uppercase">Refine</p>
             <h2 className="text-3xl font-semibold text-ivory">Search filters</h2>
           </div>
-          <button onClick={onClose} className="grid size-10 place-items-center rounded-full bg-surface-2 text-ivory transition hover:text-gold-hi" aria-label="Close filters">
+          <button onClick={onClose} className="grid size-10 shrink-0 place-items-center rounded-full bg-surface-2 text-ivory transition hover:text-gold-hi" aria-label="Close filters">
             <X className="size-5" />
           </button>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-6">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 sm:px-6">
           <Section title="Keyword">
             <label className="flex h-11 items-center gap-2 rounded-xl border border-line bg-surface-2/60 px-3 text-sm focus-within:border-gold/60">
               <Search className="size-4 text-dim" />
@@ -185,13 +185,13 @@ export function FilterDrawer({
             <Chips options={allLanguages} value={value.languages} onChange={(v) => set("languages", v)} />
           </Section>
           <Section title="Rating at least">
-            <div className="flex gap-2">
+            <div className="grid grid-cols-4 gap-2">
               {[0, 4, 4.5, 5].map((r) => (
                 <button
                   key={r}
                   aria-pressed={value.minRating === r}
                   onClick={() => set("minRating", r)}
-                  className={`flex h-9 items-center gap-1 rounded-full px-3.5 text-sm font-semibold transition ${
+                  className={`flex h-10 items-center justify-center gap-1 rounded-full px-2 text-sm font-semibold whitespace-nowrap transition ${
                     value.minRating === r ? "bg-gold" : "border border-line bg-surface-2/60 text-muted hover:border-gold/50"
                   }`}
                 >
@@ -200,12 +200,12 @@ export function FilterDrawer({
               ))}
             </div>
           </Section>
-          <p className="flex items-center gap-1.5 pb-6 text-xs text-dim">
-            <Sparkles className="size-3.5" /> Companionship and creator profiles only. Tips are always optional.
+          <p className="flex items-start gap-1.5 pb-6 text-xs leading-relaxed text-dim">
+            <Sparkles className="mt-0.5 size-3.5 shrink-0" /> Companionship and creator profiles only. Tips are always optional.
           </p>
         </div>
 
-        <div className="flex items-center gap-3 border-t border-line/60 px-6 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className="flex items-center gap-3 border-t border-line/60 px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">
           <button
             onClick={() => onChange(defaultSearch)}
             className="flex h-12 items-center gap-2 rounded-full border border-line px-5 text-sm font-semibold text-muted transition hover:border-gold/50 hover:text-ivory"

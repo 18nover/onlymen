@@ -40,7 +40,7 @@ function Gallery({ m }: { m: Model }) {
   const go = (d: number) => setI((x) => (x + d + n) % n);
   return (
     <div>
-      <div className="group relative aspect-[4/5] overflow-hidden rounded-3xl border-gold-grad glow-gold sm:aspect-[5/6]">
+      <div className="group relative aspect-[4/5] overflow-hidden rounded-3xl border-gold-grad glow-gold sm:aspect-[4/3] md:aspect-[4/5] lg:aspect-[5/6]">
         <img
           key={i}
           src={m.photo}
@@ -49,7 +49,7 @@ function Gallery({ m }: { m: Model }) {
           style={{ objectPosition: crops[i].pos, transform: `scale(${crops[i].scale})`, transformOrigin: crops[i].pos }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-ink/30" />
-        <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+        <div className="absolute top-4 right-16 left-4 flex flex-wrap gap-2">
           {m.live ? (
             <span className="flex items-center gap-1.5 rounded-full bg-ruby px-3 py-1 text-xs font-bold tracking-wider text-ivory uppercase">
               <span className="size-1.5 animate-pulse-dot rounded-full bg-ivory" /> Live · {m.viewers} watching
@@ -71,7 +71,7 @@ function Gallery({ m }: { m: Model }) {
           <ChevronRight className="size-5" />
         </button>
       </div>
-      <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto">
+      <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto p-0.5">
         {crops.map((c, k) => (
           <button
             key={k}
@@ -101,7 +101,7 @@ function Gallery({ m }: { m: Model }) {
 
 function Card({ title, icon, children, id }: { title: string; icon: React.ReactNode; children: React.ReactNode; id?: string }) {
   return (
-    <section id={id} className="scroll-mt-24 rounded-2xl bg-surface/70 p-5 ring-1 ring-line/70 sm:p-6">
+    <section id={id} className="min-w-0 scroll-mt-24 rounded-2xl bg-surface/70 p-5 ring-1 ring-line/70 sm:p-6">
       <h2 className="flex items-center gap-2 font-sans text-xs font-bold tracking-[0.22em] text-gold uppercase">
         {icon} {title}
       </h2>
@@ -115,20 +115,20 @@ function ActionPanel({ m }: { m: Model }) {
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
   return (
-    <div className="rounded-3xl border-gold-grad p-6 sm:p-7">
+    <div className="rounded-3xl border-gold-grad p-5 sm:p-7">
       <p className="flex items-center gap-1.5 text-sm font-semibold text-gold">
         @{m.handle} {m.verified && <BadgeCheck className="size-4" aria-label="Verified" />}
       </p>
-      <h1 className="mt-1 text-5xl leading-none font-semibold text-ivory sm:text-6xl">
+      <h1 className="mt-1 text-5xl leading-none font-semibold text-ivory lg:text-6xl">
         {m.name}
         <span className="text-gold">,</span> <span className="font-normal text-ivory/80">{m.age}</span>
       </h1>
-      <p className="mt-3 flex items-center gap-2 text-sm text-muted">
+      <p className="mt-3 flex flex-wrap items-center gap-2 text-sm text-muted">
         <StatusDot m={m} /> {fmtActive(m)}
         {m.isNew && <span className="rounded-full bg-ivory px-2 py-0.5 text-[10px] font-extrabold tracking-wider text-ink uppercase">New</span>}
       </p>
       <div className="mt-5 grid grid-cols-2 gap-3">
-        <div className="rounded-2xl bg-surface-2/70 p-3.5 ring-1 ring-line/60">
+        <div className="min-w-0 rounded-2xl bg-surface-2/70 p-3.5 ring-1 ring-line/60">
           <p className="text-[11px] tracking-wide text-dim uppercase">Currently in</p>
           <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-ivory">
             <MapPin className="size-4 shrink-0 text-gold" /> {m.city}
@@ -137,11 +137,11 @@ function ActionPanel({ m }: { m: Model }) {
             {cityLabel(m.metro)} · {fmtDistance(m.km)}
           </p>
         </div>
-        <a href="#reviews" className="rounded-2xl bg-surface-2/70 p-3.5 ring-1 ring-line/60 transition hover:ring-gold/50">
+        <a href="#reviews" className="min-w-0 rounded-2xl bg-surface-2/70 p-3.5 ring-1 ring-line/60 transition hover:ring-gold/50">
           <p className="text-[11px] tracking-wide text-dim uppercase">Rating</p>
           {m.reviews.length ? (
             <>
-              <p className="mt-1 flex items-center gap-2">
+              <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
                 <b className="font-display text-3xl leading-none text-gold-hi">{m.rating.toFixed(1)}</b>
                 <Stars value={m.rating} />
               </p>
@@ -177,7 +177,7 @@ function ActionPanel({ m }: { m: Model }) {
           <MessageCircle className="size-4" /> Message
         </a>
       </div>
-      <div className="mt-3 flex items-center justify-center gap-1 text-sm text-muted">
+      <div className="mt-3 flex flex-wrap items-center justify-center gap-1 text-sm text-muted">
         <button onClick={() => setSaved((s) => !s)} aria-pressed={saved} className="flex h-10 items-center gap-1.5 rounded-full px-3 transition hover:text-ivory">
           <Heart className={`size-4 ${saved ? "fill-ruby text-ruby" : ""}`} /> {saved ? "Saved" : "Save"}
         </button>
@@ -203,10 +203,10 @@ function Availability({ m }: { m: Model }) {
   return (
     <div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[420px] border-separate border-spacing-1 text-center text-xs">
+        <table className="w-full table-fixed border-separate border-spacing-1 text-center text-xs">
           <thead>
             <tr>
-              <th className="w-20" />
+              <th className="w-16 sm:w-20" />
               {days.map((d) => (
                 <th key={d} className="pb-1 font-semibold text-muted">{d}</th>
               ))}
@@ -215,7 +215,7 @@ function Availability({ m }: { m: Model }) {
           <tbody>
             {slots.map((s) => (
               <tr key={s}>
-                <th className="pr-2 text-left font-medium text-dim">{s}</th>
+                <th className="pr-1 text-left font-medium text-dim">{s}</th>
                 {days.map((d) => {
                   const on = m.availability[d].includes(s);
                   return (
@@ -283,13 +283,13 @@ function Reviews({ m }: { m: Model }) {
           <li key={k} className="rounded-xl bg-surface-2/60 p-4 ring-1 ring-line/50">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               <span className="grid size-8 place-items-center rounded-full bg-oxblood/60 text-xs font-bold text-gold-hi ring-1 ring-gold/30">{r.author[0].toUpperCase()}</span>
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-ivory">{r.author}</p>
                 <p className="text-xs text-dim">
                   {r.from} · {r.date}
                 </p>
               </div>
-              <span className="ml-auto">
+              <span className="shrink-0">
                 <Stars value={r.rating} />
               </span>
             </div>
@@ -321,7 +321,7 @@ function MessageBox({ m }: { m: Model }) {
     <div>
       <div className="flex flex-wrap gap-2">
         {starters.map((s) => (
-          <button key={s} onClick={() => setText(s)} className="rounded-full border border-line bg-surface-2/60 px-3 py-1.5 text-xs text-muted transition hover:border-gold/50 hover:text-ivory">
+          <button key={s} onClick={() => setText(s)} className="inline-flex min-h-10 items-center rounded-full border border-line bg-surface-2/60 px-3.5 text-xs text-muted transition hover:border-gold/50 hover:text-ivory">
             {s}
           </button>
         ))}
@@ -338,8 +338,8 @@ function MessageBox({ m }: { m: Model }) {
           <Send className="size-4" /> <span className="hidden sm:inline">Send</span>
         </button>
       </div>
-      <p className="mt-2 flex items-center gap-1.5 text-xs text-dim">
-        <Lock className="size-3.5" /> Join free to send. Keep it respectful — conversations are private between adults.
+      <p className="mt-2 flex items-start gap-1.5 text-xs leading-relaxed text-dim">
+        <Lock className="mt-0.5 size-3.5 shrink-0" /> Join free to send. Keep it respectful — conversations are private between adults.
       </p>
     </div>
   );
@@ -363,8 +363,8 @@ function Details({ m }: { m: Model }) {
     <dl className="divide-y divide-line/50">
       {rows.map(([k, v]) => (
         <div key={k} className="flex justify-between gap-4 py-2.5 text-sm">
-          <dt className="text-muted">{k}</dt>
-          <dd className="text-right font-semibold text-ivory">{v}</dd>
+          <dt className="shrink-0 text-muted">{k}</dt>
+          <dd className="min-w-0 text-right font-semibold text-ivory">{v}</dd>
         </div>
       ))}
     </dl>
@@ -373,15 +373,15 @@ function Details({ m }: { m: Model }) {
 
 function MiniTile({ m }: { m: Model }) {
   return (
-    <Link to="/m/$handle" params={{ handle: m.handle }} className="group relative block aspect-[3/4] w-36 shrink-0 overflow-hidden rounded-xl ring-1 ring-line/70 transition hover:ring-gold/60 sm:w-44">
+    <Link to="/m/$handle" params={{ handle: m.handle }} className="group relative block aspect-[3/4] w-36 shrink-0 snap-start overflow-hidden rounded-xl ring-1 ring-line/70 transition hover:ring-gold/60 sm:w-44">
       <img src={m.photo} alt={`${m.name}, ${m.age}`} loading="lazy" className="size-full object-cover transition duration-500 group-hover:scale-105" />
       <div className="absolute inset-0 tile-shade" />
       <div className="absolute top-2 left-2">
         <TierBadge tier={m.tier} />
       </div>
       <div className="absolute inset-x-2.5 bottom-2.5">
-        <p className="flex items-center gap-1.5 text-sm font-bold text-ivory">
-          <StatusDot m={m} /> {m.name}, <span className="font-medium text-ivory/80">{m.age}</span>
+        <p className="flex min-w-0 items-center gap-1.5 text-sm font-bold text-ivory">
+          <StatusDot m={m} /> <span className="truncate">{m.name}, <span className="font-medium text-ivory/80">{m.age}</span></span>
         </p>
         <p className="truncate text-xs text-muted">{m.city}</p>
       </div>
@@ -405,20 +405,20 @@ export function OnlyMenProfile({ handle }: { handle: string }) {
           void navigate({ to: "/", hash: "browse" });
         }}
       />
-      <main className="mx-auto max-w-7xl px-4 pb-28 sm:px-6 md:pb-0">
-        <Link to="/" hash="browse" className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-muted transition hover:text-gold-hi">
+      <main className="om-container">
+        <Link to="/" hash="browse" className="mt-4 inline-flex h-10 items-center gap-1.5 text-sm font-semibold text-muted transition hover:text-gold-hi">
           <ArrowLeft className="size-4" /> Back to browse
         </Link>
 
-        <div className="mt-4 grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-8">
+        <div className="mt-2 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-8">
           <Gallery m={m} />
-          <div className="lg:sticky lg:top-24 lg:self-start">
+          <div className="min-w-0 md:sticky md:top-24 md:self-start">
             <ActionPanel m={m} />
           </div>
         </div>
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:gap-8">
-          <div className="grid gap-6">
+        <div className="mt-6 grid grid-cols-1 gap-6 lg:mt-8 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:gap-8">
+          <div className="grid min-w-0 grid-cols-1 gap-6 content-start">
             <Card title={`About ${m.name}`} icon={<Sparkles className="size-3.5" />}>
               <p className="leading-relaxed text-ivory/85">{m.about}</p>
               <p className="mt-5 text-[11px] font-bold tracking-[0.2em] text-dim uppercase">Good company for</p>
@@ -444,7 +444,7 @@ export function OnlyMenProfile({ handle }: { handle: string }) {
               <Reviews m={m} />
             </Card>
           </div>
-          <aside className="grid content-start gap-6">
+          <aside className="grid min-w-0 grid-cols-1 content-start gap-6 lg:sticky lg:top-24 lg:self-start">
             <Card title="Details" icon={<Languages className="size-3.5" />}>
               <Details m={m} />
             </Card>
@@ -473,12 +473,12 @@ export function OnlyMenProfile({ handle }: { handle: string }) {
           </aside>
         </div>
 
-        <section className="mt-12">
-          <div className="flex items-end justify-between">
+        <section className="om-section">
+          <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
             <h2 className="text-3xl font-semibold text-ivory">More in {cityLabel(m.metro).split(",")[0]}</h2>
-            <Link to="/" hash="browse" className="text-sm font-semibold text-gold transition hover:text-gold-hi">See all →</Link>
+            <Link to="/" hash="browse" className="inline-flex h-10 items-center text-sm font-semibold text-gold transition hover:text-gold-hi">See all →</Link>
           </div>
-          <div className="no-scrollbar -mx-4 mt-4 flex gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
+          <div className="no-scrollbar om-bleed mt-4 flex snap-x gap-3 overflow-x-auto pb-2 sm:gap-4">
             {similar.map((x) => (
               <MiniTile key={x.id} m={x} />
             ))}
@@ -488,7 +488,7 @@ export function OnlyMenProfile({ handle }: { handle: string }) {
       <Footer />
 
       {/* mobile sticky action bar */}
-      <div className="fixed inset-x-3 bottom-3 z-40 flex items-center gap-2 rounded-2xl border-gold-grad p-2 shadow-2xl md:hidden">
+      <div className="om-fixed-bottom fixed inset-x-3 z-40 mx-auto flex max-w-md items-center gap-2 rounded-2xl border-gold-grad p-2 shadow-2xl md:hidden">
         <img src={m.photo} alt="" className="size-11 rounded-xl object-cover" />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-bold text-ivory">{m.name}, {m.age}</p>

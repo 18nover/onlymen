@@ -47,7 +47,8 @@ function Hero({ online, live }: { online: number; live: number }) {
       <img src="/models/hero.webp" alt="" className="absolute inset-0 -z-10 size-full object-cover object-right opacity-70" />
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-ink via-ink/85 to-ink/10" />
       <div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-transparent to-ink/40" />
-      <div className="mx-auto max-w-7xl px-4 pt-10 pb-10 sm:px-6 sm:py-14 lg:py-16">
+      <div className="absolute inset-0 -z-10 bg-ink/45 sm:hidden" />
+      <div className="om-container py-[clamp(2.5rem,6vw,4.5rem)]">
         <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-gold">
           <Sparkles className="size-3.5" /> Private club for gay men · 18+
         </p>
@@ -94,8 +95,8 @@ function Hero({ online, live }: { online: number; live: number }) {
 
 function SectionHead({ kicker, title, icon, tone = "gold", right }: { kicker: string; title: string; icon: React.ReactNode; tone?: "gold" | "ruby"; right?: React.ReactNode }) {
   return (
-    <div className="flex items-end justify-between gap-4">
-      <div>
+    <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+      <div className="min-w-0">
         <p className={`flex items-center gap-2 text-xs font-bold uppercase tracking-[0.25em] ${tone === "ruby" ? "text-ruby" : "text-gold"}`}>
           {icon} {kicker}
         </p>
@@ -109,9 +110,9 @@ function SectionHead({ kicker, title, icon, tone = "gold", right }: { kicker: st
 function LiveRow({ list }: { list: Model[] }) {
   if (!list.length) return null;
   return (
-    <section id="live" className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-10 sm:px-6">
+    <section id="live" className="om-container om-section scroll-mt-20">
       <SectionHead kicker="On air" title="Live now" tone="ruby" icon={<span className="size-2 animate-pulse-dot rounded-full bg-ruby" />} />
-      <div className="no-scrollbar -mx-4 mt-5 flex snap-x gap-4 overflow-x-auto px-4 pb-2 sm:-mx-6 sm:px-6">
+      <div className="no-scrollbar om-bleed mt-6 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 sm:gap-4">
         {list.map((m) => (
           <Link
             key={m.id}
@@ -128,8 +129,8 @@ function LiveRow({ list }: { list: Model[] }) {
               <Eye className="size-3" /> {m.viewers}
             </span>
             <div className="absolute inset-x-3 bottom-3">
-              <p className="font-display text-2xl leading-none font-semibold text-ivory">{m.name}</p>
-              <p className="mt-1 truncate text-xs text-muted">{m.tagline}</p>
+              <p className="truncate font-display text-2xl leading-none font-semibold text-ivory">{m.name}</p>
+              <p className="mt-1.5 line-clamp-2 text-xs leading-snug text-muted">{m.tagline}</p>
             </div>
           </Link>
         ))}
@@ -142,27 +143,27 @@ function Featured({ list, onTip }: { list: Model[]; onTip: (m: Model) => void })
   if (!list.length) return null;
   const [spot, ...rest] = list;
   return (
-    <section id="featured" className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-14 sm:px-6">
+    <section id="featured" className="om-container om-section scroll-mt-20">
       <SectionHead
         kicker="Elite & Premium"
         title="Featured tonight"
         icon={<Crown className="size-3.5" />}
-        right={<span className="hidden text-xs text-dim sm:block">Members who boosted their profile this week</span>}
+        right={<span className="hidden pb-1 text-xs text-dim sm:block">Members who boosted their profile this week</span>}
       />
-      <div className="mt-5 grid gap-3 lg:grid-cols-[1.1fr_2fr]">
+      <div className="mt-6 grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,2fr)]">
         <Link
           to="/m/$handle"
           params={{ handle: spot.handle }}
-          className="group relative block aspect-[4/5] overflow-hidden rounded-2xl border-gold-grad glow-gold lg:aspect-auto lg:min-h-[420px]"
+          className="group relative block aspect-[4/5] overflow-hidden rounded-2xl border-gold-grad glow-gold sm:aspect-[16/10] lg:aspect-auto lg:min-h-[420px]"
         >
-          <img src={spot.photo} alt={`${spot.name}, ${spot.age}`} className="absolute inset-0 size-full object-cover transition duration-700 group-hover:scale-105" />
+          <img src={spot.photo} alt={`${spot.name}, ${spot.age}`} className="absolute inset-0 size-full object-cover object-[50%_25%] transition duration-700 group-hover:scale-105" />
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
           <span className="absolute top-4 left-4 rounded-full bg-oxblood/90 px-3 py-1 text-[11px] font-extrabold tracking-[0.18em] text-gold-hi uppercase ring-1 ring-gold/40">
             Man of the night
           </span>
           <div className="absolute inset-x-5 bottom-5">
             <TierBadge tier={spot.tier} />
-            <p className="mt-2 font-display text-5xl leading-none font-semibold text-ivory">
+            <p className="mt-2 font-display text-4xl leading-none font-semibold text-ivory sm:text-5xl">
               {spot.name}
               <span className="text-gold">,</span> <span className="font-normal text-ivory/80">{spot.age}</span>
             </p>
@@ -176,7 +177,7 @@ function Featured({ list, onTip }: { list: Model[]; onTip: (m: Model) => void })
             </div>
           </div>
         </Link>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
           {rest.slice(0, 6).map((m) => (
             <Tile key={m.id} m={m} onTip={onTip} featured />
           ))}
@@ -196,26 +197,29 @@ function Tile({ m, onTip, featured = false }: { m: Model; onTip: (m: Model) => v
       <Link to="/m/$handle" params={{ handle: m.handle }} className="absolute inset-0 z-10" aria-label={`View ${m.name}'s profile`} />
       <img src={m.photo} alt={`${m.name}, ${m.age}`} loading="lazy" className="size-full object-cover transition duration-700 group-hover:scale-[1.06]" />
       <div className="absolute inset-0 tile-shade" />
-      <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-1 p-2.5">
-        <div className="flex flex-col items-start gap-1">
+      <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-2.5">
+        <div className="flex min-w-0 flex-col items-start gap-1">
           {m.live ? (
             <span className="flex items-center gap-1 rounded-full bg-ruby px-2 py-0.5 text-[10px] font-bold tracking-wider text-ivory uppercase">
               <span className="size-1.5 rounded-full bg-ivory" /> Live
+            </span>
+          ) : m.availableNow ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-ink/75 px-2 py-0.5 text-[10px] font-bold tracking-wide whitespace-nowrap text-online uppercase ring-1 ring-online/50 backdrop-blur">
+              <span className="size-1.5 rounded-full bg-online" /> Available
             </span>
           ) : m.isNew ? (
             <span className="rounded-full bg-ivory px-2 py-0.5 text-[10px] font-extrabold tracking-wider text-ink uppercase">New</span>
           ) : null}
           <TierBadge tier={m.tier} />
         </div>
-        {m.verified && <BadgeCheck className="size-5 shrink-0 fill-ink/60 text-gold-hi" aria-label="Verified" />}
-      </div>
-      <div className="absolute inset-x-0 bottom-0 p-3">
-        {m.availableNow && !m.live && (
-          <span className="mb-1.5 inline-flex items-center gap-1 rounded-full bg-online/15 px-2 py-0.5 text-[10px] font-bold tracking-wide text-online uppercase ring-1 ring-online/40">
-            Available now
+        {m.verified && (
+          <span className="grid size-6 shrink-0 place-items-center rounded-full bg-ink/60 backdrop-blur">
+            <BadgeCheck className="size-4 text-gold-hi" aria-label="Verified" />
           </span>
         )}
-        <div className="flex items-center gap-1.5">
+      </div>
+      <div className="absolute inset-x-0 bottom-0 p-3">
+        <div className="flex min-w-0 items-center gap-1.5">
           <StatusDot m={m} />
           <p className="truncate text-base font-bold text-ivory">
             {m.name}, <span className="font-medium text-ivory/80">{m.age}</span>
@@ -224,11 +228,15 @@ function Tile({ m, onTip, featured = false }: { m: Model; onTip: (m: Model) => v
         <p className="mt-0.5 flex items-center gap-1 truncate text-xs text-muted">
           <MapPin className="size-3 shrink-0" /> {fmtDistance(m.km)} · {m.city}
         </p>
-        {m.reviews.length > 0 && (
-          <p className="mt-1 flex items-center gap-1.5 text-[11px] text-muted">
-            <Stars value={m.rating} /> <span>({m.reviews.length})</span>
-          </p>
-        )}
+        <p className="mt-1 flex h-4 items-center gap-1.5 text-[11px] text-muted">
+          {m.reviews.length > 0 ? (
+            <>
+              <Stars value={m.rating} /> <span>({m.reviews.length})</span>
+            </>
+          ) : (
+            <span className="text-dim">{m.isNew ? "New this week" : "No reviews yet"}</span>
+          )}
+        </p>
         <div className="grid grid-rows-[0fr] opacity-0 transition-all duration-300 group-hover:grid-rows-[1fr] group-hover:opacity-100">
           <div className="overflow-hidden">
             <p className="mt-2 line-clamp-2 text-xs leading-snug text-ivory/85">{m.tagline}</p>
@@ -255,8 +263,8 @@ function Tile({ m, onTip, featured = false }: { m: Model; onTip: (m: Model) => v
 
 function Row({ m, onTip }: { m: Model; onTip: (m: Model) => void }) {
   return (
-    <article className="group relative grid grid-cols-[112px_1fr] overflow-hidden rounded-2xl bg-surface/80 ring-1 ring-line/70 transition hover:ring-gold/50 sm:grid-cols-[180px_1fr]">
-      <Link to="/m/$handle" params={{ handle: m.handle }} className="relative block min-h-[150px]">
+    <article className="group relative grid grid-cols-[104px_minmax(0,1fr)] overflow-hidden rounded-2xl bg-surface/80 ring-1 ring-line/70 transition hover:ring-gold/50 sm:grid-cols-[180px_minmax(0,1fr)]">
+      <Link to="/m/$handle" params={{ handle: m.handle }} className="relative block min-h-[150px]" aria-label={`View ${m.name}'s profile`}>
         <img src={m.photo} alt={`${m.name}, ${m.age}`} loading="lazy" className="absolute inset-0 size-full object-cover" />
         <span className="absolute top-2 left-2">
           <StatusDot m={m} className="block size-2.5 ring-2 ring-ink" />
@@ -265,19 +273,23 @@ function Row({ m, onTip }: { m: Model; onTip: (m: Model) => void }) {
           <span className="absolute bottom-2 left-2 rounded-full bg-ruby px-2 py-0.5 text-[10px] font-bold tracking-wider text-ivory uppercase">Live</span>
         )}
       </Link>
-      <div className="flex min-w-0 flex-col gap-3 p-4 sm:p-5">
-        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
-          <Link to="/m/$handle" params={{ handle: m.handle }} className="text-lg font-bold text-ivory hover:text-gold-hi">
-            {m.name} <span className="font-medium text-ivory/70">· {m.age}</span>
-          </Link>
-          <TierBadge tier={m.tier} />
-          {m.verified && <BadgeCheck className="size-4 text-gold-hi" aria-label="Verified" />}
-          <span className="ml-auto flex items-center gap-1 text-sm text-muted">
-            <MapPin className="size-3.5 text-gold" /> {m.city}, {cityLabel(m.metro).split(",")[0]}
-          </span>
+      <div className="flex min-w-0 flex-col gap-3 px-4 pt-2 pb-4 sm:px-5 sm:pt-3 sm:pb-5">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
+            <Link to="/m/$handle" params={{ handle: m.handle }} className="inline-flex min-h-10 items-center gap-1 text-lg leading-tight font-bold text-ivory hover:text-gold-hi">
+              {m.name} <span className="font-medium text-ivory/70">· {m.age}</span>
+            </Link>
+            <TierBadge tier={m.tier} />
+            {m.verified && <BadgeCheck className="size-4 shrink-0 text-gold-hi" aria-label="Verified" />}
+          </div>
+          <p className="flex items-center gap-1 text-sm text-muted">
+            <MapPin className="size-3.5 shrink-0 text-gold" /> {m.city}, {cityLabel(m.metro).split(",")[0]}
+          </p>
         </div>
-        <p className="truncate text-xs text-muted">Good company for: {m.goodCompanyFor.join(" · ")}</p>
-        <dl className="grid grid-cols-3 gap-2 text-sm sm:grid-cols-4">
+        <p className="text-xs leading-relaxed text-muted">
+          <span className="text-dim">Good company for:</span> {m.goodCompanyFor.join(" · ")}
+        </p>
+        <dl className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm sm:grid-cols-4">
           <div>
             <dt className="text-[11px] tracking-wide text-dim uppercase">Height</dt>
             <dd className="text-ivory">{fmtHeight(m.heightCm).split(" · ")[0]}</dd>
@@ -286,9 +298,9 @@ function Row({ m, onTip }: { m: Model; onTip: (m: Model) => void }) {
             <dt className="text-[11px] tracking-wide text-dim uppercase">Build</dt>
             <dd className="text-ivory">{m.build}</dd>
           </div>
-          <div>
+          <div className="col-span-2 sm:col-span-1">
             <dt className="text-[11px] tracking-wide text-dim uppercase">Speaks</dt>
-            <dd className="truncate text-ivory">{m.languages.join(", ")}</dd>
+            <dd className="text-ivory">{m.languages.join(", ")}</dd>
           </div>
           <div className="hidden sm:block">
             <dt className="text-[11px] tracking-wide text-dim uppercase">Rating</dt>
@@ -303,8 +315,9 @@ function Row({ m, onTip }: { m: Model; onTip: (m: Model) => void }) {
             </dd>
           </div>
         </dl>
-        <div className="flex flex-wrap items-end gap-3">
-          <p className="line-clamp-2 min-w-0 flex-1 font-display text-lg leading-snug text-ivory/85 italic">“{m.tagline}”</p>
+        <p className="font-display text-lg leading-snug text-ivory/85 italic">“{m.tagline}”</p>
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-3">
+          <p className="text-[11px] text-dim">{fmtActive(m)}</p>
           <div className="flex gap-2">
             <button onClick={() => onTip(m)} className="flex h-10 items-center gap-1.5 rounded-full bg-gold px-4 text-xs font-bold">
               <Coins className="size-4" /> Tip
@@ -319,7 +332,6 @@ function Row({ m, onTip }: { m: Model; onTip: (m: Model) => void }) {
             </Link>
           </div>
         </div>
-        <p className="text-[11px] text-dim">{fmtActive(m)}</p>
       </div>
     </article>
   );
@@ -343,14 +355,14 @@ export function TipSheet({ m, onClose }: { m: Model; onClose: () => void }) {
         aria-modal="true"
         aria-label={`Tip ${m.name}`}
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-md animate-fade-up rounded-t-3xl border-gold-grad p-6 glow-gold sm:rounded-3xl sm:p-8"
+        className="relative max-h-[calc(100dvh-1rem)] w-full max-w-md animate-fade-up overflow-y-auto rounded-t-3xl border-gold-grad p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] glow-gold sm:rounded-3xl sm:p-8"
       >
         <button onClick={onClose} className="absolute top-4 right-4 grid size-10 place-items-center rounded-full bg-surface-2 text-ivory transition hover:text-gold-hi" aria-label="Close">
           <X className="size-5" />
         </button>
         <div className="flex items-center gap-4">
           <img src={m.photo} alt="" className="size-16 rounded-full object-cover ring-2 ring-gold/60" />
-          <div>
+          <div className="min-w-0 pr-10">
             <p className="text-xs font-semibold text-gold">@{m.handle}</p>
             <h3 className="text-3xl font-semibold text-ivory">Tip {m.name}</h3>
           </div>
@@ -410,7 +422,7 @@ export function OnlyMenHome() {
         <LiveRow list={live} />
         <Featured list={featured} onTip={setTip} />
 
-        <section id="browse" className="mx-auto max-w-7xl scroll-mt-20 px-4 pt-14 sm:px-6">
+        <section id="browse" className="om-container om-section scroll-mt-20">
           <SectionHead
             kicker={city === "all" ? "Everywhere tonight" : `In ${cityLabel(city)}`}
             title="Browse men"
@@ -418,7 +430,7 @@ export function OnlyMenHome() {
           />
 
           {/* toolbar */}
-          <div className="mt-5 flex flex-wrap items-center gap-2">
+          <div className="mt-6 flex flex-wrap items-center gap-2">
             <div className="md:hidden">
               <CityPicker city={city} onCity={setCity} compact />
             </div>
@@ -444,14 +456,14 @@ export function OnlyMenHome() {
               <p className="hidden text-sm text-muted sm:block">
                 <b className="text-ivory">{shown.length}</b> {shown.length === 1 ? "man" : "men"}
               </p>
-              <div className="flex rounded-full border border-line bg-surface/80 p-1" role="group" aria-label="Layout">
+              <div className="flex rounded-full bg-surface/80 ring-1 ring-line" role="group" aria-label="Layout">
                 {(["grid", "list"] as const).map((v) => (
                   <button
                     key={v}
                     onClick={() => setView(v)}
                     aria-pressed={view === v}
                     aria-label={v === "grid" ? "Grid view" : "List view"}
-                    className={`grid size-8 place-items-center rounded-full transition ${view === v ? "bg-gold" : "text-muted hover:text-ivory"}`}
+                    className={`grid size-10 place-items-center rounded-full transition ${view === v ? "bg-gold" : "text-muted hover:text-ivory"}`}
                   >
                     {v === "grid" ? <LayoutGrid className="size-4" /> : <List className="size-4" />}
                   </button>
@@ -460,7 +472,7 @@ export function OnlyMenHome() {
             </div>
           </div>
 
-          <div className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
+          <div className="no-scrollbar om-bleed mt-3 flex gap-2 overflow-x-auto py-0.5 sm:mx-0 sm:flex-wrap sm:px-0">
             {filters.map((f) => {
               const active = filter === f.id;
               return (
@@ -468,7 +480,7 @@ export function OnlyMenHome() {
                   key={f.id}
                   onClick={() => setFilter(f.id)}
                   aria-pressed={active}
-                  className={`flex h-9 shrink-0 items-center gap-1.5 rounded-full px-4 text-sm font-semibold transition ${
+                  className={`flex h-10 shrink-0 items-center gap-1.5 rounded-full px-4 text-sm font-semibold whitespace-nowrap transition ${
                     active ? "bg-gold glow-gold" : "border border-line bg-surface/80 text-muted hover:border-gold/50 hover:text-ivory"
                   }`}
                 >
@@ -481,7 +493,7 @@ export function OnlyMenHome() {
               );
             })}
             {nFilters > 0 && (
-              <button onClick={() => setSearch(defaultSearch)} className="flex h-9 shrink-0 items-center gap-1 rounded-full px-3 text-sm font-semibold text-gold hover:text-gold-hi">
+              <button onClick={() => setSearch(defaultSearch)} className="flex h-10 shrink-0 items-center gap-1 rounded-full px-3 text-sm font-semibold whitespace-nowrap text-gold hover:text-gold-hi">
                 <X className="size-4" /> Clear {nFilters} filter{nFilters > 1 ? "s" : ""}
               </button>
             )}
@@ -489,13 +501,13 @@ export function OnlyMenHome() {
 
           {visible.length ? (
             view === "grid" ? (
-              <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                 {visible.map((m) => (
                   <Tile key={m.id} m={m} onTip={setTip} />
                 ))}
               </div>
             ) : (
-              <div className="mt-6 grid gap-3 lg:grid-cols-2">
+              <div className="mt-6 grid grid-cols-1 gap-3 sm:gap-4 xl:grid-cols-2">
                 {visible.map((m) => (
                   <Row key={m.id} m={m} onTip={setTip} />
                 ))}
@@ -519,7 +531,7 @@ export function OnlyMenHome() {
           )}
 
           {shown.length > visible.length && (
-            <div className="mt-8 flex flex-col items-center gap-2">
+            <div className="mt-10 flex flex-col items-center gap-2">
               <button onClick={() => setPage((p) => p + 1)} className="h-12 rounded-full border border-gold/50 px-8 text-sm font-bold text-gold-hi transition hover:bg-gold/10">
                 Load more men
               </button>
@@ -530,8 +542,8 @@ export function OnlyMenHome() {
           )}
         </section>
 
-        <section className="mx-auto mt-16 max-w-7xl px-4 sm:px-6">
-          <div className="relative overflow-hidden rounded-3xl border-gold-grad p-8 sm:p-12">
+        <section className="om-container om-section">
+          <div className="relative overflow-hidden rounded-3xl border-gold-grad p-[clamp(1.5rem,5vw,3rem)] text-center md:text-left">
             <div className="absolute -top-24 -right-24 size-72 rounded-full bg-oxblood/60 blur-3xl" />
             <div className="relative grid gap-6 md:grid-cols-[1.5fr_1fr] md:items-center">
               <div>
@@ -539,12 +551,12 @@ export function OnlyMenHome() {
                 <h2 className="mt-2 text-4xl font-semibold text-ivory sm:text-5xl">
                   Your stage. <span className="text-gold italic">Your tips.</span>
                 </h2>
-                <p className="mt-3 max-w-lg text-muted">
+                <p className="mx-auto mt-3 max-w-lg text-muted md:mx-0">
                   Go live from your own space, build your following, and keep it simple: fans tip what they want. No paywalls,
                   no subscriptions in Phase 1.
                 </p>
               </div>
-              <div className="flex md:justify-end">
+              <div className="flex justify-center md:justify-end">
                 <button className="h-12 rounded-full bg-gold px-8 text-sm font-bold glow-gold transition hover:brightness-110">Apply as a creator</button>
               </div>
             </div>

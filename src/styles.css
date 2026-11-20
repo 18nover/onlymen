@@ -150,3 +150,29 @@
     outline-offset: 2px;
   }
 }
+
+/* Layout system — one centered container, one gutter, one vertical rhythm */
+@layer components {
+  :root {
+    --gutter: clamp(1rem, 4vw, 2.5rem);
+    --section-gap: clamp(2.75rem, 6vw, 4.5rem);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .om-container {
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+  .om-section { padding-top: var(--section-gap); }
+  /* horizontal scrollers that run edge-to-edge but start aligned with the container */
+  .om-bleed {
+    margin-inline: calc(-1 * var(--gutter));
+    padding-inline: var(--gutter);
+    scroll-padding-inline: var(--gutter);
+  }
+  /* room for the fixed mobile bottom bars (nav / profile action bar) */
+  .om-bottom-safe { padding-bottom: calc(6.5rem + var(--safe-bottom)); }
+  @media (min-width: 48rem) { .om-bottom-safe { padding-bottom: 0; } }
+  .om-fixed-bottom { bottom: max(0.75rem, var(--safe-bottom)); }
+}
