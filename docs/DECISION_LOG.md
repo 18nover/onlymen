@@ -41,3 +41,7 @@ Reason: The two product directions were incompatible. We are committing to the c
 Models/escorts will be able to go live from their space (webcam or RTSP source) and stream to customers/viewers on the platform, with the ability to receive tips.  
 The platform starts with the owner as the first model, then opens signups. Marketing will include X (Twitter) advertising and a deliberate PR/launch event once there is a real working experience.  
 Reason: Live + tips is a strong differentiator versus classic static directory sites. Starting with the owner keeps scope manageable and gives us a real product to show before opening the floodgates.
+
+**2026-11-21** — Sign-up & onboarding storage  
+Built sign-up, log-in, password reset and a multi-step onboarding wizard (consents, profile, photos, device permissions, creator ID verification, privacy). No database or auth provider is provisioned yet, so accounts are stored by a clearly isolated browser-local adapter (`LocalAccountStore`, PBKDF2-hashed passwords, photos in IndexedDB) behind an `AccountStore` interface.  
+Reason: works on Vercel today with zero paid services; a server adapter (Neon + Better Auth, both pre-wired) can replace it without UI changes. Must be swapped before real sign-ups open. Details: docs/ONBOARDING.md.

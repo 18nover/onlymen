@@ -2,6 +2,63 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Check, ChevronDown, Crown, Flame, Gem, Lock, MapPin, Radio, Search, ShieldCheck, SlidersHorizontal, Star } from "lucide-react";
 import { company } from "@/lib/company";
+import { useAccount } from "@/lib/account/use-account";
+import { useImageUrl } from "@/lib/account/media";
+
+const footerRoutes: Record<string, string> = {
+  "Become a creator": "/join?as=creator",
+  "Terms of service": "/terms",
+  Privacy: "/privacy",
+  "2257 statement": "/2257",
+  "Community guidelines": "/guidelines",
+  "18+ & age verification": "/2257",
+};
+
+function Avatar({ id, name, className = "size-8" }: { id?: string; name: string; className?: string }) {
+  const url = useImageUrl(id);
+  return url ? (
+    <img src={url} alt="" className={`${className} rounded-full object-cover ring-1 ring-gold/60`} />
+  ) : (
+    <span className={`${className} grid place-items-center rounded-full bg-oxblood font-display text-sm font-bold text-gold-hi ring-1 ring-gold/60`}>{name.slice(0, 1).toUpperCase()}</span>
+  );
+}
+
+function AccountButtons() {
+  const { account, ready } = useAccount();
+  if (ready && account) {
+    const primary = account.profile.photos.find((p) => p.primary)?.id;
+    return (
+      <Link to={account.onboarding.finishedAt ? "/me" : "/onboarding"} className="flex h-10 items-center gap-2 rounded-full border border-line bg-surface/80 pr-4 pl-1 text-sm font-semibold text-ivory transition hover:border-gold/60">
+        <Avatar id={primary} name={account.profile.displayName || account.username} />
+        <span className="hidden max-w-[8rem] truncate sm:inline">{account.onboarding.finishedAt ? account.profile.displayName || "My profile" : "Finish setup"}</span>
+      </Link>
+    );
+  }
+  return (
+    <>
+      <Link to="/login" className="hidden h-10 items-center rounded-full px-3 text-sm font-semibold whitespace-nowrap text-ivory transition hover:text-gold-hi sm:flex">
+        Sign in
+      </Link>
+      <Link to="/join" className="flex h-10 items-center rounded-full bg-gold px-5 text-sm font-bold whitespace-nowrap transition hover:brightness-110">Join free</Link>
+    </>
+  );
+}
+
+function MobileAccountLink({ cls }: { cls: string }) {
+  const { account, ready } = useAccount();
+  if (ready && account) {
+    return (
+      <Link to="/me" className={cls}>
+        <Avatar id={account.profile.photos.find((p) => p.primary)?.id} name={account.profile.displayName || account.username} className="size-5" /> Me
+      </Link>
+    );
+  }
+  return (
+    <Link to="/login" className={cls}>
+      <Lock className="size-5 text-gold" /> Sign in
+    </Link>
+  );
+}
 import { cities, cityLabel, models, type CityId, type Model, type Tier } from "@/lib/models";
 
 
@@ -206,10 +263,7 @@ export function Header({ city, onCity, q, onQ, onOpenFilters, filterCount = 0 }:
               )}
             </button>
           )}
-          <button className="hidden h-10 rounded-full px-3 text-sm font-semibold whitespace-nowrap text-ivory transition hover:text-gold-hi sm:block">
-            Sign in
-          </button>
-          <button className="h-10 rounded-full bg-gold px-5 text-sm font-bold whitespace-nowrap transition hover:brightness-110">Join free</button>
+          <AccountButtons />
         </div>
       </div>
     </header>
@@ -219,7 +273,7 @@ export function Header({ city, onCity, q, onQ, onOpenFilters, filterCount = 0 }:
 export function Footer() {
   const cols = [
     { title: "Explore", links: ["Browse", "Live now", "New faces", "Become a creator"] },
-    { title: "Safety", links: ["18+ & age verification", "Consent policy", "Safety center", "Report a profile"] },
+    { title: "Safety", links: ["18+ & age verification", "Community guidelines", "Safety center", "Report a profile"] },
     { title: "Legal", links: ["Terms of service", "Privacy", "Cookies", "2257 statement", "DMCA"] },
   ];
   return (
@@ -240,7 +294,11 @@ export function Footer() {
             <ul className="mt-3 grid text-sm text-muted md:mt-4 md:gap-1">
               {c.links.map((l) => (
                 <li key={l}>
-                  <a href="#" className="inline-flex min-h-10 items-center transition hover:text-ivory md:min-h-8">{l}</a>
+                  {footerRoutes[l] ? (
+                    <a href={footerRoutes[l]} className="inline-flex min-h-10 items-center transition hover:text-ivory md:min-h-8">{l}</a>
+                  ) : (
+                    <a href="#" className="inline-flex min-h-10 items-center transition hover:text-ivory md:min-h-8">{l}</a>
+                  )}
                 </li>
               ))}
             </ul>
@@ -289,9 +347,7 @@ export function MobileNav({ onOpenFilters }: { onOpenFilters?: () => void }) {
           <Crown className="size-5 text-gold" /> Featured
         </Link>
       )}
-      <a href="#" className={cls}>
-        <Lock className="size-5 text-gold" /> Sign in
-      </a>
+      <MobileAccountLink cls={cls} />
     </nav>
   );
 }
