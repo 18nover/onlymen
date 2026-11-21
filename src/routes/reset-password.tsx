@@ -28,6 +28,7 @@ function Reset() {
       await accountStore.resetPassword(token ?? "", pw);
       nav({ to: "/me" });
     } catch (e) {
+      if (e instanceof AccountError && e.message.startsWith("Password updated")) return nav({ to: "/login" });
       setErr(e instanceof AccountError ? e.message : "Something went wrong.");
     } finally {
       setBusy(false);

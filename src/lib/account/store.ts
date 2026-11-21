@@ -1,18 +1,19 @@
 // Pluggable account storage.
 //
-// TODAY: `LocalAccountStore` keeps accounts in this browser's localStorage (photos
-// in IndexedDB, see media.ts). It works on Vercel with zero infrastructure, but it
-// is a DEMO adapter: accounts don't sync across devices, and the password hash
-// lives on the client. It must be replaced before real sign-ups open.
+// PRODUCTION: `ServerAccountStore` — accounts, sessions and profile data live in
+// Postgres (Neon) behind server functions (./api.ts); passwords are hashed on the
+// server by Better Auth (./auth.server.ts). See docs/ACCOUNTS.md.
 //
-// NEXT: implement `AccountStore` with server functions backed by Postgres (Neon)
-// and Better Auth, both already pre-wired in src/lib/db.ts and src/lib/auth/.
-// The UI only talks to `accountStore`, so swapping adapters is a one-line change.
-// See docs/ONBOARDING.md.
+// DEV FALLBACK: `LocalAccountStore` keeps accounts in this browser's localStorage
+// (photos in IndexedDB, see media.ts). Used only when the server reports that no
+// DATABASE_URL is configured.
+//
+// The UI only talks to `accountStore` (a facade that picks the adapter at startup).
 
 import { CONSENT_VERSIONS, defaultPermissions, defaultPrivacy, emptyCreator, emptyProfile } from "./constants.ts";
 import type { Account, AccountType, ConsentKey, ConsentRecord, PublicAccount } from "./types.ts";
 import { normalizeUsername } from "./validation.ts";
+import * as api from "./api.ts";
 
 export type SignUpInput = { email: string; username: string; password: string; dob: string; type: AccountType };
 
@@ -27,6 +28,8 @@ export class AccountError extends Error {
 
 export interface AccountStore {
   readonly kind: "local" | "server";
+  /** False until the adapter knows whether someone is signed in. */
+  loaded(): boolean;
   signUp(input: SignUpInput): Promise<PublicAccount>;
   logIn(identifier: string, password: string): Promise<PublicAccount>;
   logOut(): Promise<void>;
@@ -99,6 +102,9 @@ type Db = Record<string, Account>;
 
 class LocalAccountStore implements AccountStore {
   readonly kind = "local" as const;
+  loaded() {
+    return true;
+  }
   private cache: { raw: string | null; session: string | null; value: PublicAccount | null } = { raw: null, session: null, value: null };
 
   private get ok() {
@@ -225,5 +231,157 @@ class LocalAccountStore implements AccountStore {
   }
 }
 
-/** The single store the UI uses. Swap for a server adapter when a DB is provisioned. */
-export const accountStore: AccountStore = new LocalAccountStore();
+// ---------------------------------------------------------------- server adapter
+
+const unwrap = <T,>(r: api.ApiResult<T>): T => {
+  if (!r.ok) throw new AccountError(r.error, r.field);
+  return r.value;
+};
+
+class ServerAccountStore implements AccountStore {
+  readonly kind = "server" as const;
+  private value: PublicAccount | null;
+  private listeners = new Set<() => void>();
+  private chain: Promise<unknown> = Promise.resolve();
+
+  constructor(initial: PublicAccount | null) {
+    this.value = initial;
+  }
+  private set(v: PublicAccount | null) {
+    this.value = v;
+    this.listeners.forEach((fn) => fn());
+  }
+  loaded() {
+    return true;
+  }
+  current() {
+    return this.value;
+  }
+  async refresh() {
+    const s = await api.accountStatus();
+    this.set(s.account);
+  }
+  async signUp(input: SignUpInput) {
+    const acc = unwrap(await api.signUpFn({ data: input }));
+    this.set(acc);
+    return acc;
+  }
+  async logIn(identifier: string, password: string) {
+    const acc = unwrap(await api.logInFn({ data: { identifier, password } }));
+    this.set(acc);
+    return acc;
+  }
+  async logOut() {
+    await api.logOutFn().catch(() => {});
+    this.set(null);
+  }
+  update(patch: (a: PublicAccount) => PublicAccount): Promise<PublicAccount> {
+    const cur = this.value;
+    if (!cur) return Promise.reject(new AccountError("You're signed out."));
+    // Optimistic: the UI updates now; saves are serialized so the last write wins.
+    const next = { ...patch(cur), updatedAt: new Date().toISOString() };
+    this.set(next);
+    const run = this.chain.then(async () => {
+      const saved = unwrap(await api.saveAccountFn({ data: this.value ?? next }));
+      // Only adopt the server copy if nothing newer happened meanwhile.
+      if (this.value && this.value.updatedAt === next.updatedAt) this.set({ ...saved, updatedAt: next.updatedAt });
+      return saved;
+    });
+    this.chain = run.catch(() => {});
+    return run.then(() => this.value ?? next);
+  }
+  async isUsernameTaken(username: string) {
+    return api.usernameTakenFn({ data: { username } });
+  }
+  async requestPasswordReset(email: string) {
+    await api.requestResetFn({ data: { email } });
+    return null;
+  }
+  async resetPassword(token: string, newPassword: string) {
+    const r = unwrap(await api.resetPasswordFn({ data: { token, password: newPassword } }));
+    if (r.signedIn) await this.refresh();
+    else throw new AccountError("Password updated. Log in with your new password.", "token");
+  }
+  subscribe(fn: () => void) {
+    this.listeners.add(fn);
+    return () => this.listeners.delete(fn);
+  }
+}
+
+// ---------------------------------------------------------------- facade
+
+/**
+ * Picks the adapter once at startup: the server tells us whether a database is
+ * configured. Until then `loaded()` is false and nobody is signed in.
+ */
+class AccountStoreFacade implements AccountStore {
+  private impl: AccountStore | null = null;
+  private listeners = new Set<() => void>();
+  private unsub: (() => void) | null = null;
+  private starting: Promise<AccountStore> | null = null;
+
+  get kind() {
+    return this.impl?.kind ?? "server";
+  }
+  private start(): Promise<AccountStore> {
+    if (typeof window === "undefined") return Promise.reject(new Error("Accounts are client-side only."));
+    this.starting ??= api
+      .accountStatus()
+      .then((s) => (s.server ? new ServerAccountStore(s.account) : new LocalAccountStore()))
+      .catch((e) => {
+        console.error("[accounts] status check failed", e);
+        this.starting = null;
+        return new ServerAccountStore(null);
+      })
+      .then((impl) => {
+        this.impl = impl;
+        this.unsub?.();
+        this.unsub = impl.subscribe(() => this.emit());
+        this.emit();
+        return impl;
+      });
+    return this.starting;
+  }
+  private emit() {
+    this.listeners.forEach((fn) => fn());
+  }
+  private async use() {
+    return this.impl ?? this.start();
+  }
+  loaded() {
+    if (!this.impl && typeof window !== "undefined") void this.start();
+    return !!this.impl?.loaded();
+  }
+  current() {
+    return this.impl?.current() ?? null;
+  }
+  async signUp(input: SignUpInput) {
+    return (await this.use()).signUp(input);
+  }
+  async logIn(identifier: string, password: string) {
+    return (await this.use()).logIn(identifier, password);
+  }
+  async logOut() {
+    return (await this.use()).logOut();
+  }
+  async update(patch: (a: PublicAccount) => PublicAccount) {
+    return (await this.use()).update(patch);
+  }
+  async isUsernameTaken(username: string) {
+    return (await this.use()).isUsernameTaken(username);
+  }
+  async requestPasswordReset(email: string) {
+    return (await this.use()).requestPasswordReset(email);
+  }
+  async resetPassword(token: string, newPassword: string) {
+    return (await this.use()).resetPassword(token, newPassword);
+  }
+  subscribe(fn: () => void) {
+    this.listeners.add(fn);
+    if (typeof window !== "undefined") void this.start();
+    return () => this.listeners.delete(fn);
+  }
+}
+
+/** The single store the UI uses. */
+export const accountStore = new AccountStoreFacade();

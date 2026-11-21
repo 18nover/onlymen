@@ -239,7 +239,7 @@ export function UploadSlot({ label, hint, mediaId, onChange, capture, icon }: {
           setBusy(true);
           try {
             if (mediaId) await deleteImage(mediaId).catch(() => {});
-            onChange(await saveImage(f, 1600));
+            onChange(await saveImage(f, 1600, { private: true }));
           } finally {
             setBusy(false);
           }

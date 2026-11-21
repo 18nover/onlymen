@@ -25,6 +25,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as MHandleRouteImport } from './routes/m.$handle'
 import { Route as WatchHandleRouteImport } from './routes/watch.$handle'
+import { Route as ApiPhotoIdRouteImport } from './routes/api/photo/$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -106,6 +107,11 @@ const WatchHandleRoute = WatchHandleRouteImport.update({
   path: '/watch/$handle',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPhotoIdRoute = ApiPhotoIdRouteImport.update({
+  id: '/api/photo/$id',
+  path: '/api/photo/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -124,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/m/$handle': typeof MHandleRoute
   '/watch/$handle': typeof WatchHandleRoute
+  '/api/photo/$id': typeof ApiPhotoIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -142,6 +149,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/m/$handle': typeof MHandleRoute
   '/watch/$handle': typeof WatchHandleRoute
+  '/api/photo/$id': typeof ApiPhotoIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -161,6 +169,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/m/$handle': typeof MHandleRoute
   '/watch/$handle': typeof WatchHandleRoute
+  '/api/photo/$id': typeof ApiPhotoIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -181,6 +190,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/m/$handle'
     | '/watch/$handle'
+    | '/api/photo/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -199,6 +209,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/m/$handle'
     | '/watch/$handle'
+    | '/api/photo/$id'
   id:
     | '__root__'
     | '/'
@@ -217,6 +228,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/m/$handle'
     | '/watch/$handle'
+    | '/api/photo/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -236,6 +248,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   MHandleRoute: typeof MHandleRoute
   WatchHandleRoute: typeof WatchHandleRoute
+  ApiPhotoIdRoute: typeof ApiPhotoIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -352,6 +365,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WatchHandleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/photo/$id': {
+      id: '/api/photo/$id'
+      path: '/api/photo/$id'
+      fullPath: '/api/photo/$id'
+      preLoaderRoute: typeof ApiPhotoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -372,6 +392,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   MHandleRoute: MHandleRoute,
   WatchHandleRoute: WatchHandleRoute,
+  ApiPhotoIdRoute: ApiPhotoIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

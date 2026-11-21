@@ -36,7 +36,13 @@ function Forgot() {
         <div className="grid gap-5" role="status">
           <div className="flex gap-4 rounded-2xl border-gold-grad p-5">
             <MailCheck className="size-6 shrink-0 text-gold" />
-            <p className="text-sm leading-relaxed text-muted">If an account exists for <span className="font-semibold text-ivory">{email}</span>, a reset link is on its way. It expires in an hour.</p>
+            {accountStore.kind === "server" ? (
+              <p className="text-sm leading-relaxed text-muted">
+                Request received for <span className="font-semibold text-ivory">{email}</span>. Reset emails aren't switched on yet during early access — if you're locked out, contact OnlyMen support from that email address and we'll send your one-hour reset link.
+              </p>
+            ) : (
+              <p className="text-sm leading-relaxed text-muted">If an account exists for <span className="font-semibold text-ivory">{email}</span>, a reset link is on its way. It expires in an hour.</p>
+            )}
           </div>
           {accountStore.kind === "local" && (
             <div className="rounded-2xl border border-dashed border-gold/40 bg-gold/[0.04] p-5 text-sm text-muted">

@@ -5,6 +5,7 @@ import { Brand } from "@/components/onlymen-ui";
 import { LiveRing } from "@/components/live-ui";
 import { useAccount } from "@/lib/account/use-account";
 import { useImageUrl } from "@/lib/account/media";
+import { publicProfileFn } from "@/lib/account/api";
 import { liveNow } from "@/lib/live/demo";
 import { findModel } from "@/lib/models";
 import { LIVE_BASE_URL, liveHost, resolveHandoff } from "@/lib/live/config";
@@ -24,17 +25,38 @@ function Watch() {
   const [left, setLeft] = useState(DELAY);
   const [paused, setPaused] = useState(false);
 
+  const [real, setReal] = useState<Awaited<ReturnType<typeof publicProfileFn>> | undefined>(undefined);
+  useEffect(() => {
+    if (findModel(handle) || (account && account.username === handle)) return;
+    let live = true;
+    publicProfileFn({ data: { username: handle } }).then((p) => live && setReal(p)).catch(() => live && setReal(null));
+    return () => {
+      live = false;
+    };
+  }, [handle, account]);
+
   const info = useMemo(() => {
     if (account && account.username === handle && account.live?.session) {
       const t = resolveHandoff(handle, account.live.session.roomUrl);
       return { name: account.profile.displayName || handle, photo: ownPhoto ?? "/models/hero.webp", title: account.live.session.title, live: true, target: t, profile: false };
+    }
+    if (real) {
+      const ph = real.photos.find((x) => x.primary && !x.explicit) ?? real.photos.find((x) => !x.explicit);
+      return {
+        name: real.displayName,
+        photo: ph ? `/api/photo/${ph.id}` : "/models/hero.webp",
+        title: real.live?.title ?? real.headline,
+        live: !!real.live,
+        target: resolveHandoff(handle, real.live?.roomUrl ?? null),
+        profile: true,
+      };
     }
     const d = liveNow().find((s) => s.handle === handle);
     const m = findModel(handle);
     if (!m) return null;
     // demo creators have no linked external room, so they resolve to their OnlyMen Live room
     return { name: m.name, photo: m.photo, title: d?.title ?? m.tagline, live: !!d, target: resolveHandoff(handle, null), profile: true };
-  }, [account, handle, ownPhoto]);
+  }, [account, handle, ownPhoto, real]);
 
   const go = info?.live && info.target.available && !paused;
 
@@ -57,7 +79,7 @@ function Watch() {
       <div className="absolute inset-0 vignette" />
       <div className="relative w-full max-w-md animate-fade-up rounded-3xl border-gold-grad p-[clamp(1.5rem,6vw,2.5rem)] text-center glow-gold">
         <div className="flex justify-center"><Brand /></div>
-        {!ready ? (
+        {!ready || (!info && real === undefined && !findModel(handle) && account?.username !== handle) ? (
           <Loader2 className="mx-auto mt-10 size-8 animate-spin text-gold" />
         ) : !info ? (
           <>

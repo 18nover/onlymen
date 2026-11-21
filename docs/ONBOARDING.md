@@ -1,6 +1,6 @@
 # Sign-up & onboarding — OnlyMen
 
-**Added:** 2026-11-21 · **Status:** working preview (browser-local storage). Not production-ready until the items in §4 are done.
+**Added:** 2026-11-21 · **Status:** server-backed accounts on Neon + Better Auth (see docs/ACCOUNTS.md). Remaining gaps in §4 and ACCOUNTS.md.
 
 ## 1. Routes
 
@@ -34,7 +34,9 @@ Optional steps have **Skip for now**; all steps have **Back**.
 
 Types: `src/lib/account/types.ts` (Account, ConsentRecord, Profile, Photo, PermissionRecord, CreatorVerification, PrivacySettings, OnboardingProgress). Consent versions: `src/lib/account/constants.ts` (`CONSENT_VERSIONS` — bump when a document changes to re-prompt).
 
-**Today:** `LocalAccountStore` (`src/lib/account/store.ts`) keeps accounts in the browser's `localStorage`; photos and ID images go to IndexedDB (`src/lib/account/media.ts`). Passwords are hashed with PBKDF2-SHA256 (210k iterations, random salt) via WebCrypto — the raw password is never stored.
+**Production (2026-11-21):** `ServerAccountStore` — accounts, consents, photos and progress live in Neon Postgres; see docs/ACCOUNTS.md. ID images still stay on the device.
+
+**Dev fallback (no `DATABASE_URL`):** `LocalAccountStore` (`src/lib/account/store.ts`) keeps accounts in the browser's `localStorage`; photos and ID images go to IndexedDB (`src/lib/account/media.ts`). Passwords are hashed with PBKDF2-SHA256 (210k iterations, random salt) via WebCrypto — the raw password is never stored.
 
 Why: no database or auth provider is provisioned on the Vercel project, and serverless memory/disk doesn't persist between requests, so a server-side "in-memory" store would silently lose sign-ups. The local adapter works on Vercel today with zero infrastructure and lets the full flow be demoed end-to-end.
 
