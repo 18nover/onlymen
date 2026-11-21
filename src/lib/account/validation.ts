@@ -2,7 +2,7 @@
 
 export const MIN_AGE = 18;
 
-const RESERVED = new Set(["admin", "support", "onlymen", "18nover", "help", "root", "staff", "moderator", "official", "me", "login", "join"]);
+const RESERVED = new Set(["admin", "support", "onlymen", "18nover", "help", "root", "staff", "moderator", "official", "me", "login", "join", "live", "watch", "live-rules"]);
 
 export function ageOn(dob: string, today: Date = new Date()): number | null {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dob);

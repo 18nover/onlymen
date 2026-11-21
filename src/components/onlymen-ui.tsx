@@ -246,7 +246,7 @@ export function Header({ city, onCity, q, onQ, onOpenFilters, filterCount = 0 }:
         )}
         <nav className="hidden shrink-0 items-center gap-1 text-sm font-medium text-muted xl:flex">
           <Link to="/" hash="browse" className="rounded-full px-3 py-2 transition hover:text-gold-hi">Browse</Link>
-          <Link to="/" hash="live" className="flex items-center gap-1.5 rounded-full px-3 py-2 transition hover:text-gold-hi">
+          <Link to="/live" className="flex items-center gap-1.5 rounded-full px-3 py-2 transition hover:text-gold-hi" activeProps={{ className: "text-gold-hi" }}>
             <span className="size-1.5 animate-pulse-dot rounded-full bg-ruby" /> Live
           </Link>
           <Link to="/" hash="featured" className="rounded-full px-3 py-2 transition hover:text-gold-hi">Featured</Link>
@@ -335,7 +335,7 @@ export function MobileNav({ onOpenFilters }: { onOpenFilters?: () => void }) {
       <Link to="/" hash="browse" className={cls}>
         <Flame className="size-5 text-gold" /> Browse
       </Link>
-      <Link to="/" hash="live" className={cls}>
+      <Link to="/live" className={cls}>
         <Radio className="size-5 text-gold" /> Live
       </Link>
       {onOpenFilters ? (

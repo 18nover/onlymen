@@ -176,3 +176,36 @@
   @media (min-width: 48rem) { .om-bottom-safe { padding-bottom: 0; } }
   .om-fixed-bottom { bottom: max(0.75rem, var(--safe-bottom)); }
 }
+
+/* Live ring — rotating gold/ruby border for anyone on air */
+@property --live-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes live-spin {
+  to { --live-angle: 360deg; }
+}
+@layer components {
+  .live-ring {
+    background: conic-gradient(from var(--live-angle), #c22a45, #f3dca0, #d4af6a, #5c0d1b, #c22a45);
+    animation: live-spin 3.2s linear infinite;
+    box-shadow: 0 0 28px -8px rgb(194 42 69 / 0.75);
+  }
+}
+@layer components {
+  /* overlay variant: drop inside any relative, rounded box to draw a live border on top of photos */
+  .live-ring-border {
+    position: absolute;
+    inset: 0;
+    z-index: 15;
+    pointer-events: none;
+    border-radius: inherit;
+    padding: 3px;
+    background: conic-gradient(from var(--live-angle), #c22a45, #f3dca0, #d4af6a, #5c0d1b, #c22a45);
+    animation: live-spin 3.2s linear infinite;
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+}

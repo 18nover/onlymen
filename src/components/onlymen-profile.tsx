@@ -23,6 +23,7 @@ import {
   Sparkles,
   ThumbsUp,
 } from "lucide-react";
+import { WatchLiveLink } from "@/components/live-ui";
 import { AgeGate, Footer, Header, Stars, StatusDot, TierBadge } from "@/components/onlymen-ui";
 import { useAgeGate, useCity } from "@/lib/onlymen-hooks";
 import { cityLabel, days, findModel, fmtActive, fmtDistance, fmtHeight, models, slots, type Model } from "@/lib/models";
@@ -40,7 +41,8 @@ function Gallery({ m }: { m: Model }) {
   const go = (d: number) => setI((x) => (x + d + n) % n);
   return (
     <div>
-      <div className="group relative aspect-[4/5] overflow-hidden rounded-3xl border-gold-grad glow-gold sm:aspect-[4/3] md:aspect-[4/5] lg:aspect-[5/6]">
+      <div className={`group relative aspect-[4/5] overflow-hidden rounded-3xl sm:aspect-[4/3] md:aspect-[4/5] lg:aspect-[5/6] ${m.live ? "shadow-[0_0_40px_-10px_rgb(194_42_69_/_0.9)]" : "border-gold-grad glow-gold"}`}>
+        {m.live && <span className="live-ring-border !z-20 !p-1" aria-hidden="true" />}
         <img
           key={i}
           src={m.photo}
@@ -153,6 +155,13 @@ function ActionPanel({ m }: { m: Model }) {
         </a>
       </div>
       <p className="mt-5 font-display text-2xl leading-snug text-ivory/90 italic">“{m.tagline}”</p>
+      {m.live && (
+        <div className="mt-5 flex items-center gap-3 rounded-2xl border border-ruby/50 bg-oxblood/30 p-3">
+          <span className="size-2.5 shrink-0 animate-pulse-dot rounded-full bg-ruby" />
+          <p className="min-w-0 flex-1 text-sm text-ivory"><b>Live now</b> <span className="text-muted">· {m.viewers} watching</span></p>
+          <WatchLiveLink handle={m.handle} className="h-11 shrink-0" />
+        </div>
+      )}
 
       <div className="mt-6">
         <p className="text-[11px] font-bold tracking-[0.2em] text-dim uppercase">Send a tip</p>

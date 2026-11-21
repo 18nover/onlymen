@@ -6,6 +6,7 @@ import { GoldButton } from "@/components/account-ui";
 import { useAccount } from "@/lib/account/use-account";
 import { useImageUrl } from "@/lib/account/media";
 import type { OnboardingStepId, PublicAccount } from "@/lib/account/types";
+import { LiveStep } from "./live-step";
 import { BasicsStep, ConsentsStep, DetailsStep, PermissionsStep, PhotosStep, PrivacyStep, SocialsStep, VerifyStep, type StepProps } from "./steps";
 
 type StepDef = { id: OnboardingStepId; label: string; skippable: boolean; Component?: (p: StepProps) => React.ReactNode };
@@ -18,12 +19,13 @@ const ALL: StepDef[] = [
   { id: "socials", label: "Links", skippable: true, Component: SocialsStep },
   { id: "permissions", label: "Permissions", skippable: true, Component: PermissionsStep },
   { id: "verify", label: "Verify", skippable: true, Component: VerifyStep },
+  { id: "live", label: "Live", skippable: true, Component: LiveStep },
   { id: "privacy", label: "Privacy", skippable: true, Component: PrivacyStep },
   { id: "finish", label: "Done", skippable: false },
 ];
 
 function stepsFor(a: Pick<PublicAccount, "type">) {
-  return ALL.filter((s) => s.id !== "verify" || a.type === "creator").map((s) =>
+  return ALL.filter((s) => (s.id !== "verify" && s.id !== "live") || a.type === "creator").map((s) =>
     s.id === "socials" && a.type === "creator" ? { ...s, label: "Links & rates" } : s,
   );
 }
@@ -197,6 +199,7 @@ function Finish({ account }: { account: PublicAccount }) {
     { label: "Headline & bio", done: !!(p.headline && p.bio) },
     { label: "Details & tags", done: !!(p.bodyType || p.tribes.length || p.interests.length) },
     { label: "Notifications on", done: account.permissions.notifications.state === "granted" },
+    ...(creator ? [{ label: "Live room linked", done: !!account.live?.rooms.length }] : []),
     ...(creator ? [{ label: account.creator?.status === "pending_review" ? "ID submitted — in review" : "ID verification", done: account.creator?.status === "pending_review" || account.creator?.status === "approved" }] : []),
   ];
   const pct = Math.round((checks.filter((c) => c.done).length / checks.length) * 100);

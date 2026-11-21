@@ -14,6 +14,8 @@ import { Route as R2257RouteImport } from './routes/2257'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as GuidelinesRouteImport } from './routes/guidelines'
 import { Route as JoinRouteImport } from './routes/join'
+import { Route as LiveRouteImport } from './routes/live'
+import { Route as LiveRulesRouteImport } from './routes/live-rules'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LogoutRouteImport } from './routes/logout'
 import { Route as MeRouteImport } from './routes/me'
@@ -22,6 +24,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as MHandleRouteImport } from './routes/m.$handle'
+import { Route as WatchHandleRouteImport } from './routes/watch.$handle'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +49,16 @@ const GuidelinesRoute = GuidelinesRouteImport.update({
 const JoinRoute = JoinRouteImport.update({
   id: '/join',
   path: '/join',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LiveRoute = LiveRouteImport.update({
+  id: '/live',
+  path: '/live',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LiveRulesRoute = LiveRulesRouteImport.update({
+  id: '/live-rules',
+  path: '/live-rules',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -88,6 +101,11 @@ const MHandleRoute = MHandleRouteImport.update({
   path: '/m/$handle',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WatchHandleRoute = WatchHandleRouteImport.update({
+  id: '/watch/$handle',
+  path: '/watch/$handle',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -95,6 +113,8 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/guidelines': typeof GuidelinesRoute
   '/join': typeof JoinRoute
+  '/live': typeof LiveRoute
+  '/live-rules': typeof LiveRulesRoute
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/me': typeof MeRoute
@@ -103,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/m/$handle': typeof MHandleRoute
+  '/watch/$handle': typeof WatchHandleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -110,6 +131,8 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/guidelines': typeof GuidelinesRoute
   '/join': typeof JoinRoute
+  '/live': typeof LiveRoute
+  '/live-rules': typeof LiveRulesRoute
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/me': typeof MeRoute
@@ -118,6 +141,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/m/$handle': typeof MHandleRoute
+  '/watch/$handle': typeof WatchHandleRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -126,6 +150,8 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/guidelines': typeof GuidelinesRoute
   '/join': typeof JoinRoute
+  '/live': typeof LiveRoute
+  '/live-rules': typeof LiveRulesRoute
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/me': typeof MeRoute
@@ -134,6 +160,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/m/$handle': typeof MHandleRoute
+  '/watch/$handle': typeof WatchHandleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -143,6 +170,8 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/guidelines'
     | '/join'
+    | '/live'
+    | '/live-rules'
     | '/login'
     | '/logout'
     | '/me'
@@ -151,6 +180,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/terms'
     | '/m/$handle'
+    | '/watch/$handle'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -158,6 +188,8 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/guidelines'
     | '/join'
+    | '/live'
+    | '/live-rules'
     | '/login'
     | '/logout'
     | '/me'
@@ -166,6 +198,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/terms'
     | '/m/$handle'
+    | '/watch/$handle'
   id:
     | '__root__'
     | '/'
@@ -173,6 +206,8 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/guidelines'
     | '/join'
+    | '/live'
+    | '/live-rules'
     | '/login'
     | '/logout'
     | '/me'
@@ -181,6 +216,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/terms'
     | '/m/$handle'
+    | '/watch/$handle'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -189,6 +225,8 @@ export interface RootRouteChildren {
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   GuidelinesRoute: typeof GuidelinesRoute
   JoinRoute: typeof JoinRoute
+  LiveRoute: typeof LiveRoute
+  LiveRulesRoute: typeof LiveRulesRoute
   LoginRoute: typeof LoginRoute
   LogoutRoute: typeof LogoutRoute
   MeRoute: typeof MeRoute
@@ -197,6 +235,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   TermsRoute: typeof TermsRoute
   MHandleRoute: typeof MHandleRoute
+  WatchHandleRoute: typeof WatchHandleRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -234,6 +273,20 @@ declare module '@tanstack/react-router' {
       path: '/join'
       fullPath: '/join'
       preLoaderRoute: typeof JoinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/live': {
+      id: '/live'
+      path: '/live'
+      fullPath: '/live'
+      preLoaderRoute: typeof LiveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/live-rules': {
+      id: '/live-rules'
+      path: '/live-rules'
+      fullPath: '/live-rules'
+      preLoaderRoute: typeof LiveRulesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -292,6 +345,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MHandleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/watch/$handle': {
+      id: '/watch/$handle'
+      path: '/watch/$handle'
+      fullPath: '/watch/$handle'
+      preLoaderRoute: typeof WatchHandleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -301,6 +361,8 @@ const rootRouteChildren: RootRouteChildren = {
   ForgotPasswordRoute: ForgotPasswordRoute,
   GuidelinesRoute: GuidelinesRoute,
   JoinRoute: JoinRoute,
+  LiveRoute: LiveRoute,
+  LiveRulesRoute: LiveRulesRoute,
   LoginRoute: LoginRoute,
   LogoutRoute: LogoutRoute,
   MeRoute: MeRoute,
@@ -309,6 +371,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   TermsRoute: TermsRoute,
   MHandleRoute: MHandleRoute,
+  WatchHandleRoute: WatchHandleRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

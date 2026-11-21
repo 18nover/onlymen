@@ -1,3 +1,5 @@
+import type { CreatorLive, Reminder, ViewerPrefs } from "../live/types.ts";
+
 // OnlyMen account + onboarding data model.
 // Storage-agnostic: the same shapes are persisted by the local adapter today and
 // by a real database adapter later (see docs/ONBOARDING.md).
@@ -15,7 +17,9 @@ export type ConsentKey =
   | "marketingEmail"
   | "sms"
   | "creator2257"
-  | "creatorModelRelease";
+  | "creatorModelRelease"
+  | "liveRules"
+  | "liveCoPerformers";
 
 /** One immutable entry in the append-only consent log. */
 export type ConsentRecord = {
@@ -105,6 +109,7 @@ export type OnboardingStepId =
   | "socials"
   | "permissions"
   | "verify"
+  | "live"
   | "privacy"
   | "finish";
 
@@ -134,6 +139,12 @@ export type Account = {
   privacy: PrivacySettings;
   creator?: CreatorVerification;
   onboarding: OnboardingProgress;
+  /** Creator live settings + current session (see src/lib/live). */
+  live?: CreatorLive;
+  /** Viewer live preferences. */
+  viewer?: ViewerPrefs;
+  /** "Remind me" on upcoming shows. */
+  reminders?: Reminder[];
 };
 
 /** Account with the credential stripped, safe to hand to the UI. */

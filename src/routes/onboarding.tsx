@@ -3,7 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { OnboardingWizard } from "@/components/onboarding/wizard";
 import type { OnboardingStepId } from "@/lib/account/types";
 
-const IDS: OnboardingStepId[] = ["consents", "basics", "photos", "details", "socials", "permissions", "verify", "privacy", "finish"];
+const IDS: OnboardingStepId[] = ["consents", "basics", "photos", "details", "socials", "permissions", "verify", "live", "privacy", "finish"];
 
 export const Route = createFileRoute("/onboarding")({
   validateSearch: (s: Record<string, unknown>): { step?: OnboardingStepId } => ({

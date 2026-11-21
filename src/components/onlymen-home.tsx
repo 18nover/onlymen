@@ -63,12 +63,12 @@ function Hero({ online, live }: { online: number; live: number }) {
           <a href="#browse" className="grid h-12 place-items-center rounded-full bg-gold px-7 text-sm font-bold glow-gold transition hover:brightness-110">
             Browse men
           </a>
-          <a
-            href="#live"
+          <Link
+            to="/live"
             className="flex h-12 items-center gap-2 rounded-full border border-ruby/60 bg-oxblood/40 px-6 text-sm font-semibold text-ivory transition hover:bg-oxblood/70"
           >
             <Radio className="size-4 text-ruby" /> Watch live
-          </a>
+          </Link>
         </div>
         <dl className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-sm">
           <div className="flex items-center gap-2">
@@ -111,15 +111,22 @@ function LiveRow({ list }: { list: Model[] }) {
   if (!list.length) return null;
   return (
     <section id="live" className="om-container om-section scroll-mt-20">
-      <SectionHead kicker="On air" title="Live now" tone="ruby" icon={<span className="size-2 animate-pulse-dot rounded-full bg-ruby" />} />
+      <SectionHead
+        kicker="On air"
+        title="Live now"
+        tone="ruby"
+        icon={<span className="size-2 animate-pulse-dot rounded-full bg-ruby" />}
+        right={<Link to="/live" className="inline-flex h-10 items-center text-sm font-semibold text-gold transition hover:text-gold-hi">Schedule & all live →</Link>}
+      />
       <div className="no-scrollbar om-bleed mt-6 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 sm:gap-4">
         {list.map((m) => (
           <Link
             key={m.id}
-            to="/m/$handle"
+            to="/watch/$handle"
             params={{ handle: m.handle }}
             className="group relative aspect-[4/5] w-44 shrink-0 snap-start overflow-hidden rounded-2xl text-left glow-ruby sm:w-56"
           >
+            <span className="live-ring-border" aria-hidden="true" />
             <img src={m.photo} alt={`${m.name}, live`} className="size-full object-cover transition duration-500 group-hover:scale-105" />
             <div className="absolute inset-0 tile-shade" />
             <span className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full bg-ruby px-2.5 py-1 text-xs font-bold tracking-wider text-ivory uppercase">
@@ -190,11 +197,12 @@ function Featured({ list, onTip }: { list: Model[]; onTip: (m: Model) => void })
 function Tile({ m, onTip, featured = false }: { m: Model; onTip: (m: Model) => void; featured?: boolean }) {
   return (
     <article
-      className={`group relative aspect-[3/4] overflow-hidden rounded-xl bg-surface ring-1 transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-18px_rgb(212_175_106_/_0.55)] ${
+      className={`group relative aspect-[3/4] overflow-hidden rounded-xl bg-surface transition duration-300 ${m.live ? "ring-0 shadow-[0_0_28px_-8px_rgb(194_42_69_/_0.8)]" : "ring-1"} hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-18px_rgb(212_175_106_/_0.55)] ${
         m.tier === "elite" || featured ? "ring-gold/45 hover:ring-gold" : "ring-line/70 hover:ring-gold/60"
       }`}
     >
       <Link to="/m/$handle" params={{ handle: m.handle }} className="absolute inset-0 z-10" aria-label={`View ${m.name}'s profile`} />
+      {m.live && <span className="live-ring-border" aria-hidden="true" />}
       <img src={m.photo} alt={`${m.name}, ${m.age}`} loading="lazy" className="size-full object-cover transition duration-700 group-hover:scale-[1.06]" />
       <div className="absolute inset-0 tile-shade" />
       <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-2.5">
@@ -266,6 +274,7 @@ function Row({ m, onTip }: { m: Model; onTip: (m: Model) => void }) {
     <article className="group relative grid grid-cols-[104px_minmax(0,1fr)] overflow-hidden rounded-2xl bg-surface/80 ring-1 ring-line/70 transition hover:ring-gold/50 sm:grid-cols-[180px_minmax(0,1fr)]">
       <Link to="/m/$handle" params={{ handle: m.handle }} className="relative block min-h-[150px]" aria-label={`View ${m.name}'s profile`}>
         <img src={m.photo} alt={`${m.name}, ${m.age}`} loading="lazy" className="absolute inset-0 size-full object-cover" />
+        {m.live && <span className="live-ring-border rounded-l-2xl" aria-hidden="true" />}
         <span className="absolute top-2 left-2">
           <StatusDot m={m} className="block size-2.5 ring-2 ring-ink" />
         </span>
@@ -557,7 +566,7 @@ export function OnlyMenHome() {
                 </p>
               </div>
               <div className="flex justify-center md:justify-end">
-                <button className="h-12 rounded-full bg-gold px-8 text-sm font-bold glow-gold transition hover:brightness-110">Apply as a creator</button>
+                <Link to="/join" search={{ as: "creator" }} className="grid h-12 place-items-center rounded-full bg-gold px-8 text-sm font-bold glow-gold transition hover:brightness-110">Apply as a creator</Link>
               </div>
             </div>
           </div>

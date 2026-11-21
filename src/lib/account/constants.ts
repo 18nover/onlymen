@@ -1,3 +1,4 @@
+import type { CreatorLive, ViewerPrefs } from "../live/types.ts";
 import type { ConsentKey, CreatorVerification, PermissionKey, PermissionRecord, PrivacySettings, Profile } from "./types.ts";
 
 /**
@@ -16,6 +17,8 @@ export const CONSENT_VERSIONS: Record<ConsentKey, string> = {
   sms: "2026-11-21",
   creator2257: "draft-2026-11-21",
   creatorModelRelease: "draft-2026-11-21",
+  liveRules: "draft-2026-11-21",
+  liveCoPerformers: "draft-2026-11-21",
 };
 
 export type ConsentSpec = { key: ConsentKey; required: boolean; label: string; detail?: string; link?: { to: string; text: string } };
@@ -97,3 +100,40 @@ export const LANGUAGES = ["English", "Spanish", "Portuguese", "French", "German"
 export const CREATOR_SERVICES = ["Custom videos", "Custom photos", "Video calls", "Live shows", "Sexting", "Fan club", "Dinner dates", "Events & travel"];
 
 export const MAX_PHOTOS = 9;
+
+export const LIVE_CONSENTS: ConsentSpec[] = [
+  {
+    key: "liveCoPerformers",
+    required: true,
+    label: "Everyone who appears on camera with me is 18+, verified on OnlyMen (or on the platform I stream from), and has their own ID and 2257 records on file before they appear.",
+  },
+  {
+    key: "liveRules",
+    required: true,
+    label: "I agree to the Live Stream Rules: no minors, no one who can't consent, no public spaces without consent, no off-platform payments, and I follow the rules of whatever platform I stream on.",
+    link: { to: "/live-rules", text: "Read the Live Stream Rules" },
+  },
+];
+
+export const emptyLive = (): CreatorLive => ({
+  streams: true,
+  rooms: [],
+  useOnlyMenLive: true,
+  categories: [],
+  scheduleDays: [],
+  scheduleTime: "21:00",
+  timeZone: typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "America/New_York",
+  tipMenu: [],
+  privateRate: "",
+  recordingsAllowed: false,
+  blockedRegions: [],
+  moderators: [],
+  bannedWords: [],
+  shows: [],
+});
+
+export const defaultViewer = (): ViewerPrefs => ({ goLiveAlerts: false, country: "", favoriteCategories: [] });
+
+export const REGIONS = ["United States", "Canada", "United Kingdom", "European Union", "Australia", "Brazil", "Mexico", "India", "Philippines", "Other"];
+export const BLOCKABLE_REGIONS = ["My home state", "My home country", "Texas", "Utah", "Louisiana", "Virginia", "Mississippi", "Arkansas", "United Kingdom", "France", "Germany", "Russia", "China", "Middle East"];
+export const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];

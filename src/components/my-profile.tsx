@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Bell, Camera, Check, Coins, Crown, ExternalLink, Eye, EyeOff, Globe, Instagram, Loader2, LogOut, MapPin, Mic, Pencil, ShieldCheck, Sparkles, X as XIcon } from "lucide-react";
 import { Footer, Header, MobileNav } from "@/components/onlymen-ui";
+import { GoLivePanel, RemindersCard } from "@/components/go-live";
+import { LiveRing } from "@/components/live-ui";
 import { useCity } from "@/lib/onlymen-hooks";
 import { useAccount } from "@/lib/account/use-account";
 import { useImageUrl } from "@/lib/account/media";
@@ -81,7 +83,8 @@ function Body({ a }: { a: PublicAccount }) {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-8">
         {/* gallery */}
         <div className="min-w-0">
-          <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border-gold-grad glow-gold">
+          <LiveRing live={!!a.live?.session} radius="rounded-3xl">
+          <div className={`relative aspect-[4/5] overflow-hidden rounded-3xl ${a.live?.session ? "" : "border-gold-grad glow-gold"}`}>
             {shown ? (
               <Img photo={shown} alt={`${p.displayName} photo ${active + 1}`} className="size-full object-cover" blur={blurred} />
             ) : (
@@ -115,6 +118,7 @@ function Body({ a }: { a: PublicAccount }) {
               {p.headline && <p className="mt-2 text-sm text-ivory/80">{p.headline}</p>}
             </div>
           </div>
+          </LiveRing>
           {photos.length > 1 && (
             <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto">
               {photos.map((ph, i) => (
@@ -151,6 +155,8 @@ function Body({ a }: { a: PublicAccount }) {
               <Link to="/logout" className="flex h-11 items-center justify-center gap-1.5 rounded-full border border-line text-sm font-semibold text-muted hover:text-ivory"><LogOut className="size-4" /> Log out</Link>
             </div>
           </div>
+
+          {creator && <GoLivePanel a={a} />}
 
           <Card title="About" icon={<Sparkles className="size-3.5" />} edit="basics">
             <p className="leading-relaxed whitespace-pre-line text-ivory/85">{p.bio || <span className="text-dim">Nothing yet — tell them what a great night with you looks like.</span>}</p>
@@ -200,6 +206,7 @@ function Body({ a }: { a: PublicAccount }) {
             <p className="mt-3 text-xs text-dim">Tips {p.acceptsTips ? "on" : "off"}</p>
           </Card>
         )}
+        <RemindersCard a={a} />
         <Card title="Links" icon={<Globe className="size-3.5" />} edit="socials">
           {p.social.x || p.social.instagram || p.social.onlyfans || p.social.website ? (
             <ul className="grid gap-2 text-sm">

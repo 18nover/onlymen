@@ -14,6 +14,7 @@ import {
   MapPin,
   Mic,
   Plus,
+  Radio,
   ScanFace,
   ShieldCheck,
   Trash2,
@@ -31,7 +32,10 @@ import {
   POSITIONS,
   TRIBES,
   emptyCreator,
+  defaultViewer,
+  REGIONS,
 } from "@/lib/account/constants";
+import { LIVE_CATEGORIES } from "@/lib/live/config";
 import { consentRecord, latestConsents, randomId } from "@/lib/account/store";
 import { requestPermission } from "@/lib/account/permissions";
 import { ageOn, validatePhone } from "@/lib/account/validation";
@@ -173,6 +177,8 @@ export function DetailsStep({ account, save, onNext }: StepProps) {
   const set = (patch: Partial<typeof p>) => save((a) => ({ ...a, profile: { ...a.profile, ...patch } }));
   onNext(() => null);
   const heights = Array.from({ length: 61 }, (_, i) => 150 + i);
+  const v = { ...defaultViewer(), ...account.viewer };
+  const setV = (patch: Partial<typeof v>) => save((a) => ({ ...a, viewer: { ...defaultViewer(), ...a.viewer, ...patch } }));
   return (
     <>
       <StepHead kicker="The details" title={<>Your <span className="text-gold italic">type</span>, your terms.</>} sub="All optional. The more you share, the better your matches and search placement." />
@@ -187,6 +193,12 @@ export function DetailsStep({ account, save, onNext }: StepProps) {
           <Chips label="Looking for" options={LOOKING_FOR} value={p.lookingFor} onChange={(lookingFor) => set({ lookingFor })} />
           <Chips label="Interests" options={INTERESTS} value={p.interests} max={8} onChange={(interests) => set({ interests })} />
           <Chips label="Languages" options={LANGUAGES} value={p.languages} onChange={(languages) => set({ languages })} />
+        </Card>
+        <Card className="grid gap-5">
+          <h2 className="flex items-center gap-2 font-sans text-sm font-bold tracking-[0.2em] text-ivory uppercase"><Radio className="size-4 text-ruby" /> Live</h2>
+          <Toggle checked={v.goLiveAlerts} onChange={(goLiveAlerts) => setV({ goLiveAlerts })} label="Go-live alerts" detail="Get a ping when men you follow start streaming. Uses notifications if you allow them." icon={<Bell className="size-5" />} />
+          <SelectField label="Where you're watching from" optional value={v.country} onChange={(e) => setV({ country: e.target.value })} placeholder="Choose region" options={REGIONS} hint="Used to respect creators' region blocks and local laws." />
+          <Chips label="Favorite live categories" options={LIVE_CATEGORIES} value={v.favoriteCategories} max={6} onChange={(favoriteCategories) => setV({ favoriteCategories })} />
         </Card>
       </div>
     </>

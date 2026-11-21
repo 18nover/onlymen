@@ -17,8 +17,8 @@ export function LegalPage({ title, version, intro, sections }: { title: string; 
       <header className="border-b border-line/60">
         <div className="om-container flex h-16 items-center justify-between">
           <Link to="/" aria-label="OnlyMen home"><Brand /></Link>
-          <nav className="flex gap-1 text-xs font-semibold text-muted sm:text-sm">
-            {[["/terms", "Terms"], ["/privacy", "Privacy"], ["/guidelines", "Guidelines"], ["/2257", "2257"]].map(([to, l]) => (
+          <nav className="no-scrollbar flex gap-0.5 overflow-x-auto text-xs font-semibold text-muted sm:text-sm">
+            {[["/terms", "Terms"], ["/privacy", "Privacy"], ["/guidelines", "Guidelines"], ["/live-rules", "Live"], ["/2257", "2257"]].map(([to, l]) => (
               <Link key={to} to={to} className="rounded-full px-2.5 py-2 hover:text-gold-hi" activeProps={{ className: "text-gold-hi" }}>{l}</Link>
             ))}
           </nav>
