@@ -42,3 +42,6 @@ Server-owned fields (cannot be changed from the browser): email, username, DOB, 
 - Geo-blocking is not enforced.
 
 QA: `BASE=… TOKEN_CMD=… node scripts/e2e-accounts.mjs`.
+
+## Product decisions
+- **2026-11-21 — Keep the ethnicity filter** as a self-identified, optional creator field. Decision made by the user (owner), relayed to engineering on 2026-11-21.
