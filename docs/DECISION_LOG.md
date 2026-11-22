@@ -52,3 +52,19 @@ Reason: a solo founder can't carry performer KYC, 2257 records for streams, adul
 
 **2026-11-21** — Real accounts on free Neon + Better Auth  
 Accounts, sessions, profiles, versioned consents, onboarding progress, verification status, live status, schedules, reminders and profile photos moved to a free-tier Neon Postgres database, with Better Auth (own instance under `src/lib/account`, separate from the template's broker-bound auth) hashing passwords server-side. Photos are stored as downscaled bytea in Postgres to avoid another service. The browser-local adapter remains only as a dev fallback when `DATABASE_URL` is missing. Reset emails and KYC remain open (no paid services). Details: docs/ACCOUNTS.md.
+
+
+**2026-11-21** — Keep the ethnicity filter
+Jerry decided to keep the ethnicity filter. It will be a self-identified, optional creator field (never assigned by the platform). The browse filter and demo profiles already use it; the real account `Profile` type still needs the field added.
+
+**2026-11-21** — onlymen.live
+Jerry bought onlymen.live in the afternoon (ET). It is attached to the `onlymen` Vercel project with HTTPS. `VITE_LIVE_DOMAIN_READY` was set on Production so Go live / Watch hand-offs can use the domain. A white-label live partner is still to be chosen; until then the domain serves the same OnlyMen app.
+
+**2026-11-21** — Business and payments direction
+18nover will be a Kentucky LLC. Creators are 1099 contractors. When payments exist, use adult processors (Segpay / CCBill), not Stripe or PayPal. KYC via Veriff, Yoti, or Persona. Intended revenue: a 10–15% tip commission, featured placements, memberships and affiliates. Always try the free or cheapest allowed option first. Vercel Hobby is non-commercial, so the app must move (planned Cloudflare Workers migration, not started) or upgrade before taking payments.
+
+**2026-11-21** — Role split among the bots
+OnlyMen bot owns repo `18nover/onlymen`, the `onlymen` Vercel project, onlymen.gay, onlymen.live, and the product roadmap. 18nover bot owns the company side. Supervisor coordinates. Nobody changes another's repo, project, or DNS without asking first. The 18nover.gay footer links at OnlyMen legal and join routes must not be renamed without coordinating.
+
+**2026-11-21 9:28 PM ET** — Private mode
+Public registration is closed server-side and only Jerry's allowlisted account can sign in, so the site can stay private until he is ready to open it. Mechanism details are recorded as a TODO until the gate commit is in this repo.

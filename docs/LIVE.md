@@ -1,6 +1,8 @@
 # OnlyMen Live — "rent compliance" model
 
-_Status: built 2026-11-21 (demo data + browser-local storage). Draft, not legal advice._
+_Status: built 2026-11-21. Accounts, live status, schedules and reminders are server-backed on Neon (see [ACCOUNTS.md](ACCOUNTS.md)). Demo creators still come from `src/lib/live/demo.ts`. Draft, not legal advice._
+
+`onlymen.live` is bought and attached to the `onlymen` Vercel project (HTTPS live as of 2026-11-21). Go live / Watch hand-offs to that domain are enabled in Production when `VITE_LIVE_DOMAIN_READY` is set. A white-label live partner has **not** been chosen yet, so the domain currently serves the same OnlyMen app rather than a partner-operated room product.
 
 ## The idea in one paragraph
 
@@ -24,7 +26,7 @@ from companies set up to handle them.
 | Surface | Where | Notes |
 | --- | --- | --- |
 | Live page | `/live` | Who's live now (gold/red animated ring, viewers, tip-goal bar), category filter, "Coming up" schedule with **Remind me**, compliance note. |
-| Hand-off interstitial | `/watch/$handle` | "Taking you to OnlyMen Live…", 18+ reminder, platform + host shown, 3s countdown, **Stay here** / **Back to OnlyMen**. If the destination is `onlymen.live` and the domain isn't ready, shows "OnlyMen Live opens soon" + profile link instead of a dead link. |
+| Hand-off interstitial | `/watch/$handle` | "Taking you to OnlyMen Live…", 18+ reminder, platform + host shown, 3s countdown, **Stay here** / **Back to OnlyMen**. If the destination is `onlymen.live` and `VITE_LIVE_DOMAIN_READY` is not set, shows "OnlyMen Live opens soon" + profile link instead of a dead link. |
 | Live rings | home grid, home "Live now" row, profile gallery, `/me` photo | `.live-ring` (wrapper) and `.live-ring-border` (overlay) in `src/styles.css`. |
 | Watch live buttons | profile action panel, home live row, `/live` cards | All go through `/watch/$handle`. |
 | Go live | `/me#go-live` (`src/components/go-live.tsx`) | Gate → pre-flight sheet (title, up to 4 tags, tip goal, which room) → marks session live → hand-off. **End stream** → recap card (demo stats). Schedule shows (date/time + length). Reminders card for viewers. |
@@ -34,8 +36,9 @@ from companies set up to handle them.
 | Rules | `/live-rules` | DRAFT with lawyer banner; version `CONSENT_VERSIONS.liveRules`. Bumping the version re-prompts creators (the gate checks the latest version). |
 
 Data lives on the account (`account.live`, `account.viewer`, `account.reminders`)
-through the same `AccountStore` adapter as onboarding (browser-local today; see
-docs/ONBOARDING.md). Demo creators come from `src/lib/live/demo.ts`.
+through the same `AccountStore` adapter as onboarding. In production that is the
+Neon server adapter; see [ACCOUNTS.md](ACCOUNTS.md) and [ONBOARDING.md](ONBOARDING.md).
+Demo creators come from `src/lib/live/demo.ts`.
 
 ## Config — one constant
 
@@ -43,15 +46,15 @@ docs/ONBOARDING.md). Demo creators come from `src/lib/live/demo.ts`.
 
 ```ts
 LIVE_BASE_URL     = import.meta.env.VITE_LIVE_BASE_URL ?? "https://onlymen.live"
-LIVE_DOMAIN_READY = import.meta.env.VITE_LIVE_DOMAIN_READY === "true"   // false until bought + live
+LIVE_DOMAIN_READY = import.meta.env.VITE_LIVE_DOMAIN_READY === "true"
 ```
 
-* Change the domain: set `VITE_LIVE_BASE_URL` (e.g. a partner subdomain like `live.onlymen.gay`).
-* Turn on hand-off to it: set `VITE_LIVE_DOMAIN_READY=true` and redeploy.
-* Until then every OnlyMen-Live destination degrades to the "opens soon" screen;
-  a creator's own linked room hands off for real.
-* Only `http(s)` room links are accepted (`safeExternalUrl`), and known platforms
-  are recognised by host (`LIVE_PLATFORMS`).
+* Change the domain: set `VITE_LIVE_BASE_URL` (for example a partner subdomain like `live.onlymen.gay`).
+* Turn on hand-off to it: set `VITE_LIVE_DOMAIN_READY` so its value is the string `true`, then redeploy. This is set on Production as of 2026-11-21.
+* Until that flag is set, every OnlyMen-Live destination degrades to the "opens soon" screen; a creator's own linked room hands off for real.
+* Only `http(s)` room links are accepted (`safeExternalUrl`), and known platforms are recognised by host (`LIVE_PLATFORMS`).
+
+Jerry's own cam room links are still waiting to be added. Open UI polish: tap-friendly Tip/Message buttons on phone tiles, and a Live-now name alignment fix (Marco's two-line tagline).
 
 ## SSO to onlymen.live — one-time token hand-off (design, not built)
 
@@ -70,9 +73,8 @@ sharing cookies across domains or exposing a long-lived credential.
 5. onlymen.live sets its own first-party session cookie and drops the token from
    the URL (`history.replaceState`).
 * Single use, ≤60s expiry, bound to `aud`, rejected if replayed.
-* If the white-label partner supports SSO natively (most do via an affiliate/
+* If the white-label partner supports SSO natively (most do via an affiliate /
   "white label login" API), OnlyMen becomes the identity provider in the same way.
-* Needs the server adapter (Better Auth + Neon are pre-wired, off today).
 
 ## Shared wallet (design, not built)
 
@@ -83,7 +85,8 @@ sharing cookies across domains or exposing a long-lived credential.
 * Tips from an OnlyMen profile to a creator who streams elsewhere stay on the
   creator's platform (we just link) — OnlyMen does not hold money in Phase 1.
 * If OnlyMen ever processes payments itself it needs a high-risk merchant account
-  (e.g. CCBill / Segpay / Epoch-type processors) — out of scope now.
+  (Segpay / CCBill / Epoch-type processors) — not Stripe or PayPal. Out of scope
+  until hosting is commercial-ready (see [HOSTING.md](HOSTING.md)).
 
 ## White-label options (to evaluate — verify current terms)
 
@@ -99,10 +102,12 @@ re-hosting stream content, and honest labeling that the room is run by the partn
 
 ## Gaps / next steps
 
-1. Buy `onlymen.live` (or use `live.onlymen.gay`) → point at the chosen partner → `VITE_LIVE_DOMAIN_READY=true`.
-2. Pick a white-label partner and read their contract (revenue share, who is merchant of record, SSO API).
-3. Server adapter for accounts so live status, schedules and reminders are shared across devices/fans (today: browser-local + demo).
-4. Real notifications for reminders and go-live alerts (email/push) — needs the server and a sender.
+1. ~~Buy `onlymen.live` and point it at the app.~~ Done 2026-11-21. `VITE_LIVE_DOMAIN_READY` is set on Production.
+2. Pick a white-label partner and read their contract (revenue share, who is merchant of record, SSO API). The domain is attached to the OnlyMen Vercel project until that partner is serving it.
+3. ~~Server adapter for accounts so live status, schedules and reminders are shared.~~ Done; see [ACCOUNTS.md](ACCOUNTS.md).
+4. Real notifications for reminders and go-live alerts (email/push) — needs a sender.
 5. Blocked regions are stored but only **enforceable** with a server-side IP lookup; partner platforms already geo-block their rooms.
 6. Live status detection: today the creator presses Go live/End. Later, poll partner APIs (many expose "is online") so the ring is automatic.
 7. Lawyer review of `/live-rules`, then bump `CONSENT_VERSIONS.liveRules` to a dated final version.
+8. Add `onlymen.live` and `www.onlymen.live` to Better Auth allowed hosts / trusted origins.
+9. Jerry's own cam room links; Tip/Message phone-tile polish; Live-now name alignment (Marco's two-line tagline).
