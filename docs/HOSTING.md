@@ -25,7 +25,7 @@ Nobody changes another's repo, project, or DNS without asking its owner first.
 - Framework (Vercel): `tanstack-start`; Node `26.x`
 - **Not Git-linked.** Production deploys are **file uploads** through the Vercel connector, not pushes from GitHub.
 - Preview deployments are behind **Vercel Authentication** (SSO protection, preview only). Password protection is off.
-- Plan: Vercel **Hobby**. Hobby is **non-commercial**. Paid hosting (for example Vercel Pro) or a move off Vercel is required before taking payments or selling featured placements. The planned path is Cloudflare Workers; see [§7](#7-cloudflare-workers-port-workersdev-preview).
+- Plan: Vercel **Hobby**. Hobby is **non-commercial**. Paid hosting (for example Vercel Pro) or a move off Vercel is required before taking payments. The planned path is Cloudflare Workers; see [§7](#7-cloudflare-workers-port-workersdev-preview).
 
 ### Current production (verified 2026-11-21)
 

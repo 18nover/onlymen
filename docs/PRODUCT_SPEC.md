@@ -7,7 +7,7 @@
 
 ## 1. Vision
 
-OnlyMen is a cleaner, modern, fully-owned alternative to RentMen.men.
+OnlyMen is a private, invite-only community for gay men built around verified adult creators: profiles, live cam rooms (linked, never hosted), tips, and an opt-in Nearby grid.
 We are not cloning or wrapping an existing product. We are building our own platform under the 18nover company.
 
 Goal: treat this like a real company from day one and see how far it can go.
@@ -23,7 +23,7 @@ Goal: treat this like a real company from day one and see how far it can go.
 | Live / hand-off domain | onlymen.live |
 | Company | 18nover |
 | Company domain | 18nover.gay |
-| Positioning | Cleaner, modern alternative to RentMen that we own completely |
+| Positioning | Verified creators, live cams and community, fully owned. No escorting or in-person paid services, ever ([Terms](../src/routes/terms.tsx)). |
 | Repo / hosting | `18nover/onlymen`, Vercel project `onlymen` (OnlyMen bot). Company site is owned by the 18nover bot. |
 
 ---
@@ -62,11 +62,11 @@ OnlyMen **never hosts explicit video**. Creators link external rooms (Chaturbate
 
 ### Payments (not built yet)
 
-When money moves:
+No payments exist in this branch. When money moves:
 
-- Use **adult processors** (Segpay / CCBill), **not Stripe or PayPal**.
+- The processor is an owner + lawyer decision (adult-content-friendly processors only).
 - Creators are **1099 contractors**.
-- Intended revenue: a **10–15% tip commission**, featured placements, later memberships and affiliates.
+- Intended revenue: a **10–15% tip commission**, later memberships and affiliates. No paid ranking or paid placement in Nearby or the directory.
 - KYC via **Veriff, Yoti, or Persona**.
 - Do not take payments while the app is on Vercel Hobby (non-commercial). See [HOSTING.md](HOSTING.md) and [OPERATIONS.md](OPERATIONS.md).
 
@@ -88,7 +88,7 @@ Company form: **Kentucky LLC** (18nover). Legal pages are drafts and need lawyer
 ## 7. Growth and marketing intent
 
 - Launch with the owner as the first model (private mode until that experience is ready).
-- Open model/client signups after the core experience works.
+- Open creator and member sign-ups after the core experience works.
 - Advertise on X (Twitter) and run a deliberate PR / launch event once there is something real to show.
 
 ---

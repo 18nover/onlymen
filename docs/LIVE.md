@@ -1,4 +1,4 @@
-# OnlyMen Live — "rent compliance" model
+# OnlyMen Live — partner-compliance model
 
 _Status: built 2026-11-21. Accounts, live status, schedules and reminders are server-backed on Neon (see [ACCOUNTS.md](ACCOUNTS.md)). Demo creators still come from `src/lib/live/demo.ts`. Draft, not legal advice._
 
@@ -18,8 +18,8 @@ links and content; the streaming platform owns age verification of performers,
 
 This lets one founder open a live product without a legal department: the
 regulated parts (performer KYC, 2257 custodian of records for streamed content,
-card processing for adult content, chargebacks, DMCA on streams) are "rented"
-from companies set up to handle them.
+card processing for adult content, chargebacks, DMCA on streams) are handled by partners
+set up for them.
 
 ## What is built
 
@@ -31,7 +31,7 @@ from companies set up to handle them.
 | Watch live buttons | profile action panel, home live row, `/live` cards | All go through `/watch/$handle`. |
 | Go live | `/me#go-live` (`src/components/go-live.tsx`) | Gate → pre-flight sheet (title, up to 4 tags, tip goal, which room) → marks session live → hand-off. **End stream** → recap card (demo stats). Schedule shows (date/time + length). Reminders card for viewers. |
 | Gate | `src/lib/live/gate.ts` | Creator account + ID verification submitted (pending review or approved) + latest **Live Stream Rules** and **co-performer** consents. |
-| Onboarding — creators | step `live` (after Verify, skippable) | Streams yes/no, room links per platform, reserve OnlyMen Live room, categories (≤5), usual days/time/time zone, tip menu, private show rate, recordings allowed, blocked regions, moderators, banned words, co-performer acknowledgement, versioned live-rules consent (logged with source `onboarding:live`). |
+| Onboarding — creators | step `live` (after Verify, skippable) | Streams yes/no, room links per platform, reserve OnlyMen Live room, categories (≤5), usual days/time/time zone, tip menu, recordings allowed, blocked regions, moderators, banned words, co-performer acknowledgement, versioned live-rules consent (logged with source `onboarding:live`). |
 | Onboarding — everyone | Details step → "Live" card | Go-live alerts on/off, country/region, favorite categories (≤6). |
 | Rules | `/live-rules` | DRAFT with lawyer banner; version `CONSENT_VERSIONS.liveRules`. Bumping the version re-prompts creators (the gate checks the latest version). |
 
@@ -85,7 +85,7 @@ sharing cookies across domains or exposing a long-lived credential.
 * Tips from an OnlyMen profile to a creator who streams elsewhere stay on the
   creator's platform (we just link) — OnlyMen does not hold money in Phase 1.
 * If OnlyMen ever processes payments itself it needs a high-risk merchant account
-  (Segpay / CCBill / Epoch-type processors) — not Stripe or PayPal. Out of scope
+  with an adult-content-friendly processor (owner + lawyer decision). Out of scope
   until hosting is commercial-ready (see [HOSTING.md](HOSTING.md)).
 
 ## White-label options (to evaluate — verify current terms)

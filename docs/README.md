@@ -17,7 +17,7 @@ Do not put secrets in these files: environment variable **names** only, never va
 | [HOSTING.md](HOSTING.md) | Domains, DNS, env var names, Vercel deploys, planned Cloudflare move |
 | [ACCOUNTS.md](ACCOUNTS.md) | Neon + Better Auth, tables, sign-up webhook, account gaps, ethnicity decision |
 | [ONBOARDING.md](ONBOARDING.md) | `/join` `/login` `/onboarding` `/me`, wizard steps, draft legal pages |
-| [LIVE.md](LIVE.md) | Rent-compliance live model, hand-offs to onlymen.live and creator rooms |
+| [LIVE.md](LIVE.md) | Partner-compliance live model, hand-offs to onlymen.live and creator rooms |
 | [OPERATIONS.md](OPERATIONS.md) | AI operations plan (ranking, pricing, safety, agents, costs) |
 | [ROADMAP.md](ROADMAP.md) | What's done, what's open, current priority |
 | [DECISION_LOG.md](DECISION_LOG.md) | Chronological decisions and why |

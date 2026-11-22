@@ -30,7 +30,7 @@ The November 20 Next.js sketch is obsolete. Production is a TanStack Start app.
 | Auth (product) | **Better Auth** (email + password, scrypt) | Own instance in `src/lib/account/auth.server.ts`, called in-process under `/api/account/*`. Separate from the template Grok-broker auth in `src/lib/auth/`, which stays off. |
 | Hosting | **Vercel** project `onlymen` on team `18nover` | See [HOSTING.md](HOSTING.md). |
 | Photos | `bytea` in Neon, served at `/api/photo/<id>` | No object storage yet. |
-| Payments | Not implemented | When they are: adult processors (Segpay / CCBill), not Stripe or PayPal. |
+| Payments | Not implemented | Processor choice is an owner + lawyer decision. |
 
 Schema lives in `migrations/*.sql` and is applied by `npm run db:migrate` (also run from the Vercel `build` script).
 

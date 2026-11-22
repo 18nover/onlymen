@@ -14,7 +14,7 @@
 - [x] **2026-11-20** — Live streaming + tips direction captured in the Product Spec
 - [x] **2026-11-21** — Public site: photo-first homepage, directory, profiles, filters
 - [x] **2026-11-21** — Sign-up, log-in, onboarding, draft legal pages
-- [x] **2026-11-21** — Live surfaces (`/live`, hand-off, go-live, schedule, reminders, live rules) under the rent-compliance model
+- [x] **2026-11-21** — Live surfaces (`/live`, hand-off, go-live, schedule, reminders, live rules) under the partner-compliance model
 - [x] **2026-11-21** — Real accounts on Neon Postgres + Better Auth; photos at `/api/photo/<id>`
 - [x] **2026-11-21** — onlymen.gay and onlymen.live on the `onlymen` Vercel project; `VITE_LIVE_DOMAIN_READY` set on Production
 - [x] **2026-11-21** — Decision: keep the ethnicity filter as a self-identified, optional creator field
@@ -50,7 +50,7 @@
 ## Later / backlog
 
 - Tip implementation, 10–15% commission, payouts through Segpay / CCBill
-- Featured placements, memberships, affiliates
+- Memberships, affiliates (no paid ranking or placement)
 - Messaging / contact flow
 - Event log and ranking v1 (see the AI operations plan)
 - Photo pipeline off Postgres (R2 + CSAM scanning)

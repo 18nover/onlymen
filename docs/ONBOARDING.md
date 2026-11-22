@@ -15,7 +15,7 @@ The 18nover.gay footer links to `/terms`, `/privacy`, `/2257`, `/guidelines`, an
 | `/logout` | Ends the session on this device. |
 | `/forgot-password` → `/reset-password?token=` | Reset flow. Same response whether or not the email exists. Tokens expire after 1 hour. In **server** mode the link is never shown in the browser (no email provider yet; support must deliver it). The browser-local dev adapter still shows a demo link. |
 | `/onboarding?step=…` | Multi-step wizard (below). Progress saves on every change; returning resumes the saved step. |
-| `/me` | Your own profile (photo-first gallery, details, rates, links, privacy/permission summary, verification status, edit links into each wizard step). |
+| `/me` | Your own profile (photo-first gallery, details, tips, links, privacy/permission summary, verification status, edit links into each wizard step). |
 | `/terms`, `/privacy`, `/guidelines`, `/2257` | Placeholder legal pages with a **DRAFT — have a lawyer review** banner. `/live-rules` is a separate draft for creators who go live. |
 
 Header "Sign in" / "Join free" and the mobile nav are wired to these; when signed in they show your avatar → `/me` (or "Finish setup" → `/onboarding`).
@@ -27,8 +27,8 @@ The wizard is defined in `src/components/onboarding/wizard.tsx`. Creators see ni
 1. **Agreements** (required, can't skip) — every box unchecked by default. Required: 18+ attestation, Terms, Privacy Policy, adult-content acknowledgement, Community Guidelines. Optional: analytics cookies, marketing email, SMS (asks for a mobile number). Each answer — yes *or* no — is appended to a consent log with key, version, ISO timestamp, source and user agent.
 2. **Basics** — display name (required), headline, bio, city, show-age toggle.
 3. **Photos** — up to 9 in the UI; drag-and-drop upload, drag or arrow reorder, "Set main" (first = profile photo), delete; creators can flag a photo 18+ (blurred for viewers who opt in). Images are downscaled to ≤1280px JPEG. The server adapter will reject a 16th photo (hard cap 15).
-4. **Details** — height, body type, position, tribes, looking for, interests, languages. (Ethnicity is a decided optional creator field but is not on this step yet; see [ACCOUNTS.md](ACCOUNTS.md).)
-5. **Links** (creators: **Links & rates**) — X, Instagram, website (+ OnlyFans/JFF, tips toggle, services, rate list for creators).
+4. **Details** — height, body type, tribes, looking for, interests, languages. (Ethnicity is a decided optional creator field but is not on this step yet; see [ACCOUNTS.md](ACCOUNTS.md).)
+5. **Links** — X, Instagram, website (+ OnlyFans/JFF and the tips toggle for creators).
 6. **Permissions** — location, notifications (web push), camera/photos, microphone. Each card explains why; tapping Allow shows an in-app explainer *before* the real browser prompt. Stores `granted | denied | skipped | unsupported` + timestamp. Never blocks.
 7. **Verify** (creators only, skippable) — legal name, ID type/country, ID front/back + selfie-with-ID uploads, 18 U.S.C. § 2257 record-keeping acknowledgement, model release / content-ownership consent, payout method + email and tax form (placeholders — no bank/SSN collected). Submitting sets `creator.status = "pending_review"`. ID images stay on the device.
 8. **Live** (creators only, skippable) — room links, schedule prefs, tip menu, co-performer and Live Stream Rules consents. See [LIVE.md](LIVE.md).
@@ -57,7 +57,7 @@ All UI talks only to the `AccountStore` interface (`signUp, logIn, logOut, curre
 | Media storage | Cloudflare R2 / S3 (planned with the Cloudflare move) | Signed uploads, EXIF strip, CSAM hash scan (e.g. PhotoDNA) before anything is shown. Today photos are `bytea` in Neon. |
 | SMS | Twilio / Telnyx | Requires A2P 10DLC registration; adult content is restricted — use for account alerts only. |
 | Web push | Web Push + VAPID keys (service worker) | Notification permission is already captured; store push subscriptions server-side. |
-| Payouts / tax | Adult-friendly processor (Segpay, CCBill, Epoch, Paxum) — not Stripe or PayPal | Creators are 1099 contractors. Collect bank + W-9/W-8BEN inside the processor's hosted flow, never in our DB. |
+| Payouts / tax | Adult-content-friendly processor (owner + lawyer decision) | Creators are 1099 contractors. Collect bank + W-9/W-8BEN inside the processor's hosted flow, never in our DB. |
 | Legal | Counsel | Replace the DRAFT pages; name a 2257 custodian of records; cookie banner per jurisdiction. |
 | Hosting | Cloudflare Workers (planned) or Vercel Pro | Vercel Hobby is non-commercial; required before taking payments. See [HOSTING.md](HOSTING.md). |
 

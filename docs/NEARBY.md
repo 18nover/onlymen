@@ -53,7 +53,7 @@ link is hidden and every Nearby server function refuses.
 
 `PLAN_LIMITS` in `geo.ts`: Free 10 km / 30 profiles, Plus 50 km / 150
 profiles. Plus is an admin-set row in `om_plus` (granted on `/admin/reports`).
-There is **no billing** and no Stripe.
+There is **no billing**.
 
 ## Presence
 
