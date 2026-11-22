@@ -70,7 +70,7 @@ async function signUp(p, { type, user, mobile }) {
   await cont(p);
   await step(p, "basics");
   await p.getByLabel("Display name").fill("Marco");
-  await p.getByLabel("Headline").fill("Late-night conversation, good wine, better company.");
+  await p.getByLabel("Headline").fill("Late-night streams and behind-the-scenes.");
   await p.getByLabel("About you").fill("Italian by blood, New Yorker by choice. Velvet jackets, dim bars, and late-night streams.");
   await p.getByLabel("City").fill("New York, NY");
   await shot(p, `${D}-03-basics`, true);

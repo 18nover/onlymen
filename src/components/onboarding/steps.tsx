@@ -132,8 +132,8 @@ export function BasicsStep({ account, save, onNext }: StepProps) {
       <StepHead kicker="Your profile" title={<>First <span className="text-gold italic">impressions.</span></>} sub="This is what men see first. Keep it real — you can change it any time." />
       <Card className="grid gap-5">
         <TextField label="Display name" value={p.displayName} maxLength={32} onChange={(e) => set({ displayName: e.target.value })} error={p.displayName.trim().length < 2 ? "Required" : null} hint="Shown on your profile and in chats." />
-        <TextField label="Headline" optional value={p.headline} maxLength={70} onChange={(e) => set({ headline: e.target.value })} placeholder="Late-night conversation, good wine, better company." hint={`${p.headline.length}/70 · the one line under your name`} />
-        <TextArea label="About you" optional value={p.bio} maxLength={600} rows={5} onChange={(e) => set({ bio: e.target.value })} placeholder="What makes a great night with you?" />
+        <TextField label="Headline" optional value={p.headline} maxLength={70} onChange={(e) => set({ headline: e.target.value })} placeholder="Late-night streams and behind-the-scenes." hint={`${p.headline.length}/70 · the one line under your name`} />
+        <TextArea label="About you" optional value={p.bio} maxLength={600} rows={5} onChange={(e) => set({ bio: e.target.value })} placeholder="Tell people about yourself and what you post." />
         <TextField label="City" optional value={p.city} autoComplete="address-level2" onChange={(e) => set({ city: e.target.value })} placeholder="New York, NY" hint="City only. We never show your exact location." />
         <Toggle checked={p.showAge} onChange={(v) => set({ showAge: v })} label={`Show my age${age ? ` (${age})` : ""}`} detail="Your birthday itself is never shown." />
       </Card>
