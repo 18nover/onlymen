@@ -1,11 +1,22 @@
-import { createRootRoute, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
+import { createRootRoute, HeadContent, Outlet, Scripts, useRouterState } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
+import { PrivateComingSoon } from "@/components/private-gate";
+import { privateAccessFn } from "@/lib/private/access";
+import { isPublicPath } from "@/lib/private/policy";
 import appCss from "../styles.css?url";
 
 const APP_NAME = "OnlyMen — Men worth staying up for";
 
 export const Route = createRootRoute({
+  // PRIVATE MODE: decided server-side on every SSR request and navigation.
+  beforeLoad: async () => {
+    try {
+      return { access: await privateAccessFn() };
+    } catch {
+      return { access: { allowed: false, ownerSignup: false } };
+    }
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -13,6 +24,7 @@ export const Route = createRootRoute({
       { title: APP_NAME },
       { name: "description", content: "OnlyMen: a private directory of verified adult creators and companions for gay men. 18+. Free to join, tips only." },
       { name: "theme-color", content: "#0a0809" },
+      { name: "robots", content: "noindex, nofollow, noarchive" },
     ],
     links: [
       { rel: "icon", href: "/favicon.ico", sizes: "any" },
@@ -28,7 +40,14 @@ export const Route = createRootRoute({
       },
     ],
   }),
-  component: () => (
+  component: RootComponent,
+});
+
+function RootComponent() {
+  const { access } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const gated = !access.allowed && !isPublicPath(pathname) && !(access.ownerSignup && pathname === "/join");
+  return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
@@ -36,10 +55,10 @@ export const Route = createRootRoute({
       <body>
         <PreviewHostBridge />
         <AuthProvider>
-          <Outlet />
+          {gated ? <PrivateComingSoon /> : <Outlet />}
         </AuthProvider>
         <Scripts />
       </body>
     </html>
-  ),
-});
+  );
+}

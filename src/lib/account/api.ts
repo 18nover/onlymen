@@ -20,10 +20,16 @@ async function ctx() {
   return { request, headers: request.headers, auth: authMod.getAuth(), enabled: authMod.serverAccountsEnabled, repo, assertSameSite: iso.assertSameSiteRequest };
 }
 
+/** The signed-in user id — only if that account is on the private-mode allowlist. */
 async function sessionUserId(c: Awaited<ReturnType<typeof ctx>>): Promise<string | null> {
   const s = await c.auth.api.getSession({ headers: c.headers });
-  return s?.user?.id ?? null;
+  const uid = s?.user?.id ?? null;
+  if (!uid) return null;
+  const { isUserAllowed } = await import("../private/allowlist.server");
+  return (await isUserAllowed(uid)) ? uid : null;
 }
+
+const CLOSED = "Sign-ups are closed. OnlyMen is private for now.";
 
 function errCode(e: unknown): string {
   const any = e as { body?: { code?: string; message?: string }; message?: string };
@@ -49,6 +55,9 @@ export const signUpFn = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<ApiResult<PublicAccount>> => {
     const c = await ctx();
     c.assertSameSite();
+    // PRIVATE MODE: reject before touching the database (Better Auth also refuses).
+    const { isSignUpAllowed } = await import("../private/allowlist.server");
+    if (!isSignUpAllowed(data.email)) return { ok: false, error: CLOSED };
     const v = await import("./validation.ts");
     const username = v.normalizeUsername(data.username);
     const bad =
@@ -99,6 +108,11 @@ export const logInFn = createServerFn({ method: "POST" })
     if (!email || !data.password) return generic;
     try {
       const res = await c.auth.api.signInEmail({ body: { email, password: data.password, rememberMe: true }, headers: c.headers });
+      const { isUserAllowed } = await import("../private/allowlist.server");
+      if (!(await isUserAllowed(res.user.id))) {
+        await c.auth.api.signOut({ headers: c.headers }).catch(() => {});
+        return generic;
+      }
       const acc = await c.repo.loadAccount(res.user.id);
       if (!acc) return generic;
       return { ok: true, value: acc };
@@ -135,6 +149,7 @@ export const usernameTakenFn = createServerFn({ method: "POST" })
   .validator((input: unknown) => s(obj(input).username, 40))
   .handler(async ({ data }) => {
     const c = await ctx();
+    if (!(await sessionUserId(c))) return true; // private mode: no probing
     const { normalizeUsername } = await import("./validation.ts");
     return c.repo.usernameTaken(normalizeUsername(data));
   });
@@ -185,6 +200,7 @@ export const publicProfileFn = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const c = await ctx();
     if (!c.enabled || !data) return null;
+    if (!(await sessionUserId(c))) return null; // private mode: members only
     return c.repo.publicProfile(data);
   });
 
@@ -192,6 +208,7 @@ export const publicProfileFn = createServerFn({ method: "GET" })
 export const liveDirectoryFn = createServerFn({ method: "GET" }).handler(async () => {
   const c = await ctx();
   if (!c.enabled) return { live: [], upcoming: [] };
+  if (!(await sessionUserId(c))) return { live: [], upcoming: [] }; // private mode: members only
   return c.repo.liveDirectory();
 });
 

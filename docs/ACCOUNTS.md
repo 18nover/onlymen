@@ -45,3 +45,13 @@ QA: `BASE=… TOKEN_CMD=… node scripts/e2e-accounts.mjs`.
 
 ## Product decisions
 - **2026-11-21 — Keep the ethnicity filter** as a self-identified, optional creator field. Decision made by the user (owner), relayed to engineering on 2026-11-21.
+
+## Private mode (2026-11-21)
+OnlyMen is closed: only allowlisted accounts can get in.
+- **Sign-up is off server-side**: Better Auth `disableSignUp` + a `/sign-up*` before-hook, and `signUpFn` rejects first. `/join` shows the coming-soon page.
+- **Allowlist** (server env, comma-separated; unset = nobody): `ONLYMEN_ALLOWED_USER_IDS` (preferred), `ONLYMEN_ALLOWED_USERNAMES`. Enforced when a session is created (Better Auth `databaseHooks.session.create.before`), on every session check in `api.ts`, in the root route guard, and in `/api/photo/<id>` (photos are members-only now). Code: `src/lib/private/`.
+- **Gate**: `server/middleware/private-gate.ts` serves the standalone "Private — coming soon" page to logged-out visitors on every host; only `/login`, `/logout`, `/terms`, `/privacy`, `/guidelines`, `/2257`, static assets, server functions and `/api/photo` pass. Everything is `noindex` (`x-robots-tag`, meta robots, `robots.txt`).
+- **Owner account**: seeded once through `POST /api/owner-seed` (Better Auth hashing + internal adapter), which is inert unless `ONLYMEN_OWNER_SEED_TOKEN` is set — remove that var after use. `om_account.role` (`migrations/0003_account_role.sql`) marks it `owner`. The reserved handle `admin` is only allowed there.
+- Optional one-time owner bootstrap via sign-up: `ONLYMEN_OWNER_SIGNUP_EMAIL` (off by default).
+- Local dev only: `ONLYMEN_PRIVATE_MODE=off` disables the gate (ignored in production).
+- QA: `BASE=… node scripts/e2e-private.mjs` (owner login check reads `OWNER_ID`/`OWNER_PW` from env only).

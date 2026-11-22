@@ -11,11 +11,13 @@
  * Sessions: httpOnly, Secure, SameSite=Lax cookie (30 days, rolling).
  */
 import { betterAuth } from "better-auth";
+import { APIError, createAuthMiddleware } from "better-auth/api";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { randomBytes } from "node:crypto";
 import { Pool } from "pg";
 import { getPglite } from "../db";
 import { pgliteDialect } from "../auth/pglite-dialect";
+import { isSignUpAllowed, isUserAllowed, allowlist, privateModeOff } from "../private/allowlist.server";
 
 const env = (k: string) => {
   const v = process.env[k]?.trim();
@@ -40,10 +42,12 @@ function secret() {
 }
 
 /** Hosts this app is served from. Requests from anywhere else are rejected. */
-const HOSTS = ["onlymen.gay", "www.onlymen.gay", "onlymen.vercel.app", "onlymen-18nover.vercel.app", "*.vercel.app", "localhost", "127.0.0.1"];
+const HOSTS = ["onlymen.gay", "www.onlymen.gay", "onlymen.live", "www.onlymen.live", "onlymen.vercel.app", "onlymen-18nover.vercel.app", "*.vercel.app", "localhost", "127.0.0.1"];
 const ORIGINS = [
   "https://onlymen.gay",
   "https://www.onlymen.gay",
+  "https://onlymen.live",
+  "https://www.onlymen.live",
   "https://onlymen.vercel.app",
   "https://onlymen-18nover.vercel.app",
   "https://*.vercel.app",
@@ -65,6 +69,10 @@ function create() {
       : { dialect: pgliteDialect(() => getPglite()), type: "postgres" as const },
     emailAndPassword: {
       enabled: true,
+      // PRIVATE MODE: public sign-up is off. The only exception is a one-time
+      // owner bootstrap email (ONLYMEN_OWNER_SIGNUP_EMAIL), enforced again in
+      // the before-hook below.
+      disableSignUp: !privateModeOff() && allowlist().ownerEmails.size === 0,
       minPasswordLength: 8,
       maxPasswordLength: 128,
       autoSignIn: true,
@@ -74,6 +82,29 @@ function create() {
       // 1-hour token server-side; we deliberately never log or return it.
       sendResetPassword: async ({ user }) => {
         console.info(`[accounts] password reset requested for user ${user.id} (email delivery not configured)`);
+      },
+    },
+    // PRIVATE MODE gates, enforced inside Better Auth itself (not just the UI):
+    hooks: {
+      before: createAuthMiddleware(async (ctx) => {
+        if (ctx.path.startsWith("/sign-up")) {
+          const email = (ctx.body as { email?: string } | undefined)?.email;
+          if (!isSignUpAllowed(email)) throw new APIError("FORBIDDEN", { message: "Sign-ups are closed. OnlyMen is private for now.", code: "SIGNUP_DISABLED" });
+        }
+      }),
+    },
+    databaseHooks: {
+      // No session is ever created for an account that isn't on the allowlist
+      // (blocks sign-in, auto sign-in after sign-up, and sign-in after reset).
+      session: {
+        create: {
+          before: async (session) => {
+            if (!(await isUserAllowed(session.userId))) {
+              console.info("[private] blocked session for non-allowlisted user");
+              return false;
+            }
+          },
+        },
       },
     },
     session: { expiresIn: 60 * 60 * 24 * 30, updateAge: 60 * 60 * 24 },

@@ -46,10 +46,7 @@ function Login() {
           <Link to="/forgot-password" className="justify-self-end text-xs font-semibold text-gold-hi underline-offset-4 hover:underline">Forgot password?</Link>
         </div>
         <GoldButton type="submit" loading={busy} className="w-full">Log in</GoldButton>
-        <p className="text-center text-sm text-muted">
-          New here?{" "}
-          <Link to="/join" className="font-semibold text-gold-hi underline-offset-4 hover:underline">Join free</Link>
-        </p>
+        <p className="text-center text-sm text-muted">OnlyMen is private for now. Sign-ups are closed.</p>
       </form>
     </AuthShell>
   );

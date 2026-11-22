@@ -1,4 +1,5 @@
 // Manual QA for server-backed accounts. Not part of `npm test`.
+// NOTE: OnlyMen is in private mode, so this only works against a local build with ONLYMEN_PRIVATE_MODE=off (sign-up is closed in production). See scripts/e2e-private.mjs.
 // Usage: BASE=https://onlymen.vercel.app TOKEN_CMD="node /path/token.mjs" node scripts/e2e-accounts.mjs
 // TOKEN_CMD (optional) is run with the test email appended and must print the reset token.
 import { chromium } from "playwright";
