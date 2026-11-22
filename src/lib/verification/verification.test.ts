@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { randomBytes } from "node:crypto";
 import {
   ageOn, explicitPublishViolation, mayPublishExplicit, requiredKinds, sniffDocType, stripJpegMetadata, stripPngMetadata,
-  toAccountStatus, transition, validateFile, validateSubmission, VERIFY_REQUIRED_MSG, MAX_FILE_BYTES,
+  toAccountStatus, transition, selfReviewCheck, decisionNote, validateFile, validateSubmission, VERIFY_REQUIRED_MSG, MAX_FILE_BYTES,
 } from "./status.ts";
 import { decrypt, encrypt } from "./storage.server.ts";
 import { manualProvider, providerByName } from "./providers.ts";
@@ -108,4 +108,19 @@ test("KYC provider is pluggable; manual is the default, unknown names don't sile
   assert.equal(providerByName("manual"), manualProvider);
   assert.equal(providerByName("veriff"), null);
   assert.deepEqual(await manualProvider.startSession({ userId: "u", verificationId: "v", returnUrl: "/" }), { kind: "form", url: "/me/verify" });
+});
+
+test("self-review: refused when off, allowed + tagged in the audit note when on", () => {
+  const own = { actorId: "u1", subjectUserId: "u1" };
+  assert.equal(selfReviewCheck({ ...own, action: "approve", selfReviewOn: false }).ok, false);
+  assert.equal(selfReviewCheck({ ...own, action: "reject", selfReviewOn: false }).ok, false);
+  assert.deepEqual(selfReviewCheck({ ...own, action: "approve", selfReviewOn: true }), { ok: true, self: true });
+  assert.deepEqual(selfReviewCheck({ ...own, action: "revoke", selfReviewOn: false }), { ok: true, self: true });
+  assert.deepEqual(selfReviewCheck({ actorId: "admin", subjectUserId: "u1", action: "approve", selfReviewOn: false }), { ok: true, self: false });
+  assert.equal(decisionNote(undefined, true), "self-review");
+  assert.equal(decisionNote("Blurry", true), "self-review: Blurry");
+  assert.equal(decisionNote(undefined, false), null);
+  assert.equal(decisionNote(" Blurry ", false), "Blurry");
+  // Self-review never lets a creator act as staff: approval stays staff-only.
+  assert.equal(transition("pending", "approve", "creator").ok, false);
 });

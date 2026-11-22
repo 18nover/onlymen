@@ -42,6 +42,26 @@ export function transition(from: VStatus, action: VAction, actor: "creator" | "s
   return { ok: true, to };
 }
 
+/**
+ * Own-verification rule. Approving/rejecting your OWN verification is refused
+ * unless ONLYMEN_KYC_SELF_REVIEW=on (solo operator). Allowed self-reviews are
+ * tagged so the audit note says so. Revoking your own approval is always allowed.
+ */
+export function selfReviewCheck(o: { actorId: string; subjectUserId: string; action: Exclude<VAction, "submit">; selfReviewOn: boolean }): { ok: true; self: boolean } | { ok: false; error: string } {
+  const self = o.actorId === o.subjectUserId;
+  if (self && o.action !== "revoke" && !o.selfReviewOn) return { ok: false, error: "You can't review your own verification. Ask another admin, or see docs/VERIFICATION.md." };
+  return { ok: true, self };
+}
+
+export const SELF_REVIEW_TAG = "self-review";
+
+/** Audit note for a decision: reason (if any), prefixed with the self-review tag when applicable. */
+export function decisionNote(reason: string | undefined, self: boolean): string | null {
+  const r = (reason ?? "").trim().slice(0, 180);
+  if (self) return r ? `${SELF_REVIEW_TAG}: ${r}` : SELF_REVIEW_TAG;
+  return r || null;
+}
+
 export function toAccountStatus(s: VStatus | null | undefined): AccountVStatus {
   if (s === "pending") return "pending_review";
   if (s === "approved" || s === "rejected") return s;

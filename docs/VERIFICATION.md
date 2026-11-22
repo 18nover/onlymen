@@ -12,7 +12,7 @@ visitor gate stores nothing. This flow must keep records.
 | --- | --- | --- |
 | `ONLYMEN_ID_VERIFICATION` | `on` | Turns on the flow and its enforcement. |
 | `ONLYMEN_KYC_PROVIDER` | `manual` | Which `VerificationProvider` is used. |
-| `ONLYMEN_KYC_SELF_REVIEW` | `off` | `on` lets an admin approve their **own** verification (needed while Jerry is the only admin). |
+| `ONLYMEN_KYC_SELF_REVIEW` | `on` | Lets an admin approve their **own** verification (needed while Jerry is the only admin). Self-reviews are tagged `self-review` in the audit note. |
 | `ONLYMEN_KYC_ENC_KEY` | secret | 32-byte base64 AES key for document files. Set with `wrangler secret put`. If it is lost, stored files can't be read. A backup copy is kept in the box's private secrets folder (never in git). |
 
 ## Flow

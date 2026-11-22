@@ -7,7 +7,7 @@ import { createHash, randomBytes } from "node:crypto";
 import { platformEnv } from "../platform/runtime.ts";
 import type { Sql } from "../db";
 import { encKey, encrypt, decrypt, ENC_SCHEME, fileStore } from "./storage.server.ts";
-import { FILE_KINDS, flagOn, stripMetadata, toAccountStatus, transition, validateFile, validateSubmission, type FileKind, type Submission, type VAction, type VStatus } from "./status.ts";
+import { decisionNote, selfReviewCheck, FILE_KINDS, flagOn, stripMetadata, toAccountStatus, transition, validateFile, validateSubmission, type FileKind, type Submission, type VAction, type VStatus } from "./status.ts";
 
 export function idVerificationEnabled(): boolean {
   return flagOn(platformEnv("ONLYMEN_ID_VERIFICATION"));
@@ -155,12 +155,14 @@ export async function adminDetail(db: Sql, id: string): Promise<AdminDetail | nu
 export async function decide(db: Sql, actorId: string, id: string, action: Exclude<VAction, "submit">, reason?: string): Promise<VStatus> {
   const v = (await db<VRow>`select * from om_verification where id = ${id}`)[0];
   if (!v) throw new VerificationError("Unknown verification.");
-  if (action !== "revoke" && v.user_id === actorId && !flagOn(platformEnv("ONLYMEN_KYC_SELF_REVIEW"))) throw new VerificationError("You can't review your own verification. Ask another admin, or see docs/VERIFICATION.md.");
+  const sr = selfReviewCheck({ actorId, subjectUserId: v.user_id, action, selfReviewOn: flagOn(platformEnv("ONLYMEN_KYC_SELF_REVIEW")) });
+  if (!sr.ok) throw new VerificationError(sr.error);
   const t = transition(v.status, action, "staff", { reason });
   if (!t.ok) throw new VerificationError(t.error);
-  const note = reason ? reason.trim().slice(0, 200) : null;
+  const reasonText = reason ? reason.trim().slice(0, 200) : null;
+  const note = decisionNote(reason, sr.self);
   const done = await db<{ id: string }>`update om_verification set status = ${t.to}, reviewed_at = now(), reviewer_id = ${actorId},
-    reject_reason = ${t.to === "rejected" ? note : null}, updated_at = now() where id = ${id} and status = ${v.status} returning id`;
+    reject_reason = ${t.to === "rejected" ? reasonText : null}, updated_at = now() where id = ${id} and status = ${v.status} returning id`;
   if (!done.length) throw new VerificationError("Someone else just changed this. Reload.");
   if (t.to === "approved") {
     const acc = await db<{ username: string; profile: { displayName?: string } | null }>`select username, profile from om_account where user_id = ${v.user_id}`;
