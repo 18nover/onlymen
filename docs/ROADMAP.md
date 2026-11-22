@@ -43,7 +43,7 @@
 - Geo-blocking is stored but not enforced.
 - Photo storage is `bytea` in Neon, capped by the free-plan branch size (1 GB verified 2026-11-21). On Workers every photo view is a Worker request (100k/day free) plus a Hyperdrive query; move to R2 when volume or Neon size gets tight.
 - Re-counted 2026-11-21 on `cloudflare-workers`: **1 pre-existing lint error** (`client.server.ts` empty block), **8 failing template share-card tests** and **1 failing migration-plan test**; all pre-existing on main.
-- AI operations plan (ranking, featured pricing, safety, agent-run ops) is a plan, not a build: [OPERATIONS.md](OPERATIONS.md).
+- AI operations plan (ranking, safety, agent-run ops; paid placement dropped in ONL-11) is a plan, not a build: [OPERATIONS.md](OPERATIONS.md).
 
 ---
 
