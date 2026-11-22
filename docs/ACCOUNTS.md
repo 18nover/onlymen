@@ -29,7 +29,7 @@ Public registration is closed server-side and only Jerry's allowlisted account c
 | `om_banner` | one banner image per account (`migrations/0005_profile_banner.sql`). Not in `om_photo`, so production gallery queries are unchanged. |
 | `om_show`, `om_reminder` | scheduled shows and fans' reminders |
 
-Schema: `migrations/0001_auth.sql`, `migrations/0002_onlymen_accounts.sql`, `migrations/0003_account_role.sql`, `migrations/0004_invite_codes.sql`, `migrations/0005_profile_banner.sql` (applied by `npm run db:migrate`, which runs during the Vercel build). Photos count against Neon's free-plan storage (1 GB branch logical size, verified 2026-11-21). See [ARCHITECTURE.md](ARCHITECTURE.md) and [HOSTING.md](HOSTING.md).
+Schema: `migrations/0001_auth.sql`, `migrations/0002_onlymen_accounts.sql`, `migrations/0003_account_role.sql`, `migrations/0004_invite_codes.sql`, `migrations/0005_profile_banner.sql`, `migrations/0006_creator_verification.sql` (creator ID verification + 2257, see [VERIFICATION.md](VERIFICATION.md)) (applied by `npm run db:migrate`, which runs during the Vercel build). Photos count against Neon's free-plan storage (1 GB branch logical size, verified 2026-11-21). See [ARCHITECTURE.md](ARCHITECTURE.md) and [HOSTING.md](HOSTING.md).
 
 ## Code map
 

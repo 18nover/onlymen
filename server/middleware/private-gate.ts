@@ -46,7 +46,7 @@ async function pass(next: () => unknown | Promise<unknown>): Promise<unknown> {
 export default async function privateGate(event: GateEvent, next: () => unknown | Promise<unknown>): Promise<unknown> {
   if (privateModeOff()) return next();
   const path = normalizePath(event.url.pathname);
-  if (isPublicPath(path) || path.startsWith(SERVER_FN_PREFIX) || path.startsWith("/api/photo/") || path === "/api/owner-seed") return pass(next);
+  if (isPublicPath(path) || path.startsWith(SERVER_FN_PREFIX) || path.startsWith("/api/photo/") || path === "/api/owner-seed" || path.startsWith("/api/kyc/webhook/")) return pass(next);
   if (signUpPageOpen() && path === "/join") return pass(next);
   if (hasSessionCookie(event.req.headers)) return pass(next);
 

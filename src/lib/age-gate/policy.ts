@@ -34,7 +34,7 @@ export const AGE_EXEMPT_PAGES = new Set(["/terms", "/privacy", "/guidelines", "/
 
 export function isAgeExempt(path: string): boolean {
   const p = normalizePath(path);
-  return AGE_EXEMPT_PAGES.has(p) || p.startsWith("/legal/") || isStaticAsset(p);
+  return AGE_EXEMPT_PAGES.has(p) || p.startsWith("/legal/") || p.startsWith("/api/kyc/webhook/") || isStaticAsset(p);
 }
 
 /**

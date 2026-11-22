@@ -9,6 +9,7 @@ import { useImageUrl } from "@/lib/account/media";
 import { emptyLive } from "@/lib/account/constants";
 import { randomId } from "@/lib/account/store";
 import { canGoLive } from "@/lib/live/gate";
+import { useIdVerification } from "@/lib/verification/use-verification";
 import { demoRecapStats } from "@/lib/live/demo";
 import { LIVE_CATEGORIES, liveHost, resolveHandoff } from "@/lib/live/config";
 import type { CreatorLive, LiveRecap } from "@/lib/live/types";
@@ -26,7 +27,8 @@ export function GoLivePanel({ a }: { a: PublicAccount }) {
   const [now, setNow] = useState(() => Date.now());
   const live: CreatorLive = { ...emptyLive(), ...a.live };
   const session = live.session;
-  const gate = canGoLive(a);
+  const idv = useIdVerification();
+  const gate = canGoLive(a, { requireApproved: idv.enabled });
   const photo = useImageUrl(a.profile.photos.find((p) => p.primary)?.id);
 
   useEffect(() => {
@@ -79,7 +81,11 @@ export function GoLivePanel({ a }: { a: PublicAccount }) {
             {gate.missing.map((m) => (
               <li key={m.key} className="flex items-center justify-between gap-2">
                 <span className="text-muted">{m.label}</span>
-                {m.step && <Link to="/onboarding" search={{ step: m.step }} className="text-xs font-semibold text-gold-hi underline underline-offset-2">Do it</Link>}
+                {m.key === "verification" && idv.enabled ? (
+                  <Link to="/me/verify" className="text-xs font-semibold text-gold-hi underline underline-offset-2">{a.creator?.status === "pending_review" ? "View" : "Verify ID"}</Link>
+                ) : (
+                  m.step && <Link to="/onboarding" search={{ step: m.step }} className="text-xs font-semibold text-gold-hi underline underline-offset-2">Do it</Link>
+                )}
               </li>
             ))}
           </ul>

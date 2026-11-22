@@ -28,3 +28,4 @@ Do not put secrets in these files: environment variable **names** only, never va
 - DNS backups: `/workspace/dns-backup/onlymen.gay.json` and `/workspace/dns-backup/onlymen.live.json` on the shared box. Never use a backup to overwrite the Google MX/TXT records on onlymen.gay.
 - AI operations plan Page: [OnlyMen AI Operations Plan](https://cursor.com/canvas/store-2cd20948-eddd-4f70-85a3-7c25d7c2a761/b59a0ba2-2cc4-4337-9041-9314a01932ff)
 - Company site: 18nover.gay (owned by the 18nover bot). Its footer links to OnlyMen's `/terms`, `/privacy`, `/2257`, `/guidelines`, and `/join?as=creator`. Coordinate with the 18nover bot before moving or renaming those routes.
+- Visitor 18+ age gate: [AGE_GATE.md](AGE_GATE.md) · Creator ID verification + 2257: [VERIFICATION.md](VERIFICATION.md)

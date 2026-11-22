@@ -43,6 +43,17 @@
     "ONLYMEN_AGE_VERIFIER": "clickthrough",
     // Block visitors geolocated to U.S. states with adult-site AV laws
     // (src/lib/age-gate/av-states.ts). OFF: Jerry is in Kentucky. Owner/admin bypass.
-    "ONLYMEN_AGE_GATE_GEOBLOCK": "off"
+    "ONLYMEN_AGE_GATE_GEOBLOCK": "off",
+    // Creator ID verification + 2257 (src/lib/verification, docs/VERIFICATION.md).
+    // On: only APPROVED creators can go live or mark photos explicit.
+    "ONLYMEN_ID_VERIFICATION": "on",
+    // KYC provider: "manual" (admin review at /admin/verifications). Vendors plug in here.
+    "ONLYMEN_KYC_PROVIDER": "manual",
+    // "on" lets an admin approve their OWN verification (solo operator). Off by default — Jerry decides.
+    "ONLYMEN_KYC_SELF_REVIEW": "off"
   }
+  // Private R2 bucket for ID documents — add once R2 is enabled on the account
+  // (Cloudflare dashboard → R2; free tier 10 GB-month). Until then files are
+  // stored AES-256-GCM encrypted in Neon (om_verification_blob).
+  // "r2_buckets": [{ "binding": "KYC_BUCKET", "bucket_name": "onlymen-kyc" }]
 }

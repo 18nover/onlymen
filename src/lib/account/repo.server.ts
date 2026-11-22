@@ -8,6 +8,8 @@ import type { ConsentKey, ConsentRecord, Photo, PublicAccount, VerificationStatu
 import type { CreatorLive, Reminder, ScheduledShow } from "../live/types.ts";
 import { isDirectoryEligible } from "../directory.ts";
 import { publicRooms } from "../live/config.ts";
+import { platformEnv } from "../platform/runtime.ts";
+import { explicitPublishViolation } from "../verification/status.ts";
 
 type Row = Record<string, unknown>;
 
@@ -118,8 +120,9 @@ const validDate = (v: unknown) => typeof v === "string" && !Number.isNaN(Date.pa
  */
 export async function saveAccount(userId: string, next: PublicAccount): Promise<void> {
   const db = await getSql();
-  const cur = (await db<Row>`select verification_status, account_type from om_account where user_id = ${userId}`)[0];
+  const cur = (await db<Row>`select verification_status, account_type, live_session is not null as live_now from om_account where user_id = ${userId}`)[0];
   if (!cur) throw new Error("Account not found.");
+  const idGate = platformEnv("ONLYMEN_ID_VERIFICATION") === "on";
 
   const { photos, bannerPhotoId: _bannerPhotoId, ...profileRest } = next.profile ?? ({} as PublicAccount["profile"]);
   // ID images never leave the device; only their local media keys are kept.
@@ -140,9 +143,26 @@ export async function saveAccount(userId: string, next: PublicAccount): Promise<
   const size = Object.values(blobs).reduce((n, b) => n + (b?.length ?? 0), 0);
   if (size > MAX_JSON) throw new Error("That's too much profile data to save.");
 
+  // ID VERIFICATION (ONLYMEN_ID_VERIFICATION=on): only approved creators may go
+  // live or mark photos explicit. Checked here, server-side, on every save.
+  if (idGate) {
+    const prevExplicit = new Set(
+      (await db<{ id: string }>`select id from om_photo where user_id = ${userId} and attached and explicit`).map((r) => String(r.id)),
+    );
+    const bad = explicitPublishViolation({
+      flag: true,
+      accountType: String(cur.account_type),
+      accountStatus: String(cur.verification_status),
+      startingLive: Boolean(session) && !cur.live_now,
+      newlyExplicit: (photos ?? []).some((p) => p.explicit && !prevExplicit.has(p.id)),
+    });
+    if (bad) throw new Error(bad);
+  }
+
   // Creators may submit (or resubmit) verification; only staff can approve/reject.
+  // With ID verification on, status only changes through /me/verify + admin review.
   let status = String(cur.verification_status) as VerificationStatus;
-  if (wantedStatus === "pending_review" && (status === "not_started" || status === "rejected") && cur.account_type === "creator") status = "pending_review";
+  if (!idGate && wantedStatus === "pending_review" && (status === "not_started" || status === "rejected") && cur.account_type === "creator") status = "pending_review";
   if (!STATUSES.includes(status)) status = "not_started";
 
   await db`update om_account set

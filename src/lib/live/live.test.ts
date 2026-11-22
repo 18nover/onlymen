@@ -70,4 +70,13 @@ describe("go-live gate", () => {
     assert.equal(canGoLive({ ...base, consents: [rec("liveRules", true), rec("liveCoPerformers", true), rec("liveRules", false)] }).ok, false);
     assert.equal(canGoLive({ type: "creator", creator: { status: "not_started" } as never, consents: [rec("liveRules", true), rec("liveCoPerformers", true)] }).missing[0].key, "verification");
   });
+
+  it("with ID verification on, only an APPROVED creator may go live", () => {
+    const consents = [rec("liveRules", true), rec("liveCoPerformers", true)];
+    const at = (status: string) => canGoLive({ type: "creator", creator: { status } as never, consents }, { requireApproved: true });
+    assert.equal(at("pending_review").ok, false);
+    assert.equal(at("not_started").ok, false);
+    assert.equal(at("rejected").ok, false);
+    assert.equal(at("approved").ok, true);
+  });
 });

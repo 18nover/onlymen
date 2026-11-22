@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from "react";
+import { useIdVerification } from "@/lib/verification/use-verification";
 import { createPortal } from "react-dom";
 import { Link } from "@tanstack/react-router";
 import {
@@ -373,7 +374,31 @@ export function PermissionsStep({ account, save, onNext }: StepProps) {
 
 // ------------------------------------------------------------------ creator verification
 
-export function VerifyStep({ account, save, onNext }: StepProps) {
+export function VerifyStep(props: StepProps) {
+  const idv = useIdVerification();
+  // ONLYMEN_ID_VERIFICATION=on: documents go to the server flow at /me/verify instead of this device.
+  if (idv.enabled) return <VerifyStepServer {...props} />;
+  return <VerifyStepLocal {...props} />;
+}
+
+function VerifyStepServer({ account, onNext }: StepProps) {
+  onNext(() => null);
+  const st = account.creator?.status;
+  return (
+    <>
+      <StepHead kicker="Creator verification" title={<>Prove you're <span className="text-gold italic">you.</span></>} sub="Every creator is ID- and age-verified before going live or posting explicit photos. Documents are encrypted and only seen by our review team." />
+      <Card className="grid gap-3">
+        <p className="flex items-center gap-2 text-sm font-semibold text-ivory"><ShieldCheck className="size-4 text-gold" /> {st === "approved" ? "You're verified." : st === "pending_review" ? "Submitted — in review." : st === "rejected" ? "Your last submission was declined." : "Not verified yet."}</p>
+        {st !== "approved" && st !== "pending_review" && (
+          <Link to="/me/verify" className="inline-flex h-11 w-fit items-center rounded-full bg-gold px-6 text-sm font-bold tracking-[0.12em] uppercase">Verify my ID</Link>
+        )}
+        <p className="text-xs text-dim">You can finish setting up your profile now and verify later.</p>
+      </Card>
+    </>
+  );
+}
+
+function VerifyStepLocal({ account, save, onNext }: StepProps) {
   const c = account.creator ?? emptyCreator();
   const set = (patch: Partial<typeof c>) => save((a) => ({ ...a, creator: { ...(a.creator ?? emptyCreator()), ...patch } }));
   const prev = latestConsents(account.consents);

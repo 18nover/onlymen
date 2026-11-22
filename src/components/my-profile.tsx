@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useIdVerification } from "@/lib/verification/use-verification";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Bell, Camera, Check, Coins, Crown, ExternalLink, Eye, EyeOff, Globe, Instagram, Loader2, LogOut, MapPin, Mic, Pencil, ShieldCheck, Sparkles, X as XIcon } from "lucide-react";
 import { Footer, Header, MobileNav } from "@/components/onlymen-ui";
@@ -69,6 +70,7 @@ function Body({ a }: { a: PublicAccount }) {
   const age = ageOn(a.dob);
   const creator = a.type === "creator";
   const status = a.creator?.status;
+  const idv = useIdVerification();
   const consents = latestConsents(a.consents);
   const shown = photos[active] ?? photos[0];
   const blurred = !!shown?.explicit && a.privacy.blurExplicit && !reveal;
@@ -153,9 +155,13 @@ function Body({ a }: { a: PublicAccount }) {
                 <ShieldCheck className="mt-0.5 size-4 shrink-0 text-gold" />
                 <div>
                   <p className="font-semibold text-ivory">{status === "pending_review" ? "ID verification pending review" : status === "approved" ? "Verified creator" : "Verify your ID to go public"}</p>
-                  {status !== "pending_review" && status !== "approved" && (
-                    <Link to="/onboarding" search={{ step: "verify" }} className="mt-1 inline-block text-xs font-semibold text-gold-hi underline underline-offset-2">Start verification</Link>
-                  )}
+                  {status !== "pending_review" && status !== "approved" &&
+                    (idv.enabled ? (
+                      <Link to="/me/verify" className="mt-1 inline-block text-xs font-semibold text-gold-hi underline underline-offset-2">{status === "rejected" ? "Try again" : "Start verification"}</Link>
+                    ) : (
+                      <Link to="/onboarding" search={{ step: "verify" }} className="mt-1 inline-block text-xs font-semibold text-gold-hi underline underline-offset-2">Start verification</Link>
+                    ))}
+                  {idv.enabled && status === "pending_review" && <p className="mt-0.5 text-xs text-muted">You can't go live or post explicit photos until it's approved.</p>}
                 </div>
               </div>
             )}

@@ -21,6 +21,11 @@ export function platformEnv(key: string): string | undefined {
   return v || undefined;
 }
 
+/** A non-string Worker binding (e.g. an R2 bucket). Always undefined on Node. */
+export function platformBinding<T = unknown>(_name: string): T | undefined {
+  return undefined;
+}
+
 /** True when the Worker has a Hyperdrive binding. Always false on Node. */
 export function workerDbAvailable(): boolean {
   return false;

@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as R2257RouteImport } from './routes/2257'
+import { Route as CustodianRouteImport } from './routes/custodian'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as GuidelinesRouteImport } from './routes/guidelines'
 import { Route as JoinRouteImport } from './routes/join'
@@ -24,10 +25,14 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AdminInvitesRouteImport } from './routes/admin.invites'
+import { Route as AdminVerificationsRouteImport } from './routes/admin.verifications'
 import { Route as ApiOwnerSeedRouteImport } from './routes/api/owner-seed'
 import { Route as MHandleRouteImport } from './routes/m.$handle'
+import { Route as MeVerifyRouteImport } from './routes/me_.verify'
 import { Route as WatchHandleRouteImport } from './routes/watch.$handle'
 import { Route as ApiPhotoIdRouteImport } from './routes/api/photo/$id'
+import { Route as ApiKycFileIdRouteImport } from './routes/api/kyc/file/$id'
+import { Route as ApiKycWebhookProviderRouteImport } from './routes/api/kyc/webhook/$provider'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -37,6 +42,11 @@ const IndexRoute = IndexRouteImport.update({
 const R2257Route = R2257RouteImport.update({
   id: '/2257',
   path: '/2257',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CustodianRoute = CustodianRouteImport.update({
+  id: '/custodian',
+  path: '/custodian',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
@@ -104,6 +114,11 @@ const AdminInvitesRoute = AdminInvitesRouteImport.update({
   path: '/admin/invites',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminVerificationsRoute = AdminVerificationsRouteImport.update({
+  id: '/admin/verifications',
+  path: '/admin/verifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiOwnerSeedRoute = ApiOwnerSeedRouteImport.update({
   id: '/api/owner-seed',
   path: '/api/owner-seed',
@@ -112,6 +127,11 @@ const ApiOwnerSeedRoute = ApiOwnerSeedRouteImport.update({
 const MHandleRoute = MHandleRouteImport.update({
   id: '/m/$handle',
   path: '/m/$handle',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeVerifyRoute = MeVerifyRouteImport.update({
+  id: '/me_/verify',
+  path: '/me/verify',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WatchHandleRoute = WatchHandleRouteImport.update({
@@ -124,10 +144,21 @@ const ApiPhotoIdRoute = ApiPhotoIdRouteImport.update({
   path: '/api/photo/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiKycFileIdRoute = ApiKycFileIdRouteImport.update({
+  id: '/api/kyc/file/$id',
+  path: '/api/kyc/file/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiKycWebhookProviderRoute = ApiKycWebhookProviderRouteImport.update({
+  id: '/api/kyc/webhook/$provider',
+  path: '/api/kyc/webhook/$provider',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/2257': typeof R2257Route
+  '/custodian': typeof CustodianRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/guidelines': typeof GuidelinesRoute
   '/join': typeof JoinRoute
@@ -141,14 +172,19 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/admin/invites': typeof AdminInvitesRoute
+  '/admin/verifications': typeof AdminVerificationsRoute
   '/api/owner-seed': typeof ApiOwnerSeedRoute
   '/m/$handle': typeof MHandleRoute
+  '/me/verify': typeof MeVerifyRoute
   '/watch/$handle': typeof WatchHandleRoute
   '/api/photo/$id': typeof ApiPhotoIdRoute
+  '/api/kyc/file/$id': typeof ApiKycFileIdRoute
+  '/api/kyc/webhook/$provider': typeof ApiKycWebhookProviderRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/2257': typeof R2257Route
+  '/custodian': typeof CustodianRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/guidelines': typeof GuidelinesRoute
   '/join': typeof JoinRoute
@@ -162,15 +198,20 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/admin/invites': typeof AdminInvitesRoute
+  '/admin/verifications': typeof AdminVerificationsRoute
   '/api/owner-seed': typeof ApiOwnerSeedRoute
   '/m/$handle': typeof MHandleRoute
+  '/me/verify': typeof MeVerifyRoute
   '/watch/$handle': typeof WatchHandleRoute
   '/api/photo/$id': typeof ApiPhotoIdRoute
+  '/api/kyc/file/$id': typeof ApiKycFileIdRoute
+  '/api/kyc/webhook/$provider': typeof ApiKycWebhookProviderRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/2257': typeof R2257Route
+  '/custodian': typeof CustodianRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/guidelines': typeof GuidelinesRoute
   '/join': typeof JoinRoute
@@ -184,16 +225,21 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/admin/invites': typeof AdminInvitesRoute
+  '/admin/verifications': typeof AdminVerificationsRoute
   '/api/owner-seed': typeof ApiOwnerSeedRoute
   '/m/$handle': typeof MHandleRoute
+  '/me_/verify': typeof MeVerifyRoute
   '/watch/$handle': typeof WatchHandleRoute
   '/api/photo/$id': typeof ApiPhotoIdRoute
+  '/api/kyc/file/$id': typeof ApiKycFileIdRoute
+  '/api/kyc/webhook/$provider': typeof ApiKycWebhookProviderRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/2257'
+    | '/custodian'
     | '/forgot-password'
     | '/guidelines'
     | '/join'
@@ -207,14 +253,19 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/terms'
     | '/admin/invites'
+    | '/admin/verifications'
     | '/api/owner-seed'
     | '/m/$handle'
+    | '/me/verify'
     | '/watch/$handle'
     | '/api/photo/$id'
+    | '/api/kyc/file/$id'
+    | '/api/kyc/webhook/$provider'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/2257'
+    | '/custodian'
     | '/forgot-password'
     | '/guidelines'
     | '/join'
@@ -228,14 +279,19 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/terms'
     | '/admin/invites'
+    | '/admin/verifications'
     | '/api/owner-seed'
     | '/m/$handle'
+    | '/me/verify'
     | '/watch/$handle'
     | '/api/photo/$id'
+    | '/api/kyc/file/$id'
+    | '/api/kyc/webhook/$provider'
   id:
     | '__root__'
     | '/'
     | '/2257'
+    | '/custodian'
     | '/forgot-password'
     | '/guidelines'
     | '/join'
@@ -249,15 +305,20 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/terms'
     | '/admin/invites'
+    | '/admin/verifications'
     | '/api/owner-seed'
     | '/m/$handle'
+    | '/me_/verify'
     | '/watch/$handle'
     | '/api/photo/$id'
+    | '/api/kyc/file/$id'
+    | '/api/kyc/webhook/$provider'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   R2257Route: typeof R2257Route
+  CustodianRoute: typeof CustodianRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   GuidelinesRoute: typeof GuidelinesRoute
   JoinRoute: typeof JoinRoute
@@ -271,10 +332,14 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   TermsRoute: typeof TermsRoute
   AdminInvitesRoute: typeof AdminInvitesRoute
+  AdminVerificationsRoute: typeof AdminVerificationsRoute
   ApiOwnerSeedRoute: typeof ApiOwnerSeedRoute
   MHandleRoute: typeof MHandleRoute
+  MeVerifyRoute: typeof MeVerifyRoute
   WatchHandleRoute: typeof WatchHandleRoute
   ApiPhotoIdRoute: typeof ApiPhotoIdRoute
+  ApiKycFileIdRoute: typeof ApiKycFileIdRoute
+  ApiKycWebhookProviderRoute: typeof ApiKycWebhookProviderRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -291,6 +356,13 @@ declare module '@tanstack/react-router' {
       path: '/2257'
       fullPath: '/2257'
       preLoaderRoute: typeof R2257RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/custodian': {
+      id: '/custodian'
+      path: '/custodian'
+      fullPath: '/custodian'
+      preLoaderRoute: typeof CustodianRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forgot-password': {
@@ -384,6 +456,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminInvitesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/verifications': {
+      id: '/admin/verifications'
+      path: '/admin/verifications'
+      fullPath: '/admin/verifications'
+      preLoaderRoute: typeof AdminVerificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/owner-seed': {
       id: '/api/owner-seed'
       path: '/api/owner-seed'
@@ -396,6 +475,13 @@ declare module '@tanstack/react-router' {
       path: '/m/$handle'
       fullPath: '/m/$handle'
       preLoaderRoute: typeof MHandleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/me_/verify': {
+      id: '/me_/verify'
+      path: '/me/verify'
+      fullPath: '/me/verify'
+      preLoaderRoute: typeof MeVerifyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/watch/$handle': {
@@ -412,12 +498,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPhotoIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/kyc/file/$id': {
+      id: '/api/kyc/file/$id'
+      path: '/api/kyc/file/$id'
+      fullPath: '/api/kyc/file/$id'
+      preLoaderRoute: typeof ApiKycFileIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/kyc/webhook/$provider': {
+      id: '/api/kyc/webhook/$provider'
+      path: '/api/kyc/webhook/$provider'
+      fullPath: '/api/kyc/webhook/$provider'
+      preLoaderRoute: typeof ApiKycWebhookProviderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R2257Route: R2257Route,
+  CustodianRoute: CustodianRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   GuidelinesRoute: GuidelinesRoute,
   JoinRoute: JoinRoute,
@@ -431,10 +532,14 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   TermsRoute: TermsRoute,
   AdminInvitesRoute: AdminInvitesRoute,
+  AdminVerificationsRoute: AdminVerificationsRoute,
   ApiOwnerSeedRoute: ApiOwnerSeedRoute,
   MHandleRoute: MHandleRoute,
+  MeVerifyRoute: MeVerifyRoute,
   WatchHandleRoute: WatchHandleRoute,
   ApiPhotoIdRoute: ApiPhotoIdRoute,
+  ApiKycFileIdRoute: ApiKycFileIdRoute,
+  ApiKycWebhookProviderRoute: ApiKycWebhookProviderRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

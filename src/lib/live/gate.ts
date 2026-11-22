@@ -8,12 +8,18 @@ function latestGranted(a: Pick<PublicAccount, "consents">, key: string) {
   return v;
 }
 
-/** A creator may go live once ID verification is submitted and live rules + co-performer policy are accepted. */
-export function canGoLive(a: Pick<PublicAccount, "type" | "creator" | "consents">): GoLiveCheck {
+/**
+ * A creator may go live once ID verification is submitted and live rules +
+ * co-performer policy are accepted. With `requireApproved` (ONLYMEN_ID_VERIFICATION=on)
+ * the verification must be APPROVED, matching the server-side check in saveAccount.
+ */
+export function canGoLive(a: Pick<PublicAccount, "type" | "creator" | "consents">, opts: { requireApproved?: boolean } = {}): GoLiveCheck {
   const missing: GoLiveCheck["missing"] = [];
   if (a.type !== "creator") missing.push({ key: "creator", label: "Creator account" });
   const st = a.creator?.status;
-  if (st !== "pending_review" && st !== "approved") missing.push({ key: "verification", label: "Submit ID verification", step: "verify" });
+  if (opts.requireApproved) {
+    if (st !== "approved") missing.push({ key: "verification", label: st === "pending_review" ? "ID verification in review (needs approval)" : "Get ID-verified", step: "verify" });
+  } else if (st !== "pending_review" && st !== "approved") missing.push({ key: "verification", label: "Submit ID verification", step: "verify" });
   if (!latestGranted(a, "liveRules") || !latestGranted(a, "liveCoPerformers")) missing.push({ key: "rules", label: "Accept the Live Stream Rules", step: "live" });
   return { ok: missing.length === 0, missing };
 }

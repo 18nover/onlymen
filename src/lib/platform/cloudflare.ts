@@ -30,6 +30,12 @@ export function platformEnv(key: string): string | undefined {
   return p || undefined;
 }
 
+/** A non-string Worker binding (e.g. an R2 bucket), or undefined. */
+export function platformBinding<T = unknown>(name: string): T | undefined {
+  const v = bindings[name];
+  return v && typeof v === "object" ? (v as T) : undefined;
+}
+
 export function workerDbAvailable(): boolean {
   return Boolean(bindings.HYPERDRIVE);
 }
