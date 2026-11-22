@@ -8,7 +8,7 @@ OnlyMen is a creator and community product. It never offers escorting or any pai
 
 | Area | Removed | Why |
 |---|---|---|
-| Directory and profiles | Reviews and star ratings, rating and "most reviewed" sorts, paid-looking tier badges, the "available" badge and filter, availability grids, travel flags, "Into" lists, profile view counts, private-album "request access", distance on profile cards, an inflated online count | Read like a booking directory, or faked activity |
+| Directory and profiles | Reviews and star ratings, rating-based sorts, paid-looking tier badges, the "available" badge and filter, availability grids, travel flags, "Into" lists, profile view counts, private-album access requests, distance on profile cards, an inflated online count | Read like a booking directory, or faked activity |
 | Account and onboarding | Rate cards (including the per-hour unit), the services/content menu, the position field, the private show rate in go-live | Read as selling in-person services |
 | Tags | "Dinner dates", "Events & travel", "Right now", "Dates", "Discreet" | Coded or easy to misread. Hidden in code (see below) |
 | Copy | Reference-site positioning, escort wording in the docs, "not Stripe" lines, paid placement and "boosted" copy | Not our product |
