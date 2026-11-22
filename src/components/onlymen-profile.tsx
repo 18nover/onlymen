@@ -36,16 +36,17 @@ function Gallery({ m }: { m: Model }) {
   const n = crops.length;
   const go = (d: number) => setI((x) => (x + d + n) % n);
   return (
-    <div className="-mx-[var(--gutter)] sm:mx-0">
-      <div className={`group relative aspect-[4/5] overflow-hidden rounded-none sm:rounded-3xl sm:aspect-[4/3] md:aspect-[4/5] lg:aspect-[5/6] ${m.live ? "shadow-[0_0_40px_-10px_rgb(194_42_69_/_0.9)]" : "border-gold-grad glow-gold"}`}>
+    <div className="om-hero-in -mx-1 sm:mx-0">
+      <div className={`group relative aspect-[4/5] overflow-hidden rounded-[22px] sm:rounded-3xl sm:aspect-[4/3] md:aspect-[4/5] lg:aspect-[5/6] ${m.live ? "shadow-[0_0_40px_-10px_rgb(194_42_69_/_0.9)]" : "border-gold-grad glow-gold"}`}>
         {m.live && <span className="live-ring-border !z-20 !p-1" aria-hidden="true" />}
-        <img
-          key={i}
-          src={m.photo}
-          alt={`${m.name}, photo ${i + 1} of ${n}`}
-          className="absolute inset-0 size-full animate-fade-up object-cover"
-          style={{ objectPosition: crops[i].pos, transform: `scale(${crops[i].scale})`, transformOrigin: crops[i].pos }}
-        />
+        <div key={i} className="om-photo-in absolute inset-0 overflow-hidden rounded-[inherit]">
+          <img
+            src={m.photo}
+            alt={`${m.name}, photo ${i + 1} of ${n}`}
+            className="size-full object-cover transition-transform duration-700 ease-out"
+            style={{ objectPosition: crops[i].pos, transform: `scale(${crops[i].scale})`, transformOrigin: crops[i].pos }}
+          />
+        </div>
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/10 to-ink/30" />
         <div className="absolute inset-x-5 bottom-5 z-10 md:hidden" aria-hidden="true">
           <p className="font-display text-5xl leading-none font-semibold text-ivory drop-shadow-[0_2px_18px_rgb(0_0_0/0.8)]">{m.name}<span className="text-gold">,</span> <span className="font-normal text-ivory/85">{m.age}</span></p>
@@ -68,7 +69,7 @@ function Gallery({ m }: { m: Model }) {
           <ChevronRight className="size-5" />
         </button>
       </div>
-      <div className="no-scrollbar mt-3 flex justify-center gap-2 overflow-x-auto p-0.5 px-[var(--gutter)] sm:justify-start sm:px-0.5">
+      <div className="no-scrollbar mt-3 flex justify-center gap-2 overflow-x-auto p-0.5 px-1 sm:justify-start sm:px-0.5">
         {crops.map((c, k) => (
           <button
             key={k}
@@ -87,7 +88,7 @@ function Gallery({ m }: { m: Model }) {
 
 function Card({ title, icon, children, id }: { title: string; icon: React.ReactNode; children: React.ReactNode; id?: string }) {
   return (
-    <section id={id} className="min-w-0 scroll-mt-24 rounded-2xl bg-surface/70 p-5 ring-1 ring-line/70 sm:p-6">
+    <section id={id} className="om-reveal min-w-0 scroll-mt-24 rounded-2xl bg-surface/70 p-5 ring-1 ring-line/70 sm:p-6">
       <h2 className="flex items-center gap-2 font-sans text-xs font-bold tracking-[0.22em] text-gold uppercase">
         {icon} {title}
       </h2>
@@ -276,13 +277,13 @@ export function OnlyMenProfile({ handle }: { handle: string }) {
         <Link to="/" hash="browse" className="mt-4 inline-flex h-10 items-center gap-1.5 text-sm font-semibold text-muted transition hover:text-gold-hi">
           <ArrowLeft className="size-4" /> Back to browse
         </Link>
-        <p className="mx-auto mt-1 mb-3 flex w-fit max-w-full items-center gap-2 rounded-full border border-line/80 bg-surface/70 px-3 py-1.5 text-xs text-muted">
+        <p className="om-enter mx-auto mt-1 mb-3 flex w-fit max-w-full items-center gap-2 rounded-full border border-line/80 bg-surface/70 px-3 py-1.5 text-xs text-muted">
           <DemoBadge /> Demo profile · AI-generated portrait, not a real person
         </p>
 
         <div className="mt-2 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-8">
           <Gallery m={m} />
-          <div className="min-w-0 md:sticky md:top-24 md:self-start">
+          <div className="om-enter-2 min-w-0 md:sticky md:top-24 md:self-start">
             <ActionPanel m={m} />
           </div>
         </div>
@@ -345,7 +346,7 @@ export function OnlyMenProfile({ handle }: { handle: string }) {
       <Footer />
 
       {/* mobile sticky action bar */}
-      <div className="om-fixed-bottom om-glass fixed inset-x-3 z-40 mx-auto flex max-w-md items-center gap-2 rounded-full p-1.5 pl-2 md:hidden">
+      <div className="om-fixed-bottom om-glass om-slide-up fixed inset-x-3 z-40 mx-auto flex max-w-md items-center gap-2 rounded-full p-1.5 pl-2 md:hidden">
         <img src={m.photo} alt="" className="size-11 rounded-full object-cover ring-1 ring-gold/60" />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-bold text-ivory">{m.name}, {m.age}</p>
@@ -356,7 +357,7 @@ export function OnlyMenProfile({ handle }: { handle: string }) {
         <a href="#message" className="grid size-11 place-items-center rounded-full border border-gold/50 text-gold-hi" aria-label="Message">
           <MessageCircle className="size-5" />
         </a>
-        <button className="flex h-11 items-center gap-1.5 rounded-full bg-gold px-5 text-sm font-bold">
+        <button className="om-shimmer flex h-11 items-center gap-1.5 rounded-full bg-gold px-5 text-sm font-bold">
           <Coins className="size-4" /> Tip
         </button>
       </div>

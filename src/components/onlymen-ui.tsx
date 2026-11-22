@@ -37,7 +37,7 @@ function AccountButtons() {
   }
   return (
     <>
-      <Link to="/login" className="flex h-10 items-center rounded-full bg-gold px-5 text-sm font-bold whitespace-nowrap transition hover:brightness-110">Members sign in</Link>
+      <Link to="/login" className="om-shimmer flex h-10 items-center rounded-full bg-gold px-5 text-sm font-bold whitespace-nowrap transition hover:brightness-110">Members sign in</Link>
     </>
   );
 }

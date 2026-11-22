@@ -44,10 +44,10 @@ const PAGE = 12;
 function Hero({ online, live }: { online: number; live: number }) {
   return (
     <section className="relative isolate overflow-hidden border-b border-line/60">
-      <img src="/models/hero.webp" alt="" className="absolute inset-0 -z-10 size-full object-cover object-[70%_center] opacity-75" />
+      <img src="/models/hero.webp" alt="" className="om-zoom-out absolute inset-0 -z-10 size-full object-cover object-[70%_center] opacity-75" />
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,rgb(43_7_14/0.35)_0%,rgb(7_4_5/0.82)_75%)]" />
       <div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-transparent to-ink/50" />
-      <div className="om-container flex flex-col items-center py-[clamp(3rem,8vw,6rem)] text-center">
+      <div className="om-enter om-container flex flex-col items-center py-[clamp(3rem,8vw,6rem)] text-center">
         <p className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-gold">
           <Sparkles className="size-3.5" /> Private club for gay men · 18+
         </p>
@@ -60,7 +60,7 @@ function Hero({ online, live }: { online: number; live: number }) {
           who make your night.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <a href="#browse" className="grid h-12 place-items-center rounded-full bg-gold px-7 text-sm font-bold glow-gold transition hover:brightness-110">
+          <a href="#browse" className="om-shimmer grid h-12 place-items-center rounded-full bg-gold px-7 text-sm font-bold glow-gold hover:brightness-110">
             Browse men
           </a>
           <Link
@@ -109,7 +109,7 @@ function SectionHead({ kicker, title, icon, tone = "gold", right }: { kicker: st
 function LiveRow({ list }: { list: Model[] }) {
   if (!list.length) return null;
   return (
-    <section id="live" className="om-container om-section scroll-mt-20">
+    <section id="live" className="om-reveal om-container om-section scroll-mt-20">
       <SectionHead
         kicker="On air"
         title="Live now"
@@ -117,7 +117,7 @@ function LiveRow({ list }: { list: Model[] }) {
         icon={<span className="size-2 animate-pulse-dot rounded-full bg-ruby" />}
         right={<Link to="/live" className="inline-flex h-10 items-center text-sm font-semibold text-gold transition hover:text-gold-hi">Schedule & all live →</Link>}
       />
-      <div className="no-scrollbar om-bleed mt-6 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 sm:gap-4">
+      <div className="om-stagger no-scrollbar om-bleed mt-6 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 sm:gap-4">
         {list.map((m) => (
           <Link
             key={m.id}
@@ -129,7 +129,7 @@ function LiveRow({ list }: { list: Model[] }) {
             <img src={m.photo} alt={`${m.name}, live`} className="size-full object-cover transition duration-500 group-hover:scale-105" />
             <div className="absolute inset-0 tile-shade" />
             <span className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full bg-ruby px-2.5 py-1 text-xs font-bold tracking-wider text-ivory uppercase">
-              <span className="size-1.5 rounded-full bg-ivory" /> Live
+              <span className="size-1.5 animate-pulse-dot rounded-full bg-ivory" /> Live
             </span>
             {m.source !== "real" && <span className="absolute top-3 left-[4.75rem]"><DemoBadge /></span>}
             <span className="absolute top-3 right-3 flex items-center gap-1 rounded-full bg-ink/70 px-2 py-1 text-xs font-semibold text-ivory backdrop-blur">
@@ -150,7 +150,7 @@ function Featured({ list, onTip }: { list: Model[]; onTip: (m: Model) => void })
   if (!list.length) return null;
   const [spot, ...rest] = list;
   return (
-    <section id="featured" className="om-container om-section scroll-mt-20">
+    <section id="featured" className="om-reveal om-container om-section scroll-mt-20">
       <SectionHead
         kicker="Editor’s picks"
         title="Featured"
@@ -195,7 +195,7 @@ function Featured({ list, onTip }: { list: Model[]; onTip: (m: Model) => void })
 function Tile({ m, onTip, featured = false }: { m: Model; onTip: (m: Model) => void; featured?: boolean }) {
   return (
     <article
-      className={`group relative aspect-[3/4] overflow-hidden rounded-none bg-surface transition sm:rounded-xl duration-300 ${m.live ? "ring-0 shadow-[0_0_28px_-8px_rgb(194_42_69_/_0.8)]" : "ring-1"} hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-18px_rgb(212_175_106_/_0.55)] ${
+      className={`group relative aspect-[3/4] overflow-hidden rounded-md bg-surface transition sm:rounded-xl duration-300 ${m.live ? "ring-0 shadow-[0_0_28px_-8px_rgb(194_42_69_/_0.8)]" : "ring-1"} hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-18px_rgb(212_175_106_/_0.55)] ${
         m.featured || featured ? "ring-gold/45 hover:ring-gold" : "ring-line/70 hover:ring-gold/60"
       }`}
     >
@@ -207,7 +207,7 @@ function Tile({ m, onTip, featured = false }: { m: Model; onTip: (m: Model) => v
         <div className="flex min-w-0 flex-col items-start gap-1">
           {m.live ? (
             <span className="flex items-center gap-1 rounded-full bg-ruby px-2 py-0.5 text-[10px] font-bold tracking-wider text-ivory uppercase">
-              <span className="size-1.5 rounded-full bg-ivory" /> Live
+              <span className="size-1.5 animate-pulse-dot rounded-full bg-ivory" /> Live
             </span>
           ) : m.isNew ? (
             <span className="rounded-full bg-ivory px-2 py-0.5 text-[10px] font-extrabold tracking-wider text-ink uppercase">New</span>
@@ -488,7 +488,7 @@ export function OnlyMenHome() {
 
           {visible.length ? (
             view === "grid" ? (
-              <div className="-mx-[var(--gutter)] mt-5 grid grid-cols-2 gap-[3px] sm:mx-0 sm:mt-6 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+              <div className="om-stagger -mx-[var(--gutter)] mt-5 grid grid-cols-2 gap-[3px] px-[3px] sm:mx-0 sm:px-0 sm:mt-6 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                 {visible.map((m) => (
                   <Tile key={m.id} m={m} onTip={setTip} />
                 ))}
@@ -529,7 +529,7 @@ export function OnlyMenHome() {
           )}
         </section>
 
-        <section className="om-container om-section">
+        <section className="om-reveal om-container om-section">
           <div className="relative overflow-hidden rounded-3xl border-gold-grad p-[clamp(1.5rem,5vw,3rem)] text-center md:text-left">
             <div className="absolute -top-24 -right-24 size-72 rounded-full bg-oxblood/60 blur-3xl" />
             <div className="relative grid gap-6 md:grid-cols-[1.5fr_1fr] md:items-center">
