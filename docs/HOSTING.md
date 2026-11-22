@@ -162,6 +162,7 @@ Local: `npm run preview:cf` (build + `wrangler dev` on :8787). Hyperdrive needs 
 
 - Better Auth hashes with **scrypt** (N=16384, r=16). In workerd it uses native `node:crypto` scrypt: measured **~50 ms CPU per verify** locally (hash ~50–80 ms). Every sign-in, password change and reset is ~5× over the free limit, so **Error 1102 on login is expected on the free plan**. Do not weaken the hash; use **Workers Paid ($5/mo)**.
 - Warm SSR of the gate, /login and legal pages measured ~6–8 ms wall locally: near the limit. Session checks are a cookie HMAC + one or two Hyperdrive queries (cheap).
+- Measured on the real workers.dev deploy (2026-11-21, `wrangler tail`): sign-in POST **87–172 ms CPU**, cold `/login` SSR up to ~190 ms, warm SSR of login/legal pages 7–18 ms, gate pages 0–5 ms, session server-function GETs 1–12 ms, `/api/photo` 52–60 ms. No Error 1102 in ~15 sign-ins (all outcomes `ok`), but sign-in is 9–17× the documented free limit; budget for Workers Paid before real traffic.
 - Hyperdrive config `onlymen-neon` currently has **query caching enabled**. For auth/session reads, turn caching **off** (stale session/allowlist reads for up to 60 s after sign-out otherwise). Supervisor owns that config.
 
 ### Still open before any cutover

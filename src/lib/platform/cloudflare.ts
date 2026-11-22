@@ -53,7 +53,10 @@ export async function runWithDbScope<T>(fn: () => Promise<T>): Promise<{ result:
   const close = async () => {
     if (scope.closed) return;
     scope.closed = true;
-    await Promise.allSettled(scope.all.map((c) => c.end()));
+    // Never let a slow Terminate handshake hold the invocation open (waitUntil
+    // is capped at 30 s); the socket is torn down with the request anyway.
+    const timeout = new Promise<void>((resolve) => setTimeout(resolve, 2000));
+    await Promise.race([Promise.allSettled(scope.all.map((c) => c.end())), timeout]);
   };
   try {
     const result = await scopes.run(scope, fn);
