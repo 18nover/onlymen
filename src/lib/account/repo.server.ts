@@ -7,6 +7,7 @@ import { CONSENT_VERSIONS, defaultPermissions, defaultPrivacy, emptyProfile } fr
 import type { ConsentKey, ConsentRecord, Photo, PublicAccount, VerificationStatus } from "./types.ts";
 import type { CreatorLive, Reminder, ScheduledShow } from "../live/types.ts";
 import { isDirectoryEligible } from "../directory.ts";
+import { publicRooms } from "../live/config.ts";
 
 type Row = Record<string, unknown>;
 
@@ -268,6 +269,7 @@ export type PublicProfile = {
   services: string[];
   acceptsTips: boolean;
   live: null | { title: string; tags: string[]; tipGoal: string; roomUrl: string; startedAt: string };
+  rooms: { platform: string; url: string }[];
   categories: string[];
   tipMenu: { label: string; price: string }[];
   shows: { id: string; title: string; startsAt: string; durationMin: number; tags: string[] }[];
@@ -307,7 +309,8 @@ const toPublic = (r: Row, photos: Row[], shows: Row[], bannerPhotoId: string | n
     bannerPhotoId,
     services: arr(p.services),
     acceptsTips: Boolean(p.acceptsTips),
-    live: session ? { title: str(session.title, 80), tags: arr(session.tags), tipGoal: str(session.tipGoal, 12), roomUrl: str(session.roomUrl, 400), startedAt: iso(session.startedAt) } : null,
+    live: session ? { title: str(session.title, 80), tags: arr(session.tags), tipGoal: str(session.tipGoal, 12), roomUrl: str(session.roomUrl, 500), startedAt: iso(session.startedAt) } : null,
+    rooms: publicRooms(live.rooms),
     categories: arr(live.categories),
     tipMenu: (live.tipMenu ?? []).slice(0, 20).map((t) => ({ label: str(t.label, 60), price: str(t.price, 12) })),
     shows: shows.map((s) => ({ id: String(s.id), title: String(s.title), startsAt: iso(s.starts_at), durationMin: Number(s.duration_min), tags: json<string[]>(s.tags, []) })),

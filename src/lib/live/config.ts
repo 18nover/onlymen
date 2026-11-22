@@ -54,9 +54,43 @@ export function hostLabel(url: string) {
   }
 }
 
+export type PublicRoom = { platform: string; url: string };
+
+/** http(s) rooms only; platform label falls back to the recognised host. Query strings (affiliate params) are kept. */
+export function publicRooms(rooms: { platform?: string; url?: string }[] | undefined | null): PublicRoom[] {
+  const out: PublicRoom[] = [];
+  const seen = new Set<string>();
+  for (const r of rooms ?? []) {
+    const url = safeExternalUrl(r.url);
+    if (!url || seen.has(url)) continue;
+    seen.add(url);
+    const platform = (r.platform ?? "").trim() || hostLabel(url);
+    out.push({ platform, url });
+    if (out.length >= 10) break;
+  }
+  return out;
+}
+
+/** Official Chaturbate embed src, preserving affiliate query params so referrals still credit the creator. */
+export function chaturbateEmbedSrc(url: string | undefined | null): string | null {
+  const safe = safeExternalUrl(url);
+  if (!safe) return null;
+  try {
+    const u = new URL(safe);
+    const host = u.hostname.replace(/^www\./, "");
+    if (host !== "chaturbate.com" && host !== "cbxyz.com") return null;
+    if (!u.pathname.startsWith("/in/")) return null;
+    // Keep the exact query string (tour, campaign, track, room, …).
+    return `https://cbxyz.com${u.pathname}${u.search}${u.hash}`;
+  } catch {
+    return null;
+  }
+}
+
 export const LIVE_PLATFORMS = [
   { id: "onlymen-live", label: "OnlyMen Live (coming soon)", hosts: [liveHost()], example: `${LIVE_BASE_URL}/yourname` },
-  { id: "chaturbate", label: "Chaturbate", hosts: ["chaturbate.com"], example: "https://chaturbate.com/yourname/" },
+  { id: "cam4", label: "CAM4", hosts: ["cam4.com"], example: "https://www.cam4.com/yourname" },
+  { id: "chaturbate", label: "Chaturbate", hosts: ["chaturbate.com", "cbxyz.com"], example: "https://chaturbate.com/yourname/" },
   { id: "stripchat", label: "Stripchat", hosts: ["stripchat.com"], example: "https://stripchat.com/yourname" },
   { id: "jff", label: "JustFor.Fans", hosts: ["justfor.fans"], example: "https://justfor.fans/yourname" },
   { id: "onlyfans", label: "OnlyFans live", hosts: ["onlyfans.com"], example: "https://onlyfans.com/yourname" },

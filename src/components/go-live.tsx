@@ -179,7 +179,7 @@ function PreflightSheet({ a, live, onClose, onStart }: { a: PublicAccount; live:
                 </button>
               ))}
             </div>
-            {live.rooms.length === 0 && <p className="mt-2 text-xs text-dim"><Link to="/onboarding" search={{ step: "live" }} className="text-gold-hi underline">Link your own room</Link> (Chaturbate, Stripchat, JFF…) so fans can watch today.</p>}
+            {live.rooms.length === 0 && <p className="mt-2 text-xs text-dim"><Link to="/onboarding" search={{ step: "live" }} className="text-gold-hi underline">Link your own room</Link> (CAM4, Chaturbate, Stripchat, JFF…) so fans can watch today.</p>}
           </fieldset>
           {err && <p role="alert" className="rounded-xl border border-ruby/50 bg-oxblood/50 px-4 py-2.5 text-sm font-semibold text-ivory">{err}</p>}
           <ul className="grid gap-1 text-xs text-dim">

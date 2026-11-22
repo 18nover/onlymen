@@ -24,6 +24,19 @@ import { runWithDbScope } from "./lib/platform/cloudflare";
 
 type Next = () => unknown | Promise<unknown>;
 
+/** Allow official Chaturbate embeds; does not tighten other directives. */
+const FRAME_SRC = "frame-src 'self' https://cbxyz.com https://www.cbxyz.com https://chaturbate.com https://www.chaturbate.com";
+
+function withFrameSrcCsp(res: Response): Response {
+  const ct = res.headers.get("content-type") ?? "";
+  if (!ct.includes("text/html")) return res;
+  const headers = new Headers(res.headers);
+  const existing = headers.get("content-security-policy");
+  if (existing && existing.toLowerCase().includes("frame-src")) return res;
+  headers.set("content-security-policy", existing ? `${existing}; ${FRAME_SRC}` : FRAME_SRC);
+  return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
+}
+
 async function toResponse(value: unknown): Promise<Response> {
   if (value instanceof Response) return value;
   if (value === undefined || value === null) return new Response(null, { status: 204 });
@@ -37,7 +50,7 @@ async function handle(request: Request): Promise<Response> {
   const gated: Next = () => privateGate(event, app);
   // In `vite dev` the grok-pwa Vite plugin already wraps HTML at the Node layer.
   const outer = import.meta.env.DEV ? gated() : grokPwaMiddleware(event, gated);
-  return toResponse(await outer);
+  return withFrameSrcCsp(await toResponse(await outer));
 }
 
 export default {

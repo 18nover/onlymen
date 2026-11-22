@@ -2,13 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { ArrowLeft, ExternalLink, Loader2, Radio, ShieldAlert } from "lucide-react";
 import { Brand } from "@/components/onlymen-ui";
-import { LiveRing } from "@/components/live-ui";
+import { ChaturbateEmbed, LiveRing, RoomLinks } from "@/components/live-ui";
 import { useAccount } from "@/lib/account/use-account";
 import { useImageUrl } from "@/lib/account/media";
 import { publicProfileFn } from "@/lib/account/api";
 import { liveNow } from "@/lib/live/demo";
 import { findModel } from "@/lib/models";
-import { LIVE_BASE_URL, liveHost, resolveHandoff } from "@/lib/live/config";
+import { LIVE_BASE_URL, chaturbateEmbedSrc, liveHost, publicRooms, resolveHandoff } from "@/lib/live/config";
+import type { PublicRoom } from "@/lib/live/config";
 
 export const Route = createFileRoute("/watch/$handle")({
   head: () => ({ meta: [{ title: "Taking you to OnlyMen Live…" }, { name: "robots", content: "noindex" }] }),
@@ -24,6 +25,7 @@ function Watch() {
   const ownPhoto = useImageUrl(account?.username === handle ? account.profile.photos.find((p) => p.primary)?.id : undefined);
   const [left, setLeft] = useState(DELAY);
   const [paused, setPaused] = useState(false);
+  const [showEmbed, setShowEmbed] = useState(false);
 
   const [real, setReal] = useState<Awaited<ReturnType<typeof publicProfileFn>> | undefined>(undefined);
   useEffect(() => {
@@ -36,18 +38,24 @@ function Watch() {
   }, [handle, account]);
 
   const info = useMemo(() => {
-    if (account && account.username === handle && account.live?.session) {
-      const t = resolveHandoff(handle, account.live.session.roomUrl);
-      return { name: account.profile.displayName || handle, photo: ownPhoto ?? "/models/hero.webp", title: account.live.session.title, live: true, target: t, profile: false };
+    const ownRooms = (): PublicRoom[] => publicRooms(account?.username === handle ? account.live?.rooms : undefined);
+    if (account && account.username === handle) {
+      const session = account.live?.session;
+      const t = resolveHandoff(handle, session?.roomUrl ?? account.live?.rooms[0]?.url ?? null);
+      const rooms = publicRooms([...(session?.roomUrl ? [{ platform: t.platform, url: session.roomUrl }] : []), ...ownRooms()]);
+      return { name: account.profile.displayName || handle, photo: ownPhoto ?? "/models/hero.webp", title: session?.title ?? account.profile.headline ?? "", live: !!session, target: t, rooms, profile: false };
     }
     if (real) {
       const ph = real.photos.find((x) => x.primary && !x.explicit) ?? real.photos.find((x) => !x.explicit);
+      const t = resolveHandoff(handle, real.live?.roomUrl ?? real.rooms[0]?.url ?? null);
+      const rooms = publicRooms([...(real.live?.roomUrl ? [{ platform: t.platform, url: real.live.roomUrl }] : []), ...ownRooms(), ...real.rooms]);
       return {
         name: real.displayName,
         photo: ph ? `/api/photo/${ph.id}` : "/models/hero.webp",
         title: real.live?.title ?? real.headline,
         live: !!real.live,
-        target: resolveHandoff(handle, real.live?.roomUrl ?? null),
+        target: t,
+        rooms,
         profile: true,
       };
     }
@@ -55,10 +63,12 @@ function Watch() {
     const m = findModel(handle);
     if (!m) return null;
     // demo creators have no linked external room, so they resolve to their OnlyMen Live room
-    return { name: m.name, photo: m.photo, title: d?.title ?? m.tagline, live: !!d, target: resolveHandoff(handle, null), profile: true };
+    return { name: m.name, photo: m.photo, title: d?.title ?? m.tagline, live: !!d, target: resolveHandoff(handle, null), rooms: [] as PublicRoom[], profile: true };
   }, [account, handle, ownPhoto, real]);
 
-  const go = info?.live && info.target.available && !paused;
+  const member = !!account;
+  const embedSrc = member && info?.live ? (chaturbateEmbedSrc(info.target.kind === "own-room" ? info.target.url : "") ?? info.rooms.map((r) => chaturbateEmbedSrc(r.url)).find(Boolean) ?? null) : null;
+  const go = info?.live && info.target.available && !paused && !embedSrc;
 
   useEffect(() => {
     if (!go) return;
@@ -77,7 +87,7 @@ function Watch() {
       {info && <img src={info.photo} alt="" aria-hidden="true" className="absolute inset-0 size-full scale-110 object-cover opacity-25 blur-2xl" />}
       <div className="absolute inset-0 bg-gradient-to-b from-ink/60 via-ink/80 to-ink" />
       <div className="absolute inset-0 vignette" />
-      <div className="relative w-full max-w-md animate-fade-up rounded-3xl border-gold-grad p-[clamp(1.5rem,6vw,2.5rem)] text-center glow-gold">
+      <div className={`relative w-full animate-fade-up rounded-3xl border-gold-grad p-[clamp(1.5rem,6vw,2.5rem)] text-center glow-gold ${showEmbed ? "max-w-3xl" : "max-w-md"}`}>
         <div className="flex justify-center"><Brand /></div>
         {!ready || (!info && real === undefined && !findModel(handle) && account?.username !== handle) ? (
           <Loader2 className="mx-auto mt-10 size-8 animate-spin text-gold" />
@@ -91,7 +101,23 @@ function Watch() {
             <LiveRing live={info.live} radius="rounded-full" className="mx-auto mt-8 size-28">
               <img src={info.photo} alt={info.name} className="size-full rounded-full object-cover" />
             </LiveRing>
-            {info.live && info.target.available ? (
+            {info.live && embedSrc ? (
+              <>
+                <p className="mt-6 text-xs font-bold tracking-[0.3em] text-ruby uppercase">● Live now</p>
+                <h1 className="mt-2 text-4xl leading-tight font-semibold text-ivory">{info.name} is on <span className="text-gold italic">OnlyMen Live</span></h1>
+                <p className="mt-2 text-sm text-muted">{info.title ? `“${info.title}”` : "Watch in the room below, or open it on the platform."}</p>
+                {showEmbed ? (
+                  <div className="mt-6 text-left">
+                    <ChaturbateEmbed src={embedSrc} title={`${info.name} live on Chaturbate`} />
+                  </div>
+                ) : (
+                  <button type="button" onClick={() => setShowEmbed(true)} className="mt-6 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-gold text-sm font-bold tracking-[0.14em] uppercase">
+                    Watch here (18+)
+                  </button>
+                )}
+                <RoomLinks rooms={info.rooms} className="mt-3" />
+              </>
+            ) : info.live && info.target.available ? (
               <>
                 <p className="mt-6 text-xs font-bold tracking-[0.3em] text-ruby uppercase">● Live now</p>
                 <h1 className="mt-2 text-4xl leading-tight font-semibold text-ivory">Taking you to <span className="text-gold italic">OnlyMen Live</span>…</h1>
@@ -106,6 +132,7 @@ function Watch() {
                   </a>
                   {!paused && <button type="button" onClick={() => setPaused(true)} className="h-10 text-xs font-semibold text-dim hover:text-ivory">Stay here</button>}
                 </div>
+                <RoomLinks rooms={info.rooms.filter((r) => r.url !== info.target.url)} className="mt-3" />
               </>
             ) : info.live ? (
               <>
@@ -115,7 +142,8 @@ function Watch() {
                   {info.name}'s room will live at <span className="text-ivory">{liveHost()}/{handle}</span>. We're putting the finishing touches on it — follow him to get a ping when it opens.
                 </p>
                 <p className="mt-2 text-[11px] text-dim">Preview: live domain not connected yet ({LIVE_BASE_URL}).</p>
-                <div className="mt-6 grid gap-2">
+                <RoomLinks rooms={info.rooms} className="mt-6" />
+                <div className="mt-3 grid gap-2">
                   {info.profile && <Link to="/m/$handle" params={{ handle }} className="grid h-12 place-items-center rounded-full bg-gold text-sm font-bold tracking-[0.14em] uppercase">See {info.name}'s profile</Link>}
                   <Link to="/live" className="grid h-11 place-items-center rounded-full border border-line text-sm font-semibold text-muted hover:text-ivory">Who else is live</Link>
                 </div>
@@ -123,14 +151,16 @@ function Watch() {
             ) : (
               <>
                 <h1 className="mt-6 text-3xl font-semibold text-ivory">{info.name} isn't live right now.</h1>
-                <div className="mt-6 grid gap-2">
+                {info.rooms.length > 0 && <p className="mt-2 text-sm text-muted">You can still open his rooms on their platforms.</p>}
+                <RoomLinks rooms={info.rooms} className="mt-6" />
+                <div className="mt-3 grid gap-2">
                   <Link to="/live" className="flex h-12 items-center justify-center gap-2 rounded-full bg-gold text-sm font-bold"><Radio className="size-4" /> See who's live</Link>
                   {info.profile && <Link to="/m/$handle" params={{ handle }} className="grid h-11 place-items-center rounded-full border border-line text-sm font-semibold text-muted">View profile</Link>}
                 </div>
               </>
             )}
             <p className="mt-6 flex items-start justify-center gap-2 text-left text-[11px] leading-relaxed text-dim">
-              <ShieldAlert className="mt-0.5 size-3.5 shrink-0 text-gold/80" /> 18+ only. You're leaving OnlyMen for a live room run by its platform; their terms, age checks and payments apply. Never pay anyone outside the platform.
+              <ShieldAlert className="mt-0.5 size-3.5 shrink-0 text-gold/80" /> 18+ only. Live rooms are run by their platforms; their terms, age checks and payments apply. Never pay anyone outside the platform.
             </p>
           </>
         )}

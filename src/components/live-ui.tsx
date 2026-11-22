@@ -1,9 +1,10 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Bell, BellRing, Eye, Radio, Target } from "lucide-react";
+import { Bell, BellRing, ExternalLink, Eye, Radio, Target } from "lucide-react";
 import { useAccount } from "@/lib/account/use-account";
 import type { LiveNow, Upcoming } from "@/lib/live/demo";
 import type { Reminder } from "@/lib/live/types";
+import type { PublicRoom } from "@/lib/live/config";
 
 /** Gold → ruby rotating ring for anything that's live. */
 export function LiveRing({ live, children, className = "", radius = "rounded-2xl" }: { live: boolean; children: ReactNode; className?: string; radius?: string }) {
@@ -132,3 +133,37 @@ export function UpcomingRow({ show, reminded, onRemind }: { show: Upcoming; remi
     </article>
   );
 }
+
+export function RoomLinks({ rooms, className = "" }: { rooms: PublicRoom[]; className?: string }) {
+  if (!rooms.length) return null;
+  return (
+    <div className={`grid gap-2 ${className}`}>
+      {rooms.map((r) => (
+        <a
+          key={r.url}
+          href={r.url}
+          rel="noopener noreferrer"
+          className="flex h-12 items-center justify-center gap-2 rounded-full border border-gold/50 px-5 text-sm font-semibold text-gold-hi transition hover:bg-gold/10"
+        >
+          <ExternalLink className="size-4" /> Open on {r.platform}
+        </a>
+      ))}
+    </div>
+  );
+}
+
+export function ChaturbateEmbed({ src, title }: { src: string; title: string }) {
+  return (
+    <div className="overflow-hidden rounded-2xl border border-gold/40 bg-ink aspect-[850/528]">
+      <iframe
+        src={src}
+        title={title}
+        className="size-full border-0"
+        allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+        allowFullScreen
+        referrerPolicy="no-referrer-when-downgrade"
+      />
+    </div>
+  );
+}
+

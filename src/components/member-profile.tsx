@@ -3,7 +3,7 @@ import { ArrowLeft, BadgeCheck, CalendarClock, Crown, MapPin, Sparkles } from "l
 import { useState } from "react";
 import { AgeGate, Footer, Header, MobileNav } from "@/components/onlymen-ui";
 import { ProfileBanner } from "@/components/banner-field";
-import { WatchLiveLink } from "@/components/live-ui";
+import { RoomLinks, WatchLiveLink } from "@/components/live-ui";
 import { useAgeGate, useCity } from "@/lib/onlymen-hooks";
 import type { PublicProfile } from "@/lib/account/repo.server";
 
@@ -108,6 +108,12 @@ export function MemberProfile({ p }: { p: PublicProfile }) {
                   <span className="size-2.5 shrink-0 animate-pulse-dot rounded-full bg-ruby" />
                   <p className="min-w-0 flex-1 truncate text-sm text-ivory"><b>Live now</b> <span className="text-muted">· {p.live.title}</span></p>
                   <WatchLiveLink handle={p.username} className="h-11 shrink-0" />
+                </div>
+              )}
+              {p.rooms.length > 0 && (
+                <div className="mt-4">
+                  <p className="mb-2 text-[11px] font-bold tracking-[0.2em] text-gold uppercase">Rooms</p>
+                  <RoomLinks rooms={p.rooms} />
                 </div>
               )}
               {!p.verified && p.type === "creator" && <p className="mt-4 text-xs text-dim">ID verification in review.</p>}

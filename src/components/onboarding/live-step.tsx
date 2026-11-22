@@ -117,7 +117,7 @@ export function LiveStep({ account, save, onNext }: StepProps) {
                 <TextField label="Your room link" type="url" inputMode="url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder={plat.example} error={urlErr} />
                 <button type="button" onClick={addRoom} className="flex h-12 items-center justify-center gap-1.5 rounded-xl border border-gold/50 px-4 text-sm font-bold text-gold-hi hover:bg-gold/10"><Plus className="size-4" /> Add</button>
               </div>
-              <Toggle checked={l.useOnlyMenLive} onChange={(v) => set({ useOnlyMenLive: v })} label={`Reserve my OnlyMen Live room (${liveHost()}/${account.username})`} detail="Our white-label room — opening soon. Until then, fans are sent to the links above." />
+              <Toggle checked={l.useOnlyMenLive} onChange={(v) => set({ useOnlyMenLive: v })} label={`Reserve my OnlyMen Live room (${liveHost()}/${account.username})`} detail="Our white-label room — opening soon. Affiliate links (for example a Chaturbate /in/? campaign URL) are kept as-is. Until then, fans are sent to the links above." />
             </Card>
 
             <Card title="Categories & schedule" icon={<CalendarClock className="size-4" />}>
