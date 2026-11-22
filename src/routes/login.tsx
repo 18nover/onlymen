@@ -27,7 +27,11 @@ function Login() {
     setBusy(true);
     setErr(null);
     try {
-      await accountStore.logIn(id, pw);
+      const acc = await accountStore.logIn(id, pw);
+      // Full navigation so the server re-checks private-mode access with the
+      // new session cookie (the root guard's state is decided server-side).
+      window.location.assign(acc.onboarding.finishedAt ? "/me" : "/onboarding");
+      return;
     } catch (e) {
       setErr(e instanceof AccountError ? e.message : "Something went wrong. Try again.");
     } finally {
