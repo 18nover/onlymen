@@ -33,7 +33,7 @@ Goal: treat this like a real company from day one and see how far it can go.
 - Free for everyone (platform owner + any models who join). No subscription fees on the directory itself in Phase 1.
 - Optional tips only, until paid features are deliberately turned on.
 - Grow the platform and community first. Prefer the free or cheapest option for vendors and hosting.
-- **Private mode as of 2026-11-21 9:28 PM ET:** public registration is closed server-side and only Jerry's allowlisted account can sign in. Mechanism details are a TODO until the gate commit is in this repo. The owner remains the first model; sign-ups stay closed until he is ready to open them.
+- **Private mode as of 2026-11-21 9:28 PM ET:** public registration is closed server-side and only Jerry's allowlisted account can sign in (coming-soon gate for everyone else). Mechanism: [ACCOUNTS.md](ACCOUNTS.md). The owner remains the first model; sign-ups stay closed until he is ready to open them.
 
 ---
 

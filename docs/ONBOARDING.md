@@ -2,7 +2,7 @@
 
 **Added:** 2026-11-21 · **Status:** server-backed accounts on Neon + Better Auth (see [ACCOUNTS.md](ACCOUNTS.md)). Remaining gaps in §4 and ACCOUNTS.md.
 
-**Private mode (as of 2026-11-21 9:28 PM ET):** public registration is closed server-side and only Jerry's allowlisted account can sign in. Mechanism details are a TODO until the gate commit is in this repo.
+**Private mode (as of 2026-11-21 9:28 PM ET):** public registration is closed server-side and only Jerry's allowlisted account can sign in. Logged-out visitors see a coming-soon page; `/join` is gated. Mechanism: [ACCOUNTS.md](ACCOUNTS.md).
 
 The 18nover.gay footer links to `/terms`, `/privacy`, `/2257`, `/guidelines`, and `/join?as=creator` on this product. **Coordinate with the 18nover bot before moving or renaming those routes.**
 
@@ -10,7 +10,7 @@ The 18nover.gay footer links to `/terms`, `/privacy`, `/2257`, `/guidelines`, an
 
 | Route | What it does |
 |---|---|
-| `/join` (`?as=creator`) | Sign-up: account type (Member / Creator), email, @username (live availability check), password + strength meter, date of birth with a hard 18+ check. Google / Apple / X buttons are shown disabled ("coming soon"). Closed to the public while private mode is on. |
+| `/join` (`?as=creator`) | Sign-up: account type (Member / Creator), email, @username (live availability check), password + strength meter, date of birth with a hard 18+ check. Google / Apple / X buttons are shown disabled ("coming soon"). In private mode the coming-soon gate is shown instead; server-side sign-up is disabled. |
 | `/login` | Email **or** username + password. |
 | `/logout` | Ends the session on this device. |
 | `/forgot-password` → `/reset-password?token=` | Reset flow. Same response whether or not the email exists. Tokens expire after 1 hour. In **server** mode the link is never shown in the browser (no email provider yet; support must deliver it). The browser-local dev adapter still shows a demo link. |

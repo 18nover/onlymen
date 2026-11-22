@@ -109,5 +109,4 @@ re-hosting stream content, and honest labeling that the room is run by the partn
 5. Blocked regions are stored but only **enforceable** with a server-side IP lookup; partner platforms already geo-block their rooms.
 6. Live status detection: today the creator presses Go live/End. Later, poll partner APIs (many expose "is online") so the ring is automatic.
 7. Lawyer review of `/live-rules`, then bump `CONSENT_VERSIONS.liveRules` to a dated final version.
-8. Add `onlymen.live` and `www.onlymen.live` to Better Auth allowed hosts / trusted origins.
-9. Jerry's own cam room links; Tip/Message phone-tile polish; Live-now name alignment (Marco's two-line tagline).
+8. Jerry's own cam room links; Tip/Message phone-tile polish; Live-now name alignment (Marco's two-line tagline).

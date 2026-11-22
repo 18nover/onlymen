@@ -51,7 +51,7 @@ OnlyMen tables (from `migrations/0002_onlymen_accounts.sql`):
 
 | Table | Holds |
 |---|---|
-| `om_account` | username, account type (`member` / `creator`), DOB, profile / privacy / permissions / onboarding JSON, verification status, creator data, viewer live prefs, live settings / current session / recap |
+| `om_account` | username, account type (`member` / `creator`), `role` (`user` / `admin` / `owner`, from `migrations/0003_account_role.sql`), DOB, profile / privacy / permissions / onboarding JSON, verification status, creator data, viewer live prefs, live settings / current session / recap |
 | `om_consent` | append-only, versioned consent records (key, granted, version, source, user agent, timestamp) |
 | `om_photo` | profile photos (`bytea`, metadata, attached flag) |
 | `om_show` | scheduled shows |
@@ -68,7 +68,7 @@ Demo directory profiles (not real accounts) still live in `src/lib/models.ts`. T
 - The browser downscales uploads to ≤1280px JPEG (quality 0.84; retries at 1080px / 0.78 if still large) in `src/lib/account/media.ts`.
 - The server rejects uploads over **700 KB** (`MAX_PHOTO_BYTES` in `src/lib/account/repo.server.ts`).
 - The onboarding UI allows **up to 9** photos (`MAX_PHOTOS` in `src/lib/account/constants.ts`). The server adapter has a hard cap of **15**.
-- Bytes are stored in `om_photo.data`. Attached (on-profile) photos are served publicly and cached for a day; unattached uploads are owner-only and not cached.
+- Bytes are stored in `om_photo.data`. In private mode, `/api/photo/<id>` requires an allowlisted session (unattached uploads remain owner-only). When the site is public again, attached photos can be served more openly; see the photo route.
 - Route: `GET /api/photo/<id>` (`src/routes/api/photo/$id.ts`). IDs match `ph_` plus hex.
 - Neon `free_v3` branch logical size limit, verified 2026-11-21 via the Neon connector, is **1 GB**. Photos count against that until object storage is added. The default `main` branch was about 32 MB at that check.
 - ID documents are **not** stored in Neon; they stay on the creator's device until a KYC vendor is wired.
@@ -79,7 +79,7 @@ Demo directory profiles (not real accounts) still live in `src/lib/models.ts`. T
 
 - The UI talks only to the `AccountStore` interface. Production uses `ServerAccountStore` when the server reports a database; otherwise `LocalAccountStore` (browser-local dev fallback).
 - Better Auth cookies: prefix `onlymen`, httpOnly, SameSite=Lax, Secure in production, 30-day sessions (rolling once a day).
-- Allowed hosts in committed code (`src/lib/account/auth.server.ts`): `onlymen.gay`, `www.onlymen.gay`, `onlymen.vercel.app`, `onlymen-18nover.vercel.app`, `*.vercel.app`, `localhost`, `127.0.0.1`. **`onlymen.live` and `www.onlymen.live` are not yet in this list**, which is an open item now that those domains serve the same app.
+- Allowed hosts in committed code (`src/lib/account/auth.server.ts`): `onlymen.gay`, `www.onlymen.gay`, `onlymen.live`, `www.onlymen.live`, `onlymen.vercel.app`, `onlymen-18nover.vercel.app`, `*.vercel.app`, `localhost`, `127.0.0.1`. The live hosts were added in the private-mode commit (`8311918`).
 - Password-reset tokens expire in one hour and are stored in `verification`. No email provider is connected, so production does not send or display the link.
 
 ---

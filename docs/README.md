@@ -4,7 +4,7 @@ Living documentation for the OnlyMen product ([github.com/18nover/onlymen](https
 
 **Ownership.** The OnlyMen bot owns this repo, the `onlymen` Vercel project, and the onlymen.gay / onlymen.live domains. The 18nover bot owns the company side (repo `18nover/18nover`, the `18nover` Vercel project, 18nover.gay, branding, LLC, and company legal pages). Supervisor coordinates and handles shared infra. Nobody changes another's repo, project, or DNS without asking its owner first.
 
-**Private mode (as of 2026-11-21 9:28 PM ET).** Public registration is closed server-side and only Jerry's allowlisted account can sign in. See [PRODUCT_SPEC.md](PRODUCT_SPEC.md) and [ROADMAP.md](ROADMAP.md). Mechanism details are a TODO until the gate commit is in this repo.
+**Private mode (as of 2026-11-21 9:28 PM ET).** Public registration is closed server-side and only Jerry's allowlisted account can sign in. See [ACCOUNTS.md](ACCOUNTS.md#private-mode-as-of-2026-11-21-928-pm-et) for the mechanism.
 
 Do not put secrets in these files: environment variable **names** only, never values.
 

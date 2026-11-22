@@ -73,6 +73,11 @@ Never commit or paste values. The site reads these:
 | `VITE_LIVE_DOMAIN_READY` | `src/lib/live/config.ts` (build-time) | Hand-offs to the live domain are enabled only when this equals the string `true`. Set on Production. |
 | `VITE_AUTH_ENABLED` | template auth in `src/lib/auth/client.ts` | Template Grok-broker auth. Leave off / unset for product accounts. |
 | `NODE_ENV` | various | Standard Node flag; Better Auth uses it to require the secret and to set Secure cookies. |
+| `ONLYMEN_ALLOWED_USER_IDS` | `src/lib/private/` | Private-mode allowlist of user ids (comma-separated). Unset = nobody. Preferred. |
+| `ONLYMEN_ALLOWED_USERNAMES` | `src/lib/private/` | Private-mode allowlist of usernames. Unset = nobody. |
+| `ONLYMEN_OWNER_SIGNUP_EMAIL` | optional, one-time | If set, only that email may use the otherwise-closed sign-up path. Off by default. |
+| `ONLYMEN_OWNER_SEED_TOKEN` | optional, one-time | Required for `POST /api/owner-seed`. Remove after the owner account is seeded. |
+| `ONLYMEN_PRIVATE_MODE` | local dev only | Set to `off` to disable the coming-soon gate in non-production. Ignored in production. |
 
 Other names appear in leftover template / preview scripts (`GROK_PROJECT_ID`, `GROK_GATE_ORIGIN`, `GROK_CONNECTORS_URL`, `GROK_CONNECTOR_ACCESS_TOKEN`, `VITE_PUBLIC_HOSTNAME`, `VITE_GROK_EXTENSIONS`, `VITE_STUN_URLS`, `XAI_API_KEY`, and various `*_TIMEOUT_MS` / e2e `BASE` / `TOKEN_CMD` vars). They are not part of the OnlyMen product account path.
 
@@ -114,7 +119,7 @@ Intended OnlyMen shape (when work is approved):
 - Follow Cloudflare's TanStack Start / Vercel-to-Workers guides. Do **not** use Nitro's `cloudflare-module` preset.
 - Talk to Neon through a free **Hyperdrive** config (preferred) or `@neondatabase/serverless`. Do not keep a process-wide `pg` Pool on Workers. Keep `scripts/migrate.mjs` as a Node CI step, not inside the Worker.
 - Read production secrets via `cloudflare:workers` `env`. Keep `VITE_LIVE_*` as build-time vars.
-- Extend Better Auth allowed hosts with `onlymen.live`, `www.onlymen.live`, and the `*.workers.dev` preview host.
+- Keep `onlymen.live` and `www.onlymen.live` on the Better Auth allowed-hosts list (already added in `8311918`) and extend it with the `*.workers.dev` preview host.
 - Cloudflare account / team name should be **18nover**. Do not use Cloudflare Stream or Images for explicit video (rent-compliance model stays).
 - Nameserver cutover to Cloudflare's free plan is required for custom domains on the cheap path; copy every email record first, and do not cut over until a `workers.dev` preview has been tested (sign-up, sign-in, photos). Rollback is switching Porkbun nameservers back.
 - Realistic start cost is $0, or $5/mo (Workers Paid) if scrypt / SSR consistently exceeds the free plan's 10 ms CPU limit.
@@ -123,4 +128,6 @@ Intended OnlyMen shape (when work is approved):
 
 ## 8. Private mode and deploys
 
-As of **2026-11-21 9:28 PM ET**, OnlyMen is in private mode (public registration closed server-side; only Jerry's allowlisted account can sign in). When the gate commit lands, a Production redeploy (file upload, same as usual) is required for it to go live. Mechanism details: see [ROADMAP.md](ROADMAP.md) (TODO if not yet in the tree).
+As of **2026-11-21 9:28 PM ET**, OnlyMen is in private mode (public registration closed server-side; only Jerry's allowlisted account can sign in). The mechanism landed in commit `8311918` (see [ACCOUNTS.md](ACCOUNTS.md)).
+
+For it to go live on onlymen.gay / onlymen.live: set the allowlist (and, if needed, owner-seed) environment variable **names** listed above in the Vercel UI, then do a Production file-upload redeploy that includes `8311918` or later. Do not put the values through chat or the connector. After a successful owner seed, remove `ONLYMEN_OWNER_SEED_TOKEN`.

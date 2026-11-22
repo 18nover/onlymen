@@ -18,16 +18,17 @@
 - [x] **2026-11-21** — Real accounts on Neon Postgres + Better Auth; photos at `/api/photo/<id>`
 - [x] **2026-11-21** — onlymen.gay and onlymen.live on the `onlymen` Vercel project; `VITE_LIVE_DOMAIN_READY` set on Production
 - [x] **2026-11-21** — Decision: keep the ethnicity filter as a self-identified, optional creator field
+- [x] **2026-11-21 9:28 PM ET** — Private mode: sign-up closed, owner-only allowlist, coming-soon gate, owner seed (`8311918`)
 
 ---
 
 ## Current priority
 
-1. **Private mode** (requested 2026-11-21 9:28 PM ET) — close public registration server-side and allow only Jerry's account to sign in, with a coming-soon / private gate for everyone else. Mechanism details are a **TODO** until that commit is in this repo.
+1. **Turn private mode on in Production** — set `ONLYMEN_ALLOWED_USER_IDS` (and related names in [HOSTING.md](HOSTING.md); never paste values into chat), then file-upload redeploy from `8311918` or later. Remove `ONLYMEN_OWNER_SEED_TOKEN` after a successful owner seed.
 2. **Webhook env typo** — rename Production `ONLYMEN_WEBHOOKS_URL` to `ONLYMEN_WEBHOOK_URL`, then redeploy so sign-up alerts turn on. Jerry does this in the Vercel UI.
 3. **www 308 redirects** — in the Vercel UI, restore `www.onlymen.gay` → `onlymen.gay` and `www.onlymen.live` → `onlymen.live` (cleared around 4:49 PM ET on 2026-11-21). The connector cannot edit project-domain redirects.
 4. **Password-reset email** — pick a free (or cheapest adult-allowed) provider and actually send the one-hour reset link.
-5. **Hardening** — login rate limiting; wrap account saves in a single transaction; add `onlymen.live` / `www.onlymen.live` to Better Auth allowed hosts.
+5. **Hardening** — login rate limiting; wrap account saves in a single transaction.
 6. **Jerry's cam room links** — plus tap-friendly Tip/Message buttons on phone tiles, and the Live-now name alignment fix (Marco's two-line tagline).
 7. **Implement the ethnicity field** on real creator profiles (optional, self-identified), not only on demo models / the filter drawer.
 8. **Lawyer review** of `/terms`, `/privacy`, `/guidelines`, `/2257`, and `/live-rules`. Coordinate with the 18nover bot before renaming those routes (the company footer links here).
