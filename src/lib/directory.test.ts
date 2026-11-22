@@ -81,8 +81,7 @@ function demo(handle: string, extra: Partial<Model> = {}): Model {
     live: false,
     isNew: false,
     verified: true,
-    tier: null,
-    availableNow: false,
+    featured: false,
     lastActiveMin: 10,
     tagline: "demo",
     tags: [],
@@ -96,13 +95,7 @@ function demo(handle: string, extra: Partial<Model> = {}): Model {
     zodiac: "Leo",
     languages: ["English"],
     interests: [],
-    goodCompanyFor: [],
     about: "",
-    availability: { Mon: [], Tue: [], Wed: [], Thu: [], Fri: [], Sat: [], Sun: [] },
-    travels: false,
-    rating: 5,
-    reviews: [],
-    profileViews: 1,
     memberSince: "Jan 2026",
     focal: [],
     source: "demo",
@@ -141,9 +134,8 @@ describe("toDirectoryModel", () => {
     assert.equal(m!.banner, "/api/photo/ph_banner");
     assert.equal(m!.live, false);
     assert.equal(m!.online, false);
-    assert.equal(m!.availableNow, false);
     assert.equal(m!.verified, false);
-    assert.equal(m!.tier, null);
+    assert.equal(m!.featured, false);
     assert.equal(m!.metro, "nyc");
     assert.equal(m!.metroKnown, true);
     assert.equal(m!.age, 35);
@@ -163,7 +155,7 @@ describe("toDirectoryModel", () => {
 });
 
 describe("mergeDirectory", () => {
-  const demos = [demo("marco.noir", { live: true, tier: "elite" }), demo("dre.gold"), demo("rafa.velvet", { live: true })];
+  const demos = [demo("marco.noir", { live: true, featured: true }), demo("dre.gold"), demo("rafa.velvet", { live: true })];
   const real = [toDirectoryModel(dakota)!];
 
   it("replaces placeholders one-for-one and pins the real profile first", () => {
@@ -188,7 +180,7 @@ describe("mergeDirectory", () => {
 describe("arrangeDirectory", () => {
   it("keeps real profiles first after a demo-only sort", () => {
     const list = mergeDirectory(
-      [demo("marco.noir", { live: true, tier: "elite" }), demo("dre.gold")],
+      [demo("marco.noir", { live: true, featured: true }), demo("dre.gold")],
       [toDirectoryModel(dakota)!],
       true,
     );

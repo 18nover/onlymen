@@ -17,7 +17,7 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import { AgeGate, DemoBadge, Footer, Header, MobileNav, Stars, StatusDot, TierBadge, CityPicker } from "@/components/onlymen-ui";
+import { AgeGate, DemoBadge, Footer, Header, MobileNav, StatusDot, CityPicker } from "@/components/onlymen-ui";
 import { useAgeGate, useCity } from "@/lib/onlymen-hooks";
 import { useDirectory } from "@/lib/use-directory";
 import { arrangeDirectory, inCity } from "@/lib/directory";
@@ -76,7 +76,7 @@ function Hero({ online, live }: { online: number; live: number }) {
             <span className="size-2 rounded-full bg-online" />
             <dt className="sr-only">Online</dt>
             <dd>
-              <b className="text-ivory">{online * 97 + 13}</b> <span className="text-muted">online now</span>
+              <b className="text-ivory">{online}</b> <span className="text-muted">online now</span>
             </dd>
           </div>
           <div className="flex items-center gap-2">
@@ -157,7 +157,7 @@ function Featured({ list, onTip }: { list: Model[]; onTip: (m: Model) => void })
         kicker="Elite & Premium"
         title="Featured tonight"
         icon={<Crown className="size-3.5" />}
-        right={<span className="hidden pb-1 text-xs text-dim sm:block">{list.some((m) => m.source === "real") ? "Tonight’s lineup" : "Members who boosted their profile this week"}</span>}
+        right={<span className="hidden pb-1 text-xs text-dim sm:block">{list.some((m) => m.source === "real") ? "Tonight’s lineup" : "Editor’s picks this week"}</span>}
       />
       <div className="mt-6 grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,2fr)]">
         <Link
@@ -168,11 +168,10 @@ function Featured({ list, onTip }: { list: Model[]; onTip: (m: Model) => void })
           <img src={spot.banner || spot.photo} alt={`${spot.name}${spot.age ? `, ${spot.age}` : ""}`} className="absolute inset-0 size-full object-cover object-[50%_25%] transition duration-700 group-hover:scale-105" />
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
           <span className="absolute top-4 left-4 rounded-full bg-oxblood/90 px-3 py-1 text-[11px] font-extrabold tracking-[0.18em] text-gold-hi uppercase ring-1 ring-gold/40">
-            {spot.source === "real" ? "Featured" : "Man of the night"}
+            Featured
           </span>
           {spot.source !== "real" && <span className="absolute top-4 right-4"><DemoBadge /></span>}
           <div className="absolute inset-x-5 bottom-5">
-            <TierBadge tier={spot.tier} />
             <p className="mt-2 font-display text-4xl leading-none font-semibold text-ivory sm:text-5xl">
               {spot.name}
               {spot.age ? <><span className="text-gold">,</span> <span className="font-normal text-ivory/80">{spot.age}</span></> : null}
@@ -183,12 +182,6 @@ function Featured({ list, onTip }: { list: Model[]; onTip: (m: Model) => void })
             </p>
             )}
             {spot.tagline && <p className="mt-3 max-w-sm font-display text-xl text-ivory/90 italic">“{spot.tagline}”</p>}
-            {spot.reviews.length > 0 && (
-            <div className="mt-3 flex items-center gap-2 text-sm">
-              <Stars value={spot.rating} />
-              <span className="text-muted">{spot.reviews.length} reviews</span>
-            </div>
-            )}
           </div>
         </Link>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
@@ -205,7 +198,7 @@ function Tile({ m, onTip, featured = false }: { m: Model; onTip: (m: Model) => v
   return (
     <article
       className={`group relative aspect-[3/4] overflow-hidden rounded-xl bg-surface transition duration-300 ${m.live ? "ring-0 shadow-[0_0_28px_-8px_rgb(194_42_69_/_0.8)]" : "ring-1"} hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-18px_rgb(212_175_106_/_0.55)] ${
-        m.tier === "elite" || featured ? "ring-gold/45 hover:ring-gold" : "ring-line/70 hover:ring-gold/60"
+        m.featured || featured ? "ring-gold/45 hover:ring-gold" : "ring-line/70 hover:ring-gold/60"
       }`}
     >
       <Link to="/m/$handle" params={{ handle: m.handle }} className="absolute inset-0 z-10" aria-label={`View ${m.name}'s profile`} />
@@ -218,14 +211,9 @@ function Tile({ m, onTip, featured = false }: { m: Model; onTip: (m: Model) => v
             <span className="flex items-center gap-1 rounded-full bg-ruby px-2 py-0.5 text-[10px] font-bold tracking-wider text-ivory uppercase">
               <span className="size-1.5 rounded-full bg-ivory" /> Live
             </span>
-          ) : m.availableNow ? (
-            <span className="inline-flex items-center gap-1 rounded-full bg-ink/75 px-2 py-0.5 text-[10px] font-bold tracking-wide whitespace-nowrap text-online uppercase ring-1 ring-online/50 backdrop-blur">
-              <span className="size-1.5 rounded-full bg-online" /> Available
-            </span>
           ) : m.isNew ? (
             <span className="rounded-full bg-ivory px-2 py-0.5 text-[10px] font-extrabold tracking-wider text-ink uppercase">New</span>
           ) : null}
-          <TierBadge tier={m.tier} />
           {m.source !== "real" && <DemoBadge />}
         </div>
         {m.verified && (
@@ -245,13 +233,7 @@ function Tile({ m, onTip, featured = false }: { m: Model; onTip: (m: Model) => v
           <MapPin className="size-3 shrink-0" /> {m.source === "real" ? (m.city || "OnlyMen") : `${fmtDistance(m.km)} · ${m.city}`}
         </p>
         <p className="mt-1 flex h-4 items-center gap-1.5 text-[11px] text-muted">
-          {m.reviews.length > 0 ? (
-            <>
-              <Stars value={m.rating} /> <span>({m.reviews.length})</span>
-            </>
-          ) : (
-            <span className="text-dim">{m.isNew ? "New this week" : "No reviews yet"}</span>
-          )}
+          <span className="text-dim">{m.isNew ? "New this week" : m.live ? "Streaming now" : "Creator"}</span>
         </p>
         <div className="grid grid-rows-[0fr] opacity-0 transition-all duration-300 group-hover:grid-rows-[1fr] group-hover:opacity-100">
           <div className="overflow-hidden">
@@ -297,7 +279,6 @@ function Row({ m, onTip }: { m: Model; onTip: (m: Model) => void }) {
             <Link to="/m/$handle" params={{ handle: m.handle }} className="inline-flex min-h-10 items-center gap-1 text-lg leading-tight font-bold text-ivory hover:text-gold-hi">
               {m.name}{m.age ? <span className="font-medium text-ivory/70"> · {m.age}</span> : null}
             </Link>
-            <TierBadge tier={m.tier} />
             {m.source !== "real" && <DemoBadge />}
             {m.verified && <BadgeCheck className="size-4 shrink-0 text-gold-hi" aria-label="Verified" />}
           </div>
@@ -307,10 +288,7 @@ function Row({ m, onTip }: { m: Model; onTip: (m: Model) => void }) {
           </p>
           )}
         </div>
-        <p className="text-xs leading-relaxed text-muted">
-          <span className="text-dim">Into:</span> {m.goodCompanyFor.join(" · ")}
-        </p>
-        <dl className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm sm:grid-cols-4">
+        <dl className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm sm:grid-cols-3">
           <div>
             <dt className="text-[11px] tracking-wide text-dim uppercase">Height</dt>
             <dd className="text-ivory">{fmtHeight(m.heightCm).split(" · ")[0]}</dd>
@@ -322,18 +300,6 @@ function Row({ m, onTip }: { m: Model; onTip: (m: Model) => void }) {
           <div className="col-span-2 sm:col-span-1">
             <dt className="text-[11px] tracking-wide text-dim uppercase">Speaks</dt>
             <dd className="text-ivory">{m.languages.join(", ")}</dd>
-          </div>
-          <div className="hidden sm:block">
-            <dt className="text-[11px] tracking-wide text-dim uppercase">Rating</dt>
-            <dd className="flex items-center gap-1 text-ivory">
-              {m.reviews.length ? (
-                <>
-                  <b className="text-gold-hi">{m.rating.toFixed(1)}</b> <span className="text-xs text-dim">({m.reviews.length})</span>
-                </>
-              ) : (
-                <span className="text-dim">New</span>
-              )}
-            </dd>
           </div>
         </dl>
         <p className="font-display text-lg leading-snug text-ivory/85 italic">“{m.tagline}”</p>
@@ -430,10 +396,10 @@ export function OnlyMenHome() {
     () => arrangeDirectory(cityList, (demos) => applySort(applySearch(applyFilter(demos, filter), search), sort)),
     [cityList, filter, search, sort],
   );
-  // Real profiles lead Featured so the first real creator is visible; demos keep their paid-tier slots.
+  // Real profiles lead Featured so the first real creator is visible; then editorial demo picks.
   const featured = useMemo(() => {
     const real = cityList.filter((m) => m.source === "real");
-    const demos = applySort(cityList.filter((m) => m.source !== "real" && m.tier), "recommended");
+    const demos = applySort(cityList.filter((m) => m.source !== "real" && m.featured), "recommended");
     return [...real, ...demos];
   }, [cityList]);
   const live = useMemo(() => cityList.filter((m) => m.live), [cityList]);

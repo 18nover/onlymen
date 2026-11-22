@@ -101,7 +101,7 @@ function isNew(joinedAt: string, now = Date.now()): boolean {
   return Number.isFinite(t) && now - t < 14 * 24 * 3600_000;
 }
 
-/** Map a real public profile to the directory Model shape. Never invents live/online/verified/tier. */
+/** Map a real public profile to the directory Model shape. Never invents live/online/verified/featured. */
 export function toDirectoryModel(p: DirectoryProfile, now = Date.now()): Model | null {
   const photoId = primaryPhotoId(p.photos);
   if (!photoId) return null;
@@ -127,8 +127,7 @@ export function toDirectoryModel(p: DirectoryProfile, now = Date.now()): Model |
     live: Boolean(p.live),
     isNew: isNew(p.joinedAt, now),
     verified: Boolean(p.verified),
-    tier: null,
-    availableNow: false,
+    featured: false,
     lastActiveMin: 120,
     tagline,
     tags: tags.slice(0, 8),
@@ -142,13 +141,7 @@ export function toDirectoryModel(p: DirectoryProfile, now = Date.now()): Model |
     zodiac: "",
     languages,
     interests: p.interests.slice(0, 16),
-    goodCompanyFor: p.lookingFor.slice(0, 8),
     about: p.bio || tagline,
-    availability: { Mon: [], Tue: [], Wed: [], Thu: [], Fri: [], Sat: [], Sun: [] },
-    travels: false,
-    rating: 0,
-    reviews: [],
-    profileViews: 0,
     memberSince,
     focal: ["50% 30%", "50% 15%", "50% 70%", "30% 40%"],
     source: "real",

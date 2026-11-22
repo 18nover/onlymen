@@ -3,11 +3,9 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import {
   ArrowLeft,
   BadgeCheck,
-  CalendarDays,
   Check,
   ChevronLeft,
   ChevronRight,
-  Clock,
   Coins,
   Eye,
   Flag,
@@ -16,17 +14,15 @@ import {
   Lock,
   MapPin,
   MessageCircle,
-  Plane,
   Send,
   Share2,
   ShieldCheck,
   Sparkles,
-  ThumbsUp,
 } from "lucide-react";
 import { WatchLiveLink } from "@/components/live-ui";
-import { AgeGate, DemoBadge, Footer, Header, Stars, StatusDot, TierBadge } from "@/components/onlymen-ui";
+import { AgeGate, DemoBadge, Footer, Header, StatusDot } from "@/components/onlymen-ui";
 import { useAgeGate, useCity } from "@/lib/onlymen-hooks";
-import { cityLabel, days, findModel, fmtActive, fmtDistance, fmtHeight, models, slots, type Model } from "@/lib/models";
+import { cityLabel, findModel, fmtActive, fmtHeight, models, type Model } from "@/lib/models";
 
 const crops = [
   { pos: "50% 30%", scale: 1 },
@@ -56,12 +52,7 @@ function Gallery({ m }: { m: Model }) {
             <span className="flex items-center gap-1.5 rounded-full bg-ruby px-3 py-1 text-xs font-bold tracking-wider text-ivory uppercase">
               <span className="size-1.5 animate-pulse-dot rounded-full bg-ivory" /> Live · {m.viewers} watching
             </span>
-          ) : m.availableNow ? (
-            <span className="flex items-center gap-1.5 rounded-full bg-ink/70 px-3 py-1 text-xs font-bold text-online ring-1 ring-online/40 backdrop-blur">
-              <span className="size-1.5 rounded-full bg-online" /> Available now
-            </span>
           ) : null}
-          <TierBadge tier={m.tier} className="!text-[11px] !px-2.5 !py-1" />
         </div>
         <span className="absolute top-4 right-4 rounded-full bg-ink/70 px-2.5 py-1 text-xs font-semibold text-ivory backdrop-blur">
           {i + 1} / {n}
@@ -85,17 +76,6 @@ function Gallery({ m }: { m: Model }) {
             <img src={m.photo} alt="" className="size-full object-cover" style={{ objectPosition: c.pos, transform: `scale(${c.scale})`, transformOrigin: c.pos }} />
           </button>
         ))}
-        <button className="relative size-16 shrink-0 overflow-hidden rounded-xl ring-1 ring-gold/40 sm:size-20" aria-label="Private album, request access">
-          <img src={m.photo} alt="" className="size-full scale-125 object-cover blur-md brightness-50" />
-          <span className="absolute inset-0 grid place-items-center text-center text-[10px] leading-tight font-bold text-gold-hi">
-            <span>
-              <Lock className="mx-auto mb-0.5 size-4" />
-              Private
-              <br />
-              +6
-            </span>
-          </span>
-        </button>
       </div>
     </div>
   );
@@ -131,28 +111,17 @@ function ActionPanel({ m }: { m: Model }) {
       </p>
       <div className="mt-5 grid grid-cols-2 gap-3">
         <div className="min-w-0 rounded-2xl bg-surface-2/70 p-3.5 ring-1 ring-line/60">
-          <p className="text-[11px] tracking-wide text-dim uppercase">Currently in</p>
+          <p className="text-[11px] tracking-wide text-dim uppercase">Based in</p>
           <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-ivory">
             <MapPin className="size-4 shrink-0 text-gold" /> {m.city}
           </p>
-          <p className="mt-0.5 text-xs text-muted">
-            {cityLabel(m.metro)} · {fmtDistance(m.km)}
-          </p>
+          <p className="mt-0.5 text-xs text-muted">{cityLabel(m.metro)}</p>
         </div>
-        <a href="#reviews" className="min-w-0 rounded-2xl bg-surface-2/70 p-3.5 ring-1 ring-line/60 transition hover:ring-gold/50">
-          <p className="text-[11px] tracking-wide text-dim uppercase">Rating</p>
-          {m.reviews.length ? (
-            <>
-              <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
-                <b className="font-display text-3xl leading-none text-gold-hi">{m.rating.toFixed(1)}</b>
-                <Stars value={m.rating} />
-              </p>
-              <p className="mt-0.5 text-xs text-muted">{m.reviews.length} reviews</p>
-            </>
-          ) : (
-            <p className="mt-1 text-sm text-muted">No reviews yet</p>
-          )}
-        </a>
+        <div className="min-w-0 rounded-2xl bg-surface-2/70 p-3.5 ring-1 ring-line/60">
+          <p className="text-[11px] tracking-wide text-dim uppercase">Member since</p>
+          <p className="mt-1 text-sm font-semibold text-ivory">{m.memberSince}</p>
+          <p className="mt-0.5 text-xs text-muted">Creator on OnlyMen</p>
+        </div>
       </div>
       <p className="mt-5 font-display text-2xl leading-snug text-ivory/90 italic">“{m.tagline}”</p>
       {m.live && (
@@ -208,124 +177,9 @@ function ActionPanel({ m }: { m: Model }) {
   );
 }
 
-function Availability({ m }: { m: Model }) {
-  return (
-    <div>
-      <div className="overflow-x-auto">
-        <table className="w-full table-fixed border-separate border-spacing-1 text-center text-xs">
-          <thead>
-            <tr>
-              <th className="w-16 sm:w-20" />
-              {days.map((d) => (
-                <th key={d} className="pb-1 font-semibold text-muted">{d}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {slots.map((s) => (
-              <tr key={s}>
-                <th className="pr-1 text-left font-medium text-dim">{s}</th>
-                {days.map((d) => {
-                  const on = m.availability[d].includes(s);
-                  return (
-                    <td key={d} aria-label={`${d} ${s}: ${on ? "usually free" : "unavailable"}`} className={`h-8 rounded-lg ${on ? "bg-gold/80" : "bg-surface-2/80 ring-1 ring-line/50"}`}>
-                      {on && <Check className="mx-auto size-3.5 text-ink" strokeWidth={3} />}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted">
-        <span className="flex items-center gap-1.5">
-          <Plane className="size-4 text-gold" /> {m.travels ? "Open to travel" : "Local only"}
-        </span>
-        <span className="flex items-center gap-1.5">
-          <Clock className="size-4 text-gold" /> Usually replies within {m.online ? "an hour" : "a day"}
-        </span>
-      </div>
-    </div>
-  );
-}
-
-function Reviews({ m }: { m: Model }) {
-  const counts = [5, 4, 3, 2, 1].map((s) => m.reviews.filter((r) => r.rating === s).length);
-  const recommend = m.reviews.length ? Math.round((m.reviews.filter((r) => r.recommend).length / m.reviews.length) * 100) : 0;
-  if (!m.reviews.length)
-    return (
-      <div className="rounded-xl border border-dashed border-line p-6 text-center">
-        <p className="font-display text-xl text-ivory">No reviews yet</p>
-        <p className="mt-1 text-sm text-muted">Met {m.name}? Be the first to share how it went.</p>
-        <button className="mt-4 h-10 rounded-full border border-gold/50 px-5 text-sm font-bold text-gold-hi">Write a review</button>
-      </div>
-    );
-  return (
-    <div>
-      <div className="grid gap-5 sm:grid-cols-[auto_1fr_auto] sm:items-center">
-        <div className="text-center sm:text-left">
-          <p className="font-display text-6xl leading-none text-gold-hi">{m.rating.toFixed(1)}</p>
-          <Stars value={m.rating} />
-          <p className="mt-1 text-xs text-muted">{m.reviews.length} reviews</p>
-        </div>
-        <div className="grid gap-1.5">
-          {counts.map((c, k) => (
-            <div key={k} className="flex items-center gap-2 text-xs text-muted">
-              <span className="w-3">{5 - k}</span>
-              <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-surface-2">
-                <div className="h-full rounded-full bg-gold" style={{ width: `${(c / m.reviews.length) * 100}%` }} />
-              </div>
-              <span className="w-4 text-right">{c}</span>
-            </div>
-          ))}
-        </div>
-        <div className="flex flex-col items-center gap-2 sm:items-end">
-          <p className="flex items-center gap-1.5 text-sm text-ivory">
-            <ThumbsUp className="size-4 text-gold" /> {recommend}% recommend
-          </p>
-          <button className="h-10 rounded-full border border-gold/50 px-5 text-sm font-bold text-gold-hi transition hover:bg-gold/10">Write a review</button>
-        </div>
-      </div>
-      <ul className="mt-6 grid gap-3">
-        {m.reviews.map((r, k) => (
-          <li key={k} className="rounded-xl bg-surface-2/60 p-4 ring-1 ring-line/50">
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-              <span className="grid size-8 place-items-center rounded-full bg-oxblood/60 text-xs font-bold text-gold-hi ring-1 ring-gold/30">{r.author[0].toUpperCase()}</span>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-ivory">{r.author}</p>
-                <p className="text-xs text-dim">
-                  {r.from} · {r.date}
-                </p>
-              </div>
-              <span className="shrink-0">
-                <Stars value={r.rating} />
-              </span>
-            </div>
-            <p className="mt-3 text-sm leading-relaxed text-ivory/85">{r.text}</p>
-            <dl className="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
-              {[
-                ["Enjoyed", r.metFor],
-                ["Vibe", r.vibe],
-                ["Photos accurate?", r.photosAccurate ? "Yes" : "Not quite"],
-                ["Recommend?", r.recommend ? "Definitely" : "Maybe"],
-              ].map(([k2, v]) => (
-                <div key={k2} className="rounded-lg bg-ink/40 px-2.5 py-2">
-                  <dt className="text-dim">{k2}</dt>
-                  <dd className="mt-0.5 font-semibold text-ivory">{v}</dd>
-                </div>
-              ))}
-            </dl>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
 function MessageBox({ m }: { m: Model }) {
   const [text, setText] = useState("");
-  const starters = ["Hi! Loved your profile.", "Free for dinner this week?", "What's your favorite spot in town?"];
+  const starters = ["Hi! Loved your profile.", "What are you streaming next?", "Any custom video slots open?"];
   return (
     <div>
       <div className="flex flex-wrap gap-2">
@@ -386,7 +240,6 @@ function MiniTile({ m }: { m: Model }) {
       <img src={m.photo} alt={`${m.name}, ${m.age}`} loading="lazy" className="size-full object-cover transition duration-500 group-hover:scale-105" />
       <div className="absolute inset-0 tile-shade" />
       <div className="absolute top-2 left-2 flex flex-col items-start gap-1">
-        <TierBadge tier={m.tier} />
         {m.source !== "real" && <DemoBadge />}
       </div>
       <div className="absolute inset-x-2.5 bottom-2.5">
@@ -434,12 +287,6 @@ export function OnlyMenProfile({ handle }: { handle: string }) {
           <div className="grid min-w-0 grid-cols-1 gap-6 content-start">
             <Card title={`About ${m.name}`} icon={<Sparkles className="size-3.5" />}>
               <p className="leading-relaxed text-ivory/85">{m.about}</p>
-              <p className="mt-5 text-[11px] font-bold tracking-[0.2em] text-dim uppercase">Into</p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {m.goodCompanyFor.map((t) => (
-                  <span key={t} className="rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-semibold text-gold-hi">{t}</span>
-                ))}
-              </div>
               <p className="mt-5 text-[11px] font-bold tracking-[0.2em] text-dim uppercase">Interests</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {m.interests.map((t) => (
@@ -447,14 +294,8 @@ export function OnlyMenProfile({ handle }: { handle: string }) {
                 ))}
               </div>
             </Card>
-            <Card title="Availability" icon={<CalendarDays className="size-3.5" />}>
-              <Availability m={m} />
-            </Card>
             <Card id="message" title={`Message ${m.name}`} icon={<MessageCircle className="size-3.5" />}>
               <MessageBox m={m} />
-            </Card>
-            <Card id="reviews" title="Reviews" icon={<ThumbsUp className="size-3.5" />}>
-              <Reviews m={m} />
             </Card>
           </div>
           <aside className="grid min-w-0 grid-cols-1 content-start gap-6 lg:sticky lg:top-24 lg:self-start">
@@ -462,10 +303,9 @@ export function OnlyMenProfile({ handle }: { handle: string }) {
               <Details m={m} />
             </Card>
             <Card title="Profile stats" icon={<Eye className="size-3.5" />}>
-              <dl className="grid grid-cols-3 gap-2 text-center">
+              <dl className="grid grid-cols-2 gap-2 text-center">
                 {[
                   ["Last active", m.online || m.live ? "Now" : fmtActive(m).replace("Active ", "")],
-                  ["Profile views", m.profileViews.toLocaleString("en-US")],
                   ["Member since", m.memberSince],
                 ].map(([k, v]) => (
                   <div key={k} className="rounded-xl bg-surface-2/60 px-2 py-3">

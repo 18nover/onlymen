@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Check, ChevronDown, Crown, Flame, Gem, Lock, MapPin, Radar, Radio, Search, ShieldCheck, SlidersHorizontal, Star } from "lucide-react";
+import { Check, ChevronDown, Crown, Flame, Lock, MapPin, Radar, Radio, Search, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import { company } from "@/lib/company";
 import { useAccount } from "@/lib/account/use-account";
 import { useImageUrl } from "@/lib/account/media";
@@ -60,7 +60,7 @@ function MobileAccountLink({ cls }: { cls: string }) {
     </Link>
   );
 }
-import { cities, cityLabel, models, type CityId, type Model, type Tier } from "@/lib/models";
+import { cities, cityLabel, models, type CityId, type Model } from "@/lib/models";
 import { useDirectory } from "@/lib/use-directory";
 
 
@@ -77,34 +77,10 @@ export function Brand({ size = "md" }: { size?: "md" | "lg" }) {
   );
 }
 
-export function TierBadge({ tier, className = "" }: { tier: Tier; className?: string }) {
-  if (!tier) return null;
-  return tier === "elite" ? (
-    <span className={`inline-flex items-center gap-1 rounded-full bg-gold px-2 py-0.5 text-[10px] font-extrabold tracking-[0.14em] uppercase ${className}`}>
-      <Crown className="size-3" strokeWidth={2.4} /> Elite
-    </span>
-  ) : (
-    <span className={`inline-flex items-center gap-1 rounded-full border border-gold/60 bg-ink/70 px-2 py-0.5 text-[10px] font-extrabold tracking-[0.14em] text-gold-hi uppercase backdrop-blur ${className}`}>
-      <Gem className="size-3" strokeWidth={2.4} /> Premium
-    </span>
-  );
-}
-
-export function Stars({ value, size = "sm" }: { value: number; size?: "sm" | "lg" }) {
-  const s = size === "lg" ? "size-5" : "size-3.5";
-  return (
-    <span className="inline-flex items-center gap-0.5" aria-label={`${value.toFixed(1)} out of 5`}>
-      {[1, 2, 3, 4, 5].map((i) => (
-        <Star key={i} className={`${s} ${i <= Math.round(value) ? "fill-gold text-gold" : "text-line"}`} strokeWidth={1.5} />
-      ))}
-    </span>
-  );
-}
-
-export function StatusDot({ m, className = "size-2" }: { m: Pick<Model, "live" | "online" | "availableNow">; className?: string }) {
+export function StatusDot({ m, className = "size-2" }: { m: Pick<Model, "live" | "online">; className?: string }) {
   return (
     <span
-      className={`shrink-0 rounded-full ${className} ${m.live ? "bg-ruby" : m.online || m.availableNow ? "bg-online" : "bg-dim"}`}
+      className={`shrink-0 rounded-full ${className} ${m.live ? "bg-ruby" : m.online ? "bg-online" : "bg-dim"}`}
       aria-label={m.live ? "Live" : m.online ? "Online" : "Offline"}
     />
   );
