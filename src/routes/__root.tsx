@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createRootRoute, HeadContent, Outlet, Scripts, useRouter, useRouterState } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
@@ -6,6 +6,7 @@ import { PrivateComingSoon } from "@/components/private-gate";
 import { useAccount } from "@/lib/account/use-account";
 import { privateAccessFn } from "@/lib/private/access";
 import { isPublicPath } from "@/lib/private/policy";
+import { AGE_GATE_PATH, hasAgeCookie, isAgeExempt } from "@/lib/age-gate/policy";
 import appCss from "../styles.css?url";
 
 const APP_NAME = "OnlyMen — Men worth staying up for";
@@ -50,6 +51,13 @@ function RootComponent() {
   useRecheckAccessOnAccountChange();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const gated = !access.allowed && !isPublicPath(pathname) && !(access.ownerSignup && pathname === "/join");
+  // 18+ gate, client side: the server middleware covers full page loads; this
+  // covers in-app navigation from an exempt page (e.g. /terms) to a gated one.
+  const [ageOk, setAgeOk] = useState(true);
+  useEffect(() => {
+    setAgeOk(!access.ageGate || hasAgeCookie(document.cookie));
+  }, [access.ageGate, pathname]);
+  const ageGated = !ageOk && !isAgeExempt(pathname);
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -58,7 +66,7 @@ function RootComponent() {
       <body>
         <PreviewHostBridge />
         <AuthProvider>
-          {gated ? <PrivateComingSoon invites={access.invites} /> : <Outlet />}
+          {ageGated ? <AgeInterstitial next={pathname} /> : gated ? <PrivateComingSoon invites={access.invites} /> : <Outlet />}
         </AuthProvider>
         <Scripts />
       </body>
@@ -77,4 +85,16 @@ function useRecheckAccessOnAccountChange() {
     if (prev.current !== null && prev.current !== id) void router.invalidate();
     prev.current = id;
   }, [id, router]);
+}
+
+/** In-app navigation without a valid age token: hand over to the server's /age page (the active verifier). */
+function AgeInterstitial({ next }: { next: string }) {
+  useEffect(() => {
+    window.location.replace(`${AGE_GATE_PATH}?next=${encodeURIComponent(next)}`);
+  }, [next]);
+  return (
+    <main className="grid min-h-screen place-items-center px-6 text-center" data-gate="age">
+      <p className="text-sm text-muted">Adults only (18+). Checking your age…</p>
+    </main>
+  );
 }

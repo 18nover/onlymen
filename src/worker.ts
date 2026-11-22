@@ -1,13 +1,14 @@
 /**
  * Cloudflare Workers entry (wrangler.jsonc "main"). Vercel never builds this file.
  *
- * Wraps TanStack Start's handler with the same two global middlewares that
+ * Wraps TanStack Start's handler with the same three global middlewares that
  * Nitro auto-registers from server/middleware/ on Vercel, in the same order
  * (Nitro registers them alphabetically):
  *
- *   grok-pwa (manifest, ?install=1 page, head-tag injection)
- *     └─ private-gate (coming-soon page, 403 for anonymous writes, noindex)
- *          └─ TanStack Start (SSR, server functions, /api/* server routes)
+ *   age-gate (18+ interstitial + optional AV-law geoblock; ONLYMEN_AGE_GATE)
+ *     └─ grok-pwa (manifest, ?install=1 page, head-tag injection)
+ *          └─ private-gate (coming-soon page, 403 for anonymous writes, noindex)
+ *               └─ TanStack Start (SSR, server functions, /api/* server routes)
  *
  * Static files in dist/client are served by Workers Static Assets before this
  * code runs (same as Vercel's CDN serving public/), so the gate only ever sees
@@ -19,6 +20,7 @@
  */
 import handler from "@tanstack/react-start/server-entry";
 import grokPwaMiddleware from "../server/middleware/grok-pwa";
+import ageGate from "../server/middleware/age-gate";
 import privateGate from "../server/middleware/private-gate";
 import { runWithDbScope } from "./lib/platform/cloudflare";
 
@@ -45,11 +47,13 @@ async function toResponse(value: unknown): Promise<Response> {
 }
 
 async function handle(request: Request): Promise<Response> {
-  const event = { url: new URL(request.url), req: { method: request.method, headers: request.headers } };
+  const cf = (request as Request & { cf?: { country?: unknown; regionCode?: unknown } }).cf ?? null;
+  const event = { url: new URL(request.url), req: { method: request.method, headers: request.headers, text: () => request.clone().text() }, cf };
   const app: Next = () => handler.fetch(request);
   const gated: Next = () => privateGate(event, app);
   // In `vite dev` the grok-pwa Vite plugin already wraps HTML at the Node layer.
-  const outer = import.meta.env.DEV ? gated() : grokPwaMiddleware(event, gated);
+  const pwa: Next = () => (import.meta.env.DEV ? gated() : grokPwaMiddleware(event, gated));
+  const outer = ageGate(event, pwa);
   return withFrameSrcCsp(await toResponse(await outer));
 }
 

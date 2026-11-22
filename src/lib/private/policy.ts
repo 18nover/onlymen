@@ -9,7 +9,7 @@
  */
 
 /** Exact document paths anyone may open. */
-export const PUBLIC_PAGES = new Set(["/login", "/logout", "/terms", "/privacy", "/guidelines", "/2257", "/robots.txt"]);
+export const PUBLIC_PAGES = new Set(["/login", "/logout", "/terms", "/privacy", "/guidelines", "/2257", "/custodian", "/robots.txt"]);
 
 /** Static assets and framework internals (served by the CDN in production). */
 export function isStaticAsset(path: string): boolean {

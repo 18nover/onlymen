@@ -34,6 +34,15 @@
     // Default on: invented demo profiles stay in the directory, with real
     // eligible accounts (today: role=owner) replacing them one-for-one.
     // Set to "off" to hide every placeholder once you want a real-only grid.
-    "ONLYMEN_DEMO_PROFILES": "on"
+    "ONLYMEN_DEMO_PROFILES": "on",
+    // 18+ visitor age gate (server/middleware/age-gate.ts, docs/AGE_GATE.md).
+    "ONLYMEN_AGE_GATE": "on",
+    // Which AgeVerifier passes visitors. "clickthrough" = DEV/TEST ONLY — NOT
+    // legal age verification under KRS 436.001 (Kentucky) or similar laws.
+    // A real vendor ("vendor" stub today) is needed before going public.
+    "ONLYMEN_AGE_VERIFIER": "clickthrough",
+    // Block visitors geolocated to U.S. states with adult-site AV laws
+    // (src/lib/age-gate/av-states.ts). OFF: Jerry is in Kentucky. Owner/admin bypass.
+    "ONLYMEN_AGE_GATE_GEOBLOCK": "off"
   }
 }
