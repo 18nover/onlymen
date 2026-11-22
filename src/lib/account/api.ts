@@ -287,6 +287,15 @@ export const liveDirectoryFn = createServerFn({ method: "GET" }).handler(async (
   return c.repo.liveDirectory();
 });
 
+/** Real directory profiles (owner-gated today) plus whether demo placeholders are on. */
+export const directoryFn = createServerFn({ method: "GET" }).handler(async () => {
+  const c = await ctx();
+  const [{ platformEnv }, { demoProfilesEnabled }] = await Promise.all([import("../platform/runtime.ts"), import("../directory.ts")]);
+  const showDemo = demoProfilesEnabled(platformEnv("ONLYMEN_DEMO_PROFILES"));
+  if (!c.enabled || !(await sessionUserId(c))) return { showDemo, profiles: [] };
+  return { showDemo, profiles: await c.repo.directoryProfiles() };
+});
+
 export const uploadPhotoFn = createServerFn({ method: "POST" })
   .validator((input: unknown) => {
     const o = obj(input);

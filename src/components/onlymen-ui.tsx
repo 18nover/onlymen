@@ -60,6 +60,7 @@ function MobileAccountLink({ cls }: { cls: string }) {
   );
 }
 import { cities, cityLabel, models, type CityId, type Model, type Tier } from "@/lib/models";
+import { useDirectory } from "@/lib/use-directory";
 
 
 export function Brand({ size = "md" }: { size?: "md" | "lg" }) {
@@ -163,12 +164,22 @@ function useOutside<T extends HTMLElement>(open: boolean, close: () => void) {
   return ref;
 }
 
+export function DemoBadge({ className = "" }: { className?: string }) {
+  return (
+    <span className={`rounded-full bg-ink/75 px-2 py-0.5 text-[10px] font-bold tracking-wider text-ivory/90 uppercase ring-1 ring-ivory/25 backdrop-blur ${className}`}>
+      Demo
+    </span>
+  );
+}
+
 export function CityPicker({ city, onCity, compact = false }: { city: CityId | "all"; onCity: (c: CityId | "all") => void; compact?: boolean }) {
   const [open, setOpen] = useState(false);
   const ref = useOutside<HTMLDivElement>(open, () => setOpen(false));
-  const counts = Object.fromEntries(cities.map((c) => [c.id, models.filter((m) => m.metro === c.id).length]));
+  const { list } = useDirectory();
+  const catalog = list.length ? list : models;
+  const counts = Object.fromEntries(cities.map((c) => [c.id, catalog.filter((m) => m.source === "real" ? m.metroKnown !== false && m.metro === c.id : m.metro === c.id).length]));
   const options: { id: CityId | "all"; label: string; n: number }[] = [
-    { id: "all", label: "All cities", n: models.length },
+    { id: "all", label: "All cities", n: catalog.length },
     ...cities.map((c) => ({ id: c.id, label: `${c.label}, ${c.region}`, n: counts[c.id] })),
   ];
   return (
@@ -319,7 +330,7 @@ export function Footer() {
       </div>
       <div className="border-t border-line/60">
         <div className="om-container flex flex-col gap-2 py-6 text-xs leading-relaxed text-dim sm:flex-row sm:items-center sm:justify-between sm:gap-6">
-          <p>All people on {company.domain} are 18 or older and ID-verified. Profiles shown are demo content.</p>
+          <p>Everyone with a real account on {company.domain} is 18 or older. Profiles labeled Demo are invented placeholders (including AI-generated portraits) and are not real people.</p>
           <p>© 2026 {company.company} · {company.companyDomain}</p>
         </div>
       </div>

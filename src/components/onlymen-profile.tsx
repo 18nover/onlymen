@@ -24,7 +24,7 @@ import {
   ThumbsUp,
 } from "lucide-react";
 import { WatchLiveLink } from "@/components/live-ui";
-import { AgeGate, Footer, Header, Stars, StatusDot, TierBadge } from "@/components/onlymen-ui";
+import { AgeGate, DemoBadge, Footer, Header, Stars, StatusDot, TierBadge } from "@/components/onlymen-ui";
 import { useAgeGate, useCity } from "@/lib/onlymen-hooks";
 import { cityLabel, days, findModel, fmtActive, fmtDistance, fmtHeight, models, slots, type Model } from "@/lib/models";
 
@@ -385,8 +385,9 @@ function MiniTile({ m }: { m: Model }) {
     <Link to="/m/$handle" params={{ handle: m.handle }} className="group relative block aspect-[3/4] w-36 shrink-0 snap-start overflow-hidden rounded-xl ring-1 ring-line/70 transition hover:ring-gold/60 sm:w-44">
       <img src={m.photo} alt={`${m.name}, ${m.age}`} loading="lazy" className="size-full object-cover transition duration-500 group-hover:scale-105" />
       <div className="absolute inset-0 tile-shade" />
-      <div className="absolute top-2 left-2">
+      <div className="absolute top-2 left-2 flex flex-col items-start gap-1">
         <TierBadge tier={m.tier} />
+        {m.source !== "real" && <DemoBadge />}
       </div>
       <div className="absolute inset-x-2.5 bottom-2.5">
         <p className="flex min-w-0 items-center gap-1.5 text-sm font-bold text-ivory">
@@ -418,6 +419,9 @@ export function OnlyMenProfile({ handle }: { handle: string }) {
         <Link to="/" hash="browse" className="mt-4 inline-flex h-10 items-center gap-1.5 text-sm font-semibold text-muted transition hover:text-gold-hi">
           <ArrowLeft className="size-4" /> Back to browse
         </Link>
+        <div className="mt-3 rounded-2xl border border-line/80 bg-surface/60 px-4 py-3 text-sm text-muted">
+          <DemoBadge className="mr-2 align-middle" /> This is a demo profile — an invented placeholder with an AI-generated portrait, not a real person.
+        </div>
 
         <div className="mt-2 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-8">
           <Gallery m={m} />

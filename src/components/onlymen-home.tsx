@@ -17,8 +17,10 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import { AgeGate, Footer, Header, MobileNav, Stars, StatusDot, TierBadge, CityPicker } from "@/components/onlymen-ui";
+import { AgeGate, DemoBadge, Footer, Header, MobileNav, Stars, StatusDot, TierBadge, CityPicker } from "@/components/onlymen-ui";
 import { useAgeGate, useCity } from "@/lib/onlymen-hooks";
+import { useDirectory } from "@/lib/use-directory";
+import { arrangeDirectory, inCity } from "@/lib/directory";
 import { FilterDrawer } from "@/components/filter-drawer";
 import {
   activeFilterCount,
@@ -31,7 +33,6 @@ import {
   fmtActive,
   fmtDistance,
   fmtHeight,
-  models,
   sorts,
   type FilterId,
   type Model,
@@ -132,6 +133,7 @@ function LiveRow({ list }: { list: Model[] }) {
             <span className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full bg-ruby px-2.5 py-1 text-xs font-bold tracking-wider text-ivory uppercase">
               <span className="size-1.5 rounded-full bg-ivory" /> Live
             </span>
+            {m.source !== "real" && <span className="absolute top-3 left-[4.75rem]"><DemoBadge /></span>}
             <span className="absolute top-3 right-3 flex items-center gap-1 rounded-full bg-ink/70 px-2 py-1 text-xs font-semibold text-ivory backdrop-blur">
               <Eye className="size-3" /> {m.viewers}
             </span>
@@ -155,7 +157,7 @@ function Featured({ list, onTip }: { list: Model[]; onTip: (m: Model) => void })
         kicker="Elite & Premium"
         title="Featured tonight"
         icon={<Crown className="size-3.5" />}
-        right={<span className="hidden pb-1 text-xs text-dim sm:block">Members who boosted their profile this week</span>}
+        right={<span className="hidden pb-1 text-xs text-dim sm:block">{list.some((m) => m.source === "real") ? "Tonight’s lineup" : "Members who boosted their profile this week"}</span>}
       />
       <div className="mt-6 grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,2fr)]">
         <Link
@@ -166,22 +168,27 @@ function Featured({ list, onTip }: { list: Model[]; onTip: (m: Model) => void })
           <img src={spot.photo} alt={`${spot.name}, ${spot.age}`} className="absolute inset-0 size-full object-cover object-[50%_25%] transition duration-700 group-hover:scale-105" />
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
           <span className="absolute top-4 left-4 rounded-full bg-oxblood/90 px-3 py-1 text-[11px] font-extrabold tracking-[0.18em] text-gold-hi uppercase ring-1 ring-gold/40">
-            Man of the night
+            {spot.source === "real" ? "Featured" : "Man of the night"}
           </span>
+          {spot.source !== "real" && <span className="absolute top-4 right-4"><DemoBadge /></span>}
           <div className="absolute inset-x-5 bottom-5">
             <TierBadge tier={spot.tier} />
             <p className="mt-2 font-display text-4xl leading-none font-semibold text-ivory sm:text-5xl">
               {spot.name}
-              <span className="text-gold">,</span> <span className="font-normal text-ivory/80">{spot.age}</span>
+              {spot.age ? <><span className="text-gold">,</span> <span className="font-normal text-ivory/80">{spot.age}</span></> : null}
             </p>
+            {(spot.city || (spot.source !== "real" && spot.metro)) && (
             <p className="mt-2 flex items-center gap-2 text-sm text-muted">
-              <MapPin className="size-3.5" /> {spot.city} · {cityLabel(spot.metro)}
+              <MapPin className="size-3.5" /> {spot.source === "real" ? spot.city : `${spot.city} · ${cityLabel(spot.metro)}`}
             </p>
-            <p className="mt-3 max-w-sm font-display text-xl text-ivory/90 italic">“{spot.tagline}”</p>
+            )}
+            {spot.tagline && <p className="mt-3 max-w-sm font-display text-xl text-ivory/90 italic">“{spot.tagline}”</p>}
+            {spot.reviews.length > 0 && (
             <div className="mt-3 flex items-center gap-2 text-sm">
               <Stars value={spot.rating} />
               <span className="text-muted">{spot.reviews.length} reviews</span>
             </div>
+            )}
           </div>
         </Link>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
@@ -219,6 +226,7 @@ function Tile({ m, onTip, featured = false }: { m: Model; onTip: (m: Model) => v
             <span className="rounded-full bg-ivory px-2 py-0.5 text-[10px] font-extrabold tracking-wider text-ink uppercase">New</span>
           ) : null}
           <TierBadge tier={m.tier} />
+          {m.source !== "real" && <DemoBadge />}
         </div>
         {m.verified && (
           <span className="grid size-6 shrink-0 place-items-center rounded-full bg-ink/60 backdrop-blur">
@@ -230,11 +238,11 @@ function Tile({ m, onTip, featured = false }: { m: Model; onTip: (m: Model) => v
         <div className="flex min-w-0 items-center gap-1.5">
           <StatusDot m={m} />
           <p className="truncate text-base font-bold text-ivory">
-            {m.name}, <span className="font-medium text-ivory/80">{m.age}</span>
+            {m.name}{m.age ? <>, <span className="font-medium text-ivory/80">{m.age}</span></> : null}
           </p>
         </div>
         <p className="mt-0.5 flex items-center gap-1 truncate text-xs text-muted">
-          <MapPin className="size-3 shrink-0" /> {fmtDistance(m.km)} · {m.city}
+          <MapPin className="size-3 shrink-0" /> {m.source === "real" ? (m.city || "OnlyMen") : `${fmtDistance(m.km)} · ${m.city}`}
         </p>
         <p className="mt-1 flex h-4 items-center gap-1.5 text-[11px] text-muted">
           {m.reviews.length > 0 ? (
@@ -278,6 +286,7 @@ function Row({ m, onTip }: { m: Model; onTip: (m: Model) => void }) {
         <span className="absolute top-2 left-2">
           <StatusDot m={m} className="block size-2.5 ring-2 ring-ink" />
         </span>
+        {m.source !== "real" && <span className="absolute top-2 right-2"><DemoBadge /></span>}
         {m.live && (
           <span className="absolute bottom-2 left-2 rounded-full bg-ruby px-2 py-0.5 text-[10px] font-bold tracking-wider text-ivory uppercase">Live</span>
         )}
@@ -286,14 +295,17 @@ function Row({ m, onTip }: { m: Model; onTip: (m: Model) => void }) {
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
             <Link to="/m/$handle" params={{ handle: m.handle }} className="inline-flex min-h-10 items-center gap-1 text-lg leading-tight font-bold text-ivory hover:text-gold-hi">
-              {m.name} <span className="font-medium text-ivory/70">· {m.age}</span>
+              {m.name}{m.age ? <span className="font-medium text-ivory/70"> · {m.age}</span> : null}
             </Link>
             <TierBadge tier={m.tier} />
+            {m.source !== "real" && <DemoBadge />}
             {m.verified && <BadgeCheck className="size-4 shrink-0 text-gold-hi" aria-label="Verified" />}
           </div>
+          {m.city && (
           <p className="flex items-center gap-1 text-sm text-muted">
-            <MapPin className="size-3.5 shrink-0 text-gold" /> {m.city}, {cityLabel(m.metro).split(",")[0]}
+            <MapPin className="size-3.5 shrink-0 text-gold" /> {m.source === "real" ? m.city : `${m.city}, ${cityLabel(m.metro).split(",")[0]}`}
           </p>
+          )}
         </div>
         <p className="text-xs leading-relaxed text-muted">
           <span className="text-dim">Good company for:</span> {m.goodCompanyFor.join(" · ")}
@@ -326,7 +338,7 @@ function Row({ m, onTip }: { m: Model; onTip: (m: Model) => void }) {
         </dl>
         <p className="font-display text-lg leading-snug text-ivory/85 italic">“{m.tagline}”</p>
         <div className="mt-auto flex flex-wrap items-center justify-between gap-3">
-          <p className="text-[11px] text-dim">{fmtActive(m)}</p>
+          <p className="text-[11px] text-dim">{m.source === "real" && !m.live && !m.online ? "OnlyMen creator" : fmtActive(m)}</p>
           <div className="flex gap-2">
             <button onClick={() => onTip(m)} className="flex h-10 items-center gap-1.5 rounded-full bg-gold px-4 text-xs font-bold">
               <Coins className="size-4" /> Tip
@@ -411,12 +423,21 @@ export function OnlyMenHome() {
   const [drawer, setDrawer] = useState(false);
   const [page, setPage] = useState(1);
   const [tip, setTip] = useState<Model | null>(null);
+  const { list: catalog } = useDirectory();
 
-  const inCity = useMemo(() => (city === "all" ? models : models.filter((m) => m.metro === city)), [city]);
-  const shown = useMemo(() => applySort(applySearch(applyFilter(inCity, filter), search), sort), [inCity, filter, search, sort]);
-  const featured = useMemo(() => applySort(inCity.filter((m) => m.tier), "recommended"), [inCity]);
-  const live = useMemo(() => inCity.filter((m) => m.live), [inCity]);
-  const onlineCount = models.filter((m) => m.online || m.live).length;
+  const cityList = useMemo(() => inCity(catalog, city), [catalog, city]);
+  const shown = useMemo(
+    () => arrangeDirectory(cityList, (demos) => applySort(applySearch(applyFilter(demos, filter), search), sort)),
+    [cityList, filter, search, sort],
+  );
+  // Real profiles lead Featured so the first real creator is visible; demos keep their paid-tier slots.
+  const featured = useMemo(() => {
+    const real = cityList.filter((m) => m.source === "real");
+    const demos = applySort(cityList.filter((m) => m.source !== "real" && m.tier), "recommended");
+    return [...real, ...demos];
+  }, [cityList]);
+  const live = useMemo(() => cityList.filter((m) => m.live), [cityList]);
+  const onlineCount = catalog.filter((m) => m.online || m.live).length;
   const nFilters = activeFilterCount(search);
 
   useEffect(() => setPage(1), [city, filter, search, sort]);
@@ -427,7 +448,7 @@ export function OnlyMenHome() {
     <div className="min-h-screen">
       <Header city={city} onCity={setCity} q={search.q} onQ={(q) => setSearch({ ...search, q })} onOpenFilters={() => setDrawer(true)} filterCount={nFilters} />
       <main>
-        <Hero online={onlineCount} live={models.filter((m) => m.live).length} />
+        <Hero online={onlineCount} live={catalog.filter((m) => m.live).length} />
         <LiveRow list={live} />
         <Featured list={featured} onTip={setTip} />
 

@@ -30,6 +30,10 @@
   "vars": {
     "NODE_ENV": "production",
     // Invite-code sign-up (src/lib/invites). Vercel leaves this unset → owner-only private mode.
-    "ONLYMEN_INVITES": "on"
+    "ONLYMEN_INVITES": "on",
+    // Default on: invented demo profiles stay in the directory, with real
+    // eligible accounts (today: role=owner) replacing them one-for-one.
+    // Set to "off" to hide every placeholder once you want a real-only grid.
+    "ONLYMEN_DEMO_PROFILES": "on"
   }
 }

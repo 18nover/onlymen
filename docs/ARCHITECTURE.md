@@ -59,7 +59,9 @@ OnlyMen tables (from `migrations/0002_onlymen_accounts.sql`):
 
 Code map and environment names: [ACCOUNTS.md](ACCOUNTS.md).
 
-Demo directory profiles (not real accounts) still live in `src/lib/models.ts`. They include fields such as ethnicity used by the browse filter. Real `Profile` records do not yet have an ethnicity field; see the decision in [ACCOUNTS.md](ACCOUNTS.md).
+Demo directory profiles (not real accounts) still live in `src/lib/models.ts` (invented names; AI-generated portraits in `public/models/`). They include fields such as ethnicity used by the browse filter. Real `Profile` records do not yet have an ethnicity field; see the decision in [ACCOUNTS.md](ACCOUNTS.md).
+
+The home / browse / Live now grids merge real accounts from Neon in front of those placeholders, one-for-one (`src/lib/directory.ts`). Today only `om_account.role = 'owner'` with an attached photo and a discoverable profile qualifies — Jerry's `@admin` (Dakota Alexander). Ordinary creator accounts are not listed until age-verification and 2257 records are actually captured. `ONLYMEN_DEMO_PROFILES` (default **on**, Worker var in `wrangler.jsonc`) hides every placeholder when set to `off`. Real profiles are never marked live unless they have a real live session. Photos are served from `/api/photo/<id>`.
 
 ---
 

@@ -6,6 +6,7 @@ import { getSql, type Sql } from "../db";
 import { CONSENT_VERSIONS, defaultPermissions, defaultPrivacy, emptyProfile } from "./constants.ts";
 import type { ConsentKey, ConsentRecord, Photo, PublicAccount, VerificationStatus } from "./types.ts";
 import type { CreatorLive, Reminder, ScheduledShow } from "../live/types.ts";
+import { isDirectoryEligible } from "../directory.ts";
 
 type Row = Record<string, unknown>;
 
@@ -320,6 +321,36 @@ export async function liveDirectory(): Promise<{ live: PublicProfile[]; upcoming
       photoId: s.photo_id ? String(s.photo_id) : null,
     })),
   };
+}
+
+/**
+ * Real profiles eligible to appear in the directory (home / browse).
+ * Eligibility is role-gated today: only `owner` (Jerry's @admin) until
+ * age-verification and 2257 records are actually captured. Requires an
+ * attached photo and a discoverable profile. Does not invent a live session.
+ */
+export async function directoryProfiles(): Promise<PublicProfile[]> {
+  const db = await getSql();
+  const rows = await db<Row>`select * from om_account
+    where role = 'owner'
+      and exists (select 1 from om_photo p where p.user_id = om_account.user_id and p.attached)
+    order by created_at asc
+    limit 50`;
+  const out: PublicProfile[] = [];
+  for (const r of rows) {
+    const privacy = json<Record<string, unknown>>(r.privacy, {});
+    if (!isDirectoryEligible({
+      role: String(r.role ?? "user"),
+      accountType: r.account_type === "creator" ? "creator" : "member",
+      verificationStatus: String(r.verification_status ?? "not_started"),
+      discoverable: privacy.discoverable !== false,
+      hasAttachedPhoto: true,
+    })) continue;
+    const photos = await db<Row>`select id, is_primary, explicit from om_photo where user_id = ${r.user_id} and attached order by is_primary desc, position`;
+    if (!photos.length) continue;
+    out.push(toPublic(r, photos, []));
+  }
+  return out;
 }
 
 /** Test/admin helper: remove an account and everything attached (FK cascades). */

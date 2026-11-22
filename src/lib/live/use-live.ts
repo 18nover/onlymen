@@ -4,6 +4,7 @@ import { useImageUrl } from "@/lib/account/media";
 import { liveNow, upcomingShows, type LiveNow, type Upcoming } from "./demo";
 import { resolveHandoff } from "./config";
 import { liveDirectoryFn } from "@/lib/account/api";
+import { useDirectory } from "@/lib/use-directory";
 
 type Directory = Awaited<ReturnType<typeof liveDirectoryFn>>;
 let dirCache: { at: number; value: Promise<Directory> } | null = null;
@@ -28,6 +29,7 @@ export function useLiveNow(): LiveNow[] {
   const photoId = account?.profile.photos.find((p) => p.primary)?.id;
   const photo = useImageUrl(photoId);
   const dir = useLiveDirectory();
+  const { showDemo } = useDirectory();
   return useMemo(() => {
     const s = account?.live?.session;
     const real: LiveNow[] = (dir?.live ?? [])
@@ -51,7 +53,8 @@ export function useLiveNow(): LiveNow[] {
       });
     const realHandles = new Set(real.map((r) => r.handle));
     // a real account always wins over a demo profile with the same handle
-    const list = [...real, ...liveNow().filter((d) => !realHandles.has(d.handle) && !(account && s && d.handle === account.username))];
+    const demos = showDemo ? liveNow().filter((d) => !realHandles.has(d.handle) && !(account && s && d.handle === account.username)) : [];
+    const list = [...real, ...demos];
     if (account && s) {
       const t = resolveHandoff(account.username, s.roomUrl);
       const mins = Math.max(0, Math.round((Date.now() - new Date(s.startedAt).getTime()) / 60000));
@@ -70,7 +73,7 @@ export function useLiveNow(): LiveNow[] {
       });
     }
     return list;
-  }, [account, photo, dir]);
+  }, [account, photo, dir, showDemo]);
 }
 
 /** Upcoming shows (client-only so times match the viewer's clock). */
@@ -79,6 +82,7 @@ export function useUpcoming(): Upcoming[] | null {
   const [demo, setDemo] = useState<Upcoming[] | null>(null);
   useEffect(() => setDemo(upcomingShows()), []);
   const dir = useLiveDirectory();
+  const { showDemo } = useDirectory();
   return useMemo(() => {
     if (!demo) return null;
     const real: Upcoming[] = (dir?.upcoming ?? [])
@@ -108,6 +112,6 @@ export function useUpcoming(): Upcoming[] | null {
         platform: account!.live?.rooms[0] ? resolveHandoff(account!.username, account!.live.rooms[0].url).platform : "OnlyMen Live",
         own: true,
       }));
-    return [...own, ...real, ...demo].sort((a, b) => a.startsAt.localeCompare(b.startsAt));
-  }, [demo, account, dir]);
+    return [...own, ...real, ...(showDemo ? demo : [])].sort((a, b) => a.startsAt.localeCompare(b.startsAt));
+  }, [demo, account, dir, showDemo]);
 }

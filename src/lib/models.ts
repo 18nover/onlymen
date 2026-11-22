@@ -55,6 +55,10 @@ export type Model = {
   profileViews: number;
   memberSince: string;
   focal: string[]; // object-position crops used for the demo gallery
+  /** "real" = a database account; unset or "demo" = invented placeholder. */
+  source?: "demo" | "real";
+  /** For real profiles: false when city could not be mapped to a metro. */
+  metroKnown?: boolean;
 };
 
 export const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
@@ -165,6 +169,7 @@ function build(s: Seed, i: number): Model {
     memberSince: `${months[i % months.length]} ${2024 + (i % 3)}`,
     focal: ["50% 30%", "50% 15%", "50% 70%", "30% 40%"],
     ...s,
+    source: "demo",
   };
 }
 

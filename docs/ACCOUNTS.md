@@ -58,6 +58,7 @@ Server-owned fields (cannot be changed from the browser): email, username, DOB, 
 | `ONLYMEN_OWNER_SIGNUP_EMAIL` | optional, one-time | If set, only that email may use the otherwise-closed sign-up path. Off by default. |
 | `ONLYMEN_OWNER_SEED_TOKEN` | optional, one-time | Required for `POST /api/owner-seed`. Remove the var after the owner account is seeded. |
 | `ONLYMEN_PRIVATE_MODE` | local dev only | Set to `off` to disable the gate in non-production. Ignored in production. |
+| `ONLYMEN_DEMO_PROFILES` | Worker var (default `on`) | Set to `off` to hide invented placeholder profiles. Real directory rows are role-gated (today: `owner` with a photo). See [ARCHITECTURE.md](ARCHITECTURE.md). |
 
 Full list and the live-domain vars: [HOSTING.md](HOSTING.md). Never put the values of these variables in the repo or in chat.
 

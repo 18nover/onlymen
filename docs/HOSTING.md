@@ -138,6 +138,8 @@ Private mode is fully enforced on the Worker: the coming-soon gate, `disableSign
 | `ONLYMEN_WEBHOOK_URL`, `ONLYMEN_WEBHOOK_KEY` | secrets | Optional; sign-up alerts (sent with `waitUntil`). |
 | `BETTER_AUTH_URL` | secret/var | Optional. Leave **unset** on the preview (base URL comes from the allowed-hosts list, which includes `onlymen.18nover.workers.dev`). Pin to `https://onlymen.gay` only at cutover. |
 | `NODE_ENV` | var (wrangler.jsonc) | `production`. |
+| `ONLYMEN_INVITES` | var (wrangler.jsonc) | `on` on the Worker preview (invite-code sign-up). Leave unset on Vercel. |
+| `ONLYMEN_DEMO_PROFILES` | var (wrangler.jsonc) | Default `on`. Set to `off` to hide invented placeholder profiles. |
 | `VITE_LIVE_BASE_URL`, `VITE_LIVE_DOMAIN_READY`, `VITE_AUTH_ENABLED` | **build-time** (shell/CI env when running `build:cf`; `VITE_AUTH_ENABLED=false` comes from `.grok/app-env.json`) | Same values as Vercel Production. |
 | `ONLYMEN_OWNER_SIGNUP_EMAIL`, `ONLYMEN_OWNER_SEED_TOKEN`, `ONLYMEN_PRIVATE_MODE` | — | **Do not set** on the Worker. |
 | `DATABASE_URL` | — | **Not** on the Worker. Only for `npm run db:migrate` (Node, CI or laptop). |
