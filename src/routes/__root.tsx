@@ -1,7 +1,9 @@
-import { createRootRoute, HeadContent, Outlet, Scripts, useRouterState } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
+import { createRootRoute, HeadContent, Outlet, Scripts, useRouter, useRouterState } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { PrivateComingSoon } from "@/components/private-gate";
+import { useAccount } from "@/lib/account/use-account";
 import { privateAccessFn } from "@/lib/private/access";
 import { isPublicPath } from "@/lib/private/policy";
 import appCss from "../styles.css?url";
@@ -45,6 +47,7 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   const { access } = Route.useRouteContext();
+  useRecheckAccessOnAccountChange();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const gated = !access.allowed && !isPublicPath(pathname) && !(access.ownerSignup && pathname === "/join");
   return (
@@ -61,4 +64,17 @@ function RootComponent() {
       </body>
     </html>
   );
+}
+
+/** Sign-in / sign-out changes the session cookie: re-run the root beforeLoad (server check). */
+function useRecheckAccessOnAccountChange() {
+  const router = useRouter();
+  const { account, ready } = useAccount();
+  const id = ready ? (account?.id ?? "") : null;
+  const prev = useRef<string | null>(null);
+  useEffect(() => {
+    if (id === null) return;
+    if (prev.current !== null && prev.current !== id) void router.invalidate();
+    prev.current = id;
+  }, [id, router]);
 }

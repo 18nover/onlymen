@@ -78,16 +78,27 @@ if (process.env.DENY_ID && process.env.DENY_PW) {
   });
 }
 if (process.env.OWNER_ID && process.env.OWNER_PW) {
-  await check("owner login", async () => {
+  await check("owner login (no reload)", async () => {
     const { c, p } = await tryLogin(process.env.OWNER_ID, process.env.OWNER_PW);
     await p.waitForURL(/\/(me|onboarding)/, { timeout: 15000 });
-    const landed = new URL(p.url()).pathname;
-    await p.goto(`${BASE}/me`);
     await p.waitForLoadState("networkidle");
+    const landed = new URL(p.url()).pathname;
+    // Do NOT reload: the page must already show the app, not the gate.
     const html = await p.content();
+    if (GATE.test(html)) throw new Error(`gate still shown on ${landed} after login`);
+    if (!html.includes("@admin") && process.env.OWNER_HANDLE !== "skip") throw new Error(`landed ${landed} but @admin not shown`);
+    // Logout must bring the gate back right away.
+    await p.goto(`${BASE}/logout`);
+    await p.getByText("Until").first().waitFor();
+    await p.waitForTimeout(2500);
+    await p.getByRole("link", { name: "Back to browsing" }).click();
+    await p.waitForLoadState("networkidle");
+    const after = await p.content();
+    await p.goto(`${BASE}/me`);
+    const me = await p.content();
     await c.close();
-    if (GATE.test(html)) throw new Error("owner sees the gate on /me");
-    return `landed ${landed}; /me renders the app (${html.includes("@admin") ? "@admin shown" : "loaded"})`;
+    if (!GATE.test(after) || !GATE.test(me)) throw new Error("gate not back after logout");
+    return `landed ${landed} showing @admin without reload; after logout / and /me show the gate`;
   });
 }
 await browser.close();
