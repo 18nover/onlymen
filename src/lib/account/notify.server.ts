@@ -5,18 +5,21 @@
  * non-personal data: event, public username, role, timestamp. Never awaited by
  * the caller; failures and slowness are swallowed (1.5 s timeout).
  */
+import { platformEnv, runInBackground } from "../platform/runtime.ts";
+
 export function notifySignup(username: string, type: "member" | "creator"): void {
-  const url = process.env.ONLYMEN_WEBHOOK_URL?.trim();
-  const key = process.env.ONLYMEN_WEBHOOK_KEY?.trim();
+  const url = platformEnv("ONLYMEN_WEBHOOK_URL");
+  const key = platformEnv("ONLYMEN_WEBHOOK_KEY");
   if (!url || !key || !/^https:\/\//.test(url)) return;
   const body = JSON.stringify({ event: "signup", username, role: type === "creator" ? "creator" : "fan", at: new Date().toISOString() });
   try {
-    void fetch(url, {
+    // runInBackground: ctx.waitUntil on Workers so the POST outlives the response.
+    runInBackground(fetch(url, {
       method: "POST",
       headers: { "content-type": "application/json", authorization: `Bearer ${key}` },
       body,
       signal: AbortSignal.timeout(1500),
-    }).catch(() => {});
+    }));
   } catch {
     /* never break sign-up */
   }

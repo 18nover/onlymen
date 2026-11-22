@@ -34,15 +34,15 @@
 8. **Lawyer review** of `/terms`, `/privacy`, `/guidelines`, `/2257`, and `/live-rules`. Coordinate with the 18nover bot before renaming those routes (the company footer links here).
 9. **White-label live partner** — choose one; do not treat onlymen.live as a finished live product until a partner is serving rooms.
 10. **KYC vendor** (Veriff, Yoti, or Persona) so ID documents leave the device.
-11. **Commercial-ready hosting** — planned Cloudflare Workers move (plan at `/workspace/plans/cloudflare-migration.md`; **not started**), or Vercel Pro, before any payments. See [HOSTING.md](HOSTING.md) and [OPERATIONS.md](OPERATIONS.md).
+11. **Commercial-ready hosting** — Cloudflare Workers port is on branch `cloudflare-workers` (workers.dev preview only, PR not merged; see [HOSTING.md §7](HOSTING.md#7-cloudflare-workers-port-workersdev-preview)). Remaining: decide free vs **Workers Paid $5/mo** (scrypt sign-in ≈ 50 ms CPU vs the 10 ms free limit), turn off Hyperdrive query caching, `public/_headers`, GitHub Actions deploy (`db:migrate` → `build:cf` → `wrangler deploy`), then nameserver cutover with custom domains. Vercel stays live until then.
 
 ---
 
 ## Open engineering items (known gaps)
 
 - Geo-blocking is stored but not enforced.
-- Photo storage is `bytea` in Neon, capped by the free-plan branch size (1 GB verified 2026-11-21).
-- The engineering handoff listed **1 pre-existing lint error** and **8 pre-existing failing template share-card tests**. This docs pass did not re-run the suite to recount them.
+- Photo storage is `bytea` in Neon, capped by the free-plan branch size (1 GB verified 2026-11-21). On Workers every photo view is a Worker request (100k/day free) plus a Hyperdrive query; move to R2 when volume or Neon size gets tight.
+- Re-counted 2026-11-21 on `cloudflare-workers`: **1 pre-existing lint error** (`client.server.ts` empty block), **8 failing template share-card tests** and **1 failing migration-plan test**; all pre-existing on main.
 - AI operations plan (ranking, featured pricing, safety, agent-run ops) is a plan, not a build: [OPERATIONS.md](OPERATIONS.md).
 
 ---

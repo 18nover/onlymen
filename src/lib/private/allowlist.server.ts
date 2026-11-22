@@ -3,14 +3,19 @@
  * `allowedSessionUserId` instead of trusting a bare session.
  */
 import { readAllowlist, allowlistEmpty, isAllowedIdentity, signUpAllowedFor } from "./policy.ts";
+import { platformEnv } from "../platform/runtime.ts";
 
 /** Local-dev escape hatch only; never honored in production builds. */
 export function privateModeOff(): boolean {
-  return process.env.NODE_ENV !== "production" && process.env.ONLYMEN_PRIVATE_MODE === "off";
+  return process.env.NODE_ENV !== "production" && platformEnv("ONLYMEN_PRIVATE_MODE") === "off";
 }
 
 export function allowlist() {
-  return readAllowlist(process.env);
+  return readAllowlist({
+    ONLYMEN_ALLOWED_USER_IDS: platformEnv("ONLYMEN_ALLOWED_USER_IDS"),
+    ONLYMEN_ALLOWED_USERNAMES: platformEnv("ONLYMEN_ALLOWED_USERNAMES"),
+    ONLYMEN_OWNER_SIGNUP_EMAIL: platformEnv("ONLYMEN_OWNER_SIGNUP_EMAIL"),
+  });
 }
 
 /** Is this user id allowed into OnlyMen right now? Fails closed on any error. */

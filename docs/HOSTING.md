@@ -25,7 +25,7 @@ Nobody changes another's repo, project, or DNS without asking its owner first.
 - Framework (Vercel): `tanstack-start`; Node `26.x`
 - **Not Git-linked.** Production deploys are **file uploads** through the Vercel connector, not pushes from GitHub.
 - Preview deployments are behind **Vercel Authentication** (SSO protection, preview only). Password protection is off.
-- Plan: Vercel **Hobby**. Hobby is **non-commercial**. Paid hosting (for example Vercel Pro) or a move off Vercel is required before taking payments or selling featured placements. The planned path is Cloudflare Workers; see [§7](#planned-cloudflare-move).
+- Plan: Vercel **Hobby**. Hobby is **non-commercial**. Paid hosting (for example Vercel Pro) or a move off Vercel is required before taking payments or selling featured placements. The planned path is Cloudflare Workers; see [§7](#7-cloudflare-workers-port-workersdev-preview).
 
 ### Current production (verified 2026-11-21)
 
@@ -107,22 +107,66 @@ It stays **off** until both `ONLYMEN_WEBHOOK_URL` and `ONLYMEN_WEBHOOK_KEY` are 
 
 ---
 
-## 7. Planned Cloudflare move
+## 7. Cloudflare Workers port (workers.dev preview)
 
-**Status: planned, not started.** Do not begin this migration from these docs. The full plan is `/workspace/plans/cloudflare-migration.md` on the shared box (Supervisor, 2026-11-21).
+**Status:** code on branch `cloudflare-workers` (PR "Cloudflare Workers port (workers.dev preview, do not merge)"). Preview Worker only, at **https://onlymen.18nover.workers.dev**. **No routes, no custom domains, no DNS changes.** onlymen.gay / onlymen.live stay on Vercel until a cutover is approved. Full plan: `/workspace/plans/cloudflare-migration.md` on the shared box.
 
-Why: Vercel Hobby is non-commercial, and the cheapest path off it is Cloudflare Workers (commercial use allowed on the free plan). Porkbun stays the registrar. Neon stays the database.
+### How the dual-target build works
 
-Intended OnlyMen shape (when work is approved):
+| | Vercel (default, unchanged) | Cloudflare Workers |
+|---|---|---|
+| Build | `npm run build` (vite build + Nitro `preset: "vercel"`, then `db:migrate`) | `npm run build:cf` (`DEPLOY_TARGET=cloudflare`, Cloudflare Vite plugin, **no** migrate) |
+| Server entry | Nitro; auto-registers `server/middleware/*` | `src/worker.ts` (wraps TanStack Start with the same `grok-pwa` → `private-gate` middlewares, same order) |
+| Env / secrets | `process.env` | `import { env } from "cloudflare:workers"` (falls back to `process.env`) |
+| Database | `pg` Pool on `DATABASE_URL` | Hyperdrive binding `HYPERDRIVE` → **per-request** `pg` Client(s), closed with `ctx.waitUntil` when the response body ends. No module-level pool. |
+| PGLite | dev fallback | stubbed out of the bundle |
 
-- Uninstall Nitro; install the official **Cloudflare Vite plugin** (`@cloudflare/vite-plugin`) and **Wrangler**. Add `wrangler.jsonc` with `name: "onlymen"` and `main: "@tanstack/react-start/server-entry"`.
-- Follow Cloudflare's TanStack Start / Vercel-to-Workers guides. Do **not** use Nitro's `cloudflare-module` preset.
-- Talk to Neon through a free **Hyperdrive** config (preferred) or `@neondatabase/serverless`. Do not keep a process-wide `pg` Pool on Workers. Keep `scripts/migrate.mjs` as a Node CI step, not inside the Worker.
-- Read production secrets via `cloudflare:workers` `env`. Keep `VITE_LIVE_*` as build-time vars.
-- Keep `onlymen.live` and `www.onlymen.live` on the Better Auth allowed-hosts list (already added in `8311918`) and extend it with the `*.workers.dev` preview host.
-- Cloudflare account / team name should be **18nover**. Do not use Cloudflare Stream or Images for explicit video (rent-compliance model stays).
-- Nameserver cutover to Cloudflare's free plan is required for custom domains on the cheap path; copy every email record first, and do not cut over until a `workers.dev` preview has been tested (sign-up, sign-in, photos). Rollback is switching Porkbun nameservers back.
-- Realistic start cost is $0, or $5/mo (Workers Paid) if scrypt / SSR consistently exceeds the free plan's 10 ms CPU limit.
+The switch is `src/lib/platform/runtime.ts` (Node) vs `src/lib/platform/cloudflare.ts` (Workers), swapped at bundle time by `platformRuntimePlugin` in `vite.config.ts`. `@cloudflare/vite-plugin` and `wrangler` are devDependencies and are only imported when `DEPLOY_TARGET=cloudflare`, so Vercel's `npm install --omit=dev` build is unaffected. Nitro stays installed for the Vercel target.
+
+Config: `wrangler.jsonc` — `name: "onlymen"`, `main: "src/worker.ts"`, `compatibility_date: "2026-11-21"`, `nodejs_compat`, `workers_dev: true`, `preview_urls: false`, observability + traces on, Hyperdrive `HYPERDRIVE` = `2e620b8e625e454fb58fc8120df9e02f` (config `onlymen-neon`: Neon direct host, db `onlymen`, user `onlymen_owner`).
+
+Private mode is fully enforced on the Worker: the coming-soon gate, `disableSignUp` plus the sign-up before-hook, the allowlist session hook, members-only `/api/photo/<id>`, `x-robots-tag: noindex` on every app response, and `/api/owner-seed` returns 404 unless `ONLYMEN_OWNER_SEED_TOKEN` is set (never set it on the Worker). `privateModeOff()` compiles to `false` in the Worker bundle.
+
+### Worker variables (names only)
+
+| Name | Kind | Needed? |
+|---|---|---|
+| `HYPERDRIVE` | binding (wrangler.jsonc) | Required. Replaces `DATABASE_URL` on the Worker. |
+| `BETTER_AUTH_SECRET` | secret | Required (`wrangler secret put`). |
+| `ONLYMEN_ALLOWED_USER_IDS` | secret | Required, or nobody can sign in (fails closed). |
+| `ONLYMEN_ALLOWED_USERNAMES` | secret | Optional alternative allowlist. |
+| `ONLYMEN_WEBHOOK_URL`, `ONLYMEN_WEBHOOK_KEY` | secrets | Optional; sign-up alerts (sent with `waitUntil`). |
+| `BETTER_AUTH_URL` | secret/var | Optional. Leave **unset** on the preview (base URL comes from the allowed-hosts list, which includes `onlymen.18nover.workers.dev`). Pin to `https://onlymen.gay` only at cutover. |
+| `NODE_ENV` | var (wrangler.jsonc) | `production`. |
+| `VITE_LIVE_BASE_URL`, `VITE_LIVE_DOMAIN_READY`, `VITE_AUTH_ENABLED` | **build-time** (shell/CI env when running `build:cf`; `VITE_AUTH_ENABLED=false` comes from `.grok/app-env.json`) | Same values as Vercel Production. |
+| `ONLYMEN_OWNER_SIGNUP_EMAIL`, `ONLYMEN_OWNER_SEED_TOKEN`, `ONLYMEN_PRIVATE_MODE` | — | **Do not set** on the Worker. |
+| `DATABASE_URL` | — | **Not** on the Worker. Only for `npm run db:migrate` (Node, CI or laptop). |
+
+### Deploy steps
+
+Needs a `CLOUDFLARE_API_TOKEN` for account 18nover (`CLOUDFLARE_ACCOUNT_ID` too) with **Account → Workers Scripts: Edit**, **Account → Hyperdrive: Read** (binding check), and **Account → Account Settings: Read**; **User → User Details: Read** and **Memberships: Read** keep `wrangler whoami` working. No zone/DNS permissions are needed for workers.dev. Keep the token out of chat and the repo.
+
+```sh
+npm ci
+npm run db:migrate              # Node only, DATABASE_URL in the shell env; skip if no new migrations
+npm run deploy:cf:dry-run       # build:cf + wrangler deploy --dry-run
+npx wrangler secret put BETTER_AUTH_SECRET          # value via stdin, never argv
+npx wrangler secret put ONLYMEN_ALLOWED_USER_IDS
+npm run deploy:cf               # build:cf + wrangler deploy  → https://onlymen.18nover.workers.dev
+npx wrangler tail onlymen --format pretty           # live logs incl. CPU time
+```
+
+Local: `npm run preview:cf` (build + `wrangler dev` on :8787). Hyperdrive needs `CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE` pointing at a **local or Neon-branch** Postgres (never production); local secrets go in `.dev.vars` (gitignored).
+
+### CPU time (free plan = 10 ms per request)
+
+- Better Auth hashes with **scrypt** (N=16384, r=16). In workerd it uses native `node:crypto` scrypt: measured **~50 ms CPU per verify** locally (hash ~50–80 ms). Every sign-in, password change and reset is ~5× over the free limit, so **Error 1102 on login is expected on the free plan**. Do not weaken the hash; use **Workers Paid ($5/mo)**.
+- Warm SSR of the gate, /login and legal pages measured ~6–8 ms wall locally: near the limit. Session checks are a cookie HMAC + one or two Hyperdrive queries (cheap).
+- Hyperdrive config `onlymen-neon` currently has **query caching enabled**. For auth/session reads, turn caching **off** (stale session/allowlist reads for up to 60 s after sign-out otherwise). Supervisor owns that config.
+
+### Still open before any cutover
+
+Nameserver move to Cloudflare free plan (copy Google MX/TXT first), Custom Domains on the apex + Redirect Rule for www, `public/_headers` long-cache for `/assets/*`, GitHub Actions deploy workflow, pin `BETTER_AUTH_URL`, and a photo-storage decision (R2 later — see §5 of the plan).
 
 ---
 

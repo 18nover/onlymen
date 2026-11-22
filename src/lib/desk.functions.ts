@@ -37,7 +37,8 @@ export const briefDesk = createServerFn({ method: "POST" })
     return { brief, agentId, surface };
   })
   .handler(async ({ data }): Promise<{ ok: true; reply: DeskReply } | { ok: false; error: string }> => {
-    const apiKey = process.env.XAI_API_KEY;
+    const { platformEnv } = await import("@/lib/platform/runtime.ts");
+    const apiKey = platformEnv("XAI_API_KEY");
     if (!apiKey) {
       return { ok: false, error: "The desk has no model key in this environment yet." };
     }

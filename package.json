@@ -11,6 +11,12 @@
     "build": "node scripts/with-app-env.mjs vite build && npm run db:migrate",
     "db:migrate": "node scripts/migrate.mjs",
     "build:dev": "node scripts/with-app-env.mjs vite build --mode development",
+    "build:cf": "DEPLOY_TARGET=cloudflare node scripts/with-app-env.mjs vite build",
+    "dev:cf": "DEPLOY_TARGET=cloudflare node scripts/with-app-env.mjs vite dev --host 0.0.0.0 --port 8080",
+    "preview:cf": "npm run build:cf && wrangler dev --port 8787",
+    "deploy:cf:dry-run": "npm run build:cf && wrangler deploy --dry-run",
+    "deploy:cf": "npm run build:cf && wrangler deploy",
+    "cf-typegen": "wrangler types --path worker-configuration.d.ts",
     "preview": "node scripts/with-app-env.mjs vite preview",
     "preview:restart": "node scripts/preview.mjs restart",
     "preview:stop": "node scripts/preview.mjs stop",
@@ -79,6 +85,7 @@
     "zustand": "^5.0.0"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.70.1",
     "@eslint/js": "^9.20.0",
     "@types/node": "^22.16.5",
     "@types/pg": "^8.11.10",
@@ -92,6 +99,7 @@
     "globals": "^15.15.0",
     "playwright": "^1.62.0",
     "prettier": "^3.4.0",
-    "typescript-eslint": "^8.56.1"
+    "typescript-eslint": "^8.56.1",
+    "wrangler": "^4.166.0"
   }
 }

@@ -20,7 +20,8 @@ export const Route = createFileRoute("/api/owner-seed")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const token = process.env.ONLYMEN_OWNER_SEED_TOKEN?.trim() ?? "";
+        const { platformEnv } = await import("@/lib/platform/runtime.ts");
+        const token = platformEnv("ONLYMEN_OWNER_SEED_TOKEN") ?? "";
         if (token.length < 32) return json({ error: "Not found" }, 404);
         const { timingSafeEqual, createHash } = await import("node:crypto");
         const given = (request.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
