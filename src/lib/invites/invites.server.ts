@@ -23,17 +23,43 @@ export function hashCode(canonical: string): string {
 
 // ---------------------------------------------------------------- rate limiting
 
-/** Failed code attempts allowed per IP per window, and across everyone. */
+/** Failed code attempts allowed per client per window, and across everyone (env-overridable). */
 export const RATE = { windowMin: 15, perIp: 10, global: 300 } as const;
+
+function limits() {
+  const n = (k: string, d: number) => {
+    const v = Number(platformEnv(k));
+    return Number.isFinite(v) && v >= 1 ? Math.floor(v) : d;
+  };
+  return { perIp: n("ONLYMEN_INVITE_RATE_PER_IP", RATE.perIp), global: n("ONLYMEN_INVITE_RATE_GLOBAL", RATE.global) };
+}
 
 export function clientIp(headers: Headers): string {
   return headers.get("cf-connecting-ip") || headers.get("x-real-ip") || (headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || "unknown";
 }
 
-/** Keyed hash of the client IP — the raw IP is never stored. */
+/** Rate-limit key: the IPv4 address, or the /64 prefix of an IPv6 address (one home/device network). */
+export function rateKey(ip: string): string {
+  return ip.includes(":") ? ipv6Prefix64(ip) : ip;
+}
+
+export function ipv6Prefix64(ip: string): string {
+  const addr = ip.split("%")[0].toLowerCase();
+  const [head, tail = ""] = addr.split("::");
+  const h = head ? head.split(":") : [];
+  const t = addr.includes("::") ? (tail ? tail.split(":") : []) : [];
+  const full = addr.includes("::") ? [...h, ...Array(Math.max(0, 8 - h.length - t.length)).fill("0"), ...t] : h;
+  return full.slice(0, 4).map((x) => (x || "0").replace(/^0+(?=.)/, "")).join(":") + "::/64";
+}
+
+/** Keyed hash of the client network — the raw IP is never stored. */
 export function ipHash(headers: Headers): string {
   const key = platformEnv("BETTER_AUTH_SECRET") ?? "onlymen-dev-invite-rate";
-  return createHmac("sha256", key).update(clientIp(headers)).digest("hex").slice(0, 32);
+  return createHmac("sha256", key).update(rateKey(clientIp(headers))).digest("hex").slice(0, 32);
+}
+
+export function overLimit(counts: { mine: number; total: number }, lim: { perIp: number; global: number } = { perIp: RATE.perIp, global: RATE.global }): boolean {
+  return counts.mine >= lim.perIp || counts.total >= lim.global;
 }
 
 export async function isRateLimited(db: Sql, ip: string): Promise<boolean> {
@@ -41,8 +67,7 @@ export async function isRateLimited(db: Sql, ip: string): Promise<boolean> {
       count(*) filter (where ip_hash = ${ip}) as mine,
       count(*) as total
     from invite_attempts where at > now() - make_interval(mins => ${RATE.windowMin})`;
-  const r = rows[0];
-  return Number(r?.mine ?? 0) >= RATE.perIp || Number(r?.total ?? 0) >= RATE.global;
+  return overLimit({ mine: Number(rows[0]?.mine ?? 0), total: Number(rows[0]?.total ?? 0) }, limits());
 }
 
 export async function recordFailedAttempt(db: Sql, ip: string): Promise<void> {

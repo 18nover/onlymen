@@ -34,7 +34,8 @@ Plain codes are never stored, logged or committed.
 
 ## Sign-up flow (src/lib/account/api.ts → `signUpWithInvite`)
 
-1. Rate limit: 10 failed code attempts per IP per 15 min, 300 across everyone.
+1. Rate limit: 10 failed code attempts per client per 15 min (IPv4 address, or IPv6 /64), 300 across everyone.
+   Override with `ONLYMEN_INVITE_RATE_PER_IP` / `ONLYMEN_INVITE_RATE_GLOBAL`. While limited, even a valid code waits.
 2. Read-only pre-check for a friendly message: missing / invalid / used / revoked.
 3. Field validation, username and email checks.
 4. **One transaction**: insert `user` + credential `account` (Better Auth's scrypt hash),
@@ -46,6 +47,10 @@ Plain codes are never stored, logged or committed.
 5. Sign in through Better Auth (session cookie), then onboarding.
 
 Better Auth's own `/sign-up` stays disabled.
+
+## QA
+
+`BASE=https://onlymen.18nover.workers.dev CODE_A=… CODE_B=… CODE_RACE=… node scripts/e2e-invites.mjs` with temporary codes; delete the `e2etest*` accounts and the temporary codes afterwards.
 
 ## Managing codes
 
