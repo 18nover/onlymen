@@ -16,7 +16,7 @@ const HEAD = (title: string) => `<!doctype html>
 <meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="rating" content="adult">
 <meta name="RATING" content="RTA-5042-1996-1400-1577-RTA">
-<meta name="theme-color" content="#0a0809">
+<meta name="theme-color" content="#070405">
 <title>${title}</title>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,14 +26,14 @@ const HEAD = (title: string) => `<!doctype html>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2.25rem;padding:3rem 1.5rem;
-background:radial-gradient(ellipse 80% 55% at 50% 0%,rgba(92,13,27,.55),transparent 70%),radial-gradient(ellipse 60% 40% at 50% 100%,rgba(194,42,69,.16),transparent 70%),#0a0809;
+background:radial-gradient(ellipse 85% 60% at 50% 0%,rgba(120,10,32,.62),transparent 70%),radial-gradient(ellipse 60% 40% at 50% 100%,rgba(196,22,63,.14),transparent 70%),radial-gradient(ellipse 120% 90% at 50% 45%,transparent 55%,rgba(0,0,0,.6)),#070405;
 color:#f4ead7;font-family:Manrope,ui-sans-serif,system-ui,sans-serif;text-align:center;-webkit-font-smoothing:antialiased}
 main{display:flex;flex-direction:column;align-items:center;gap:1.5rem;max-width:34rem}
 .crest{width:96px;height:96px;border-radius:999px;box-shadow:0 0 0 1px rgba(212,175,106,.45),0 18px 60px -12px rgba(212,175,106,.45)}
 .kicker{font-size:.72rem;letter-spacing:.42em;text-transform:uppercase;color:#d4af6a;font-weight:700}
 h1{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;font-size:clamp(2.4rem,7vw,4rem);line-height:1.04}
 h1 em{font-style:italic;background:linear-gradient(180deg,#f3dca0,#d4af6a 55%,#96702f);-webkit-background-clip:text;background-clip:text;color:transparent}
-.rule{width:140px;height:1px;background:linear-gradient(90deg,transparent,#d4af6a,transparent)}
+.rule{position:relative;width:180px;height:1px;background:linear-gradient(90deg,transparent,#d4af6a,transparent)}.rule::after{content:"";position:absolute;left:50%;top:50%;width:6px;height:6px;background:#d4af6a;transform:translate(-50%,-50%) rotate(45deg);box-shadow:0 0 12px rgba(212,175,106,.7)}
 p{color:#b3a493;line-height:1.7;font-size:1rem}
 .small{font-size:.8rem;color:#7d6f63}
 .row{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center}

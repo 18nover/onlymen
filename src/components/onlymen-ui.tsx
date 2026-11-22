@@ -7,7 +7,9 @@ import { useImageUrl } from "@/lib/account/media";
 import { useNearbyEnabled } from "@/lib/nearby/use-nearby";
 
 const footerRoutes: Record<string, string> = {
-  "Become a creator": "/join?as=creator",
+  Browse: "/#browse",
+  "Live now": "/live",
+  "Have an invite?": "/join",
   "Terms of service": "/terms",
   Privacy: "/privacy",
   "2257 statement": "/2257",
@@ -40,7 +42,7 @@ function AccountButtons() {
       <Link to="/login" className="hidden h-10 items-center rounded-full px-3 text-sm font-semibold whitespace-nowrap text-ivory transition hover:text-gold-hi sm:flex">
         Sign in
       </Link>
-      <Link to="/join" className="flex h-10 items-center rounded-full bg-gold px-5 text-sm font-bold whitespace-nowrap transition hover:brightness-110">Join free</Link>
+      <Link to="/join" className="flex h-10 items-center rounded-full bg-gold px-5 text-sm font-bold whitespace-nowrap transition hover:brightness-110">I have an invite</Link>
     </>
   );
 }
@@ -262,9 +264,9 @@ export function Header({ city, onCity, q, onQ, onOpenFilters, filterCount = 0 }:
 
 export function Footer() {
   const cols = [
-    { title: "Explore", links: ["Browse", "Live now", "New faces", "Become a creator"] },
-    { title: "Safety", links: ["18+ & age verification", "Community guidelines", "Safety center", "Report a profile"] },
-    { title: "Legal", links: ["Terms of service", "Privacy", "Cookies", "2257 statement", "DMCA"] },
+    { title: "Explore", links: ["Browse", "Live now", "Have an invite?"] },
+    { title: "Safety", links: ["18+ & age verification", "Community guidelines"] },
+    { title: "Legal", links: ["Terms of service", "Privacy", "2257 statement"] },
   ];
   return (
     <footer className="om-bottom-safe mt-[calc(var(--section-gap)*1.25)] border-t border-line/60 bg-night/80">
@@ -320,27 +322,25 @@ export function Footer() {
 export function MobileNav({ onOpenFilters }: { onOpenFilters?: () => void }) {
   const nearby = useNearbyEnabled();
   const cls =
-    "flex h-14 flex-col items-center justify-center gap-1 rounded-xl text-xs font-semibold text-muted transition active:bg-surface-2 active:text-gold-hi";
+    "relative flex h-14 min-w-0 flex-col items-center justify-center gap-1 rounded-full text-[11px] font-semibold tracking-wide text-muted transition active:bg-wine active:text-gold-hi";
+  const cols = 3 + (onOpenFilters ? 1 : 0) + (nearby ? 1 : 0);
   return (
-    <nav className="om-fixed-bottom fixed inset-x-3 z-40 mx-auto grid max-w-md grid-cols-4 rounded-2xl border-gold-grad p-1 shadow-2xl md:hidden" aria-label="Primary">
+    <nav className={`om-fixed-bottom om-glass fixed inset-x-3 z-40 mx-auto grid max-w-md rounded-full p-1 md:hidden ${cols === 5 ? "grid-cols-5" : cols === 4 ? "grid-cols-4" : "grid-cols-3"}`} aria-label="Primary">
       <Link to="/" hash="browse" className={cls}>
         <Flame className="size-5 text-gold" /> Browse
       </Link>
       <Link to="/live" className={cls}>
         <Radio className="size-5 text-gold" /> Live
       </Link>
-      {onOpenFilters ? (
+      {nearby && (
+        <Link to="/nearby" className={cls} activeProps={{ className: "text-gold-hi" }}>
+          <Radar className="size-5 text-gold" /> Nearby
+        </Link>
+      )}
+      {onOpenFilters && (
         <button onClick={onOpenFilters} className={cls}>
           <SlidersHorizontal className="size-5 text-gold" /> Filters
         </button>
-      ) : nearby ? (
-        <Link to="/nearby" className={cls}>
-          <Radar className="size-5 text-gold" /> Nearby
-        </Link>
-      ) : (
-        <Link to="/" hash="featured" className={cls}>
-          <Crown className="size-5 text-gold" /> Featured
-        </Link>
       )}
       <MobileAccountLink cls={cls} />
     </nav>

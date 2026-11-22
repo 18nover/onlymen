@@ -45,22 +45,22 @@ const PAGE = 12;
 function Hero({ online, live }: { online: number; live: number }) {
   return (
     <section className="relative isolate overflow-hidden border-b border-line/60">
-      <img src="/models/hero.webp" alt="" className="absolute inset-0 -z-10 size-full object-cover object-right opacity-70" />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-ink via-ink/85 to-ink/10" />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-transparent to-ink/40" />
-      <div className="absolute inset-0 -z-10 bg-ink/45 sm:hidden" />
-      <div className="om-container py-[clamp(2.5rem,6vw,4.5rem)]">
-        <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-gold">
+      <img src="/models/hero.webp" alt="" className="absolute inset-0 -z-10 size-full object-cover object-[70%_center] opacity-75" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,rgb(43_7_14/0.35)_0%,rgb(7_4_5/0.82)_75%)]" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-transparent to-ink/50" />
+      <div className="om-container flex flex-col items-center py-[clamp(3rem,8vw,6rem)] text-center">
+        <p className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-gold">
           <Sparkles className="size-3.5" /> Private club for gay men · 18+
         </p>
-        <h1 className="mt-4 max-w-2xl text-5xl leading-[0.95] font-semibold text-ivory sm:text-7xl">
+        <h1 className="mt-5 max-w-3xl text-[3.25rem] leading-[0.95] font-semibold text-ivory drop-shadow-[0_4px_30px_rgb(196_22_63/0.35)] sm:text-8xl">
           Men worth staying <span className="text-gold italic">up for.</span>
         </h1>
-        <p className="mt-5 max-w-lg text-base leading-relaxed text-muted sm:text-lg">
-          A curated directory of verified creators. Watch them live, start a conversation, and tip the ones
+        <div className="om-ornament mt-6" aria-hidden="true"><i /></div>
+        <p className="mt-6 max-w-lg text-base leading-relaxed text-muted sm:text-lg">
+          A private club of verified creators. Watch them live, start a conversation, and tip the ones
           who make your night.
         </p>
-        <div className="mt-8 flex flex-wrap gap-3">
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
           <a href="#browse" className="grid h-12 place-items-center rounded-full bg-gold px-7 text-sm font-bold glow-gold transition hover:brightness-110">
             Browse men
           </a>
@@ -71,7 +71,7 @@ function Hero({ online, live }: { online: number; live: number }) {
             <Radio className="size-4 text-ruby" /> Watch live
           </Link>
         </div>
-        <dl className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-sm">
+        <dl className="mt-8 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm">
           <div className="flex items-center gap-2">
             <span className="size-2 rounded-full bg-online" />
             <dt className="sr-only">Online</dt>
@@ -86,7 +86,7 @@ function Hero({ online, live }: { online: number; live: number }) {
             </dd>
           </div>
           <div className="flex items-center gap-2 text-muted">
-            <Coins className="size-4 text-gold" /> Free to join · Tips only · No subscriptions
+            <Coins className="size-4 text-gold" /> Invite only · Tips optional · No subscriptions
           </div>
         </dl>
       </div>
@@ -96,13 +96,12 @@ function Hero({ online, live }: { online: number; live: number }) {
 
 function SectionHead({ kicker, title, icon, tone = "gold", right }: { kicker: string; title: string; icon: React.ReactNode; tone?: "gold" | "ruby"; right?: React.ReactNode }) {
   return (
-    <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
-      <div className="min-w-0">
-        <p className={`flex items-center gap-2 text-xs font-bold uppercase tracking-[0.25em] ${tone === "ruby" ? "text-ruby" : "text-gold"}`}>
-          {icon} {kicker}
-        </p>
-        <h2 className="mt-1 text-3xl font-semibold text-ivory sm:text-4xl">{title}</h2>
-      </div>
+    <div className="flex flex-col items-center gap-2 text-center">
+      <p className={`flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-[0.3em] ${tone === "ruby" ? "text-ruby" : "text-gold"}`}>
+        {icon} {kicker}
+      </p>
+      <h2 className="text-4xl font-semibold text-ivory sm:text-5xl">{title}</h2>
+      <div className="om-ornament" aria-hidden="true"><i /></div>
       {right}
     </div>
   );
@@ -154,8 +153,8 @@ function Featured({ list, onTip }: { list: Model[]; onTip: (m: Model) => void })
   return (
     <section id="featured" className="om-container om-section scroll-mt-20">
       <SectionHead
-        kicker="Elite & Premium"
-        title="Featured tonight"
+        kicker="Editor’s picks"
+        title="Featured"
         icon={<Crown className="size-3.5" />}
         right={<span className="hidden pb-1 text-xs text-dim sm:block">{list.some((m) => m.source === "real") ? "Tonight’s lineup" : "Editor’s picks this week"}</span>}
       />
@@ -197,7 +196,7 @@ function Featured({ list, onTip }: { list: Model[]; onTip: (m: Model) => void })
 function Tile({ m, onTip, featured = false }: { m: Model; onTip: (m: Model) => void; featured?: boolean }) {
   return (
     <article
-      className={`group relative aspect-[3/4] overflow-hidden rounded-xl bg-surface transition duration-300 ${m.live ? "ring-0 shadow-[0_0_28px_-8px_rgb(194_42_69_/_0.8)]" : "ring-1"} hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-18px_rgb(212_175_106_/_0.55)] ${
+      className={`group relative aspect-[3/4] overflow-hidden rounded-none bg-surface transition sm:rounded-xl duration-300 ${m.live ? "ring-0 shadow-[0_0_28px_-8px_rgb(194_42_69_/_0.8)]" : "ring-1"} hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-18px_rgb(212_175_106_/_0.55)] ${
         m.featured || featured ? "ring-gold/45 hover:ring-gold" : "ring-line/70 hover:ring-gold/60"
       }`}
     >
@@ -232,7 +231,7 @@ function Tile({ m, onTip, featured = false }: { m: Model; onTip: (m: Model) => v
         <p className="mt-0.5 flex items-center gap-1 truncate text-xs text-muted">
           <MapPin className="size-3 shrink-0" /> {m.source === "real" ? (m.city || "OnlyMen") : `${fmtDistance(m.km)} · ${m.city}`}
         </p>
-        <p className="mt-1 flex h-4 items-center gap-1.5 text-[11px] text-muted">
+        <p className="mt-1 hidden h-4 items-center gap-1.5 text-[11px] text-muted sm:flex">
           <span className="text-dim">{m.isNew ? "New this week" : m.live ? "Streaming now" : "Creator"}</span>
         </p>
         <div className="grid grid-rows-[0fr] opacity-0 transition-all duration-300 group-hover:grid-rows-[1fr] group-hover:opacity-100">
@@ -426,7 +425,7 @@ export function OnlyMenHome() {
           />
 
           {/* toolbar */}
-          <div className="mt-6 flex flex-wrap items-center gap-2">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
             <div className="md:hidden">
               <CityPicker city={city} onCity={setCity} compact />
             </div>
@@ -448,7 +447,7 @@ export function OnlyMenHome() {
                 ))}
               </select>
             </label>
-            <div className="ml-auto flex items-center gap-3">
+            <div className="flex items-center gap-3 sm:ml-auto">
               <p className="hidden text-sm text-muted sm:block">
                 <b className="text-ivory">{shown.length}</b> {shown.length === 1 ? "man" : "men"}
               </p>
@@ -497,7 +496,7 @@ export function OnlyMenHome() {
 
           {visible.length ? (
             view === "grid" ? (
-              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+              <div className="-mx-[var(--gutter)] mt-5 grid grid-cols-2 gap-[3px] sm:mx-0 sm:mt-6 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                 {visible.map((m) => (
                   <Tile key={m.id} m={m} onTip={setTip} />
                 ))}

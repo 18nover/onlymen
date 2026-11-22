@@ -2,6 +2,7 @@ import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } fro
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Ban, Bookmark, BookmarkCheck, Flag, Hand, Loader2, MapPin, MapPinOff, Radar, ShieldCheck, Trash2, X } from "lucide-react";
 import { FormError, inputCls } from "@/components/account-ui";
+import { MobileNav } from "@/components/onlymen-ui";
 import {
   deleteLocationFn, heartbeatFn, nearbyActionFn, nearbyConfigFn, nearbyGridFn, nearbyMapFn, saveNearbySettingsFn, updateLocationFn,
 } from "@/lib/nearby/api";
@@ -141,20 +142,24 @@ function Nearby() {
     );
 
   return (
-    <main className="mx-auto grid max-w-6xl gap-6 px-5 py-8 pb-28 text-ivory">
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-xs font-bold tracking-[0.3em] text-gold uppercase">OnlyMen</p>
-          <h1 className="mt-1 flex items-center gap-3 font-display text-4xl font-semibold"><Radar className="size-7 text-gold" /> Nearby</h1>
+    <>
+    <main className="mx-auto grid max-w-6xl gap-5 px-4 pt-6 pb-28 text-ivory sm:px-6">
+      <header className="flex flex-col items-center gap-3 text-center">
+        <div className="flex flex-col items-center">
+          <p className="text-xs font-bold tracking-[0.3em] text-gold uppercase">Around you</p>
+          <h1 className="mt-1 flex items-center gap-3 font-display text-5xl font-semibold"><Radar className="size-7 text-gold" /> Nearby</h1>
+          <div className="om-ornament mt-2" aria-hidden="true"><i /></div>
           <p className="mt-2 max-w-2xl text-sm text-muted">
             {grid?.origin === "mine" ? "Sorted by distance from your area." : grid?.origin === "approx" ? "Showing your approximate city. Share your location for closer results." : "Share your location to see who's around."}{" "}
             {grid && <>Plan: <b className="text-ivory">{grid.plan === "plus" ? "Plus" : "Free"}</b> · up to {grid.radiusKm} km.</>}
           </p>
         </div>
-        <div className="flex gap-2 text-sm font-semibold">
-          {(["grid", "map"] as const).map((v) => (
-            <button key={v} onClick={() => setView(v)} className={`h-10 rounded-full border px-4 capitalize ${view === v ? "border-gold bg-gold text-ink" : "border-line text-ivory"}`}>{v}</button>
-          ))}
+        <div className="flex flex-wrap justify-center gap-2 text-sm font-semibold">
+          <div className="flex rounded-full border border-line bg-surface/80 p-1" role="group" aria-label="View">
+            {(["grid", "map"] as const).map((v) => (
+              <button key={v} onClick={() => setView(v)} aria-pressed={view === v} className={`h-9 rounded-full px-5 capitalize transition ${view === v ? "bg-gold text-ink glow-gold" : "text-muted hover:text-ivory"}`}>{v}</button>
+            ))}
+          </div>
           {cfg.isAdmin && <Link to="/admin/reports" className="grid h-10 place-items-center rounded-full border border-line px-4 text-gold-hi">Reports</Link>}
           <Link to="/" className="grid h-10 place-items-center rounded-full border border-line px-4 text-gold-hi">Home</Link>
         </div>
@@ -179,18 +184,24 @@ function Nearby() {
           {grid && grid.items.length === 0 && (
             <p className="rounded-xl border border-line bg-surface p-4 text-sm text-muted">No members around you yet{grid.origin ? ` within ${grid.radiusKm} km` : ""}. Only members who share their location show up here.</p>
           )}
-          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">
-            {grid?.items.map((c) => <Tile key={c.username} c={c} onClick={() => setSel(c)} />)}
-          </div>
+          {grid && grid.items.length > 0 && (
+            <div className="-mx-4 grid grid-cols-3 gap-[2px] overflow-hidden sm:mx-0 sm:grid-cols-4 sm:gap-1 sm:rounded-2xl lg:grid-cols-6">
+              {grid.items.map((c) => <Tile key={c.username} c={c} onClick={() => setSel(c)} />)}
+            </div>
+          )}
           {demo.length > 0 && (
             <div className="grid gap-2">
-              <p className="text-xs font-bold tracking-[0.2em] text-dim uppercase">Demo profiles · not real people, not near you</p>
-              <div className="grid grid-cols-3 gap-2 opacity-70 sm:grid-cols-4 lg:grid-cols-6">
+              <p className="text-center text-[11px] font-bold tracking-[0.25em] text-gold/80 uppercase">Demo profiles · not real people, not near you</p>
+              <div className="-mx-4 grid grid-cols-3 gap-[2px] overflow-hidden sm:mx-0 sm:grid-cols-4 sm:gap-1 sm:rounded-2xl lg:grid-cols-6">
                 {demo.map((m) => (
-                  <Link key={m.handle} to="/m/$handle" params={{ handle: m.handle }} className="relative aspect-[3/4] overflow-hidden rounded-xl border border-line">
-                    <img src={m.photo} alt="" className="size-full object-cover" loading="lazy" />
-                    <span className="absolute top-1.5 left-1.5 rounded bg-ink/80 px-1.5 py-0.5 text-[10px] font-bold text-gold uppercase">Demo</span>
-                    <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/95 to-transparent p-2 text-xs font-semibold">{m.name}, {m.age}<br /><span className="text-muted">{bucketLabel(bucketIndex(m.km))}</span></span>
+                  <Link key={m.handle} to="/m/$handle" params={{ handle: m.handle }} className="om-tile">
+                    <img src={m.photo} alt="" loading="lazy" />
+                    <span className="absolute top-1.5 left-1.5 z-[3] rounded-sm bg-ink/75 px-1.5 py-0.5 text-[9px] font-extrabold tracking-wider text-gold uppercase backdrop-blur">Demo</span>
+                    {m.online && <span className="om-online absolute top-2 right-2 z-[3] size-2.5 rounded-full bg-online" title="Online" />}
+                    <span className="om-tile-meta">
+                      <span className="block truncate text-[13px] font-bold text-ivory">{m.name} <span className="font-medium text-ivory/75">{m.age}</span></span>
+                      <span className="block text-[10px] font-semibold tracking-wider text-gold-hi uppercase">{bucketLabel(bucketIndex(m.km))}</span>
+                    </span>
                   </Link>
                 ))}
               </div>
@@ -214,6 +225,8 @@ function Nearby() {
 
       {sel && <Sheet c={sel} onClose={() => setSel(null)} onAct={act} onReported={() => { setSel(null); setNote("Thanks. Our team will review this report."); void loadGrid(); }} />}
     </main>
+    <MobileNav />
+    </>
   );
 }
 
@@ -223,12 +236,12 @@ function Shell({ children }: { children: React.ReactNode }) {
 
 function Tile({ c, onClick }: { c: Card; onClick: () => void }) {
   return (
-    <button onClick={onClick} className="relative aspect-[3/4] overflow-hidden rounded-xl border border-line bg-surface text-left">
-      {c.photoId ? <img src={`/api/photo/${encodeURIComponent(c.photoId)}`} alt="" className="size-full object-cover" loading="lazy" /> : <span className="grid size-full place-items-center font-display text-4xl text-gold">{c.displayName.slice(0, 1).toUpperCase()}</span>}
-      {c.presence && <span className={`absolute top-2 right-2 size-2.5 rounded-full ${PRES[c.presence].dot} ring-2 ring-ink`} title={PRES[c.presence].label} />}
-      <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/95 to-transparent p-2 text-xs font-semibold">
-        {c.displayName}{c.age != null ? `, ${c.age}` : ""} {c.verified && <ShieldCheck className="inline size-3 text-gold" />}
-        <br /><span className="text-muted">{c.distance ?? "Distance hidden"}</span>
+    <button onClick={onClick} className="om-tile text-left">
+      {c.photoId ? <img src={`/api/photo/${encodeURIComponent(c.photoId)}`} alt="" loading="lazy" /> : <span className="grid size-full place-items-center bg-[radial-gradient(circle_at_50%_35%,#4a0614,#0f0809)] font-display text-5xl text-gold">{c.displayName.slice(0, 1).toUpperCase()}</span>}
+      {c.presence && <span className={`absolute top-2 right-2 z-[3] size-2.5 rounded-full ${PRES[c.presence].dot} ${c.presence === "online" ? "om-online" : "ring-2 ring-ink"}`} title={PRES[c.presence].label} />}
+      <span className="om-tile-meta">
+        <span className="block truncate text-[13px] font-bold text-ivory">{c.displayName} {c.age != null && <span className="font-medium text-ivory/75">{c.age}</span>} {c.verified && <ShieldCheck className="inline size-3 text-gold" />}</span>
+        <span className="block text-[10px] font-semibold tracking-wider text-gold-hi uppercase">{c.distance ?? "Distance hidden"}</span>
       </span>
     </button>
   );
@@ -299,10 +312,10 @@ function PrivacyPanel({ settings, busy, onShare, onSave, onDelete }: {
   settings: Settings | null; busy: boolean; onShare: () => void;
   onSave: (p: Patch) => void; onDelete: () => void;
 }) {
-  const [open, setOpen] = useState(!settings?.sharing);
+  const [open, setOpen] = useState(false);
   if (!settings) return null;
   return (
-    <section className="grid gap-4 rounded-2xl border border-line bg-surface/60 p-5">
+    <section className="grid gap-3 rounded-2xl border-gold-grad p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="flex items-center gap-2 text-sm font-semibold">
           {settings.sharing ? <><MapPin className="size-4 text-online" /> Sharing your approximate area</> : <><MapPinOff className="size-4 text-dim" /> Not sharing your location</>}
@@ -310,9 +323,10 @@ function PrivacyPanel({ settings, busy, onShare, onSave, onDelete }: {
         </p>
         <div className="flex gap-2">
           {!settings.sharing && <button disabled={busy} onClick={onShare} className="flex h-10 items-center gap-2 rounded-full bg-gold px-5 text-sm font-bold text-ink disabled:opacity-60">{busy && <Loader2 className="size-4 animate-spin" />} Share my location</button>}
-          <button onClick={() => setOpen(!open)} className="h-10 rounded-full border border-line px-4 text-sm font-semibold">Privacy {open ? "▲" : "▼"}</button>
+          <button onClick={() => setOpen(!open)} aria-expanded={open} className="h-10 rounded-full border border-line px-4 text-sm font-semibold">Privacy {open ? "▲" : "▼"}</button>
         </div>
       </div>
+      {!open && <p className="text-xs text-muted">Rounded to about 1.2 km on our server · your exact spot is never stored · others see a range, not a distance. <button onClick={() => setOpen(true)} className="font-semibold text-gold-hi underline">How it works</button></p>}
       {open && (
         <div className="grid gap-4">
           <p className="text-sm text-muted">

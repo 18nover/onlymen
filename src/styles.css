@@ -2,19 +2,20 @@
 
 /* OnlyMen — luxe after-dark tokens */
 @theme {
-  --color-ink: #0a0809;
-  --color-night: #120d0e;
-  --color-surface: #1a1314;
-  --color-surface-2: #241a1b;
-  --color-line: #3a2b2c;
+  --color-ink: #070405;
+  --color-night: #0f0809;
+  --color-surface: #170d0f;
+  --color-surface-2: #231316;
+  --color-line: #3b2427;
   --color-ivory: #f4ead7;
   --color-muted: #b3a493;
   --color-dim: #7d6f63;
   --color-gold: #d4af6a;
   --color-gold-hi: #f3dca0;
   --color-gold-lo: #96702f;
-  --color-oxblood: #5c0d1b;
-  --color-ruby: #c22a45;
+  --color-oxblood: #4a0614;
+  --color-wine: #2b070e;
+  --color-ruby: #c4163f;
   --color-online: #5fd394;
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Cormorant Garamond", "Playfair Display", ui-serif, Georgia, serif;
@@ -41,10 +42,13 @@
   }
 
   body {
+    /* velvet: a centered deep-red glow from the top, a faint gold warmth at the foot */
     background:
-      radial-gradient(1200px 600px at 85% -10%, rgb(92 13 27 / 0.45), transparent 60%),
-      radial-gradient(900px 500px at -10% 30%, rgb(150 112 47 / 0.12), transparent 60%),
+      radial-gradient(1100px 620px at 50% -12%, rgb(120 10 32 / 0.55), transparent 62%),
+      radial-gradient(700px 420px at 50% 110%, rgb(150 112 47 / 0.10), transparent 60%),
+      radial-gradient(1400px 900px at 50% 40%, transparent 55%, rgb(0 0 0 / 0.55) 100%),
       var(--color-ink);
+    background-attachment: fixed;
     color: var(--color-ivory);
     font-family: var(--font-sans);
     overflow-x: hidden;
@@ -208,4 +212,42 @@
     -webkit-mask-composite: xor;
     mask-composite: exclude;
   }
+}
+
+/* ONL-12 polish: ornaments, glass bars, photo-first tiles */
+@layer components {
+  /* gold hairline with a small diamond, under centered section titles */
+  .om-ornament {
+    display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+    color: var(--color-gold);
+  }
+  .om-ornament::before, .om-ornament::after {
+    content: ""; height: 1px; width: min(5.5rem, 22vw);
+    background: linear-gradient(90deg, transparent, rgb(212 175 106 / 0.7));
+  }
+  .om-ornament::after { transform: scaleX(-1); }
+  .om-ornament > i { width: 6px; height: 6px; transform: rotate(45deg); background: var(--color-gold); box-shadow: 0 0 12px rgb(212 175 106 / 0.7); }
+
+  /* frosted wine glass for fixed bars */
+  .om-glass {
+    background: linear-gradient(180deg, rgb(35 19 22 / 0.78), rgb(15 8 9 / 0.88));
+    backdrop-filter: blur(18px) saturate(1.3);
+    -webkit-backdrop-filter: blur(18px) saturate(1.3);
+    border: 1px solid rgb(212 175 106 / 0.28);
+    box-shadow: 0 -1px 0 rgb(243 220 160 / 0.08) inset, 0 18px 50px -12px rgb(0 0 0 / 0.9), 0 0 40px -18px rgb(196 22 63 / 0.6);
+  }
+
+  /* photo-first nearby tile: square, edge-to-edge, hairline gaps */
+  .om-tile {
+    position: relative; display: block; aspect-ratio: 1 / 1; overflow: hidden;
+    background: var(--color-surface);
+  }
+  .om-tile img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .om-tile:hover img { transform: scale(1.05); }
+  .om-tile::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(to top, rgb(7 4 5 / 0.92) 0%, rgb(7 4 5 / 0.35) 32%, transparent 55%);
+  }
+  .om-tile-meta { position: absolute; inset-inline: 0; bottom: 0; z-index: 2; padding: 0.4rem 0.5rem; line-height: 1.15; }
+  .om-online { box-shadow: 0 0 0 2px var(--color-ink), 0 0 10px 1px rgb(95 211 148 / 0.8); }
 }

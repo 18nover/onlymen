@@ -36,8 +36,8 @@ function Gallery({ m }: { m: Model }) {
   const n = crops.length;
   const go = (d: number) => setI((x) => (x + d + n) % n);
   return (
-    <div>
-      <div className={`group relative aspect-[4/5] overflow-hidden rounded-3xl sm:aspect-[4/3] md:aspect-[4/5] lg:aspect-[5/6] ${m.live ? "shadow-[0_0_40px_-10px_rgb(194_42_69_/_0.9)]" : "border-gold-grad glow-gold"}`}>
+    <div className="-mx-[var(--gutter)] sm:mx-0">
+      <div className={`group relative aspect-[4/5] overflow-hidden rounded-none sm:rounded-3xl sm:aspect-[4/3] md:aspect-[4/5] lg:aspect-[5/6] ${m.live ? "shadow-[0_0_40px_-10px_rgb(194_42_69_/_0.9)]" : "border-gold-grad glow-gold"}`}>
         {m.live && <span className="live-ring-border !z-20 !p-1" aria-hidden="true" />}
         <img
           key={i}
@@ -46,7 +46,11 @@ function Gallery({ m }: { m: Model }) {
           className="absolute inset-0 size-full animate-fade-up object-cover"
           style={{ objectPosition: crops[i].pos, transform: `scale(${crops[i].scale})`, transformOrigin: crops[i].pos }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-ink/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/10 to-ink/30" />
+        <div className="absolute inset-x-5 bottom-5 z-10 md:hidden" aria-hidden="true">
+          <p className="font-display text-5xl leading-none font-semibold text-ivory drop-shadow-[0_2px_18px_rgb(0_0_0/0.8)]">{m.name}<span className="text-gold">,</span> <span className="font-normal text-ivory/85">{m.age}</span></p>
+          <p className="mt-2 flex items-center gap-2 text-sm text-ivory/80"><StatusDot m={m} /> {fmtActive(m)}{m.city ? ` · ${m.city}` : ""}</p>
+        </div>
         <div className="absolute top-4 right-16 left-4 flex flex-wrap gap-2">
           {m.live ? (
             <span className="flex items-center gap-1.5 rounded-full bg-ruby px-3 py-1 text-xs font-bold tracking-wider text-ivory uppercase">
@@ -64,7 +68,7 @@ function Gallery({ m }: { m: Model }) {
           <ChevronRight className="size-5" />
         </button>
       </div>
-      <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto p-0.5">
+      <div className="no-scrollbar mt-3 flex justify-center gap-2 overflow-x-auto p-0.5 px-[var(--gutter)] sm:justify-start sm:px-0.5">
         {crops.map((c, k) => (
           <button
             key={k}
@@ -101,7 +105,7 @@ function ActionPanel({ m }: { m: Model }) {
       <p className="flex items-center gap-1.5 text-sm font-semibold text-gold">
         @{m.handle} {m.verified && <BadgeCheck className="size-4" aria-label="Verified" />}
       </p>
-      <h1 className="mt-1 text-5xl leading-none font-semibold text-ivory lg:text-6xl">
+      <h1 className="sr-only mt-1 text-5xl leading-none font-semibold text-ivory md:not-sr-only md:block lg:text-6xl">
         {m.name}
         <span className="text-gold">,</span> <span className="font-normal text-ivory/80">{m.age}</span>
       </h1>
@@ -272,9 +276,9 @@ export function OnlyMenProfile({ handle }: { handle: string }) {
         <Link to="/" hash="browse" className="mt-4 inline-flex h-10 items-center gap-1.5 text-sm font-semibold text-muted transition hover:text-gold-hi">
           <ArrowLeft className="size-4" /> Back to browse
         </Link>
-        <div className="mt-3 rounded-2xl border border-line/80 bg-surface/60 px-4 py-3 text-sm text-muted">
-          <DemoBadge className="mr-2 align-middle" /> This is a demo profile — an invented placeholder with an AI-generated portrait, not a real person.
-        </div>
+        <p className="mx-auto mt-1 mb-3 flex w-fit max-w-full items-center gap-2 rounded-full border border-line/80 bg-surface/70 px-3 py-1.5 text-xs text-muted">
+          <DemoBadge /> Demo profile · AI-generated portrait, not a real person
+        </p>
 
         <div className="mt-2 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-8">
           <Gallery m={m} />
@@ -341,18 +345,18 @@ export function OnlyMenProfile({ handle }: { handle: string }) {
       <Footer />
 
       {/* mobile sticky action bar */}
-      <div className="om-fixed-bottom fixed inset-x-3 z-40 mx-auto flex max-w-md items-center gap-2 rounded-2xl border-gold-grad p-2 shadow-2xl md:hidden">
-        <img src={m.photo} alt="" className="size-11 rounded-xl object-cover" />
+      <div className="om-fixed-bottom om-glass fixed inset-x-3 z-40 mx-auto flex max-w-md items-center gap-2 rounded-full p-1.5 pl-2 md:hidden">
+        <img src={m.photo} alt="" className="size-11 rounded-full object-cover ring-1 ring-gold/60" />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-bold text-ivory">{m.name}, {m.age}</p>
           <p className="flex items-center gap-1 truncate text-[11px] text-muted">
             <StatusDot m={m} className="size-1.5" /> {fmtActive(m)}
           </p>
         </div>
-        <a href="#message" className="grid size-11 place-items-center rounded-xl border border-gold/50 text-gold-hi" aria-label="Message">
+        <a href="#message" className="grid size-11 place-items-center rounded-full border border-gold/50 text-gold-hi" aria-label="Message">
           <MessageCircle className="size-5" />
         </a>
-        <button className="flex h-11 items-center gap-1.5 rounded-xl bg-gold px-4 text-sm font-bold">
+        <button className="flex h-11 items-center gap-1.5 rounded-full bg-gold px-5 text-sm font-bold">
           <Coins className="size-4" /> Tip
         </button>
       </div>
