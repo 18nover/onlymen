@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { CheckRow, Chips, SelectField, TextArea, TextField, Toggle, inputCls } from "@/components/account-ui";
 import { PhotoGrid, UploadSlot } from "./photo-grid";
+import { BannerField } from "@/components/banner-field";
 import {
   BODY_TYPES,
   CREATOR_CONSENTS,
@@ -152,7 +153,14 @@ export function PhotosStep({ account, save, onNext }: StepProps) {
     <>
       <StepHead kicker="Photo first" title={<>Show them <span className="text-gold italic">who you are.</span></>} sub={creator ? "Your profile photo must be a clear, non-explicit shot of your face. Mark anything explicit 18+ and it's blurred for men who choose that." : "Profiles with a clear face photo get far more replies. Your first photo is the one everyone sees."} />
       <Card>
-        <PhotoGrid photos={account.profile.photos} creator={creator} onChange={(photos) => save((a) => ({ ...a, profile: { ...a.profile, photos } }))} />
+        <BannerField
+          bannerPhotoId={account.profile.bannerPhotoId}
+          onChange={(bannerPhotoId) => save((a) => ({ ...a, profile: { ...a.profile, bannerPhotoId } }))}
+        />
+        <div className="mt-5">
+          <p className="mb-2 text-[11px] font-bold tracking-[0.2em] text-gold uppercase">Gallery</p>
+          <PhotoGrid photos={account.profile.photos} creator={creator} onChange={(photos) => save((a) => ({ ...a, profile: { ...a.profile, photos } }))} />
+        </div>
       </Card>
       <ul className="mt-5 grid gap-2 text-xs text-dim sm:grid-cols-3">
         {["Only photos of you (or people who consented)", "No minors, ever — not even in the background", "Main photo: face visible, nothing explicit"].map((t) => (

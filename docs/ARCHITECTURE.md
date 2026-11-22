@@ -54,6 +54,7 @@ OnlyMen tables (from `migrations/0002_onlymen_accounts.sql`):
 | `om_account` | username, account type (`member` / `creator`), `role` (`user` / `admin` / `owner`, from `migrations/0003_account_role.sql`), DOB, profile / privacy / permissions / onboarding JSON, verification status, creator data, viewer live prefs, live settings / current session / recap |
 | `om_consent` | append-only, versioned consent records (key, granted, version, source, user agent, timestamp) |
 | `om_photo` | profile photos (`bytea`, metadata, attached flag) |
+| `om_banner` | one cover/banner image per account (`migrations/0005_profile_banner.sql`). Kept out of `om_photo` so the Vercel production gallery/save/cleanup queries never treat a banner as a gallery photo. |
 | `om_show` | scheduled shows |
 | `om_reminder` | fans' "Remind me" rows |
 
@@ -72,6 +73,7 @@ The home / browse / Live now grids merge real accounts from Neon in front of tho
 - The onboarding UI allows **up to 9** photos (`MAX_PHOTOS` in `src/lib/account/constants.ts`). The server adapter has a hard cap of **15**.
 - Bytes are stored in `om_photo.data`. In private mode, `/api/photo/<id>` requires an allowlisted session (unattached uploads remain owner-only). When the site is public again, attached photos can be served more openly; see the photo route.
 - Route: `GET /api/photo/<id>` (`src/routes/api/photo/$id.ts`). IDs match `ph_` plus hex.
+- Profile banners are stored in `om_banner` and also served from `/api/photo/<id>` (members-only). Upload/replace/remove is on `/me` and the onboarding photos step (`/onboarding?step=photos`). The public profile (`/m/<username>`) and the Featured card show the banner when one is set. Size and type checks match gallery photos (JPEG/PNG/WebP, ≤700 KB after client downscale; banners are downscaled to ≤1920px).
 - Neon `free_v3` branch logical size limit, verified 2026-11-21 via the Neon connector, is **1 GB**. Photos count against that until object storage is added. The default `main` branch was about 32 MB at that check.
 - ID documents are **not** stored in Neon; they stay on the creator's device until a KYC vendor is wired.
 

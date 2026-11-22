@@ -67,6 +67,8 @@ export type Profile = {
   languages: string[];
   social: SocialLinks;
   photos: Photo[];
+  /** Cover image on the public profile; stored in om_banner, not in photos[]. */
+  bannerPhotoId?: string;
   /** Creators only. */
   rates: Rate[];
   services: string[];

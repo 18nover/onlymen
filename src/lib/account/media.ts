@@ -8,7 +8,7 @@
 
 import { useEffect, useState } from "react";
 import { accountStore, randomId } from "./store.ts";
-import { deletePhotoFn, uploadPhotoFn } from "./api.ts";
+import { deleteBannerFn, deletePhotoFn, uploadBannerFn, uploadPhotoFn } from "./api.ts";
 
 const isServerPhoto = (id: string) => id.startsWith("ph_");
 const serverUrl = (id: string) => `/api/photo/${id}`;
@@ -106,4 +106,29 @@ export function useImageUrl(id: string | undefined) {
     };
   }, [id]);
   return url;
+}
+
+/** Wider downscale for a profile banner (cover), then upload to om_banner. */
+export async function saveBanner(file: Blob): Promise<string> {
+  if (!file.type.startsWith("image/")) throw new Error("Please choose an image file.");
+  if (file.size > 25 * 1024 * 1024) throw new Error("That image is over 25 MB.");
+  let upload = await downscale(file, 1920, 0.84);
+  if (upload.size > 650_000) upload = await downscale(file, 1600, 0.78);
+  if (accountStore.kind === "server" && accountStore.current()) {
+    const r = await uploadBannerFn({ data: { mime: upload.type || "image/jpeg", base64: await toBase64(upload) } });
+    if (!r.ok) throw new Error(r.error);
+    return r.value;
+  }
+  const id = `img_${randomId(10)}`;
+  await tx("readwrite", (s) => s.put(upload, id));
+  return id;
+}
+
+export async function removeBanner(id?: string) {
+  if (accountStore.kind === "server" && accountStore.current()) {
+    const r = await deleteBannerFn();
+    if (!r.ok) throw new Error(r.error);
+    return;
+  }
+  if (id) await deleteImage(id);
 }

@@ -6,6 +6,7 @@ import { GoLivePanel, RemindersCard } from "@/components/go-live";
 import { LiveRing } from "@/components/live-ui";
 import { useCity } from "@/lib/onlymen-hooks";
 import { useAccount } from "@/lib/account/use-account";
+import { BannerField } from "@/components/banner-field";
 import { useImageUrl } from "@/lib/account/media";
 import { ageOn } from "@/lib/account/validation";
 import { latestConsents } from "@/lib/account/store";
@@ -60,6 +61,7 @@ export function MyProfile() {
 }
 
 function Body({ a }: { a: PublicAccount }) {
+  const { update } = useAccount();
   const p = a.profile;
   const photos = p.photos;
   const [active, setActive] = useState(0);
@@ -73,6 +75,13 @@ function Body({ a }: { a: PublicAccount }) {
 
   return (
     <main className="om-container pt-6">
+      <section className="mb-6">
+        <h2 className="mb-2 font-sans text-xs font-bold tracking-[0.2em] text-gold uppercase">Banner</h2>
+        <BannerField
+          bannerPhotoId={p.bannerPhotoId}
+          onChange={(bannerPhotoId) => update((x) => ({ ...x, profile: { ...x.profile, bannerPhotoId } }))}
+        />
+      </section>
       {!a.onboarding.finishedAt && (
         <Link to="/onboarding" className="mb-5 flex items-center gap-3 rounded-2xl border border-gold/50 bg-gold/[0.07] p-4 text-sm">
           <Sparkles className="size-5 shrink-0 text-gold" />

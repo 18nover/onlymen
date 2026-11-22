@@ -25,6 +25,8 @@ export type Model = {
   city: string; // neighborhood
   metro: CityId;
   photo: string;
+  /** Cover image URL for real profiles; unset on demo placeholders. */
+  banner?: string;
   online: boolean;
   live: boolean;
   isNew: boolean;

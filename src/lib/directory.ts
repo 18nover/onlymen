@@ -23,6 +23,7 @@ export type DirectoryProfile = {
   lookingFor: string[];
   languages: string[];
   photos: { id: string; primary: boolean; explicit: boolean }[];
+  bannerPhotoId?: string | null;
   live: null | { title: string; tags: string[] };
   joinedAt: string;
 };
@@ -121,6 +122,7 @@ export function toDirectoryModel(p: DirectoryProfile, now = Date.now()): Model |
     city: p.city || "",
     metro: metro ?? "nyc",
     photo: `/api/photo/${photoId}`,
+    ...(p.bannerPhotoId ? { banner: `/api/photo/${p.bannerPhotoId}` } : {}),
     online: false,
     live: Boolean(p.live),
     isNew: isNew(p.joinedAt, now),

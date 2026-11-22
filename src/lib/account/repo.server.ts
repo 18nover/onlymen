@@ -2,7 +2,7 @@
  * Postgres persistence for OnlyMen accounts (server-only).
  * Every query is scoped to a user id that came from a verified session.
  */
-import { getSql, type Sql } from "../db";
+import { getSql, withTransaction, type Sql } from "../db";
 import { CONSENT_VERSIONS, defaultPermissions, defaultPrivacy, emptyProfile } from "./constants.ts";
 import type { ConsentKey, ConsentRecord, Photo, PublicAccount, VerificationStatus } from "./types.ts";
 import type { CreatorLive, Reminder, ScheduledShow } from "../live/types.ts";
@@ -54,11 +54,12 @@ export async function loadAccount(userId: string): Promise<PublicAccount | null>
     from "user" u join om_account a on a.user_id = u.id where u.id = ${userId}`;
   const r = rows[0];
   if (!r) return null;
-  const [consents, photos, shows, reminders] = await Promise.all([
+  const [consents, photos, shows, reminders, banners] = await Promise.all([
     db<Row>`select key, granted, version, source, user_agent, at from om_consent where user_id = ${userId} order by at, id`,
     db<Row>`select id, is_primary, explicit, added_at from om_photo where user_id = ${userId} and attached order by position, added_at`,
     db<Row>`select id, title, starts_at, duration_min, tags from om_show where user_id = ${userId} order by starts_at`,
     db<Row>`select show_id, creator, title, starts_at, created_at from om_reminder where user_id = ${userId} order by starts_at`,
+    db<Row>`select photo_id from om_banner where user_id = ${userId}`,
   ]);
   const profile = { ...emptyProfile(), ...json<Record<string, unknown>>(r.profile, {}) };
   const liveSettings = json<Partial<CreatorLive> | null>(r.live_settings, null);
@@ -86,6 +87,7 @@ export async function loadAccount(userId: string): Promise<PublicAccount | null>
     profile: {
       ...(profile as PublicAccount["profile"]),
       photos: photos.map((p): Photo => ({ id: String(p.id), primary: Boolean(p.is_primary), ...(p.explicit ? { explicit: true } : {}), addedAt: iso(p.added_at) })),
+      bannerPhotoId: banners[0]?.photo_id ? String(banners[0].photo_id) : undefined,
     },
     privacy: { ...defaultPrivacy(), ...json(r.privacy, {}) },
     creator: creator ? ({ ...creator, status: r.verification_status } as PublicAccount["creator"]) : undefined,
@@ -118,7 +120,7 @@ export async function saveAccount(userId: string, next: PublicAccount): Promise<
   const cur = (await db<Row>`select verification_status, account_type from om_account where user_id = ${userId}`)[0];
   if (!cur) throw new Error("Account not found.");
 
-  const { photos, ...profileRest } = next.profile ?? ({} as PublicAccount["profile"]);
+  const { photos, bannerPhotoId: _bannerPhotoId, ...profileRest } = next.profile ?? ({} as PublicAccount["profile"]);
   // ID images never leave the device; only their local media keys are kept.
   const { status: wantedStatus, ...creatorRest } = (next.creator ?? {}) as NonNullable<PublicAccount["creator"]>;
   const { shows, session, lastRecap, ...liveRest } = (next.live ?? {}) as CreatorLive;
@@ -209,9 +211,38 @@ export async function readPhoto(id: string): Promise<{ userId: string; attached:
   const db = await getSql();
   const rows = await db<Row>`select user_id, attached, mime, data from om_photo where id = ${id}`;
   const r = rows[0];
-  if (!r || !r.data) return null;
-  const raw = r.data as Uint8Array;
-  return { userId: String(r.user_id), attached: Boolean(r.attached), mime: String(r.mime), data: Buffer.from(raw.buffer, raw.byteOffset, raw.byteLength) };
+  if (r?.data) {
+    const raw = r.data as Uint8Array;
+    return { userId: String(r.user_id), attached: Boolean(r.attached), mime: String(r.mime), data: Buffer.from(raw.buffer, raw.byteOffset, raw.byteLength) };
+  }
+  // Published banners live in om_banner (not om_photo) so prod gallery queries never see them.
+  // Treat them as attached so other members can load /api/photo/<id>.
+  const banners = await db<Row>`select user_id, mime, data from om_banner where photo_id = ${id}`;
+  const b = banners[0];
+  if (!b?.data) return null;
+  const raw = b.data as Uint8Array;
+  return { userId: String(b.user_id), attached: true, mime: String(b.mime), data: Buffer.from(raw.buffer, raw.byteOffset, raw.byteLength) };
+}
+
+export async function bannerIdFor(userId: string, tx?: Sql): Promise<string | null> {
+  const db = tx ?? (await getSql());
+  const rows = await db<Row>`select photo_id from om_banner where user_id = ${userId}`;
+  return rows[0]?.photo_id ? String(rows[0].photo_id) : null;
+}
+
+/** Replace the account's single banner. Does not touch om_photo. */
+export async function upsertBanner(userId: string, mime: string, data: Buffer): Promise<string> {
+  const id = `ph_${crypto.randomUUID().replace(/-/g, "").slice(0, 20)}`;
+  await withTransaction(async (tx) => {
+    await tx`delete from om_banner where user_id = ${userId}`;
+    await tx`insert into om_banner (user_id, photo_id, mime, bytes, data) values (${userId}, ${id}, ${mime}, ${data.length}, ${data})`;
+  });
+  return id;
+}
+
+export async function deleteBanner(userId: string) {
+  const db = await getSql();
+  await db`delete from om_banner where user_id = ${userId}`;
 }
 
 // ------------------------------------------------------------------ public
@@ -233,6 +264,7 @@ export type PublicProfile = {
   languages: string[];
   social: Record<string, string>;
   photos: { id: string; primary: boolean; explicit: boolean }[];
+  bannerPhotoId: string | null;
   services: string[];
   acceptsTips: boolean;
   live: null | { title: string; tags: string[]; tipGoal: string; roomUrl: string; startedAt: string };
@@ -250,7 +282,7 @@ function ageFrom(dob: string): number {
   return a;
 }
 
-const toPublic = (r: Row, photos: Row[], shows: Row[]): PublicProfile => {
+const toPublic = (r: Row, photos: Row[], shows: Row[], bannerPhotoId: string | null = null): PublicProfile => {
   const p = json<Record<string, unknown>>(r.profile, {});
   const live = json<Partial<CreatorLive>>(r.live_settings, {});
   const session = json<Record<string, unknown> | null>(r.live_session, null);
@@ -272,6 +304,7 @@ const toPublic = (r: Row, photos: Row[], shows: Row[]): PublicProfile => {
     languages: arr(p.languages),
     social: Object.fromEntries(Object.entries(json<Record<string, unknown>>(p.social, {})).filter(([, v]) => typeof v === "string" && v).map(([k, v]) => [k, str(v, 200)])),
     photos: photos.map((x) => ({ id: String(x.id), primary: Boolean(x.is_primary), explicit: Boolean(x.explicit) })),
+    bannerPhotoId,
     services: arr(p.services),
     acceptsTips: Boolean(p.acceptsTips),
     live: session ? { title: str(session.title, 80), tags: arr(session.tags), tipGoal: str(session.tipGoal, 12), roomUrl: str(session.roomUrl, 400), startedAt: iso(session.startedAt) } : null,
@@ -287,11 +320,12 @@ export async function publicProfile(username: string): Promise<PublicProfile | n
   const rows = await db<Row>`select * from om_account where username = ${username}`;
   const r = rows[0];
   if (!r) return null;
-  const [photos, shows] = await Promise.all([
+  const [photos, shows, banner] = await Promise.all([
     db<Row>`select id, is_primary, explicit from om_photo where user_id = ${r.user_id} and attached order by position`,
     db<Row>`select id, title, starts_at, duration_min, tags from om_show where user_id = ${r.user_id} and starts_at > now() - interval '3 hours' order by starts_at limit 20`,
+    db<Row>`select photo_id from om_banner where user_id = ${r.user_id}`,
   ]);
-  return toPublic(r, photos, shows);
+  return toPublic(r, photos, shows, banner[0]?.photo_id ? String(banner[0].photo_id) : null);
 }
 
 /** Creators who are live right now, plus upcoming scheduled shows (for /live). */
@@ -300,8 +334,11 @@ export async function liveDirectory(): Promise<{ live: PublicProfile[]; upcoming
   const liveRows = await db<Row>`select * from om_account where live_session is not null and account_type = 'creator' order by updated_at desc limit 50`;
   const live: PublicProfile[] = [];
   for (const r of liveRows) {
-    const photos = await db<Row>`select id, is_primary, explicit from om_photo where user_id = ${r.user_id} and attached order by position`;
-    live.push(toPublic(r, photos, []));
+    const [photos, banner] = await Promise.all([
+      db<Row>`select id, is_primary, explicit from om_photo where user_id = ${r.user_id} and attached order by position`,
+      db<Row>`select photo_id from om_banner where user_id = ${r.user_id}`,
+    ]);
+    live.push(toPublic(r, photos, [], banner[0]?.photo_id ? String(banner[0].photo_id) : null));
   }
   const up = await db<Row>`select s.id, s.title, s.starts_at, s.duration_min, s.tags, a.username, a.profile,
       (select id from om_photo p where p.user_id = a.user_id and p.attached order by p.is_primary desc, p.position limit 1) as photo_id
@@ -346,9 +383,12 @@ export async function directoryProfiles(): Promise<PublicProfile[]> {
       discoverable: privacy.discoverable !== false,
       hasAttachedPhoto: true,
     })) continue;
-    const photos = await db<Row>`select id, is_primary, explicit from om_photo where user_id = ${r.user_id} and attached order by is_primary desc, position`;
+    const [photos, banner] = await Promise.all([
+      db<Row>`select id, is_primary, explicit from om_photo where user_id = ${r.user_id} and attached order by is_primary desc, position`,
+      db<Row>`select photo_id from om_banner where user_id = ${r.user_id}`,
+    ]);
     if (!photos.length) continue;
-    out.push(toPublic(r, photos, []));
+    out.push(toPublic(r, photos, [], banner[0]?.photo_id ? String(banner[0].photo_id) : null));
   }
   return out;
 }

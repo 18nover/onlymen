@@ -331,3 +331,44 @@ export const deletePhotoFn = createServerFn({ method: "POST" })
     if (uid && data.startsWith("ph_")) await c.repo.deletePhoto(uid, data);
     return { ok: true };
   });
+
+function asImage(mime: string, base64: string, maxBytes: number): { ok: true; mime: "image/jpeg" | "image/png" | "image/webp"; buf: Buffer } | { ok: false; error: string } {
+  if (!/^image\/(jpeg|png|webp)$/.test(mime)) return { ok: false, error: "Please choose a JPEG, PNG or WebP image." };
+  const buf = Buffer.from(base64, "base64");
+  if (!buf.length || buf.length > maxBytes) return { ok: false, error: "That image is too large." };
+  const head = buf.subarray(0, 12);
+  const isJpeg = head[0] === 0xff && head[1] === 0xd8;
+  const isPng = head[0] === 0x89 && head[1] === 0x50;
+  const isWebp = head.subarray(0, 4).toString() === "RIFF" && head.subarray(8, 12).toString() === "WEBP";
+  if (!isJpeg && !isPng && !isWebp) return { ok: false, error: "That file isn't an image." };
+  return { ok: true, mime: isJpeg ? "image/jpeg" : isPng ? "image/png" : "image/webp", buf };
+}
+
+/** Upload or replace the profile banner (stored in om_banner, never in the gallery). */
+export const uploadBannerFn = createServerFn({ method: "POST" })
+  .validator((input: unknown) => {
+    const o = obj(input);
+    return { mime: s(o.mime, 40), base64: s(o.base64, 1_000_000) };
+  })
+  .handler(async ({ data }): Promise<ApiResult<string>> => {
+    const c = await ctx();
+    c.assertSameSite();
+    const uid = await sessionUserId(c);
+    if (!uid) return { ok: false, error: "You're signed out." };
+    const img = asImage(data.mime, data.base64, c.repo.MAX_PHOTO_BYTES);
+    if (!img.ok) return img;
+    try {
+      return { ok: true, value: await c.repo.upsertBanner(uid, img.mime, img.buf) };
+    } catch (e) {
+      return { ok: false, error: (e as Error).message };
+    }
+  });
+
+export const deleteBannerFn = createServerFn({ method: "POST" }).handler(async (): Promise<ApiResult<true>> => {
+  const c = await ctx();
+  c.assertSameSite();
+  const uid = await sessionUserId(c);
+  if (!uid) return { ok: false, error: "You're signed out." };
+  await c.repo.deleteBanner(uid);
+  return { ok: true, value: true };
+});

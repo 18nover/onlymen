@@ -165,7 +165,7 @@ function Featured({ list, onTip }: { list: Model[]; onTip: (m: Model) => void })
           params={{ handle: spot.handle }}
           className="group relative block aspect-[4/5] overflow-hidden rounded-2xl border-gold-grad glow-gold sm:aspect-[16/10] lg:aspect-auto lg:min-h-[420px]"
         >
-          <img src={spot.photo} alt={`${spot.name}, ${spot.age}`} className="absolute inset-0 size-full object-cover object-[50%_25%] transition duration-700 group-hover:scale-105" />
+          <img src={spot.banner || spot.photo} alt={`${spot.name}${spot.age ? `, ${spot.age}` : ""}`} className="absolute inset-0 size-full object-cover object-[50%_25%] transition duration-700 group-hover:scale-105" />
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
           <span className="absolute top-4 left-4 rounded-full bg-oxblood/90 px-3 py-1 text-[11px] font-extrabold tracking-[0.18em] text-gold-hi uppercase ring-1 ring-gold/40">
             {spot.source === "real" ? "Featured" : "Man of the night"}

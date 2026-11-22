@@ -2,6 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, BadgeCheck, CalendarClock, Crown, MapPin, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { AgeGate, Footer, Header, MobileNav } from "@/components/onlymen-ui";
+import { ProfileBanner } from "@/components/banner-field";
 import { WatchLiveLink } from "@/components/live-ui";
 import { useAgeGate, useCity } from "@/lib/onlymen-hooks";
 import type { PublicProfile } from "@/lib/account/repo.server";
@@ -42,6 +43,11 @@ export function MemberProfile({ p }: { p: PublicProfile }) {
         <Link to="/" hash="browse" className="mt-4 inline-flex h-10 items-center gap-1.5 text-sm font-semibold text-muted transition hover:text-gold-hi">
           <ArrowLeft className="size-4" /> Back to browse
         </Link>
+        {p.bannerPhotoId && (
+          <div className="mt-4">
+            <ProfileBanner id={p.bannerPhotoId} name={p.displayName} />
+          </div>
+        )}
         <div className="mt-2 grid grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8">
           <div>
             <div className={`relative aspect-[4/5] overflow-hidden rounded-3xl bg-surface ${p.live ? "shadow-[0_0_40px_-10px_rgb(194_42_69_/_0.9)]" : "border-gold-grad glow-gold"}`}>

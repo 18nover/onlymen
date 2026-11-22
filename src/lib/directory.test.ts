@@ -125,6 +125,7 @@ const dakota: DirectoryProfile = {
   lookingFor: ["Fans"],
   languages: ["English"],
   photos: [{ id: "ph_abc", primary: true, explicit: false }],
+  bannerPhotoId: "ph_banner",
   live: null,
   joinedAt: "2026-11-21T00:00:00.000Z",
 };
@@ -137,6 +138,7 @@ describe("toDirectoryModel", () => {
     assert.equal(m!.handle, "admin");
     assert.equal(m!.name, "Dakota Alexander");
     assert.equal(m!.photo, "/api/photo/ph_abc");
+    assert.equal(m!.banner, "/api/photo/ph_banner");
     assert.equal(m!.live, false);
     assert.equal(m!.online, false);
     assert.equal(m!.availableNow, false);
