@@ -10,7 +10,7 @@ export const RETIRED_PROFILE_KEYS = ["rates", "services", "position"] as const;
 export const RETIRED_LIVE_KEYS = ["privateRate"] as const;
 
 /** Tag values no longer offered; hidden wherever stored tags are displayed. */
-export const RETIRED_TAGS = new Set(["dinner dates", "events & travel", "right now", "dates"]);
+export const RETIRED_TAGS = new Set(["dinner dates", "events & travel", "right now", "dates", "discreet"]);
 
 export const visibleTags = (xs: readonly string[]) => xs.filter((x) => !RETIRED_TAGS.has(String(x).trim().toLowerCase()));
 

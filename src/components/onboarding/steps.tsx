@@ -436,7 +436,7 @@ export function PrivacyStep({ account, save, onNext }: StepProps) {
   ];
   return (
     <>
-      <StepHead kicker="Privacy" title={<>Discreet <span className="text-gold italic">by design.</span></>} sub="You decide what's visible. Change any of this later in settings." />
+      <StepHead kicker="Privacy" title={<>Private <span className="text-gold italic">by design.</span></>} sub="You decide what's visible. Change any of this later in settings." />
       <div className="grid gap-6">
         <div className="grid gap-3">
           <Toggle checked={p.showOnline} onChange={(v) => set({ showOnline: v })} label="Show when I'm online" detail="A green dot on your photo while you're active." icon={<span className="size-2.5 rounded-full bg-online" />} />
