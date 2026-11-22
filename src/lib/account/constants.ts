@@ -60,8 +60,6 @@ export const emptyProfile = (): Profile => ({
   languages: ["English"],
   social: {},
   photos: [],
-  rates: [],
-  services: [],
   acceptsTips: true,
 });
 
@@ -92,12 +90,10 @@ export const emptyCreator = (): CreatorVerification => ({
 });
 
 export const BODY_TYPES = ["Slim", "Toned", "Athletic", "Muscular", "Average", "Stocky", "Big & tall", "Bear"];
-export const POSITIONS = ["Top", "Vers top", "Versatile", "Vers bottom", "Bottom", "Side", "Prefer not to say"];
 export const TRIBES = ["Bear", "Cub", "Daddy", "Jock", "Twink", "Otter", "Leather", "Geek", "Clean-cut", "Rugged", "Trans", "Discreet", "Poz", "Sober"];
 export const INTERESTS = ["Fine dining", "Cocktail bars", "Gym", "Nightlife", "Travel", "Art", "Music", "Gaming", "Fashion", "Outdoors", "Cooking", "Film", "Fetish-friendly", "Kink-curious"];
-export const LOOKING_FOR = ["Chat", "Dates", "Friends", "Right now", "Relationship", "Content collabs", "Live shows", "Fans"];
+export const LOOKING_FOR = ["Chat", "Friends", "Relationship", "Content collabs", "Live shows", "Fans"];
 export const LANGUAGES = ["English", "Spanish", "Portuguese", "French", "German", "Italian", "Arabic", "Hindi", "Japanese", "Mandarin", "Russian", "Tagalog"];
-export const CREATOR_SERVICES = ["Custom videos", "Custom photos", "Video calls", "Live shows", "Sexting", "Fan club", "Voice notes", "Live Q&A"];
 
 export const MAX_PHOTOS = 9;
 
@@ -124,7 +120,6 @@ export const emptyLive = (): CreatorLive => ({
   scheduleTime: "21:00",
   timeZone: typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "America/New_York",
   tipMenu: [],
-  privateRate: "",
   recordingsAllowed: false,
   blockedRegions: [],
   moderators: [],

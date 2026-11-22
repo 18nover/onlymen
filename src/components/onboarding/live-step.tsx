@@ -153,7 +153,6 @@ export function LiveStep({ account, save, onNext }: StepProps) {
                   })}
                 </div>
               )}
-              <TextField label="Private show rate" optional prefix="$" inputMode="decimal" value={l.privateRate} onChange={(e) => set({ privateRate: e.target.value })} placeholder="3.99" hint="Per minute. Charged by the platform you stream on." />
               <Toggle checked={l.recordingsAllowed} onChange={(v) => set({ recordingsAllowed: v })} label="Allow recordings & replays" detail="Only if everyone on camera agreed to be recorded and published." />
             </Card>
 

@@ -100,7 +100,6 @@ async function join(p, user, type) {
   await p.getByRole("button", { name: "Add item" }).click();
   await p.getByLabel("Tip menu item").fill("Song request");
   await p.getByLabel("Tip price in USD").fill("10");
-  await p.getByLabel(/Private show rate/).fill("3.99");
   await p.getByRole("button", { name: "Texas", exact: true }).click();
   await p.getByLabel("Chat moderators").fill("nightowl.nyc");
   await p.getByLabel("Chat moderators").press("Enter");

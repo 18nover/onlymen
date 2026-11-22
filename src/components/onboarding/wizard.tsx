@@ -25,9 +25,7 @@ const ALL: StepDef[] = [
 ];
 
 function stepsFor(a: Pick<PublicAccount, "type">) {
-  return ALL.filter((s) => (s.id !== "verify" && s.id !== "live") || a.type === "creator").map((s) =>
-    s.id === "socials" && a.type === "creator" ? { ...s, label: "Links & content menu" } : s,
-  );
+  return ALL.filter((s) => (s.id !== "verify" && s.id !== "live") || a.type === "creator");
 }
 
 export function OnboardingWizard({ step: stepParam, onStep }: { step?: OnboardingStepId; onStep: (s: OnboardingStepId, replace?: boolean) => void }) {

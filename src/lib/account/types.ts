@@ -50,8 +50,6 @@ export type Photo = {
 
 export type SocialLinks = { x?: string; instagram?: string; onlyfans?: string; website?: string };
 
-export type Rate = { id: string; label: string; price: string; unit: string };
-
 export type Profile = {
   displayName: string;
   headline: string;
@@ -60,7 +58,6 @@ export type Profile = {
   showAge: boolean;
   heightCm?: number;
   bodyType?: string;
-  position?: string;
   tribes: string[];
   interests: string[];
   lookingFor: string[];
@@ -70,8 +67,6 @@ export type Profile = {
   /** Cover image on the public profile; stored in om_banner, not in photos[]. */
   bannerPhotoId?: string;
   /** Creators only. */
-  rates: Rate[];
-  services: string[];
   acceptsTips: boolean;
 };
 
