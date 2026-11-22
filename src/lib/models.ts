@@ -244,7 +244,7 @@ export function fmtDistance(km: number) {
 }
 export function fmtActive(m: Pick<Model, "live" | "online" | "lastActiveMin">) {
   if (m.live) return "Live now";
-  if (m.online) return "Online now";
+  if (m.online) return "Online";
   const min = m.lastActiveMin;
   if (min < 60) return `Active ${min} min ago`;
   if (min < 1440) return `Active ${Math.round(min / 60)}h ago`;

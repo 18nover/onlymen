@@ -76,7 +76,7 @@ function Hero({ online, live }: { online: number; live: number }) {
             <span className="size-2 rounded-full bg-online" />
             <dt className="sr-only">Online</dt>
             <dd>
-              <b className="text-ivory">{online}</b> <span className="text-muted">online now</span>
+              <b className="text-ivory">{online}</b> <span className="text-muted">online</span>
             </dd>
           </div>
           <div className="flex items-center gap-2">
@@ -529,7 +529,7 @@ export function OnlyMenHome() {
           {shown.length > visible.length && (
             <div className="mt-10 flex flex-col items-center gap-2">
               <button onClick={() => setPage((p) => p + 1)} className="h-12 rounded-full border border-gold/50 px-8 text-sm font-bold text-gold-hi transition hover:bg-gold/10">
-                Load more men
+                Show more
               </button>
               <p className="text-xs text-dim">
                 Showing {visible.length} of {shown.length}
