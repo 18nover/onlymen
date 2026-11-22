@@ -21,6 +21,11 @@ import { renderInstallPage } from "./grok-pwa-plugin.mjs";
 
 const TEMPLATE_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 
+// The injector defaults to process.cwd() for src/lib/og/site.json and public/og.*.
+// Run from an empty directory so these tests check the template defaults, not
+// this app's own share-card identity (which sets a site title).
+process.chdir(mkdtempSync(join(tmpdir(), "grok-pwa-cwd-")));
+
 test("injects before </head>", () => {
   const out = injectGrokPwaHead("<html><head><title>x</title></head><body></body></html>");
   assert.match(out, /rel="manifest"/);

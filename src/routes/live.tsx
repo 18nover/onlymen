@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CalendarClock, Radio, ShieldCheck, Sparkles } from "lucide-react";
 import { Footer, Header, MobileNav, AgeGate } from "@/components/onlymen-ui";
-import { LiveCard, UpcomingRow, useReminders } from "@/components/live-ui";
+import { LiveCard, UpcomingRow } from "@/components/live-ui";
+import { useReminders } from "@/lib/live/use-reminders";
 import { useAgeGate, useCity } from "@/lib/onlymen-hooks";
 import { useLiveNow, useUpcoming } from "@/lib/live/use-live";
 import { useAccount } from "@/lib/account/use-account";

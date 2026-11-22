@@ -1,9 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Bell, BellRing, ExternalLink, Eye, Radio, Target } from "lucide-react";
-import { useAccount } from "@/lib/account/use-account";
 import type { LiveNow, Upcoming } from "@/lib/live/demo";
-import type { Reminder } from "@/lib/live/types";
 import type { PublicRoom } from "@/lib/live/config";
 
 /** Gold → ruby rotating ring for anything that's live. */
@@ -74,27 +72,6 @@ export function LiveCard({ s }: { s: LiveNow }) {
       </LiveRing>
     </article>
   );
-}
-
-export function useReminders() {
-  const { account, update } = useAccount();
-  const nav = useNavigate();
-  const list: Reminder[] = account?.reminders ?? [];
-  const has = (id: string) => list.some((r) => r.showId === id);
-  const toggle = (show: Upcoming) => {
-    if (!account) return nav({ to: "/join" });
-    update((a) => {
-      const cur = a.reminders ?? [];
-      const exists = cur.some((r) => r.showId === show.id);
-      return {
-        ...a,
-        reminders: exists
-          ? cur.filter((r) => r.showId !== show.id)
-          : [...cur, { showId: show.id, creator: show.handle, title: show.title, startsAt: show.startsAt, createdAt: new Date().toISOString() }],
-      };
-    });
-  };
-  return { list, has, toggle, signedIn: !!account };
 }
 
 function fmtWhen(iso: string, now: number) {
