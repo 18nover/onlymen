@@ -305,7 +305,7 @@ function Reviews({ m }: { m: Model }) {
             <p className="mt-3 text-sm leading-relaxed text-ivory/85">{r.text}</p>
             <dl className="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
               {[
-                ["Met for", r.metFor],
+                ["Enjoyed", r.metFor],
                 ["Vibe", r.vibe],
                 ["Photos accurate?", r.photosAccurate ? "Yes" : "Not quite"],
                 ["Recommend?", r.recommend ? "Definitely" : "Maybe"],
@@ -434,7 +434,7 @@ export function OnlyMenProfile({ handle }: { handle: string }) {
           <div className="grid min-w-0 grid-cols-1 gap-6 content-start">
             <Card title={`About ${m.name}`} icon={<Sparkles className="size-3.5" />}>
               <p className="leading-relaxed text-ivory/85">{m.about}</p>
-              <p className="mt-5 text-[11px] font-bold tracking-[0.2em] text-dim uppercase">Good company for</p>
+              <p className="mt-5 text-[11px] font-bold tracking-[0.2em] text-dim uppercase">Into</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {m.goodCompanyFor.map((t) => (
                   <span key={t} className="rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-semibold text-gold-hi">{t}</span>

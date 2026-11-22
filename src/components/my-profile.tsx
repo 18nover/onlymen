@@ -206,7 +206,7 @@ function Body({ a }: { a: PublicAccount }) {
 
       <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {creator && (
-          <Card title="Rates & services" icon={<Coins className="size-3.5" />} edit="socials">
+          <Card title="Content menu" icon={<Coins className="size-3.5" />} edit="socials">
             {p.rates.filter((r) => r.label).length ? (
               <ul className="grid gap-2">
                 {p.rates.filter((r) => r.label).map((r) => (
@@ -216,7 +216,7 @@ function Body({ a }: { a: PublicAccount }) {
                   </li>
                 ))}
               </ul>
-            ) : <p className="text-sm text-dim">No rates listed.</p>}
+            ) : <p className="text-sm text-dim">Nothing on your content menu yet.</p>}
             {p.services.length > 0 && <p className="mt-3 text-xs text-muted">{p.services.join(" · ")}</p>}
             <p className="mt-3 text-xs text-dim">Tips {p.acceptsTips ? "on" : "off"}</p>
           </Card>

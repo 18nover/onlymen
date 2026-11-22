@@ -97,7 +97,7 @@ export const TRIBES = ["Bear", "Cub", "Daddy", "Jock", "Twink", "Otter", "Leathe
 export const INTERESTS = ["Fine dining", "Cocktail bars", "Gym", "Nightlife", "Travel", "Art", "Music", "Gaming", "Fashion", "Outdoors", "Cooking", "Film", "Fetish-friendly", "Kink-curious"];
 export const LOOKING_FOR = ["Chat", "Dates", "Friends", "Right now", "Relationship", "Content collabs", "Live shows", "Fans"];
 export const LANGUAGES = ["English", "Spanish", "Portuguese", "French", "German", "Italian", "Arabic", "Hindi", "Japanese", "Mandarin", "Russian", "Tagalog"];
-export const CREATOR_SERVICES = ["Custom videos", "Custom photos", "Video calls", "Live shows", "Sexting", "Fan club", "Dinner dates", "Events & travel"];
+export const CREATOR_SERVICES = ["Custom videos", "Custom photos", "Video calls", "Live shows", "Sexting", "Fan club", "Voice notes", "Live Q&A"];
 
 export const MAX_PHOTOS = 9;
 

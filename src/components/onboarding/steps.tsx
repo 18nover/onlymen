@@ -227,7 +227,7 @@ export function SocialsStep({ account, save, onNext }: StepProps) {
   });
   return (
     <>
-      <StepHead kicker={creator ? "Links & rates" : "Your links"} title={creator ? <>Get <span className="text-gold italic">paid</span> for it.</> : <>Where else to <span className="text-gold italic">find you.</span></>} sub={creator ? "Link your socials, list what you offer and set your prices. Tips are always on unless you turn them off." : "Optional. Linked accounts help others know you're real."} />
+      <StepHead kicker={creator ? "Links & content menu" : "Your links"} title={creator ? <>Sell your <span className="text-gold italic">content.</span></> : <>Where else to <span className="text-gold italic">find you.</span></>} sub={creator ? "Link your socials and list your digital content (custom videos, photo sets, video chats) with prices. No escorting or in-person meetings for pay. Tips are always on unless you turn them off." : "Optional. Linked accounts help others know you're real."} />
       <div className="grid gap-6">
         <Card className="grid gap-5 sm:grid-cols-2">
           <TextField label="X" optional prefix="@" value={p.social.x ?? ""} onChange={(e) => setSocial("x", e.target.value)} placeholder="handle" />

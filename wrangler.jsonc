@@ -51,7 +51,9 @@
     "ONLYMEN_KYC_PROVIDER": "manual",
     // "on" lets an admin approve their OWN verification (solo operator).
     // Self-reviews are tagged "self-review" in the audit log.
-    "ONLYMEN_KYC_SELF_REVIEW": "on"
+    "ONLYMEN_KYC_SELF_REVIEW": "on",
+    // ONL-10 OnlyMen Nearby (Phase 1). Off/unset everywhere else (Vercel).
+    "ONLYMEN_NEARBY": "on"
   }
   // Private R2 bucket for ID documents — add once R2 is enabled on the account
   // (Cloudflare dashboard → R2; free tier 10 GB-month). Until then files are

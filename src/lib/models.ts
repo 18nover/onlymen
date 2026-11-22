@@ -85,13 +85,13 @@ type Seed = Pick<Model, "handle" | "name" | "age" | "km" | "city" | "metro" | "o
   Partial<Model>;
 
 const seeds: Seed[] = [
-  { handle: "marco.noir", name: "Marco", age: 31, km: 0.8, city: "Chelsea", metro: "nyc", online: true, live: true, isNew: false, verified: true, tier: "elite", tagline: "Late-night conversation, good wine, better company.", tags: ["Dinner dates", "Travel"], viewers: 214, heightCm: 183, build: "Athletic", style: "Classic", ethnicity: "Mediterranean", hair: "Black", eyes: "Brown", languages: ["English", "Italian"], zodiac: "Scorpio" },
-  { handle: "dre.gold", name: "Andre", age: 28, km: 1.2, city: "Harlem", metro: "nyc", online: true, live: false, isNew: true, verified: true, tier: "premium", tagline: "Athlete by day. Gentleman by night.", tags: ["Fitness", "Jazz bars"], heightCm: 188, build: "Muscular", style: "Jock", ethnicity: "Black", hair: "Black", eyes: "Brown", languages: ["English", "French"], zodiac: "Leo" },
+  { handle: "marco.noir", name: "Marco", age: 31, km: 0.8, city: "Chelsea", metro: "nyc", online: true, live: true, isNew: false, verified: true, tier: "elite", tagline: "Late-night streams, good wine, better stories.", tags: ["Live shows", "Travel"], viewers: 214, heightCm: 183, build: "Athletic", style: "Classic", ethnicity: "Mediterranean", hair: "Black", eyes: "Brown", languages: ["English", "Italian"], zodiac: "Scorpio" },
+  { handle: "dre.gold", name: "Andre", age: 28, km: 1.2, city: "Harlem", metro: "nyc", online: true, live: false, isNew: true, verified: true, tier: "premium", tagline: "Athlete by day. Live by night.", tags: ["Fitness", "Jazz bars"], heightCm: 188, build: "Muscular", style: "Jock", ethnicity: "Black", hair: "Black", eyes: "Brown", languages: ["English", "French"], zodiac: "Leo" },
   { handle: "rafa.velvet", name: "Rafael", age: 33, km: 2.4, city: "Hell's Kitchen", metro: "nyc", online: true, live: true, isNew: false, verified: true, tier: "elite", tagline: "Velvet jackets and red-lit rooms.", tags: ["Nightlife", "Dancing"], viewers: 389, heightCm: 178, build: "Athletic", style: "Classic", ethnicity: "Latino", hair: "Dark brown", eyes: "Hazel", languages: ["English", "Spanish", "Portuguese"], zodiac: "Libra" },
   { handle: "silverfox.j", name: "James", age: 41, km: 3.1, city: "West Village", metro: "nyc", online: false, live: false, isNew: false, verified: true, tier: "premium", tagline: "Old soul, warm hands, long stories.", tags: ["Mature", "Whiskey"], heightCm: 185, build: "Average", style: "Daddy", ethnicity: "White", hair: "Silver", eyes: "Blue", languages: ["English"], zodiac: "Capricorn", lastActiveMin: 180 },
   { handle: "kenji.k", name: "Kenji", age: 29, km: 1.7, city: "SoHo", metro: "nyc", online: true, live: false, isNew: true, verified: false, tier: null, tagline: "Soft sweaters, sharp mind.", tags: ["Art", "Coffee"], heightCm: 175, build: "Slim", style: "Artsy", ethnicity: "East Asian", hair: "Black", eyes: "Brown", languages: ["English", "Japanese"], zodiac: "Pisces" },
   { handle: "tank.after.dark", name: "Luca", age: 32, km: 4.5, city: "Bushwick", metro: "nyc", online: true, live: true, isNew: false, verified: true, tier: null, tagline: "Gym, music, and the after-party.", tags: ["Muscle", "DJ sets"], viewers: 156, heightCm: 180, build: "Muscular", style: "Jock", ethnicity: "White", hair: "Brown", eyes: "Green", languages: ["English", "German"], zodiac: "Aries" },
-  { handle: "omar.lounge", name: "Omar", age: 35, km: 2.9, city: "Midtown", metro: "nyc", online: false, live: false, isNew: false, verified: true, tier: "elite", tagline: "Suit on. Phone off. Your evening.", tags: ["Black tie", "Hotels"], heightCm: 186, build: "Athletic", style: "Preppy", ethnicity: "Middle Eastern", hair: "Black", eyes: "Brown", languages: ["English", "Arabic", "French"], zodiac: "Virgo", lastActiveMin: 45 },
+  { handle: "omar.lounge", name: "Omar", age: 35, km: 2.9, city: "Midtown", metro: "nyc", online: false, live: false, isNew: false, verified: true, tier: "elite", tagline: "Suit on. Camera on. Tailored content.", tags: ["Black tie", "Fashion"], heightCm: 186, build: "Athletic", style: "Preppy", ethnicity: "Middle Eastern", hair: "Black", eyes: "Brown", languages: ["English", "Arabic", "French"], zodiac: "Virgo", lastActiveMin: 45 },
   { handle: "noah.sun", name: "Noah", age: 27, km: 5.2, city: "South Beach", metro: "mia", online: true, live: false, isNew: true, verified: false, tier: null, tagline: "Golden hour, every hour.", tags: ["Beach", "Travel"], heightCm: 181, build: "Athletic", style: "Jock", ethnicity: "White", hair: "Blond", eyes: "Blue", languages: ["English"], zodiac: "Gemini" },
   { handle: "dev.emerald", name: "Dev", age: 30, km: 3.6, city: "Mission", metro: "sf", online: true, live: true, isNew: true, verified: true, tier: "premium", tagline: "Silk, candlelight, slow evenings.", tags: ["Romance", "Poetry"], viewers: 98, heightCm: 177, build: "Slim", style: "Artsy", ethnicity: "South Asian", hair: "Black", eyes: "Brown", languages: ["English", "Hindi"], zodiac: "Taurus" },
   { handle: "vince.ink", name: "Vince", age: 33, km: 6.8, city: "Silver Lake", metro: "la", online: false, live: false, isNew: false, verified: true, tier: null, tagline: "Ink, leather, and city lights.", tags: ["Tattoos", "Bikes"], heightCm: 182, build: "Stocky", style: "Alt", ethnicity: "White", hair: "Dark brown", eyes: "Brown", tattoos: true, languages: ["English"], zodiac: "Sagittarius", lastActiveMin: 1440 * 2 },
@@ -108,17 +108,17 @@ function rand(seed: number) {
 }
 
 const interestPool = ["Fine dining", "Cocktail bars", "Museums", "Live jazz", "Gym partner", "Hiking", "Theatre", "Travel", "Wine tasting", "Vinyl", "Cooking", "Fashion week", "Beach days", "Gaming", "Photography", "Brunch"];
-const companyPool = ["Dinner dates", "Events & galas", "Travel companion", "Gym sessions", "Nights out", "Video chats", "Weekend getaways", "Conversation"];
+const companyPool = ["Live shows", "Custom videos", "Photo sets", "Video chats", "Gym talk", "Fashion", "Travel stories", "Conversation"];
 const reviewers = ["NightOwlNYC", "gent.traveler", "Tomás R.", "quiet.sam", "B. from Boston", "jay_dines", "Lukas", "alex.vibes", "Mr. Henderson"];
 const reviewFroms = ["New York, NY", "Boston, MA", "Toronto, ON", "Chicago, IL", "London, UK", "Philadelphia, PA", "Austin, TX"];
-const metFor = ["Dinner", "A gallery night", "Drinks", "An event plus-one", "Weekend trip", "Video chat", "Brunch"];
+const metFor = ["A live show", "A custom video", "A photo set", "A video chat", "A live Q&A", "A fan club post", "A livestream"];
 const vibes = ["Relaxed", "Fun & flirty", "Classy", "Easygoing", "Warm"];
 const reviewTexts = [
-  "Exactly as pictured and even better company. Conversation never stalled once.",
-  "Punctual, polished and genuinely funny. Made a work event feel like a night out.",
-  "Great taste in restaurants. Felt like catching up with an old friend.",
-  "Respectful, warm and a great listener. Already planning the next one.",
-  "Showed me a side of the city I'd never seen. Ten out of ten.",
+  "Exactly as pictured. His live shows are worth staying up for.",
+  "Polished, funny and great on camera. The custom video was perfect.",
+  "Great chat during the stream. Felt like catching up with an old friend.",
+  "Respectful, warm and fast to reply. Already subscribed to the next one.",
+  "Best photo set I've bought this year. Ten out of ten.",
 ];
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov"];
 

@@ -20,11 +20,13 @@ import { Route as LiveRulesRouteImport } from './routes/live-rules'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LogoutRouteImport } from './routes/logout'
 import { Route as MeRouteImport } from './routes/me'
+import { Route as NearbyRouteImport } from './routes/nearby'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AdminInvitesRouteImport } from './routes/admin.invites'
+import { Route as AdminReportsRouteImport } from './routes/admin.reports'
 import { Route as AdminVerificationsRouteImport } from './routes/admin.verifications'
 import { Route as ApiOwnerSeedRouteImport } from './routes/api/owner-seed'
 import { Route as MHandleRouteImport } from './routes/m.$handle'
@@ -89,6 +91,11 @@ const MeRoute = MeRouteImport.update({
   path: '/me',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NearbyRoute = NearbyRouteImport.update({
+  id: '/nearby',
+  path: '/nearby',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -112,6 +119,11 @@ const TermsRoute = TermsRouteImport.update({
 const AdminInvitesRoute = AdminInvitesRouteImport.update({
   id: '/admin/invites',
   path: '/admin/invites',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminReportsRoute = AdminReportsRouteImport.update({
+  id: '/admin/reports',
+  path: '/admin/reports',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminVerificationsRoute = AdminVerificationsRouteImport.update({
@@ -167,11 +179,13 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/me': typeof MeRoute
+  '/nearby': typeof NearbyRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/admin/invites': typeof AdminInvitesRoute
+  '/admin/reports': typeof AdminReportsRoute
   '/admin/verifications': typeof AdminVerificationsRoute
   '/api/owner-seed': typeof ApiOwnerSeedRoute
   '/m/$handle': typeof MHandleRoute
@@ -193,11 +207,13 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/me': typeof MeRoute
+  '/nearby': typeof NearbyRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/admin/invites': typeof AdminInvitesRoute
+  '/admin/reports': typeof AdminReportsRoute
   '/admin/verifications': typeof AdminVerificationsRoute
   '/api/owner-seed': typeof ApiOwnerSeedRoute
   '/m/$handle': typeof MHandleRoute
@@ -220,11 +236,13 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/me': typeof MeRoute
+  '/nearby': typeof NearbyRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
   '/admin/invites': typeof AdminInvitesRoute
+  '/admin/reports': typeof AdminReportsRoute
   '/admin/verifications': typeof AdminVerificationsRoute
   '/api/owner-seed': typeof ApiOwnerSeedRoute
   '/m/$handle': typeof MHandleRoute
@@ -248,11 +266,13 @@ export interface FileRouteTypes {
     | '/login'
     | '/logout'
     | '/me'
+    | '/nearby'
     | '/onboarding'
     | '/privacy'
     | '/reset-password'
     | '/terms'
     | '/admin/invites'
+    | '/admin/reports'
     | '/admin/verifications'
     | '/api/owner-seed'
     | '/m/$handle'
@@ -274,11 +294,13 @@ export interface FileRouteTypes {
     | '/login'
     | '/logout'
     | '/me'
+    | '/nearby'
     | '/onboarding'
     | '/privacy'
     | '/reset-password'
     | '/terms'
     | '/admin/invites'
+    | '/admin/reports'
     | '/admin/verifications'
     | '/api/owner-seed'
     | '/m/$handle'
@@ -300,11 +322,13 @@ export interface FileRouteTypes {
     | '/login'
     | '/logout'
     | '/me'
+    | '/nearby'
     | '/onboarding'
     | '/privacy'
     | '/reset-password'
     | '/terms'
     | '/admin/invites'
+    | '/admin/reports'
     | '/admin/verifications'
     | '/api/owner-seed'
     | '/m/$handle'
@@ -327,11 +351,13 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   LogoutRoute: typeof LogoutRoute
   MeRoute: typeof MeRoute
+  NearbyRoute: typeof NearbyRoute
   OnboardingRoute: typeof OnboardingRoute
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   TermsRoute: typeof TermsRoute
   AdminInvitesRoute: typeof AdminInvitesRoute
+  AdminReportsRoute: typeof AdminReportsRoute
   AdminVerificationsRoute: typeof AdminVerificationsRoute
   ApiOwnerSeedRoute: typeof ApiOwnerSeedRoute
   MHandleRoute: typeof MHandleRoute
@@ -421,6 +447,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/nearby': {
+      id: '/nearby'
+      path: '/nearby'
+      fullPath: '/nearby'
+      preLoaderRoute: typeof NearbyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
@@ -454,6 +487,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/invites'
       fullPath: '/admin/invites'
       preLoaderRoute: typeof AdminInvitesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/reports': {
+      id: '/admin/reports'
+      path: '/admin/reports'
+      fullPath: '/admin/reports'
+      preLoaderRoute: typeof AdminReportsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/verifications': {
@@ -527,11 +567,13 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   LogoutRoute: LogoutRoute,
   MeRoute: MeRoute,
+  NearbyRoute: NearbyRoute,
   OnboardingRoute: OnboardingRoute,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   TermsRoute: TermsRoute,
   AdminInvitesRoute: AdminInvitesRoute,
+  AdminReportsRoute: AdminReportsRoute,
   AdminVerificationsRoute: AdminVerificationsRoute,
   ApiOwnerSeedRoute: ApiOwnerSeedRoute,
   MHandleRoute: MHandleRoute,

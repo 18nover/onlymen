@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Check, ChevronDown, Crown, Flame, Gem, Lock, MapPin, Radio, Search, ShieldCheck, SlidersHorizontal, Star } from "lucide-react";
+import { Check, ChevronDown, Crown, Flame, Gem, Lock, MapPin, Radar, Radio, Search, ShieldCheck, SlidersHorizontal, Star } from "lucide-react";
 import { company } from "@/lib/company";
 import { useAccount } from "@/lib/account/use-account";
 import { useImageUrl } from "@/lib/account/media";
+import { useNearbyEnabled } from "@/lib/nearby/use-nearby";
 
 const footerRoutes: Record<string, string> = {
   "Become a creator": "/join?as=creator",
@@ -235,6 +236,7 @@ type HeaderProps = {
 };
 
 export function Header({ city, onCity, q, onQ, onOpenFilters, filterCount = 0 }: HeaderProps) {
+  const nearby = useNearbyEnabled();
   return (
     <header className="sticky top-0 z-40 border-b border-line/60 bg-ink/80 backdrop-blur-xl">
       <div className="om-container flex h-16 items-center gap-3 lg:gap-4">
@@ -261,6 +263,7 @@ export function Header({ city, onCity, q, onQ, onOpenFilters, filterCount = 0 }:
             <span className="size-1.5 animate-pulse-dot rounded-full bg-ruby" /> Live
           </Link>
           <Link to="/" hash="featured" className="rounded-full px-3 py-2 transition hover:text-gold-hi">Featured</Link>
+          {nearby && <Link to="/nearby" className="rounded-full px-3 py-2 transition hover:text-gold-hi" activeProps={{ className: "text-gold-hi" }}>Nearby</Link>}
         </nav>
         <div className="ml-auto flex shrink-0 items-center gap-2">
           {onOpenFilters && (
@@ -293,7 +296,7 @@ export function Footer() {
         <div className="col-span-2 sm:col-span-3 md:col-span-1">
           <Brand />
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted">
-            A private directory of verified adult creators and companions. {company.phase}
+            A private community of verified adult creators. {company.phase}
           </p>
           <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-ruby/50 bg-oxblood/30 px-3 py-1.5 text-xs font-semibold text-ivory">
             <span className="font-display text-sm font-bold">18+</span> Adults only. Consent always.
@@ -339,6 +342,7 @@ export function Footer() {
 }
 
 export function MobileNav({ onOpenFilters }: { onOpenFilters?: () => void }) {
+  const nearby = useNearbyEnabled();
   const cls =
     "flex h-14 flex-col items-center justify-center gap-1 rounded-xl text-xs font-semibold text-muted transition active:bg-surface-2 active:text-gold-hi";
   return (
@@ -353,6 +357,10 @@ export function MobileNav({ onOpenFilters }: { onOpenFilters?: () => void }) {
         <button onClick={onOpenFilters} className={cls}>
           <SlidersHorizontal className="size-5 text-gold" /> Filters
         </button>
+      ) : nearby ? (
+        <Link to="/nearby" className={cls}>
+          <Radar className="size-5 text-gold" /> Nearby
+        </Link>
       ) : (
         <Link to="/" hash="featured" className={cls}>
           <Crown className="size-5 text-gold" /> Featured

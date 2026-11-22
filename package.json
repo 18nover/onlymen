@@ -22,7 +22,7 @@
     "preview:stop": "node scripts/preview.mjs stop",
     "typecheck": "tsc --noEmit",
     "check:auth": "node scripts/check-auth-invariant.mjs",
-    "test": "node --test 'scripts/**/*.test.mjs' && node --experimental-strip-types --test src/lib/app-data/app-data.test.ts src/lib/app-data/readiness-schedule.test.ts src/lib/auth/gate-identity.test.ts src/lib/auth/sign-in-gate.test.ts src/lib/preview-path-prefix.test.ts src/lib/account/validation.test.ts src/lib/live/live.test.ts src/lib/private/policy.test.ts src/lib/invites/codes.test.ts src/lib/invites/invites.server.test.ts src/lib/directory.test.ts src/lib/age-gate/age-gate.test.ts src/lib/verification/verification.test.ts",
+    "test": "node --test 'scripts/**/*.test.mjs' && node --experimental-strip-types --test src/lib/app-data/app-data.test.ts src/lib/app-data/readiness-schedule.test.ts src/lib/auth/gate-identity.test.ts src/lib/auth/sign-in-gate.test.ts src/lib/preview-path-prefix.test.ts src/lib/account/validation.test.ts src/lib/live/live.test.ts src/lib/private/policy.test.ts src/lib/invites/codes.test.ts src/lib/invites/invites.server.test.ts src/lib/directory.test.ts src/lib/age-gate/age-gate.test.ts src/lib/verification/verification.test.ts src/lib/nearby/geo.test.ts src/lib/nearby/nearby-db.test.ts",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
@@ -66,6 +66,7 @@
     "kysely": "^0.28.5",
     "lightningcss": "^1.28.0",
     "lucide-react": "^0.510.0",
+    "maplibre-gl": "^5.24.1",
     "nitro": "3.0.260610-beta",
     "pg": "^8.16.3",
     "react": "^19.2.0",

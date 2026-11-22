@@ -57,7 +57,7 @@ function Hero({ online, live }: { online: number; live: number }) {
           Men worth staying <span className="text-gold italic">up for.</span>
         </h1>
         <p className="mt-5 max-w-lg text-base leading-relaxed text-muted sm:text-lg">
-          A curated directory of verified creators and companions. Watch them live, start a conversation, and tip the ones
+          A curated directory of verified creators. Watch them live, start a conversation, and tip the ones
           who make your night.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
@@ -308,7 +308,7 @@ function Row({ m, onTip }: { m: Model; onTip: (m: Model) => void }) {
           )}
         </div>
         <p className="text-xs leading-relaxed text-muted">
-          <span className="text-dim">Good company for:</span> {m.goodCompanyFor.join(" · ")}
+          <span className="text-dim">Into:</span> {m.goodCompanyFor.join(" · ")}
         </p>
         <dl className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm sm:grid-cols-4">
           <div>

@@ -201,7 +201,7 @@ export function FilterDrawer({
             </div>
           </Section>
           <p className="flex items-start gap-1.5 pb-6 text-xs leading-relaxed text-dim">
-            <Sparkles className="mt-0.5 size-3.5 shrink-0" /> Companionship and creator profiles only. Tips are always optional.
+            <Sparkles className="mt-0.5 size-3.5 shrink-0" /> Creator profiles only. No escorting or paid meetups. Tips are always optional.
           </p>
         </div>
 
