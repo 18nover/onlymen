@@ -16,7 +16,7 @@ export const Route = createRootRoute({
     try {
       return { access: await privateAccessFn() };
     } catch {
-      return { access: { allowed: false, ownerSignup: false } };
+      return { access: { allowed: false, ownerSignup: false, invites: false } };
     }
   },
   head: () => ({
@@ -58,7 +58,7 @@ function RootComponent() {
       <body>
         <PreviewHostBridge />
         <AuthProvider>
-          {gated ? <PrivateComingSoon /> : <Outlet />}
+          {gated ? <PrivateComingSoon invites={access.invites} /> : <Outlet />}
         </AuthProvider>
         <Scripts />
       </body>

@@ -23,6 +23,7 @@ import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as AdminInvitesRouteImport } from './routes/admin.invites'
 import { Route as ApiOwnerSeedRouteImport } from './routes/api/owner-seed'
 import { Route as MHandleRouteImport } from './routes/m.$handle'
 import { Route as WatchHandleRouteImport } from './routes/watch.$handle'
@@ -98,6 +99,11 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminInvitesRoute = AdminInvitesRouteImport.update({
+  id: '/admin/invites',
+  path: '/admin/invites',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiOwnerSeedRoute = ApiOwnerSeedRouteImport.update({
   id: '/api/owner-seed',
   path: '/api/owner-seed',
@@ -134,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
+  '/admin/invites': typeof AdminInvitesRoute
   '/api/owner-seed': typeof ApiOwnerSeedRoute
   '/m/$handle': typeof MHandleRoute
   '/watch/$handle': typeof WatchHandleRoute
@@ -154,6 +161,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
+  '/admin/invites': typeof AdminInvitesRoute
   '/api/owner-seed': typeof ApiOwnerSeedRoute
   '/m/$handle': typeof MHandleRoute
   '/watch/$handle': typeof WatchHandleRoute
@@ -175,6 +183,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
+  '/admin/invites': typeof AdminInvitesRoute
   '/api/owner-seed': typeof ApiOwnerSeedRoute
   '/m/$handle': typeof MHandleRoute
   '/watch/$handle': typeof WatchHandleRoute
@@ -197,6 +206,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/terms'
+    | '/admin/invites'
     | '/api/owner-seed'
     | '/m/$handle'
     | '/watch/$handle'
@@ -217,6 +227,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/terms'
+    | '/admin/invites'
     | '/api/owner-seed'
     | '/m/$handle'
     | '/watch/$handle'
@@ -237,6 +248,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/terms'
+    | '/admin/invites'
     | '/api/owner-seed'
     | '/m/$handle'
     | '/watch/$handle'
@@ -258,6 +270,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   TermsRoute: typeof TermsRoute
+  AdminInvitesRoute: typeof AdminInvitesRoute
   ApiOwnerSeedRoute: typeof ApiOwnerSeedRoute
   MHandleRoute: typeof MHandleRoute
   WatchHandleRoute: typeof WatchHandleRoute
@@ -364,6 +377,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/invites': {
+      id: '/admin/invites'
+      path: '/admin/invites'
+      fullPath: '/admin/invites'
+      preLoaderRoute: typeof AdminInvitesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/owner-seed': {
       id: '/api/owner-seed'
       path: '/api/owner-seed'
@@ -410,6 +430,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   TermsRoute: TermsRoute,
+  AdminInvitesRoute: AdminInvitesRoute,
   ApiOwnerSeedRoute: ApiOwnerSeedRoute,
   MHandleRoute: MHandleRoute,
   WatchHandleRoute: WatchHandleRoute,

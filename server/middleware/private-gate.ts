@@ -12,6 +12,7 @@
 import { isPublicPath, normalizePath, SERVER_FN_PREFIX } from "../../src/lib/private/policy";
 import { renderGateHtml } from "../../src/lib/private/gate-html";
 import { platformEnv } from "../../src/lib/platform/runtime.ts";
+import { invitesEnabled } from "../../src/lib/invites/invites.server.ts";
 
 interface GateEvent {
   url: URL;
@@ -28,8 +29,9 @@ function privateModeOff(): boolean {
   return process.env.NODE_ENV !== "production" && platformEnv("ONLYMEN_PRIVATE_MODE") === "off";
 }
 
-function ownerSignupOpen(): boolean {
-  return Boolean(platformEnv("ONLYMEN_OWNER_SIGNUP_EMAIL"));
+/** /join is reachable signed-out for the owner bootstrap, or in invite mode (code required server-side). */
+function signUpPageOpen(): boolean {
+  return Boolean(platformEnv("ONLYMEN_OWNER_SIGNUP_EMAIL")) || invitesEnabled();
 }
 
 /** Pass through, tagging the app's own response noindex. */
@@ -45,7 +47,7 @@ export default async function privateGate(event: GateEvent, next: () => unknown 
   if (privateModeOff()) return next();
   const path = normalizePath(event.url.pathname);
   if (isPublicPath(path) || path.startsWith(SERVER_FN_PREFIX) || path.startsWith("/api/photo/") || path === "/api/owner-seed") return pass(next);
-  if (ownerSignupOpen() && path === "/join") return pass(next);
+  if (signUpPageOpen() && path === "/join") return pass(next);
   if (hasSessionCookie(event.req.headers)) return pass(next);
 
   const method = (event.req.method ?? "GET").toUpperCase();
@@ -55,7 +57,7 @@ export default async function privateGate(event: GateEvent, next: () => unknown 
       headers: { "content-type": "application/json", "cache-control": "no-store", "x-robots-tag": NOINDEX },
     });
   }
-  return new Response(method === "HEAD" ? null : renderGateHtml(), {
+  return new Response(method === "HEAD" ? null : renderGateHtml({ invites: invitesEnabled() }), {
     status: 200,
     headers: {
       "content-type": "text/html; charset=utf-8",

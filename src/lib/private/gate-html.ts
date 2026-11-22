@@ -5,7 +5,7 @@
  */
 export const GATE_TITLE = "OnlyMen — Private. Coming soon.";
 
-export function renderGateHtml(): string {
+export function renderGateHtml(opts: { invites?: boolean } = {}): string {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -45,8 +45,13 @@ footer a{color:#7d6f63;text-decoration:none}footer a:hover{color:#d4af6a}
 <div class="kicker">OnlyMen · 18+</div>
 <h1>Private.<br><em>Coming soon.</em></h1>
 <div class="rule" aria-hidden="true"></div>
-<p>OnlyMen is closed while we finish building it. There are no public sign-ups yet. Check back soon.</p>
-<a class="owner" href="/login" rel="nofollow">Owner log in</a>
+${
+  opts.invites
+    ? `<p>OnlyMen is invite-only while we finish building it. Got an invite code? Join below.</p>
+<div style="display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center"><a class="owner" href="/join" rel="nofollow">I have an invite</a><a class="owner" href="/login" rel="nofollow">Log in</a></div>`
+    : `<p>OnlyMen is closed while we finish building it. There are no public sign-ups yet. Check back soon.</p>
+<a class="owner" href="/login" rel="nofollow">Owner log in</a>`
+}
 </main>
 <footer><span>© 18nover</span><a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/guidelines">Guidelines</a><a href="/2257">2257</a></footer>
 </body>

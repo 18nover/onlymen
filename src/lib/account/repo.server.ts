@@ -32,8 +32,9 @@ export async function usernameTaken(username: string): Promise<boolean> {
   return rows.length > 0;
 }
 
-export async function createAccountRow(input: { userId: string; username: string; dob: string; type: "member" | "creator"; displayName: string; userAgent?: string }) {
-  const db = await getSql();
+/** Pass `tx` to write inside an existing transaction (see withTransaction in ../db). */
+export async function createAccountRow(input: { userId: string; username: string; dob: string; type: "member" | "creator"; displayName: string; userAgent?: string }, tx?: Sql) {
+  const db = tx ?? (await getSql());
   const profile = { ...emptyProfile(), displayName: input.displayName };
   delete (profile as Partial<typeof profile>).photos;
   await db`insert into om_account (user_id, username, account_type, dob, profile, privacy, permissions, onboarding, creator)

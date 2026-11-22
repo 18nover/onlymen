@@ -16,6 +16,8 @@ Public registration is closed server-side and only Jerry's allowlisted account c
 - Local dev only: `ONLYMEN_PRIVATE_MODE=off` disables the gate (ignored in production).
 - QA: `BASE=… node scripts/e2e-private.mjs` (the owner login check reads `OWNER_ID` / `OWNER_PW` from the environment only; do not put those values in docs).
 
+**Invite codes:** with `ONLYMEN_INVITES=on` (the Cloudflare Worker only, for now) `/join` accepts sign-ups that carry a valid invite code. See [INVITES.md](./INVITES.md).
+
 ## What lives in the database
 
 | Table | Holds |

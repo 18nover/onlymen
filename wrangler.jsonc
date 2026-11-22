@@ -28,6 +28,8 @@
   // Non-secret runtime vars. Secrets (BETTER_AUTH_SECRET, ONLYMEN_ALLOWED_USER_IDS,
   // webhook URL/key, …) go in with `wrangler secret put` — see docs/HOSTING.md.
   "vars": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    // Invite-code sign-up (src/lib/invites). Vercel leaves this unset → owner-only private mode.
+    "ONLYMEN_INVITES": "on"
   }
 }

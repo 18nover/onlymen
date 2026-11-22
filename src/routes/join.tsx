@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useRouteContext } from "@tanstack/react-router";
 import { Camera, Check, Coins, Crown, Heart, MessageCircle, Radio } from "lucide-react";
 import { AuthShell, FormError, GoldButton, PasswordField, SocialButtons, TextField, Field, inputCls } from "@/components/account-ui";
 import { accountStore, AccountError } from "@/lib/account/store";
@@ -7,10 +7,10 @@ import { useAccount } from "@/lib/account/use-account";
 import type { AccountType } from "@/lib/account/types";
 import { maxDob, passwordStrength, validateDob, validateEmail, validatePassword, validateUsername } from "@/lib/account/validation";
 
-type Search = { as?: AccountType };
+type Search = { as?: AccountType; code?: string };
 
 export const Route = createFileRoute("/join")({
-  validateSearch: (s: Record<string, unknown>): Search => ({ as: s.as === "creator" ? "creator" : s.as === "member" ? "member" : undefined }),
+  validateSearch: (s: Record<string, unknown>): Search => ({ as: s.as === "creator" ? "creator" : s.as === "member" ? "member" : undefined, code: typeof s.code === "string" && s.code ? s.code.slice(0, 20) : undefined }),
   head: () => ({ meta: [{ title: "Join OnlyMen — free, 18+" }] }),
   component: Join,
 });
@@ -39,8 +39,11 @@ const TYPES: { id: AccountType; title: string; blurb: string; perks: { icon: typ
 ];
 
 function Join() {
-  const { as } = Route.useSearch();
+  const { as, code: codeParam } = Route.useSearch();
   const nav = useNavigate();
+  const { access } = useRouteContext({ from: "__root__" });
+  const inviteOnly = access.invites;
+  const [inviteCode, setInviteCode] = useState(codeParam ?? "");
   const { account, ready } = useAccount();
   const [type, setType] = useState<AccountType>(as ?? "member");
   const [email, setEmail] = useState("");
@@ -63,6 +66,7 @@ function Join() {
   }, [username]);
 
   const errs = {
+    inviteCode: inviteOnly && !inviteCode.trim() ? "Enter your invite code." : null,
     email: validateEmail(email),
     username: validateUsername(username) ?? (taken ? "That username is taken." : null),
     password: validatePassword(password),
@@ -73,13 +77,15 @@ function Join() {
 
   async function submit(e: FormEvent) {
     e.preventDefault();
-    setTouched({ email: true, username: true, password: true, dob: true });
+    setTouched({ inviteCode: true, email: true, username: true, password: true, dob: true });
     setServerErr(null);
     if (Object.values(errs).some(Boolean)) return;
     setBusy(true);
     try {
-      await accountStore.signUp({ email, username, password, dob, type });
-      nav({ to: "/onboarding" });
+      await accountStore.signUp({ email, username, password, dob, type, ...(inviteOnly ? { inviteCode } : {}) });
+      // Full navigation so the server re-checks private-mode access with the new session cookie.
+      if (inviteOnly) window.location.assign("/onboarding");
+      else nav({ to: "/onboarding" });
     } catch (err) {
       setServerErr(err instanceof AccountError ? { msg: err.message, field: err.field } : { msg: "Something went wrong. Try again." });
     } finally {
@@ -88,8 +94,27 @@ function Join() {
   }
 
   return (
-    <AuthShell kicker="Free · 18+ only" title={<>Join <span className="text-gold italic">OnlyMen</span></>} sub="Two minutes to sign up. Then we'll help you build a profile worth looking at.">
+    <AuthShell
+      kicker={inviteOnly ? "Invite only · 18+" : "Free · 18+ only"}
+      title={<>Join <span className="text-gold italic">OnlyMen</span></>}
+      sub={inviteOnly ? "OnlyMen is invite-only for now. Enter your code, then two minutes to sign up." : "Two minutes to sign up. Then we'll help you build a profile worth looking at."}
+    >
       <form onSubmit={submit} noValidate className="grid gap-5">
+        {inviteOnly && (
+          <TextField
+            label="Invite code"
+            autoComplete="off"
+            autoCapitalize="characters"
+            spellCheck={false}
+            value={inviteCode}
+            onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+            onBlur={() => setTouched((t) => ({ ...t, inviteCode: true }))}
+            error={show("inviteCode")}
+            hint="Looks like OM-XXXX-XXXX."
+            placeholder="OM-XXXX-XXXX"
+            maxLength={20}
+          />
+        )}
         <fieldset>
           <legend className="text-sm font-semibold text-ivory">I'm joining as</legend>
           <div className="mt-2 grid grid-cols-2 gap-3" role="radiogroup">

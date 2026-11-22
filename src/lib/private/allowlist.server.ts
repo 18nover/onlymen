@@ -4,6 +4,7 @@
  */
 import { readAllowlist, allowlistEmpty, isAllowedIdentity, signUpAllowedFor } from "./policy.ts";
 import { platformEnv } from "../platform/runtime.ts";
+import { invitesEnabled } from "../invites/invites.server.ts";
 
 /** Local-dev escape hatch only; never honored in production builds. */
 export function privateModeOff(): boolean {
@@ -23,15 +24,22 @@ export async function isUserAllowed(userId: string | null | undefined): Promise<
   if (!userId) return false;
   if (privateModeOff()) return true;
   const a = allowlist();
-  if (allowlistEmpty(a)) return false;
   if (a.ids.has(userId)) return true;
-  if (a.usernames.size === 0 && a.ownerEmails.size === 0) return false;
+  // Invite mode (ONLYMEN_INVITES=on): accounts that joined with a code, and
+  // admin/owner accounts, are in as well as the env allowlist.
+  const invites = invitesEnabled();
+  if (!invites && (allowlistEmpty(a) || (a.usernames.size === 0 && a.ownerEmails.size === 0))) return false;
   try {
     const { getSql } = await import("../db");
     const db = await getSql();
-    const rows = await db<{ email: string | null; username: string | null }>`select u.email, a.username from "user" u left join om_account a on a.user_id = u.id where u.id = ${userId}`;
+    const rows = invites
+      ? await db<{ email: string | null; username: string | null; role: string | null; invited: boolean }>`select u.email, a.username, a.role,
+          exists (select 1 from invite_redemptions r where r.user_id = u.id) as invited
+          from "user" u left join om_account a on a.user_id = u.id where u.id = ${userId}`
+      : await db<{ email: string | null; username: string | null; role: string | null; invited: boolean }>`select u.email, a.username, null as role, false as invited from "user" u left join om_account a on a.user_id = u.id where u.id = ${userId}`;
     const r = rows[0];
     if (!r) return false;
+    if (invites && (r.invited || r.role === "admin" || r.role === "owner")) return true;
     return isAllowedIdentity(a, { id: userId, username: r.username, email: r.email });
   } catch (e) {
     console.error("[private] allowlist lookup failed:", (e as Error)?.message);
@@ -41,6 +49,11 @@ export async function isUserAllowed(userId: string | null | undefined): Promise<
 
 export function isSignUpAllowed(email: string | null | undefined): boolean {
   return privateModeOff() || signUpAllowedFor(allowlist(), email);
+}
+
+/** Is the sign-up page open to signed-out visitors (owner bootstrap or invite codes)? */
+export function signUpPageOpen(): boolean {
+  return Boolean(platformEnv("ONLYMEN_OWNER_SIGNUP_EMAIL")) || invitesEnabled();
 }
 
 /** Resolve the session from request headers and return the user id only if allowlisted. */

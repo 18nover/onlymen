@@ -50,11 +50,14 @@ export const accountStatus = createServerFn({ method: "GET" }).handler(async ():
 export const signUpFn = createServerFn({ method: "POST" })
   .validator((input: unknown) => {
     const o = obj(input);
-    return { email: s(o.email, 254).trim().toLowerCase(), username: s(o.username, 40), password: s(o.password, 200), dob: s(o.dob, 10), type: (o.type === "creator" ? "creator" : "member") as AccountType };
+    return { email: s(o.email, 254).trim().toLowerCase(), username: s(o.username, 40), password: s(o.password, 200), dob: s(o.dob, 10), type: (o.type === "creator" ? "creator" : "member") as AccountType, inviteCode: s(o.inviteCode, 40) };
   })
   .handler(async ({ data }): Promise<ApiResult<PublicAccount>> => {
     const c = await ctx();
     c.assertSameSite();
+    // INVITE MODE (ONLYMEN_INVITES=on): sign-up needs a valid invite code.
+    const inv = await import("../invites/invites.server");
+    if (inv.invitesEnabled()) return signUpWithInvite(c, data);
     // PRIVATE MODE: reject before touching the database (Better Auth also refuses).
     const { isSignUpAllowed } = await import("../private/allowlist.server");
     if (!isSignUpAllowed(data.email)) return { ok: false, error: CLOSED };
@@ -94,6 +97,76 @@ export const signUpFn = createServerFn({ method: "POST" })
     }
     return { ok: true, value: (await c.repo.loadAccount(userId))! };
   });
+
+type SignUpData = { email: string; username: string; password: string; dob: string; type: AccountType; inviteCode: string };
+
+/**
+ * Invite-code sign-up. The code is claimed in the SAME transaction that writes
+ * the user, credential, om_account and consent rows, so a code can never be
+ * over-used and a failed claim leaves no account behind. Better Auth's own
+ * sign-up stays disabled; we hash with its scrypt and then sign in through it
+ * (which runs the private-mode session hook) to set the session cookie.
+ */
+async function signUpWithInvite(c: Awaited<ReturnType<typeof ctx>>, data: SignUpData): Promise<ApiResult<PublicAccount>> {
+  const [inv, codes, v, dbm] = await Promise.all([import("../invites/invites.server"), import("../invites/codes.ts"), import("./validation.ts"), import("../db")]);
+  const db = await dbm.getSql();
+  const ip = inv.ipHash(c.headers);
+  const fail = (reason: keyof typeof codes.INVITE_ERRORS) => ({ ok: false as const, error: codes.INVITE_ERRORS[reason] });
+
+  if (await inv.isRateLimited(db, ip)) return fail("rateLimited");
+  const check = await inv.checkCode(db, data.inviteCode);
+  if (!check.ok) {
+    if (check.reason !== "missing") await inv.recordFailedAttempt(db, ip).catch(() => {});
+    return fail(check.reason);
+  }
+
+  const username = v.normalizeUsername(data.username);
+  const bad =
+    (v.validateEmail(data.email) && { error: v.validateEmail(data.email)!, field: "email" as const }) ||
+    (v.validateUsername(username) && { error: v.validateUsername(username)!, field: "username" as const }) ||
+    (v.validatePassword(data.password) && { error: v.validatePassword(data.password)!, field: "password" as const }) ||
+    (v.validateDob(data.dob) && { error: v.validateDob(data.dob)! });
+  if (bad) return { ok: false, ...bad };
+  if (await c.repo.usernameTaken(username)) return { ok: false, error: "That username is taken.", field: "username" };
+  const exists = await db`select 1 from "user" where lower(email) = ${data.email}`;
+  if (exists.length) return { ok: false, error: "An account with this email already exists. Log in instead.", field: "email" };
+
+  const actx = await c.auth.$context;
+  const hash = await actx.password.hash(data.password);
+  const userId = (actx.generateId({ model: "user" }) || crypto.randomUUID().replace(/-/g, "")) as string;
+  const accountRowId = (actx.generateId({ model: "account" }) || crypto.randomUUID().replace(/-/g, "")) as string;
+  try {
+    await dbm.withTransaction(async (tx) => {
+      await tx`insert into "user" ("id", "name", "email", "emailVerified", "createdAt", "updatedAt") values (${userId}, ${username}, ${data.email}, false, now(), now())`;
+      await tx`insert into "account" ("id", "accountId", "providerId", "userId", "password", "createdAt", "updatedAt") values (${accountRowId}, ${userId}, 'credential', ${userId}, ${hash}, now(), now())`;
+      await inv.claimCode(tx, check.hash, userId);
+      await c.repo.createAccountRow({ userId, username, dob: data.dob, type: data.type, displayName: data.username.trim().replace(/^@/, ""), userAgent: c.headers.get("user-agent") ?? undefined }, tx);
+    });
+  } catch (e) {
+    if (e instanceof inv.InviteClaimError) {
+      // Lost a race for the last use (or revoked meanwhile): nothing was written.
+      const again = await inv.checkCode(db, data.inviteCode);
+      return fail(again.ok ? "used" : again.reason);
+    }
+    const msg = String((e as Error)?.message);
+    if (/om_account_username|username/i.test(msg) && /unique|duplicate/i.test(msg)) return { ok: false, error: "That username is taken.", field: "username" };
+    if (/email/i.test(msg) && /unique|duplicate/i.test(msg)) return { ok: false, error: "An account with this email already exists. Log in instead.", field: "email" };
+    console.error("[invites] sign-up transaction failed:", (e as { code?: string })?.code ?? "error");
+    return { ok: false, error: "We couldn't create your account. Please try again." };
+  }
+  console.info(`[invites] account ${userId} joined with an invite code`);
+  try {
+    await c.auth.api.signInEmail({ body: { email: data.email, password: data.password, rememberMe: true }, headers: c.headers });
+  } catch {
+    return { ok: false, error: "Your account is ready. Log in to continue." };
+  }
+  try {
+    (await import("./notify.server")).notifySignup(username, data.type);
+  } catch {
+    /* fire-and-forget */
+  }
+  return { ok: true, value: (await c.repo.loadAccount(userId))! };
+}
 
 export const logInFn = createServerFn({ method: "POST" })
   .validator((input: unknown) => {
@@ -149,7 +222,9 @@ export const usernameTakenFn = createServerFn({ method: "POST" })
   .validator((input: unknown) => s(obj(input).username, 40))
   .handler(async ({ data }) => {
     const c = await ctx();
-    if (!(await sessionUserId(c))) return true; // private mode: no probing
+    // Private mode: no probing. In invite mode the form can't pre-check either
+    // (the server re-checks the username after the code on submit).
+    if (!(await sessionUserId(c))) return !(await import("../invites/invites.server")).invitesEnabled();
     const { normalizeUsername } = await import("./validation.ts");
     return c.repo.usernameTaken(normalizeUsername(data));
   });

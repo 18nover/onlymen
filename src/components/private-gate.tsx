@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
 /** In-app "Private — coming soon" screen (the root guard renders this instead of any gated route). */
-export function PrivateComingSoon() {
+export function PrivateComingSoon({ invites = false }: { invites?: boolean }) {
   return (
     <div
       className="flex min-h-screen flex-col items-center justify-center gap-9 px-6 py-12 text-center"
@@ -19,10 +19,26 @@ export function PrivateComingSoon() {
           <span className="text-gold italic">Coming soon.</span>
         </h1>
         <div aria-hidden className="h-px w-36 bg-gradient-to-r from-transparent via-gold to-transparent" />
-        <p className="max-w-md leading-relaxed text-muted">OnlyMen is closed while we finish building it. There are no public sign-ups yet. Check back soon.</p>
-        <Link to="/login" rel="nofollow" className="rounded-full border border-gold/50 px-6 py-3 text-sm font-semibold tracking-wide text-gold-hi hover:bg-oxblood/45">
-          Owner log in
-        </Link>
+        {invites ? (
+          <>
+            <p className="max-w-md leading-relaxed text-muted">OnlyMen is invite-only while we finish building it. Got an invite code? Join below.</p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Link to="/join" rel="nofollow" className="rounded-full border border-gold/50 px-6 py-3 text-sm font-semibold tracking-wide text-gold-hi hover:bg-oxblood/45">
+                I have an invite
+              </Link>
+              <Link to="/login" rel="nofollow" className="rounded-full border border-gold/50 px-6 py-3 text-sm font-semibold tracking-wide text-gold-hi hover:bg-oxblood/45">
+                Log in
+              </Link>
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="max-w-md leading-relaxed text-muted">OnlyMen is closed while we finish building it. There are no public sign-ups yet. Check back soon.</p>
+            <Link to="/login" rel="nofollow" className="rounded-full border border-gold/50 px-6 py-3 text-sm font-semibold tracking-wide text-gold-hi hover:bg-oxblood/45">
+              Owner log in
+            </Link>
+          </>
+        )}
       </main>
       <footer className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-dim">
         <span>© 18nover</span>

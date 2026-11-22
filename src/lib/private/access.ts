@@ -4,12 +4,14 @@
  */
 import { createServerFn } from "@tanstack/react-start";
 
-export type PrivateAccess = { allowed: boolean; ownerSignup: boolean };
+/** ownerSignup: /join is open to signed-out visitors (owner bootstrap or invite codes). invites: sign-up needs a code. */
+export type PrivateAccess = { allowed: boolean; ownerSignup: boolean; invites: boolean };
 
 export const privateAccessFn = createServerFn({ method: "GET" }).handler(async (): Promise<PrivateAccess> => {
-  const [{ getRequest }, mod, rt] = await Promise.all([import("@tanstack/react-start/server"), import("./allowlist.server"), import("../platform/runtime.ts")]);
-  const ownerSignup = Boolean(rt.platformEnv("ONLYMEN_OWNER_SIGNUP_EMAIL"));
-  if (mod.privateModeOff()) return { allowed: true, ownerSignup };
+  const [{ getRequest }, mod, inv] = await Promise.all([import("@tanstack/react-start/server"), import("./allowlist.server"), import("../invites/invites.server")]);
+  const ownerSignup = mod.signUpPageOpen();
+  const invites = inv.invitesEnabled();
+  if (mod.privateModeOff()) return { allowed: true, ownerSignup, invites };
   const uid = await mod.allowedSessionUserId(getRequest().headers);
-  return { allowed: Boolean(uid), ownerSignup };
+  return { allowed: Boolean(uid), ownerSignup, invites };
 });

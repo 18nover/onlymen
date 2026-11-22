@@ -47,6 +47,7 @@ export interface Sql {
  */
 const globalRef = globalThis as typeof globalThis & {
   __pgSqlPromise__?: Promise<Sql>;
+  __pgPool__?: import("pg").Pool;
   __pgliteInstance__?: Promise<import("@electric-sql/pglite").PGlite>;
   __pgliteMigrateChain__?: Promise<void>;
 };
@@ -117,6 +118,7 @@ function createNeonSql(): Promise<Sql> {
     types.setTypeParser(OID_DATE, identity);
     types.setTypeParser(OID_INTERVAL, identity);
     const pool = new Pool({ connectionString: databaseUrl });
+    globalRef.__pgPool__ = pool;
     return toSql(async <T>(text: string, params: unknown[]) => {
       const res = await pool.query(text, params);
       return res.rows as T[];
@@ -215,6 +217,43 @@ export function getSql(): Promise<Sql> {
     throw err;
   });
   return sqlPromise;
+}
+
+/**
+ * Run `fn` inside ONE database transaction on a single dedicated connection.
+ * Commits when `fn` resolves, rolls back (and rethrows) when it throws. Use it
+ * for writes that must succeed or fail together (e.g. claim an invite code and
+ * create the account it pays for).
+ */
+export async function withTransaction<T>(fn: (tx: Sql) => Promise<T>): Promise<T> {
+  if (dbSource === "pglite") {
+    const pg = await getPglite();
+    return pg.transaction(async (t) => fn(toSql(async <R>(text: string, params: unknown[]) => (await t.query<R>(text, params)).rows)));
+  }
+  type Client = { query(text: string, params?: unknown[]): Promise<{ rows: unknown[] }>; release(): void };
+  let client: Client;
+  if (workerDb) {
+    const pool = workerPgPool();
+    if (!pool) throw new Error("[db] Workers pool facade unavailable");
+    client = await pool.connect();
+  } else {
+    await getSql();
+    const pool = globalRef.__pgPool__;
+    if (!pool) throw new Error("[db] pg pool not initialized");
+    client = (await pool.connect()) as unknown as Client;
+  }
+  const tx = toSql(async <R>(text: string, params: unknown[]) => (await client.query(text, params)).rows as R[]);
+  try {
+    await client.query("BEGIN");
+    const out = await fn(tx);
+    await client.query("COMMIT");
+    return out;
+  } catch (err) {
+    await client.query("ROLLBACK").catch(() => {});
+    throw err;
+  } finally {
+    client.release();
+  }
 }
 
 /**
