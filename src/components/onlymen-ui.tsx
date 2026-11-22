@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Check, ChevronDown, Crown, Flame, Gem, Lock, MapPin, Radio, Search, ShieldCheck, SlidersHorizontal, Star } from "lucide-react";
+import { Check, ChevronDown, Crown, Flame, Lock, MapPin, Radio, Search, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import { company } from "@/lib/company";
 import { useAccount } from "@/lib/account/use-account";
 import { useImageUrl } from "@/lib/account/media";
 
 const footerRoutes: Record<string, string> = {
-  "Become a creator": "/join?as=creator",
+  Browse: "/#browse",
+  "Live now": "/live",
   "Terms of service": "/terms",
   Privacy: "/privacy",
   "2257 statement": "/2257",
@@ -36,10 +37,7 @@ function AccountButtons() {
   }
   return (
     <>
-      <Link to="/login" className="hidden h-10 items-center rounded-full px-3 text-sm font-semibold whitespace-nowrap text-ivory transition hover:text-gold-hi sm:flex">
-        Sign in
-      </Link>
-      <Link to="/join" className="flex h-10 items-center rounded-full bg-gold px-5 text-sm font-bold whitespace-nowrap transition hover:brightness-110">Join free</Link>
+      <Link to="/login" className="flex h-10 items-center rounded-full bg-gold px-5 text-sm font-bold whitespace-nowrap transition hover:brightness-110">Members sign in</Link>
     </>
   );
 }
@@ -59,7 +57,7 @@ function MobileAccountLink({ cls }: { cls: string }) {
     </Link>
   );
 }
-import { cities, cityLabel, models, type CityId, type Model, type Tier } from "@/lib/models";
+import { cities, cityLabel, models, type CityId, type Model } from "@/lib/models";
 
 
 export function Brand({ size = "md" }: { size?: "md" | "lg" }) {
@@ -75,34 +73,10 @@ export function Brand({ size = "md" }: { size?: "md" | "lg" }) {
   );
 }
 
-export function TierBadge({ tier, className = "" }: { tier: Tier; className?: string }) {
-  if (!tier) return null;
-  return tier === "elite" ? (
-    <span className={`inline-flex items-center gap-1 rounded-full bg-gold px-2 py-0.5 text-[10px] font-extrabold tracking-[0.14em] uppercase ${className}`}>
-      <Crown className="size-3" strokeWidth={2.4} /> Elite
-    </span>
-  ) : (
-    <span className={`inline-flex items-center gap-1 rounded-full border border-gold/60 bg-ink/70 px-2 py-0.5 text-[10px] font-extrabold tracking-[0.14em] text-gold-hi uppercase backdrop-blur ${className}`}>
-      <Gem className="size-3" strokeWidth={2.4} /> Premium
-    </span>
-  );
-}
-
-export function Stars({ value, size = "sm" }: { value: number; size?: "sm" | "lg" }) {
-  const s = size === "lg" ? "size-5" : "size-3.5";
-  return (
-    <span className="inline-flex items-center gap-0.5" aria-label={`${value.toFixed(1)} out of 5`}>
-      {[1, 2, 3, 4, 5].map((i) => (
-        <Star key={i} className={`${s} ${i <= Math.round(value) ? "fill-gold text-gold" : "text-line"}`} strokeWidth={1.5} />
-      ))}
-    </span>
-  );
-}
-
-export function StatusDot({ m, className = "size-2" }: { m: Pick<Model, "live" | "online" | "availableNow">; className?: string }) {
+export function StatusDot({ m, className = "size-2" }: { m: Pick<Model, "live" | "online">; className?: string }) {
   return (
     <span
-      className={`shrink-0 rounded-full ${className} ${m.live ? "bg-ruby" : m.online || m.availableNow ? "bg-online" : "bg-dim"}`}
+      className={`shrink-0 rounded-full ${className} ${m.live ? "bg-ruby" : m.online ? "bg-online" : "bg-dim"}`}
       aria-label={m.live ? "Live" : m.online ? "Online" : "Offline"}
     />
   );
@@ -163,12 +137,21 @@ function useOutside<T extends HTMLElement>(open: boolean, close: () => void) {
   return ref;
 }
 
+export function DemoBadge({ className = "" }: { className?: string }) {
+  return (
+    <span className={`rounded-full bg-ink/75 px-2 py-0.5 text-[10px] font-bold tracking-wider text-ivory/90 uppercase ring-1 ring-ivory/25 backdrop-blur ${className}`}>
+      Demo
+    </span>
+  );
+}
+
 export function CityPicker({ city, onCity, compact = false }: { city: CityId | "all"; onCity: (c: CityId | "all") => void; compact?: boolean }) {
   const [open, setOpen] = useState(false);
   const ref = useOutside<HTMLDivElement>(open, () => setOpen(false));
-  const counts = Object.fromEntries(cities.map((c) => [c.id, models.filter((m) => m.metro === c.id).length]));
+  const catalog = models;
+  const counts = Object.fromEntries(cities.map((c) => [c.id, catalog.filter((m) => m.metro === c.id).length]));
   const options: { id: CityId | "all"; label: string; n: number }[] = [
-    { id: "all", label: "All cities", n: models.length },
+    { id: "all", label: "All cities", n: catalog.length },
     ...cities.map((c) => ({ id: c.id, label: `${c.label}, ${c.region}`, n: counts[c.id] })),
   ];
   return (
@@ -272,9 +255,9 @@ export function Header({ city, onCity, q, onQ, onOpenFilters, filterCount = 0 }:
 
 export function Footer() {
   const cols = [
-    { title: "Explore", links: ["Browse", "Live now", "New faces", "Become a creator"] },
-    { title: "Safety", links: ["18+ & age verification", "Community guidelines", "Safety center", "Report a profile"] },
-    { title: "Legal", links: ["Terms of service", "Privacy", "Cookies", "2257 statement", "DMCA"] },
+    { title: "Explore", links: ["Browse", "Live now"] },
+    { title: "Safety", links: ["18+ & age verification", "Community guidelines"] },
+    { title: "Legal", links: ["Terms of service", "Privacy", "2257 statement"] },
   ];
   return (
     <footer className="om-bottom-safe mt-[calc(var(--section-gap)*1.25)] border-t border-line/60 bg-night/80">
@@ -282,7 +265,7 @@ export function Footer() {
         <div className="col-span-2 sm:col-span-3 md:col-span-1">
           <Brand />
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted">
-            A private directory of verified adult creators and companions. {company.phase}
+            A private community of verified adult creators. {company.phase}
           </p>
           <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-ruby/50 bg-oxblood/30 px-3 py-1.5 text-xs font-semibold text-ivory">
             <span className="font-display text-sm font-bold">18+</span> Adults only. Consent always.
@@ -319,7 +302,7 @@ export function Footer() {
       </div>
       <div className="border-t border-line/60">
         <div className="om-container flex flex-col gap-2 py-6 text-xs leading-relaxed text-dim sm:flex-row sm:items-center sm:justify-between sm:gap-6">
-          <p>All people on {company.domain} are 18 or older and ID-verified. Profiles shown are demo content.</p>
+          <p>Everyone with a real account on {company.domain} is 18 or older. Profiles labeled Demo are invented placeholders (including AI-generated portraits) and are not real people.</p>
           <p>© 2026 {company.company} · {company.companyDomain}</p>
         </div>
       </div>
@@ -329,9 +312,9 @@ export function Footer() {
 
 export function MobileNav({ onOpenFilters }: { onOpenFilters?: () => void }) {
   const cls =
-    "flex h-14 flex-col items-center justify-center gap-1 rounded-xl text-xs font-semibold text-muted transition active:bg-surface-2 active:text-gold-hi";
+    "relative flex h-14 min-w-0 flex-col items-center justify-center gap-1 rounded-full text-[11px] font-semibold tracking-wide text-muted transition active:bg-wine active:text-gold-hi";
   return (
-    <nav className="om-fixed-bottom fixed inset-x-3 z-40 mx-auto grid max-w-md grid-cols-4 rounded-2xl border-gold-grad p-1 shadow-2xl md:hidden" aria-label="Primary">
+    <nav className={`om-fixed-bottom om-glass fixed inset-x-3 z-40 mx-auto grid max-w-md rounded-full p-1 md:hidden grid-cols-4`} aria-label="Primary">
       <Link to="/" hash="browse" className={cls}>
         <Flame className="size-5 text-gold" /> Browse
       </Link>

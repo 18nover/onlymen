@@ -4,6 +4,7 @@
  */
 import { getSql, type Sql } from "../db";
 import { CONSENT_VERSIONS, defaultPermissions, defaultPrivacy, emptyProfile } from "./constants.ts";
+import { RETIRED_LIVE_KEYS, RETIRED_PROFILE_KEYS, carryHiddenTags, retiredCarry, scrubLive, scrubProfile } from "./retired.ts";
 import type { ConsentKey, ConsentRecord, Photo, PublicAccount, VerificationStatus } from "./types.ts";
 import type { CreatorLive, Reminder, ScheduledShow } from "../live/types.ts";
 
@@ -58,8 +59,10 @@ export async function loadAccount(userId: string): Promise<PublicAccount | null>
     db<Row>`select id, title, starts_at, duration_min, tags from om_show where user_id = ${userId} order by starts_at`,
     db<Row>`select show_id, creator, title, starts_at, created_at from om_reminder where user_id = ${userId} order by starts_at`,
   ]);
-  const profile = { ...emptyProfile(), ...json<Record<string, unknown>>(r.profile, {}) };
-  const liveSettings = json<Partial<CreatorLive> | null>(r.live_settings, null);
+  // Retired keys and tags (rates, services, position, privateRate, "Dinner dates"…) are hidden here; see retired.ts.
+  const profile = { ...emptyProfile(), ...scrubProfile(json<Record<string, unknown>>(r.profile, {})) };
+  const storedLive = json<Record<string, unknown> | null>(r.live_settings, null);
+  const liveSettings = (storedLive ? scrubLive(storedLive) : null) as Partial<CreatorLive> | null;
   const creator = json<Record<string, unknown> | null>(r.creator, null);
   const acc: PublicAccount = {
     id: String(r.user_id),
@@ -113,7 +116,7 @@ const validDate = (v: unknown) => typeof v === "string" && !Number.isNaN(Date.pa
  */
 export async function saveAccount(userId: string, next: PublicAccount): Promise<void> {
   const db = await getSql();
-  const cur = (await db<Row>`select verification_status, account_type from om_account where user_id = ${userId}`)[0];
+  const cur = (await db<Row>`select verification_status, account_type, profile, live_settings from om_account where user_id = ${userId}`)[0];
   if (!cur) throw new Error("Account not found.");
 
   const { photos, ...profileRest } = next.profile ?? ({} as PublicAccount["profile"]);
@@ -121,14 +124,25 @@ export async function saveAccount(userId: string, next: PublicAccount): Promise<
   const { status: wantedStatus, ...creatorRest } = (next.creator ?? {}) as NonNullable<PublicAccount["creator"]>;
   const { shows, session, lastRecap, ...liveRest } = (next.live ?? {}) as CreatorLive;
 
+  // Retired fields and hidden tag values are never shown or edited, but stay as
+  // stored: the DB is shared, so nothing is dropped (see retired.ts).
+  const storedProfile = json<Record<string, unknown>>(cur.profile, {});
+  const storedLive = json<Record<string, unknown>>(cur.live_settings, {});
+  const profileOut: Record<string, unknown> = { ...scrubProfile(profileRest as Record<string, unknown>), ...retiredCarry(storedProfile, RETIRED_PROFILE_KEYS) };
+  for (const k of ["lookingFor", "interests", "tribes"]) {
+    const merged = carryHiddenTags(storedProfile[k], profileOut[k]);
+    if (merged) profileOut[k] = merged;
+  }
+  const liveOut = { ...scrubLive(liveRest as unknown as Record<string, unknown>), ...retiredCarry(storedLive, RETIRED_LIVE_KEYS) };
+
   const blobs = {
-    profile: JSON.stringify(profileRest),
+    profile: JSON.stringify(profileOut),
     privacy: JSON.stringify(next.privacy ?? {}),
     permissions: JSON.stringify(next.permissions ?? {}),
     onboarding: JSON.stringify(next.onboarding ?? {}),
     creator: cur.account_type === "creator" ? JSON.stringify(creatorRest) : null,
     viewer: next.viewer ? JSON.stringify(next.viewer) : null,
-    live: next.live ? JSON.stringify(liveRest) : null,
+    live: next.live ? JSON.stringify(liveOut) : null,
     session: session ? JSON.stringify(session) : null,
     recap: lastRecap ? JSON.stringify(lastRecap) : null,
   };
@@ -231,7 +245,6 @@ export type PublicProfile = {
   languages: string[];
   social: Record<string, string>;
   photos: { id: string; primary: boolean; explicit: boolean }[];
-  services: string[];
   acceptsTips: boolean;
   live: null | { title: string; tags: string[]; tipGoal: string; roomUrl: string; startedAt: string };
   categories: string[];
@@ -249,8 +262,8 @@ function ageFrom(dob: string): number {
 }
 
 const toPublic = (r: Row, photos: Row[], shows: Row[]): PublicProfile => {
-  const p = json<Record<string, unknown>>(r.profile, {});
-  const live = json<Partial<CreatorLive>>(r.live_settings, {});
+  const p = scrubProfile(json<Record<string, unknown>>(r.profile, {}));
+  const live = scrubLive(json<Record<string, unknown>>(r.live_settings, {})) as Partial<CreatorLive>;
   const session = json<Record<string, unknown> | null>(r.live_session, null);
   const arr = (v: unknown) => (Array.isArray(v) ? (v as unknown[]).map(String).slice(0, 30) : []);
   return {
@@ -270,7 +283,6 @@ const toPublic = (r: Row, photos: Row[], shows: Row[]): PublicProfile => {
     languages: arr(p.languages),
     social: Object.fromEntries(Object.entries(json<Record<string, unknown>>(p.social, {})).filter(([, v]) => typeof v === "string" && v).map(([k, v]) => [k, str(v, 200)])),
     photos: photos.map((x) => ({ id: String(x.id), primary: Boolean(x.is_primary), explicit: Boolean(x.explicit) })),
-    services: arr(p.services),
     acceptsTips: Boolean(p.acceptsTips),
     live: session ? { title: str(session.title, 80), tags: arr(session.tags), tipGoal: str(session.tipGoal, 12), roomUrl: str(session.roomUrl, 400), startedAt: iso(session.startedAt) } : null,
     categories: arr(live.categories),

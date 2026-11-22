@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { BadgeCheck, MessageSquareQuote, RotateCcw, Search, Sparkles, Star, X } from "lucide-react";
+import { BadgeCheck, RotateCcw, Search, Sparkles, X } from "lucide-react";
 import { allLanguages, builds, defaultSearch, ethnicities, fmtHeight, styles, type Search as SearchState } from "@/lib/models";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -162,9 +162,7 @@ export function FilterDrawer({
             </label>
           </Section>
           <Section title="Quick picks">
-            <Toggle label="Available now" icon={<span className="block size-2.5 rounded-full bg-online" />} checked={value.availableNow} onChange={(v) => set("availableNow", v)} />
             <Toggle label="Verified only" icon={<BadgeCheck className="size-4" />} checked={value.verifiedOnly} onChange={(v) => set("verifiedOnly", v)} />
-            <Toggle label="Has reviews" icon={<MessageSquareQuote className="size-4" />} checked={value.withReviews} onChange={(v) => set("withReviews", v)} />
           </Section>
           <Section title="Age">
             <DualRange label="age" min={18} max={60} value={value.age} onChange={(v) => set("age", v)} format={(n) => `${n}`} />
@@ -184,24 +182,8 @@ export function FilterDrawer({
           <Section title="Speaks">
             <Chips options={allLanguages} value={value.languages} onChange={(v) => set("languages", v)} />
           </Section>
-          <Section title="Rating at least">
-            <div className="grid grid-cols-4 gap-2">
-              {[0, 4, 4.5, 5].map((r) => (
-                <button
-                  key={r}
-                  aria-pressed={value.minRating === r}
-                  onClick={() => set("minRating", r)}
-                  className={`flex h-10 items-center justify-center gap-1 rounded-full px-2 text-sm font-semibold whitespace-nowrap transition ${
-                    value.minRating === r ? "bg-gold" : "border border-line bg-surface-2/60 text-muted hover:border-gold/50"
-                  }`}
-                >
-                  {r === 0 ? "Any" : <><Star className="size-3.5 fill-current" /> {r}+</>}
-                </button>
-              ))}
-            </div>
-          </Section>
           <p className="flex items-start gap-1.5 pb-6 text-xs leading-relaxed text-dim">
-            <Sparkles className="mt-0.5 size-3.5 shrink-0" /> Companionship and creator profiles only. Tips are always optional.
+            <Sparkles className="mt-0.5 size-3.5 shrink-0" /> Creator profiles only. Tips are always optional.
           </p>
         </div>
 

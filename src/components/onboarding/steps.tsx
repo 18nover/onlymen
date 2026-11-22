@@ -13,30 +13,26 @@ import {
   Lock,
   MapPin,
   Mic,
-  Plus,
   Radio,
   ScanFace,
   ShieldCheck,
-  Trash2,
 } from "lucide-react";
-import { CheckRow, Chips, SelectField, TextArea, TextField, Toggle, inputCls } from "@/components/account-ui";
+import { CheckRow, Chips, SelectField, TextArea, TextField, Toggle } from "@/components/account-ui";
 import { PhotoGrid, UploadSlot } from "./photo-grid";
 import {
   BODY_TYPES,
   CREATOR_CONSENTS,
-  CREATOR_SERVICES,
   INTERESTS,
   LANGUAGES,
   LOOKING_FOR,
   MEMBER_CONSENTS,
-  POSITIONS,
   TRIBES,
   emptyCreator,
   defaultViewer,
   REGIONS,
 } from "@/lib/account/constants";
 import { LIVE_CATEGORIES } from "@/lib/live/config";
-import { consentRecord, latestConsents, randomId } from "@/lib/account/store";
+import { consentRecord, latestConsents } from "@/lib/account/store";
 import { requestPermission } from "@/lib/account/permissions";
 import { ageOn, validatePhone } from "@/lib/account/validation";
 import type { ConsentKey, PermissionKey, PublicAccount, WhoCanMessage } from "@/lib/account/types";
@@ -134,8 +130,8 @@ export function BasicsStep({ account, save, onNext }: StepProps) {
       <StepHead kicker="Your profile" title={<>First <span className="text-gold italic">impressions.</span></>} sub="This is what men see first. Keep it real — you can change it any time." />
       <Card className="grid gap-5">
         <TextField label="Display name" value={p.displayName} maxLength={32} onChange={(e) => set({ displayName: e.target.value })} error={p.displayName.trim().length < 2 ? "Required" : null} hint="Shown on your profile and in chats." />
-        <TextField label="Headline" optional value={p.headline} maxLength={70} onChange={(e) => set({ headline: e.target.value })} placeholder="Late-night conversation, good wine, better company." hint={`${p.headline.length}/70 · the one line under your name`} />
-        <TextArea label="About you" optional value={p.bio} maxLength={600} rows={5} onChange={(e) => set({ bio: e.target.value })} placeholder="What makes a great night with you?" />
+        <TextField label="Headline" optional value={p.headline} maxLength={70} onChange={(e) => set({ headline: e.target.value })} placeholder="Late-night streams and behind-the-scenes." hint={`${p.headline.length}/70 · the one line under your name`} />
+        <TextArea label="About you" optional value={p.bio} maxLength={600} rows={5} onChange={(e) => set({ bio: e.target.value })} placeholder="Tell people about yourself and what you post." />
         <TextField label="City" optional value={p.city} autoComplete="address-level2" onChange={(e) => set({ city: e.target.value })} placeholder="New York, NY" hint="City only. We never show your exact location." />
         <Toggle checked={p.showAge} onChange={(v) => set({ showAge: v })} label={`Show my age${age ? ` (${age})` : ""}`} detail="Your birthday itself is never shown." />
       </Card>
@@ -181,12 +177,11 @@ export function DetailsStep({ account, save, onNext }: StepProps) {
   const setV = (patch: Partial<typeof v>) => save((a) => ({ ...a, viewer: { ...defaultViewer(), ...a.viewer, ...patch } }));
   return (
     <>
-      <StepHead kicker="The details" title={<>Your <span className="text-gold italic">type</span>, your terms.</>} sub="All optional. The more you share, the better your matches and search placement." />
+      <StepHead kicker="The details" title={<>Your <span className="text-gold italic">type</span>, your way.</>} sub="All optional. The more you share, the better your matches and search placement." />
       <div className="grid gap-6">
-        <Card className="grid gap-5 sm:grid-cols-3">
+        <Card className="grid gap-5 sm:grid-cols-2">
           <SelectField label="Height" optional value={p.heightCm ?? ""} onChange={(e) => set({ heightCm: e.target.value ? Number(e.target.value) : undefined })} placeholder="Prefer not to say" options={heights.map((h) => ({ value: String(h), label: `${cmToFt(h)} · ${h} cm` }))} />
           <SelectField label="Body type" optional value={p.bodyType ?? ""} onChange={(e) => set({ bodyType: e.target.value || undefined })} placeholder="Choose" options={BODY_TYPES} />
-          <SelectField label="Position" optional value={p.position ?? ""} onChange={(e) => set({ position: e.target.value || undefined })} placeholder="Choose" options={POSITIONS} />
         </Card>
         <Card className="grid gap-6">
           <Chips label="Tribes" options={TRIBES} value={p.tribes} max={4} onChange={(tribes) => set({ tribes })} />
@@ -205,20 +200,17 @@ export function DetailsStep({ account, save, onNext }: StepProps) {
   );
 }
 
-// ------------------------------------------------------------------ socials (+ creator rates)
+// ------------------------------------------------------------------ socials (+ creator tips)
 
 export function SocialsStep({ account, save, onNext }: StepProps) {
   const p = account.profile;
   const creator = account.type === "creator";
   const set = (patch: Partial<typeof p>) => save((a) => ({ ...a, profile: { ...a.profile, ...patch } }));
   const setSocial = (k: keyof typeof p.social, v: string) => set({ social: { ...p.social, [k]: v.replace(/^@/, "") } });
-  onNext(() => {
-    const bad = p.rates.find((r) => r.label.trim() && !/^\d+(\.\d{1,2})?$/.test(r.price.trim()));
-    return bad ? `Enter a number for “${bad.label}” price.` : null;
-  });
+  onNext(() => null);
   return (
     <>
-      <StepHead kicker={creator ? "Links & rates" : "Your links"} title={creator ? <>Get <span className="text-gold italic">paid</span> for it.</> : <>Where else to <span className="text-gold italic">find you.</span></>} sub={creator ? "Link your socials, list what you offer and set your prices. Tips are always on unless you turn them off." : "Optional. Linked accounts help others know you're real."} />
+      <StepHead kicker="Your links" title={<>Where else to <span className="text-gold italic">find you.</span></>} sub={creator ? "Optional. Link your socials so fans know you're real. Tips are on unless you turn them off." : "Optional. Linked accounts help others know you're real."} />
       <div className="grid gap-6">
         <Card className="grid gap-5 sm:grid-cols-2">
           <TextField label="X" optional prefix="@" value={p.social.x ?? ""} onChange={(e) => setSocial("x", e.target.value)} placeholder="handle" />
@@ -227,50 +219,9 @@ export function SocialsStep({ account, save, onNext }: StepProps) {
           <TextField label="Website" optional type="url" inputMode="url" value={p.social.website ?? ""} onChange={(e) => setSocial("website", e.target.value)} placeholder="https://" />
         </Card>
         {creator && (
-          <>
-            <Card className="grid gap-5">
-              <Toggle checked={p.acceptsTips} onChange={(acceptsTips) => set({ acceptsTips })} label="Accept tips" detail="Fans can tip you from your profile, chats and live shows." icon={<CircleDollarSign className="size-5" />} />
-              <Chips label="What you offer" options={CREATOR_SERVICES} value={p.services} onChange={(services) => set({ services })} />
-            </Card>
-            <Card>
-              <div className="flex items-center justify-between">
-                <h2 className="font-sans text-sm font-bold tracking-[0.2em] text-ivory uppercase">Rates</h2>
-                <button
-                  type="button"
-                  onClick={() => set({ rates: [...p.rates, { id: randomId(4), label: "", price: "", unit: "per video" }] })}
-                  className="inline-flex h-9 items-center gap-1.5 rounded-full border border-gold/50 px-3 text-xs font-bold text-gold-hi hover:bg-gold/10"
-                >
-                  <Plus className="size-3.5" /> Add rate
-                </button>
-              </div>
-              {p.rates.length === 0 ? (
-                <p className="mt-4 text-sm text-dim">No rates yet. Add things like “Custom video · $50 · per 5 min”.</p>
-              ) : (
-                <div className="mt-4 grid gap-3">
-                  {p.rates.map((r, i) => {
-                    const upd = (patch: Partial<typeof r>) => set({ rates: p.rates.map((x, k) => (k === i ? { ...x, ...patch } : x)) });
-                    return (
-                      <div key={r.id} className="grid grid-cols-[1fr_auto] gap-2 rounded-xl border border-line bg-surface/50 p-3 sm:grid-cols-[2fr_1fr_1.3fr_auto] sm:items-center">
-                        <input aria-label="Service" className={`${inputCls} h-11`} placeholder="Custom video" value={r.label} onChange={(e) => upd({ label: e.target.value })} />
-                        <button type="button" aria-label="Remove rate" onClick={() => set({ rates: p.rates.filter((_, k) => k !== i) })} className="grid size-11 place-items-center rounded-xl text-dim hover:text-ruby sm:order-last">
-                          <Trash2 className="size-4" />
-                        </button>
-                        <div className="relative">
-                          <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-dim">$</span>
-                          <input aria-label="Price in USD" inputMode="decimal" className={`${inputCls} h-11 pl-7`} placeholder="50" value={r.price} onChange={(e) => upd({ price: e.target.value })} />
-                        </div>
-                        <select aria-label="Unit" className={`${inputCls} h-11`} value={r.unit} onChange={(e) => upd({ unit: e.target.value })}>
-                          {["per video", "per photo set", "per 5 min", "per 15 min", "per hour", "per month", "flat"].map((u) => (
-                            <option key={u}>{u}</option>
-                          ))}
-                        </select>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </Card>
-          </>
+          <Card className="grid gap-5">
+            <Toggle checked={p.acceptsTips} onChange={(acceptsTips) => set({ acceptsTips })} label="Accept tips" detail="Fans can tip you from your profile, chats and live shows." icon={<CircleDollarSign className="size-5" />} />
+          </Card>
         )}
       </div>
     </>
@@ -452,7 +403,7 @@ export function PrivacyStep({ account, save, onNext }: StepProps) {
   ];
   return (
     <>
-      <StepHead kicker="Privacy" title={<>Discreet <span className="text-gold italic">by design.</span></>} sub="You decide what's visible. Change any of this later in settings." />
+      <StepHead kicker="Privacy" title={<>Private <span className="text-gold italic">by design.</span></>} sub="You decide what's visible. Change any of this later in settings." />
       <div className="grid gap-6">
         <div className="grid gap-3">
           <Toggle checked={p.showOnline} onChange={(v) => set({ showOnline: v })} label="Show when I'm online" detail="A green dot on your photo while you're active." icon={<span className="size-2.5 rounded-full bg-online" />} />

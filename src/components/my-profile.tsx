@@ -159,15 +159,14 @@ function Body({ a }: { a: PublicAccount }) {
           {creator && <GoLivePanel a={a} />}
 
           <Card title="About" icon={<Sparkles className="size-3.5" />} edit="basics">
-            <p className="leading-relaxed whitespace-pre-line text-ivory/85">{p.bio || <span className="text-dim">Nothing yet — tell them what a great night with you looks like.</span>}</p>
+            <p className="leading-relaxed whitespace-pre-line text-ivory/85">{p.bio || <span className="text-dim">Nothing yet — tell people about yourself and your content.</span>}</p>
           </Card>
 
           <Card title="Details" edit="details">
-            <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm sm:grid-cols-3">
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
               {[
                 ["Height", p.heightCm ? `${Math.floor(Math.round(p.heightCm / 2.54) / 12)}′${Math.round(p.heightCm / 2.54) % 12}″` : "—"],
                 ["Body", p.bodyType ?? "—"],
-                ["Position", p.position ?? "—"],
               ].map(([k, v]) => (
                 <div key={k}>
                   <dt className="text-[11px] tracking-wider text-dim uppercase">{k}</dt>
@@ -191,19 +190,8 @@ function Body({ a }: { a: PublicAccount }) {
 
       <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {creator && (
-          <Card title="Rates & services" icon={<Coins className="size-3.5" />} edit="socials">
-            {p.rates.filter((r) => r.label).length ? (
-              <ul className="grid gap-2">
-                {p.rates.filter((r) => r.label).map((r) => (
-                  <li key={r.id} className="flex items-baseline justify-between gap-3 border-b border-line/50 pb-2 text-sm last:border-0">
-                    <span className="text-ivory">{r.label}</span>
-                    <span className="shrink-0 font-semibold text-gold-hi">${r.price} <span className="text-xs font-normal text-dim">{r.unit}</span></span>
-                  </li>
-                ))}
-              </ul>
-            ) : <p className="text-sm text-dim">No rates listed.</p>}
-            {p.services.length > 0 && <p className="mt-3 text-xs text-muted">{p.services.join(" · ")}</p>}
-            <p className="mt-3 text-xs text-dim">Tips {p.acceptsTips ? "on" : "off"}</p>
+          <Card title="Tips" icon={<Coins className="size-3.5" />} edit="socials">
+            <p className="text-sm text-ivory">Tips {p.acceptsTips ? "on" : "off"}</p>
           </Card>
         )}
         <RemindersCard a={a} />

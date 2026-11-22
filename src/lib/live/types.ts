@@ -30,7 +30,6 @@ export type CreatorLive = {
   scheduleTime: string; // "21:00"
   timeZone: string;
   tipMenu: TipMenuItem[];
-  privateRate: string; // USD per minute
   recordingsAllowed: boolean;
   blockedRegions: string[];
   moderators: string[];

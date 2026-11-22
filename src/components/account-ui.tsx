@@ -33,7 +33,7 @@ export function AuthShell({ children, kicker, title, sub, photos = ["/models/m06
           <p className="font-display text-5xl leading-[1.05] font-semibold text-ivory">
             Men worth <span className="text-gold italic">staying up</span> for.
           </p>
-          <p className="mt-4 max-w-sm text-sm text-muted">Verified adult creators and the men who adore them. Free to join. Tips only.</p>
+          <p className="mt-4 max-w-sm text-sm text-muted">Verified adult creators and the men who adore them. Private for now. Tips optional.</p>
         </div>
       </aside>
       {/* form side */}

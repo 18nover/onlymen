@@ -5,7 +5,7 @@ export const company = {
   companyDomain: "18nover.gay",
   phase: "Phase 1 — free for everyone. Optional tips only. No subscriptions.",
   positioning:
-    "A cleaner, modern, fully owned alternative to a model directory. Not a clone and not a wrapper.",
+    "A private, fully owned community of verified adult creators for gay men.",
   repo: "https://github.com/18nover/onlymen",
 } as const;
 

@@ -87,7 +87,7 @@ function LivePage() {
             </div>
             {rem.list.length > 0 && <p className="text-xs text-dim">{rem.list.length} reminder{rem.list.length > 1 ? "s" : ""} set</p>}
           </div>
-          {!rem.signedIn && <p className="mt-2 text-sm text-muted"><Link to="/join" className="font-semibold text-gold-hi underline underline-offset-4">Join free</Link> to get reminders before shows start.</p>}
+          {!rem.signedIn && <p className="mt-2 text-sm text-muted"><Link to="/login" className="font-semibold text-gold-hi underline underline-offset-4">Sign in</Link> to get reminders before shows start.</p>}
           <div className="mt-5 grid gap-3 lg:grid-cols-2">
             {upcoming === null
               ? Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-24 animate-pulse rounded-2xl bg-surface/60" />)
