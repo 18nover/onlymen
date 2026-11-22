@@ -38,3 +38,9 @@ Thumbs.db
 *.swp
 .idea/
 .vscode/
+
+# Cloudflare / wrangler
+.wrangler/
+.dev.vars
+.dev.vars.*
+worker-configuration.d.ts

@@ -11,6 +11,7 @@
  */
 import { isPublicPath, normalizePath, SERVER_FN_PREFIX } from "../../src/lib/private/policy";
 import { renderGateHtml } from "../../src/lib/private/gate-html";
+import { platformEnv } from "../../src/lib/platform/runtime.ts";
 
 interface GateEvent {
   url: URL;
@@ -24,11 +25,11 @@ function hasSessionCookie(headers: Headers): boolean {
 }
 
 function privateModeOff(): boolean {
-  return process.env.NODE_ENV !== "production" && process.env.ONLYMEN_PRIVATE_MODE === "off";
+  return process.env.NODE_ENV !== "production" && platformEnv("ONLYMEN_PRIVATE_MODE") === "off";
 }
 
 function ownerSignupOpen(): boolean {
-  return Boolean(process.env.ONLYMEN_OWNER_SIGNUP_EMAIL?.trim());
+  return Boolean(platformEnv("ONLYMEN_OWNER_SIGNUP_EMAIL"));
 }
 
 /** Pass through, tagging the app's own response noindex. */

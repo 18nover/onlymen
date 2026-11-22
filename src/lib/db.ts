@@ -1,14 +1,15 @@
 import { pendingMigrations } from "../../scripts/migration-plan.mjs";
+import { platformEnv, workerDbAvailable, workerPgPool } from "./platform/runtime.ts";
 
 /** Which database backend is active. */
 export type DbSource = "neon" | "pglite";
 
 // An empty/whitespace DATABASE_URL (an easy misconfig in deploy UIs) must mean
 // "unset" — otherwise production would silently run on the PGLite fallback.
-const rawDatabaseUrl =
-  typeof process !== "undefined" ? process.env.DATABASE_URL : undefined;
-const databaseUrl =
-  rawDatabaseUrl && rawDatabaseUrl.trim() ? rawDatabaseUrl : undefined;
+// On Cloudflare Workers there is no DATABASE_URL: the HYPERDRIVE binding is the
+// database (request-scoped pg clients, see src/lib/platform/cloudflare.ts).
+const databaseUrl = platformEnv("DATABASE_URL");
+const workerDb = workerDbAvailable();
 
 /**
  * Active backend: real **Neon** when `DATABASE_URL` is set (deployed / configured
@@ -16,7 +17,7 @@ const databaseUrl =
  * the app has a working database even with nothing configured — the live preview
  * included. Swap in Neon later by just setting `DATABASE_URL`; no code changes.
  */
-export const dbSource: DbSource = databaseUrl ? "neon" : "pglite";
+export const dbSource: DbSource = databaseUrl || workerDb ? "neon" : "pglite";
 
 /**
  * Minimal shared SQL surface, satisfied by both Neon and PGLite. Both the
@@ -85,7 +86,29 @@ function toSql(run: Run): Sql {
   return sql;
 }
 
+/**
+ * Workers: no process-wide pool. Each query borrows a client from the current
+ * request's scope (Hyperdrive) and gives it back; the scope closes them all when
+ * the response finishes. The wrapper itself is stateless, so memoizing it is fine.
+ */
+function createWorkerSql(): Promise<Sql> {
+  const pool = workerPgPool();
+  if (!pool) return Promise.reject(new Error("[db] Workers pool facade unavailable"));
+  return Promise.resolve(
+    toSql(async <T>(text: string, params: unknown[]) => {
+      const client = await pool.connect();
+      try {
+        const res = await client.query(text, params);
+        return res.rows as T[];
+      } finally {
+        client.release();
+      }
+    }),
+  );
+}
+
 function createNeonSql(): Promise<Sql> {
+  if (workerDb) return createWorkerSql();
   globalRef.__pgSqlPromise__ ??= (async () => {
     // Regular Postgres driver: node-postgres (`pg`) — works directly with Neon's
     // pooled endpoint. One pool per process; warm serverless instances reuse it.

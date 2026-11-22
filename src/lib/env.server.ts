@@ -1,6 +1,7 @@
+import { platformEnv } from "./platform/runtime.ts";
+
 export function env(key: string): string | undefined {
-  const v = process.env[key]?.trim();
-  return v || undefined;
+  return platformEnv(key);
 }
 
 /**

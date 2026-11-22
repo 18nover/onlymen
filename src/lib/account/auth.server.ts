@@ -15,19 +15,21 @@ import { APIError, createAuthMiddleware } from "better-auth/api";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { randomBytes } from "node:crypto";
 import { Pool } from "pg";
+import { PostgresDialect } from "kysely";
 import { getPglite } from "../db";
 import { pgliteDialect } from "../auth/pglite-dialect";
+import { PLATFORM, platformEnv, workerDbAvailable, workerPgPool } from "../platform/runtime.ts";
 import { isSignUpAllowed, isUserAllowed, allowlist, privateModeOff } from "../private/allowlist.server";
 
-const env = (k: string) => {
-  const v = process.env[k]?.trim();
-  return v ? v : undefined;
-};
+/** Env/secret reader: process.env on Node/Vercel, `cloudflare:workers` env on Workers. */
+const env = (k: string) => platformEnv(k);
 
 const databaseUrl = env("DATABASE_URL");
+/** Workers: the HYPERDRIVE binding replaces DATABASE_URL (request-scoped pg clients). */
+const workerDb = workerDbAvailable();
 
 /** Server accounts are on when a real database is configured, or forced on in dev (PGLite). */
-export const serverAccountsEnabled = Boolean(databaseUrl) || env("OM_ACCOUNTS") === "server";
+export const serverAccountsEnabled = Boolean(databaseUrl) || workerDb || env("OM_ACCOUNTS") === "server";
 
 const isProd = process.env.NODE_ENV === "production";
 
@@ -36,13 +38,15 @@ const g = globalThis as typeof globalThis & { __omDevAuthSecret__?: string; __om
 function secret() {
   const s = env("BETTER_AUTH_SECRET");
   if (s) return s;
-  if (databaseUrl && isProd) throw new Error("BETTER_AUTH_SECRET must be set when DATABASE_URL is set.");
+  if ((databaseUrl || workerDb) && isProd) throw new Error("BETTER_AUTH_SECRET must be set when DATABASE_URL is set.");
   g.__omDevAuthSecret__ ??= randomBytes(32).toString("hex");
   return g.__omDevAuthSecret__;
 }
 
 /** Hosts this app is served from. Requests from anywhere else are rejected. */
-const HOSTS = ["onlymen.gay", "www.onlymen.gay", "onlymen.live", "www.onlymen.live", "onlymen.vercel.app", "onlymen-18nover.vercel.app", "*.vercel.app", "localhost", "127.0.0.1"];
+/** Cloudflare Workers preview host (account subdomain "18nover"). */
+const WORKERS_DEV_HOST = "onlymen.18nover.workers.dev";
+const HOSTS = ["onlymen.gay", "www.onlymen.gay", "onlymen.live", "www.onlymen.live", "onlymen.vercel.app", "onlymen-18nover.vercel.app", "*.vercel.app", WORKERS_DEV_HOST, "localhost", "127.0.0.1"];
 const ORIGINS = [
   "https://onlymen.gay",
   "https://www.onlymen.gay",
@@ -51,22 +55,39 @@ const ORIGINS = [
   "https://onlymen.vercel.app",
   "https://onlymen-18nover.vercel.app",
   "https://*.vercel.app",
+  `https://${WORKERS_DEV_HOST}`,
   "http://localhost:8080",
   "http://127.0.0.1:8080",
   "http://localhost:8081",
   "http://127.0.0.1:8081",
+  // wrangler dev
+  "http://localhost:8787",
+  "http://127.0.0.1:8787",
 ];
+
+function database() {
+  if (workerDb) {
+    const pool = workerPgPool();
+    if (!pool) throw new Error("Workers pool facade unavailable");
+    // Kysely only needs connect()/end() and client.query()/release().
+    return { dialect: new PostgresDialect({ pool: pool as never }), type: "postgres" as const };
+  }
+  if (databaseUrl) return new Pool({ connectionString: databaseUrl, max: 3 });
+  return { dialect: pgliteDialect(() => getPglite()), type: "postgres" as const };
+}
 
 function create() {
   return betterAuth({
     appName: "OnlyMen",
-    baseURL: env("BETTER_AUTH_URL") ?? { allowedHosts: HOSTS, protocol: "auto" as const, fallback: "https://onlymen.vercel.app" },
+    baseURL: env("BETTER_AUTH_URL") ?? {
+      allowedHosts: HOSTS,
+      protocol: "auto" as const,
+      fallback: PLATFORM === "workers" ? `https://${WORKERS_DEV_HOST}` : "https://onlymen.vercel.app",
+    },
     basePath: "/api/account",
     secret: secret(),
     trustedOrigins: ORIGINS,
-    database: databaseUrl
-      ? new Pool({ connectionString: databaseUrl, max: 3 })
-      : { dialect: pgliteDialect(() => getPglite()), type: "postgres" as const },
+    database: database(),
     emailAndPassword: {
       enabled: true,
       // PRIVATE MODE: public sign-up is off. The only exception is a one-time

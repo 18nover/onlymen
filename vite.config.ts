@@ -1,5 +1,5 @@
 import { readdirSync } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import type { Plugin } from "vite";
 import { defineConfig } from "vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
@@ -142,10 +142,41 @@ function authPopupPlugin(): Plugin {
   };
 }
 
+/**
+ * Build target. Default (unset) is Vercel: Nitro `preset: "vercel"`, exactly as
+ * on main. `DEPLOY_TARGET=cloudflare` (npm run build:cf / dev:cf) swaps Nitro for
+ * the Cloudflare Vite plugin and wrangler.jsonc (Worker entry src/worker.ts).
+ */
+const target = process.env.DEPLOY_TARGET === "cloudflare" ? "cloudflare" : "vercel";
+
+/**
+ * Workers-only module swaps for the server (SSR/worker) environment:
+ * - src/lib/platform/runtime.ts → ./cloudflare.ts (`cloudflare:workers` env,
+ *   request-scoped Hyperdrive clients, waitUntil);
+ * - @electric-sql/pglite → a throwing stub, so the dev-only WASM Postgres
+ *   never ships in the Worker.
+ */
+function platformRuntimePlugin(root: string): Plugin {
+  const runtime = resolve(root, "src/lib/platform/runtime.ts");
+  const cloudflare = resolve(root, "src/lib/platform/cloudflare.ts");
+  const pgliteStub = resolve(root, "src/lib/platform/pglite-stub.ts");
+  return {
+    name: "onlymen:platform-runtime",
+    enforce: "pre",
+    async resolveId(source, importer, options) {
+      if (this.environment?.name === "client") return null;
+      if (source === "@electric-sql/pglite") return pgliteStub;
+      if (!/platform\/runtime(\.ts)?$/.test(source)) return null;
+      const resolved = await this.resolve(source, importer, { ...options, skipSelf: true });
+      return resolved && resolved.id.split("?")[0] === runtime ? cloudflare : null;
+    },
+  };
+}
+
 // `0.0.0.0:8080` is the live-preview contract — don't change host/port.
 // The dev server starts once `src/router.tsx` and `src/routes/` exist — see
 // AGENTS.md § "First scaffold".
-export default defineConfig(({ command, isPreview }) => ({
+export default defineConfig(async ({ command, isPreview }) => ({
   server: {
     host: "0.0.0.0",
     port: 8080,
@@ -158,16 +189,26 @@ export default defineConfig(({ command, isPreview }) => ({
   },
   resolve: { tsconfigPaths: true },
   plugins: [
-    pgliteBootstrapPlugin(),
-    // Before tanstackStart so /auth/popup never falls through to the SPA.
-    authPopupPlugin(),
+    // Workers: the Cloudflare plugin goes first (official TanStack Start guide).
+    // Dynamically imported so the Vercel install (--omit=dev) never needs it.
+    ...(target === "cloudflare"
+      ? [
+          (await import("@cloudflare/vite-plugin")).cloudflare({ viteEnvironment: { name: "ssr" } }),
+          platformRuntimePlugin(process.cwd()),
+        ]
+      : [
+          // Node-only dev helpers (ssrLoadModule runs in Node, not workerd).
+          pgliteBootstrapPlugin(),
+          // Before tanstackStart so /auth/popup never falls through to the SPA.
+          authPopupPlugin(),
+        ]),
     // Dev-only /__app-env, read by scripts/check-auth-invariant.mjs.
     appEnvPlugin(),
     // PWA head + ?install=1 tutorial page; runs before Start/Nitro.
     grokPwaPlugin(),
     tailwindcss(),
     tanstackStart(),
-    ...(command === "build" || isPreview
+    ...(target === "vercel" && (command === "build" || isPreview)
       ? [
           nitro({
             preset: "vercel",

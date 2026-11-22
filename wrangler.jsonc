@@ -1,0 +1,33 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // OnlyMen on Cloudflare Workers — workers.dev PREVIEW ONLY.
+  // No routes, no custom domains, no DNS. onlymen.gay / onlymen.live stay on Vercel.
+  // Build with `npm run build:cf` (DEPLOY_TARGET=cloudflare), then `npx wrangler deploy`.
+  "name": "onlymen",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-11-21",
+  // Already implied by a compatibility_date >= 2026-08-04; kept explicit on purpose.
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "preview_urls": false,
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "invocation_logs": true },
+    "traces": { "enabled": true }
+  },
+  // Hyperdrive config "onlymen-neon" (account 18nover) → Neon direct host, db onlymen,
+  // user onlymen_owner. The Worker needs no other database secret.
+  // For `wrangler dev`, set CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE
+  // (or localConnectionString below — never commit a real one).
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "2e620b8e625e454fb58fc8120df9e02f"
+    }
+  ],
+  // Non-secret runtime vars. Secrets (BETTER_AUTH_SECRET, ONLYMEN_ALLOWED_USER_IDS,
+  // webhook URL/key, …) go in with `wrangler secret put` — see docs/HOSTING.md.
+  "vars": {
+    "NODE_ENV": "production"
+  }
+}
