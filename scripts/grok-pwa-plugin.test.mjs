@@ -529,7 +529,16 @@ test("escapes host-derived values in the install page", () => {
   assert.equal(html.includes("<script>alert(1)</script>"), false);
 });
 
+test("does not inject the Grok manifest or icon when the app already has them", () => {
+  const src = `<html><head><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"></head></html>`;
+  const out = injectGrokPwaHead(src);
+  assert.doesNotMatch(out, /__grok\/manifest\.webmanifest/);
+  assert.doesNotMatch(out, /__grok\/icon-180\.png/);
+  assert.equal((out.match(/rel="manifest"/g) || []).length, 1);
+});
+
 test("renders the manifest with the per-app name", () => {
+
   const manifest = JSON.parse(renderWebManifest("wild-race.grok.me"));
   assert.equal(manifest.name, "Wild Race");
   assert.equal(manifest.short_name, "Wild Race");

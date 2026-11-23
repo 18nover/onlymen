@@ -14,7 +14,7 @@ export const PUBLIC_PAGES = new Set(["/login", "/logout", "/terms", "/privacy", 
 /** Static assets and framework internals (served by the CDN in production). */
 export function isStaticAsset(path: string): boolean {
   if (path.startsWith("/assets/") || path.startsWith("/models/") || path.startsWith("/__grok/") || path.startsWith("/_build/")) return true;
-  if (/^\/(favicon[^/]*|apple-touch-icon[^/]*|icon-\d+\.png|og\.jpg|site\.webmanifest)$/.test(path)) return true;
+  if (/^\/(favicon[^/]*|apple-touch-icon[^/]*|icon-\d+\.png|icons\/[^/]+|og\.jpg|manifest\.webmanifest|site\.webmanifest)$/.test(path)) return true;
   // Any other file-looking path (e.g. hashed chunks) — never an app route.
   return /\.(js|mjs|css|map|png|jpe?g|webp|gif|svg|ico|woff2?|ttf|txt|webmanifest|json)$/i.test(path);
 }
