@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { AGE_OK_SCRIPT } from "@/lib/onlymen-hooks";
 import { createRootRoute, HeadContent, Outlet, Scripts, useRouter, useRouterState } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
@@ -54,6 +55,9 @@ function RootComponent() {
     <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
+        {/* Returning visitors who already confirmed 18+ (localStorage or cookie): hide the server-rendered
+            age gate before first paint so it doesn't flash on reload. New visitors still see it. */}
+        <script dangerouslySetInnerHTML={{ __html: AGE_OK_SCRIPT }} />
       </head>
       <body>
         <PreviewHostBridge />

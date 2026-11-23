@@ -84,7 +84,7 @@ export function StatusDot({ m, className = "size-2" }: { m: Pick<Model, "live" |
 
 export function AgeGate({ onEnter }: { onEnter: () => void }) {
   return (
-    <div className="fixed inset-0 z-[70] grid place-items-center overflow-y-auto bg-ink/80 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-xl">
+    <div data-age-gate className="fixed inset-0 z-[70] grid place-items-center overflow-y-auto bg-ink/80 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-xl">
       <div className="absolute inset-0 vignette" />
       <div className="relative w-full max-w-md animate-fade-up rounded-2xl border-gold-grad p-[clamp(1.5rem,6vw,2.5rem)] text-center glow-gold">
         <div className="flex justify-center">

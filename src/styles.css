@@ -302,3 +302,6 @@
   .om-shimmer::after { display: none; }
   a.bg-gold:hover, button.bg-gold:hover, a.bg-gold:active, button.bg-gold:active { transform: none; }
 }
+
+/* 18+ gate: hidden before paint for visitors who already confirmed (see AGE_OK_SCRIPT) */
+html.om-age-ok [data-age-gate] { display: none !important; }
