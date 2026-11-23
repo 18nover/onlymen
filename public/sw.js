@@ -5,8 +5,8 @@
  *   map tiles, and anything that isn't a same-origin GET. Those go straight to the network
  *   and the browser's normal HTTP cache.
  */
-const VERSION = "om-shell-v1";
-const PRECACHE = ["/offline.html", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/map/noir-gold-v2.json"];
+const VERSION = "om-shell-v2";
+const PRECACHE = ["/offline", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/map/noir-gold-v2.json"];
 const SHELL = (u) => u.pathname.startsWith("/assets/") || u.pathname.startsWith("/icons/") || PRECACHE.includes(u.pathname);
 
 self.addEventListener("install", (e) => {
@@ -22,7 +22,7 @@ self.addEventListener("fetch", (e) => {
   if (url.origin !== self.location.origin) return;
   if (req.mode === "navigate") {
     // network only; fall back to a static offline page (no cached HTML, so gates always run)
-    e.respondWith(fetch(req).catch(() => caches.match("/offline.html")));
+    e.respondWith(fetch(req).catch(() => caches.match("/offline")));
     return;
   }
   if (!SHELL(url)) return;
