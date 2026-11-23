@@ -305,3 +305,70 @@
 
 /* 18+ gate: hidden before paint for visitors who already confirmed (see AGE_OK_SCRIPT) */
 html.om-age-ok [data-age-gate] { display: none !important; }
+
+/* ONL-13: one bottom nav everywhere (Browse · Live · Nearby · Me) */
+:root { --tabbar-h: 62px; --tabbar-gap: 14px; }
+@layer components {
+  .om-tabbar {
+    position: fixed; z-index: 45; left: 14px; right: 14px; margin-inline: auto; max-width: 28rem;
+    bottom: calc(var(--tabbar-gap) + env(safe-area-inset-bottom, 0px));
+    height: var(--tabbar-h); display: grid; align-items: center; padding: 0 6px; border-radius: 999px;
+    background: rgb(14 8 10 / 0.8); border: 1px solid rgb(212 175 55 / 0.24);
+    backdrop-filter: blur(20px) saturate(1.15); -webkit-backdrop-filter: blur(20px) saturate(1.15);
+    box-shadow: 0 12px 32px rgb(0 0 0 / 0.5);
+  }
+  .om-tab-item {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; height: 100%;
+    color: #a8946a; font-size: 10.5px; font-weight: 650; letter-spacing: 0.04em; border-radius: 999px;
+    transition: color 0.2s, transform 0.2s; -webkit-tap-highlight-color: transparent;
+  }
+  .om-tab-item:active { transform: scale(0.94); }
+  .om-tab-item.is-active { color: var(--color-gold-hi); }
+  .om-tab-item.is-active svg { filter: drop-shadow(0 0 6px rgb(212 175 55 / 0.55)); }
+  /* anything else pinned to the bottom (e.g. the profile tip bar) sits just above the nav on phones */
+  .om-above-tabbar { bottom: calc(var(--tabbar-gap) + var(--tabbar-h) + 10px + env(safe-area-inset-bottom, 0px)); }
+  @media (min-width: 768px) { .om-above-tabbar { bottom: max(0.75rem, var(--safe-bottom)); } }
+
+  /* Nearby map */
+  .om-topbar {
+    position: fixed; z-index: 30; top: calc(12px + env(safe-area-inset-top, 0px)); left: 12px; right: 12px; margin-inline: auto; max-width: 40rem;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 8px 8px 14px; border-radius: 999px;
+    background: rgb(14 8 10 / 0.8); border: 1px solid rgb(212 175 55 / 0.24);
+    backdrop-filter: blur(20px) saturate(1.15); -webkit-backdrop-filter: blur(20px) saturate(1.15); box-shadow: 0 10px 28px rgb(0 0 0 / 0.45);
+  }
+  .om-seg { display: flex; padding: 3px; border-radius: 999px; background: rgb(0 0 0 / 0.35); border: 1px solid rgb(212 175 55 / 0.18); }
+  .om-seg button { height: 34px; padding: 0 16px; border-radius: 999px; font-size: 13px; font-weight: 700; color: #cbb98a; transition: color 0.2s, background 0.2s; }
+  .om-seg button[aria-pressed="true"] { color: #1a1204; background: linear-gradient(180deg, #efd27a, #d4af37 52%, #b8922b); box-shadow: inset 0 1px 0 rgb(255 240 200 / 0.45), 0 4px 10px rgb(212 175 55 / 0.28); }
+  .om-map { position: fixed; inset: 0; z-index: 0; background: #070405; }
+  .om-map .maplibregl-ctrl-bottom-right, .om-map .maplibregl-ctrl-bottom-left { display: none; }
+  .om-map-attrib {
+    position: fixed; z-index: 20; right: 14px; bottom: calc(var(--tabbar-gap) + var(--tabbar-h) + 8px + env(safe-area-inset-bottom, 0px));
+    font-size: 9px; letter-spacing: 0.02em; color: rgb(232 213 163 / 0.5); text-shadow: 0 1px 4px rgb(0 0 0 / 0.9);
+  }
+  .om-map-attrib a { color: inherit; }
+  @media (min-width: 768px) { .om-map-attrib { bottom: 10px; } }
+  .om-pin {
+    position: relative; width: 44px; height: 44px; border-radius: 50%; padding: 0; cursor: pointer; --ring: #d4af37;
+    background: radial-gradient(circle at 32% 28%, #6a3038, #1a0a0c 70%);
+    box-shadow: 0 0 0 2px var(--ring), 0 0 0 5px rgb(0 0 0 / 0.45), 0 6px 16px rgb(0 0 0 / 0.55), 0 0 16px color-mix(in srgb, var(--ring) 40%, transparent);
+    transition: transform 0.2s;
+  }
+  .om-pin:hover, .om-pin:focus-visible { transform: scale(1.08); }
+  .om-pin.is-live { --ring: #c22a45; }
+  .om-pin img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+  .om-pin .om-pin-initial { display: grid; place-items: center; width: 100%; height: 100%; font-family: var(--font-display); font-size: 20px; color: var(--color-gold-hi); }
+  .om-pin .om-pin-dot { position: absolute; right: 0; top: 0; width: 11px; height: 11px; border-radius: 50%; background: #3dcf7a; box-shadow: 0 0 0 2px #0a0a0a, 0 0 8px rgb(61 207 122 / 0.7); }
+
+  /* Add to Home Screen sheet */
+  .om-install {
+    position: fixed; z-index: 46; left: 14px; right: 14px; margin-inline: auto; max-width: 28rem;
+    bottom: calc(var(--tabbar-gap) + var(--tabbar-h) + 10px + env(safe-area-inset-bottom, 0px));
+    display: flex; align-items: center; gap: 12px; padding: 12px 12px 12px 14px; border-radius: 22px;
+    background: rgb(20 10 13 / 0.92); border: 1px solid rgb(212 175 55 / 0.3);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 14px 36px rgb(0 0 0 / 0.55);
+    animation: om-slide-up 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  @media (min-width: 768px) { .om-install { bottom: 18px; } }
+}
+html { background: #070405; }
+@media (prefers-reduced-motion: reduce) { .om-install { animation: none; } }

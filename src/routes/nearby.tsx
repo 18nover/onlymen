@@ -1,12 +1,13 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Ban, Bookmark, BookmarkCheck, Flag, Hand, Loader2, MapPin, MapPinOff, Radar, ShieldCheck, Trash2, X } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Ban, Bookmark, BookmarkCheck, Crown, Flag, Hand, Loader2, MapPin, MapPinOff, Radar, ShieldCheck, Trash2, X } from "lucide-react";
 import { FormError, inputCls } from "@/components/account-ui";
 import { MobileNav } from "@/components/onlymen-ui";
 import {
   deleteLocationFn, heartbeatFn, nearbyActionFn, nearbyConfigFn, nearbyGridFn, nearbyMapFn, saveNearbySettingsFn, updateLocationFn,
 } from "@/lib/nearby/api";
 import type { Card, GridResult, MapResult, Settings } from "@/lib/nearby/repo.server";
+import type { MapPin as MapPinT } from "@/components/nearby-map";
 import { bucketIndex, bucketLabel, PRESENCE } from "@/lib/nearby/geo";
 import { models } from "@/lib/models";
 
@@ -39,7 +40,9 @@ function Nearby() {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [grid, setGrid] = useState<GridResult | null>(null);
   const [map, setMap] = useState<MapResult | null>(null);
-  const [view, setView] = useState<"grid" | "map">("grid");
+  const [view, setView] = useState<"grid" | "map">("map");
+  const [privOpen, setPrivOpen] = useState(false);
+  const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
@@ -88,6 +91,7 @@ function Nearby() {
         const c = await nearbyConfigFn();
         setSettings(c.settings);
         void loadGrid();
+        void loadMap();
       },
       () => {
         setBusy(false);
@@ -95,7 +99,7 @@ function Nearby() {
       },
       { enableHighAccuracy: false, maximumAge: 300_000, timeout: 15_000 },
     );
-  }, [loadGrid]);
+  }, [loadGrid, loadMap]);
   const pushed = useRef(false);
   useEffect(() => {
     if (!sharing) return;
@@ -131,6 +135,22 @@ function Nearby() {
 
   const demo = useMemo(() => (cfg?.showDemo ? models.slice(0, 12) : []), [cfg?.showDemo]);
 
+  // Map pins: opted-in members from the server (already jittered), plus labelled demo
+  // profiles around the viewer's area when demo profiles are on. Online dots come from the grid.
+  const pins = useMemo<MapPinT[]>(() => {
+    if (!map?.center) return [];
+    const online = new Set((grid?.items ?? []).filter((c) => c.presence === "online").map((c) => c.username));
+    const real: MapPinT[] = map.pins.map((p) => ({ ...p, online: online.has(p.username) }));
+    const c = map.center;
+    const fake: MapPinT[] = demo.slice(0, 8).map((m, i) => {
+      const a = (i * 137.5 * Math.PI) / 180;
+      const km = 0.95 + (i % 4) * 0.45;
+      return { username: m.handle, displayName: m.name, photoId: null, photoUrl: m.photo, online: m.online, live: m.live, demo: true,
+        lat: c.lat + (km / 111.32) * Math.cos(a), lng: c.lng + (km / (111.32 * Math.cos((c.lat * Math.PI) / 180))) * Math.sin(a) };
+    });
+    return [...real, ...fake];
+  }, [map, grid, demo]);
+
   if (!cfg) return <Shell><p className="flex items-center gap-2 text-muted"><Loader2 className="size-4 animate-spin" /> Loading…</p></Shell>;
   if (!cfg.enabled) return <Shell><h1 className="font-display text-4xl">Not found</h1></Shell>;
   if (!cfg.signedIn)
@@ -141,9 +161,86 @@ function Nearby() {
       </Shell>
     );
 
+  const privacy = (
+    <PrivacyPanel settings={settings} busy={busy} onShare={() => push(false)} onSave={save}
+        onDelete={async () => {
+          if (!confirm("Stop sharing and delete your stored area and Nearby settings?")) return;
+          await deleteLocationFn();
+          pushed.current = false;
+          const c = await nearbyConfigFn();
+          setSettings(c.settings);
+          void loadGrid();
+          setNote("Your location is deleted. Nothing about where you were is kept.");
+        }} />
+  );
+  const topbar = (
+    <div className="om-topbar">
+      <Link to="/" className="flex min-w-0 items-center gap-2" aria-label="OnlyMen home">
+        <span className="grid size-8 shrink-0 place-items-center rounded-full border-gold-grad"><Crown className="size-3.5 text-gold-hi" strokeWidth={1.6} /></span>
+        <span className="truncate font-display text-[22px] font-semibold tracking-tight text-gold">Only<span className="italic">Men</span></span>
+      </Link>
+      <div className="flex items-center gap-2">
+        {view === "map" && (
+          <button onClick={() => setPrivOpen(true)} aria-label="Location and privacy" className="grid size-10 place-items-center rounded-full border border-gold/30 text-gold-hi">
+            <ShieldCheck className="size-[18px]" />
+          </button>
+        )}
+        <div className="om-seg" role="group" aria-label="View">
+          {(["map", "grid"] as const).map((v) => (
+            <button key={v} onClick={() => setView(v)} aria-pressed={view === v} className="capitalize">{v}</button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  if (view === "map")
+    return (
+      <>
+        <main className="text-ivory">
+          <h1 className="sr-only">Nearby map</h1>
+          {map?.center && (
+            <Suspense fallback={null}>
+              <NearbyMap center={map.center} pins={pins} onOpen={(u) => void navigate({ to: "/m/$handle", params: { handle: u } })} />
+            </Suspense>
+          )}
+          {topbar}
+          <div className="pointer-events-none fixed inset-x-3 top-[calc(76px+env(safe-area-inset-top,0px))] z-20 mx-auto grid max-w-md justify-items-center gap-2">
+            {err && <p className="pointer-events-auto rounded-full border border-ruby/60 bg-ink/85 px-4 py-2 text-xs">{err}</p>}
+            {note && <p className="pointer-events-auto rounded-full border border-gold/40 bg-ink/85 px-4 py-2 text-xs">{note}</p>}
+            {map?.center && demo.length > 0 && <p className="rounded-full bg-ink/70 px-3 py-1 text-[10px] font-bold tracking-[0.22em] text-gold/85 uppercase backdrop-blur">Demo pins · not real people</p>}
+          </div>
+          {!map ? (
+            <div className="fixed inset-0 grid place-items-center"><p className="flex items-center gap-2 text-muted"><Loader2 className="size-4 animate-spin" /> Loading map…</p></div>
+          ) : !map.center ? (
+            <div className="fixed inset-0 grid place-items-center bg-[radial-gradient(circle_at_50%_30%,#2a0a12,#070405_70%)] px-6">
+              <div className="grid max-w-sm justify-items-center gap-3 text-center">
+                <Radar className="size-8 text-gold" />
+                <h2 className="font-display text-3xl">See who's around</h2>
+                <p className="text-sm text-muted">Your spot is rounded on our server to an area about 1.2 km across and shown to you as a soft circle, never an exact dot.</p>
+                <button disabled={busy} onClick={() => push(false)} className="om-shimmer flex h-11 items-center gap-2 rounded-full bg-gold px-6 text-sm font-bold text-ink disabled:opacity-60">{busy && <Loader2 className="size-4 animate-spin" />} Share my approximate area</button>
+                <button onClick={() => setView("grid")} className="text-sm font-semibold text-gold-hi underline">Browse the grid instead</button>
+              </div>
+            </div>
+          ) : null}
+          {privOpen && (
+            <div className="fixed inset-0 z-50 grid place-items-end bg-ink/70 sm:place-items-center" onClick={() => setPrivOpen(false)}>
+              <div className="max-h-[85dvh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-surface p-2 sm:rounded-3xl" onClick={(e) => e.stopPropagation()}>
+                <div className="flex justify-end p-1"><button onClick={() => setPrivOpen(false)} aria-label="Close" className="text-muted"><X className="size-5" /></button></div>
+                {privacy}
+              </div>
+            </div>
+          )}
+          {sel && <Sheet c={sel} onClose={() => setSel(null)} onAct={act} onReported={() => { setSel(null); setNote("Thanks. Our team will review this report."); void loadGrid(); }} />}
+        </main>
+        <MobileNav />
+      </>
+    );
+
   return (
     <>
-    <main className="mx-auto grid max-w-6xl gap-5 px-4 pt-6 pb-28 text-ivory sm:px-6">
+    {topbar}
+    <main className="mx-auto grid max-w-6xl gap-5 px-4 pt-[calc(88px+env(safe-area-inset-top,0px))] pb-28 text-ivory sm:px-6">
       <header className="flex flex-col items-center gap-3 text-center">
         <div className="flex flex-col items-center">
           <p className="text-xs font-bold tracking-[0.3em] text-gold uppercase">Around you</p>
@@ -155,11 +252,6 @@ function Nearby() {
           </p>
         </div>
         <div className="flex flex-wrap justify-center gap-2 text-sm font-semibold">
-          <div className="flex rounded-full border border-line bg-surface/80 p-1" role="group" aria-label="View">
-            {(["grid", "map"] as const).map((v) => (
-              <button key={v} onClick={() => setView(v)} aria-pressed={view === v} className={`h-9 rounded-full px-5 capitalize transition ${view === v ? "bg-gold text-ink glow-gold" : "text-muted hover:text-ivory"}`}>{v}</button>
-            ))}
-          </div>
           {cfg.isAdmin && <Link to="/admin/reports" className="grid h-10 place-items-center rounded-full border border-line px-4 text-gold-hi">Reports</Link>}
           <Link to="/" className="grid h-10 place-items-center rounded-full border border-line px-4 text-gold-hi">Home</Link>
         </div>
@@ -168,18 +260,9 @@ function Nearby() {
       <FormError>{err}</FormError>
       {note && <p className="rounded-xl border border-gold/40 bg-surface px-4 py-3 text-sm">{note}</p>}
 
-      <PrivacyPanel settings={settings} busy={busy} onShare={() => push(false)} onSave={save}
-        onDelete={async () => {
-          if (!confirm("Stop sharing and delete your stored area and Nearby settings?")) return;
-          await deleteLocationFn();
-          pushed.current = false;
-          const c = await nearbyConfigFn();
-          setSettings(c.settings);
-          void loadGrid();
-          setNote("Your location is deleted. Nothing about where you were is kept.");
-        }} />
+      {privacy}
 
-      {view === "grid" ? (
+      {(
         <section className="grid gap-4">
           {grid && grid.items.length === 0 && (
             <p className="rounded-xl border border-line bg-surface p-4 text-sm text-muted">No members around you yet{grid.origin ? ` within ${grid.radiusKm} km` : ""}. Only members who share their location show up here.</p>
@@ -206,19 +289,6 @@ function Nearby() {
                 ))}
               </div>
             </div>
-          )}
-        </section>
-      ) : (
-        <section>
-          {!map ? (
-            <p className="flex items-center gap-2 text-muted"><Loader2 className="size-4 animate-spin" /> Loading map…</p>
-          ) : !map.center ? (
-            <p className="rounded-xl border border-line bg-surface p-4 text-sm text-muted">Share your location to open the map.</p>
-          ) : (
-            <Suspense fallback={<p className="text-muted">Loading map…</p>}>
-              <NearbyMap center={map.center} pins={map.pins} onPick={(u) => { const c = grid?.items.find((x) => x.username === u); if (c) setSel(c); }} />
-              {map.pins.length === 0 && <p className="mt-2 text-sm text-muted">No one nearby has turned on a map pin yet.</p>}
-            </Suspense>
           )}
         </section>
       )}

@@ -1,0 +1,23 @@
+{
+  "id": "/",
+  "name": "OnlyMen",
+  "short_name": "OnlyMen",
+  "description": "A private club for gay men, 18+.",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#000000",
+  "theme_color": "#070405",
+  "categories": ["social", "lifestyle"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "screenshots": [
+    { "src": "/pwa/screen-browse.jpg", "sizes": "412x915", "type": "image/jpeg", "form_factor": "narrow", "label": "Browse (demo profiles)" },
+    { "src": "/pwa/screen-profile.jpg", "sizes": "412x915", "type": "image/jpeg", "form_factor": "narrow", "label": "Profile (demo profile)" }
+  ]
+}

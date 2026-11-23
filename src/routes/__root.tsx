@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AGE_OK_SCRIPT } from "@/lib/onlymen-hooks";
+import { InstallPrompt } from "@/components/install-prompt";
 import { createRootRoute, HeadContent, Outlet, Scripts, useRouter, useRouterState } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
@@ -24,18 +25,23 @@ export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { title: APP_NAME },
       { name: "description", content: "OnlyMen: a private community of verified adult creators for gay men. 18+. Free to join, tips only." },
-      { name: "theme-color", content: "#0a0809" },
+      { name: "theme-color", content: "#070405" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-title", content: "OnlyMen" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "application-name", content: "OnlyMen" },
       { name: "robots", content: "noindex, nofollow, noarchive" },
     ],
     links: [
       { rel: "icon", href: "/favicon.ico", sizes: "any" },
       { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32.png" },
       { rel: "stylesheet", href: appCss },
-      { rel: "manifest", href: "/__grok/manifest.webmanifest" },
-      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -71,6 +77,7 @@ function RootComponent() {
         <PreviewHostBridge />
         <AuthProvider>
           {ageGated ? <AgeInterstitial next={pathname} /> : gated ? <PrivateComingSoon invites={access.invites} /> : <Outlet />}
+          {!ageGated && !gated && <InstallPrompt />}
         </AuthProvider>
         <Scripts />
       </body>

@@ -20,7 +20,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { WatchLiveLink } from "@/components/live-ui";
-import { AgeGate, DemoBadge, Footer, Header, StatusDot } from "@/components/onlymen-ui";
+import { AgeGate, DemoBadge, Footer, Header, MobileNav, StatusDot } from "@/components/onlymen-ui";
 import { useAgeGate, useCity } from "@/lib/onlymen-hooks";
 import { cityLabel, findModel, fmtActive, fmtHeight, models, type Model } from "@/lib/models";
 
@@ -265,7 +265,7 @@ export function OnlyMenProfile({ handle }: { handle: string }) {
   const similar = [...models.filter((x) => x.id !== m.id && x.metro === m.metro), ...models.filter((x) => x.metro !== m.metro)].slice(0, 8);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pb-[150px] md:pb-0">
       <Header
         city={city}
         onCity={(c) => {
@@ -346,7 +346,7 @@ export function OnlyMenProfile({ handle }: { handle: string }) {
       <Footer />
 
       {/* mobile sticky action bar */}
-      <div className="om-fixed-bottom om-glass om-slide-up fixed inset-x-3 z-40 mx-auto flex max-w-md items-center gap-2 rounded-full p-1.5 pl-2 md:hidden">
+      <div className="om-above-tabbar om-glass om-slide-up fixed inset-x-3 z-40 mx-auto flex max-w-md items-center gap-2 rounded-full p-1.5 pl-2 md:hidden">
         <img src={m.photo} alt="" className="size-11 rounded-full object-cover ring-1 ring-gold/60" />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-bold text-ivory">{m.name}, {m.age}</p>
@@ -362,6 +362,7 @@ export function OnlyMenProfile({ handle }: { handle: string }) {
         </button>
       </div>
 
+      <MobileNav />
       {gate !== "ok" && <AgeGate onEnter={enter} />}
     </div>
   );

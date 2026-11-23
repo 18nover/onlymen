@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "@tanstack/react-router";
-import { Check, ChevronDown, Crown, Flame, Lock, MapPin, Radar, Radio, Search, ShieldCheck, SlidersHorizontal } from "lucide-react";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { Check, ChevronDown, Crown, MapPin, Radar, Radio, Search, ShieldCheck, SlidersHorizontal, Star, User } from "lucide-react";
 import { company } from "@/lib/company";
 import { useAccount } from "@/lib/account/use-account";
 import { useImageUrl } from "@/lib/account/media";
@@ -47,21 +47,6 @@ function AccountButtons() {
   );
 }
 
-function MobileAccountLink({ cls }: { cls: string }) {
-  const { account, ready } = useAccount();
-  if (ready && account) {
-    return (
-      <Link to="/me" className={cls}>
-        <Avatar id={account.profile.photos.find((p) => p.primary)?.id} name={account.profile.displayName || account.username} className="size-5" /> Me
-      </Link>
-    );
-  }
-  return (
-    <Link to="/login" className={cls}>
-      <Lock className="size-5 text-gold" /> Sign in
-    </Link>
-  );
-}
 import { cities, cityLabel, models, type CityId, type Model } from "@/lib/models";
 import { useDirectory } from "@/lib/use-directory";
 
@@ -319,30 +304,23 @@ export function Footer() {
   );
 }
 
-export function MobileNav({ onOpenFilters }: { onOpenFilters?: () => void }) {
-  const nearby = useNearbyEnabled();
-  const cls =
-    "relative flex h-14 min-w-0 flex-col items-center justify-center gap-1 rounded-full text-[11px] font-semibold tracking-wide text-muted transition active:bg-wine active:text-gold-hi";
-  const cols = 3 + (onOpenFilters ? 1 : 0) + (nearby ? 1 : 0);
+/**
+ * The one bottom nav for every mobile browsing screen (Browse, Live, Nearby, Me):
+ * same height, position, frosted glass and active state everywhere.
+ */
+export function MobileNav(_props: { onOpenFilters?: () => void } = {}) {
+  const nearby = useNearbyEnabled(true); // assume on so the bar never reflows; hidden only if the flag is off
+  const path = useRouterState({ select: (s) => s.location.pathname });
+  const { account, ready } = useAccount();
+  const signedIn = ready && Boolean(account);
+  const tab = path.startsWith("/nearby") ? "nearby" : path.startsWith("/live") || path.startsWith("/watch") ? "live" : path.startsWith("/me") || path === "/login" ? "me" : "browse";
+  const item = (id: string) => `om-tab-item${tab === id ? " is-active" : ""}`;
   return (
-    <nav className={`om-fixed-bottom om-glass fixed inset-x-3 z-40 mx-auto grid max-w-md rounded-full p-1 md:hidden ${cols === 5 ? "grid-cols-5" : cols === 4 ? "grid-cols-4" : "grid-cols-3"}`} aria-label="Primary">
-      <Link to="/" hash="browse" className={cls}>
-        <Flame className="size-5 text-gold" /> Browse
-      </Link>
-      <Link to="/live" className={cls}>
-        <Radio className="size-5 text-gold" /> Live
-      </Link>
-      {nearby && (
-        <Link to="/nearby" className={cls} activeProps={{ className: "text-gold-hi" }}>
-          <Radar className="size-5 text-gold" /> Nearby
-        </Link>
-      )}
-      {onOpenFilters && (
-        <button onClick={onOpenFilters} className={cls}>
-          <SlidersHorizontal className="size-5 text-gold" /> Filters
-        </button>
-      )}
-      <MobileAccountLink cls={cls} />
+    <nav className={`om-tabbar md:hidden ${nearby ? "grid-cols-4" : "grid-cols-3"}`} aria-label="Primary">
+      <Link to="/" hash="browse" className={item("browse")} aria-current={tab === "browse" ? "page" : undefined}><Star className="size-[19px]" strokeWidth={1.7} /> Browse</Link>
+      <Link to="/live" className={item("live")} aria-current={tab === "live" ? "page" : undefined}><Radio className="size-[19px]" strokeWidth={1.7} /> Live</Link>
+      {nearby && <Link to="/nearby" className={item("nearby")} aria-current={tab === "nearby" ? "page" : undefined}><Radar className="size-[19px]" strokeWidth={1.7} /> Nearby</Link>}
+      <Link to={signedIn ? "/me" : "/login"} className={item("me")} aria-current={tab === "me" ? "page" : undefined}><User className="size-[19px]" strokeWidth={1.7} /> Me</Link>
     </nav>
   );
 }
