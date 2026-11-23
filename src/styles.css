@@ -20,7 +20,7 @@
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Cormorant Garamond", "Playfair Display", ui-serif, Georgia, serif;
   --radius: 0.75rem;
-  --animate-pulse-dot: pulse-dot 1.8s ease-in-out infinite;
+  --animate-pulse-dot: om-pulse 1.6s ease-in-out infinite;
   --animate-fade-up: fade-up 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 
   @keyframes pulse-dot {
@@ -239,7 +239,7 @@
 
   /* photo-first nearby tile: square, edge-to-edge, hairline gaps */
   .om-tile {
-    position: relative; display: block; aspect-ratio: 1 / 1; overflow: hidden;
+    position: relative; display: block; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 6px;
     background: var(--color-surface);
   }
   .om-tile img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
@@ -250,4 +250,55 @@
   }
   .om-tile-meta { position: absolute; inset-inline: 0; bottom: 0; z-index: 2; padding: 0.4rem 0.5rem; line-height: 1.15; }
   .om-online { box-shadow: 0 0 0 2px var(--color-ink), 0 0 10px 1px rgb(95 211 148 / 0.8); }
+}
+
+/* ONL-12 v2 motion — transform/opacity only; all off under prefers-reduced-motion */
+@keyframes om-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes om-hero-in { from { opacity: 0; transform: scale(1.04); } to { opacity: 1; transform: none; } }
+@keyframes om-zoom-out { from { transform: scale(1.08); } to { transform: none; } }
+@keyframes om-slide-up { from { opacity: 0; transform: translateY(130%); } to { opacity: 1; transform: none; } }
+@keyframes om-photo-in { from { opacity: 0; transform: scale(1.03); } to { opacity: 1; transform: none; } }
+@keyframes om-shimmer { 0%, 62% { transform: translateX(-130%) skewX(-18deg); } 100% { transform: translateX(230%) skewX(-18deg); } }
+@keyframes om-pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.45); opacity: 0.55; } }
+@layer components {
+  .om-enter { animation: om-rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  .om-enter-2 { animation: om-rise 0.7s 0.12s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  .om-hero-in { animation: om-hero-in 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  .om-zoom-out { animation: om-zoom-out 2.4s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  .om-photo-in { animation: om-photo-in 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  .om-slide-up { animation: om-slide-up 0.6s 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  .om-stagger > * { animation: om-rise 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: 0.42s; }
+  .om-stagger > *:nth-child(1) { animation-delay: 0s; }
+  .om-stagger > *:nth-child(2) { animation-delay: 0.04s; }
+  .om-stagger > *:nth-child(3) { animation-delay: 0.08s; }
+  .om-stagger > *:nth-child(4) { animation-delay: 0.12s; }
+  .om-stagger > *:nth-child(5) { animation-delay: 0.16s; }
+  .om-stagger > *:nth-child(6) { animation-delay: 0.2s; }
+  .om-stagger > *:nth-child(7) { animation-delay: 0.24s; }
+  .om-stagger > *:nth-child(8) { animation-delay: 0.28s; }
+  .om-stagger > *:nth-child(9) { animation-delay: 0.32s; }
+  .om-stagger > *:nth-child(10) { animation-delay: 0.36s; }
+  .om-stagger > *:nth-child(11) { animation-delay: 0.38s; }
+  .om-stagger > *:nth-child(12) { animation-delay: 0.4s; }
+  /* sections rise as they scroll into view (Chromium/Safari 18+); elsewhere they simply show */
+  @supports (animation-timeline: view()) {
+    .om-reveal { animation: om-rise linear both; animation-timeline: view(); animation-range: entry 0% entry 38%; }
+  }
+  /* primary CTA: gentle press + a gold shimmer sweep */
+  a.bg-gold, button.bg-gold { transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.2s; will-change: transform; }
+  a.bg-gold:hover, button.bg-gold:hover { transform: scale(1.03); }
+  a.bg-gold:active, button.bg-gold:active { transform: scale(0.97); }
+  .om-shimmer { position: relative; overflow: hidden; isolation: isolate; }
+  .om-shimmer::after {
+    content: ""; position: absolute; inset: -20% auto -20% 0; width: 45%; pointer-events: none; z-index: 1;
+    background: linear-gradient(90deg, transparent, rgb(255 246 214 / 0.55), transparent);
+    animation: om-shimmer 3.8s ease-in-out infinite;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .om-enter, .om-enter-2, .om-hero-in, .om-zoom-out, .om-photo-in, .om-slide-up, .om-stagger > *, .om-reveal, .animate-pulse-dot {
+    animation: none !important; opacity: 1 !important; transform: none !important;
+  }
+  .om-shimmer::after { display: none; }
+  a.bg-gold:hover, button.bg-gold:hover, a.bg-gold:active, button.bg-gold:active { transform: none; }
 }

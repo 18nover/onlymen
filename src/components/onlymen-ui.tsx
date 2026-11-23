@@ -42,7 +42,7 @@ function AccountButtons() {
       <Link to="/login" className="hidden h-10 items-center rounded-full px-3 text-sm font-semibold whitespace-nowrap text-ivory transition hover:text-gold-hi sm:flex">
         Sign in
       </Link>
-      <Link to="/join" className="flex h-10 items-center rounded-full bg-gold px-5 text-sm font-bold whitespace-nowrap transition hover:brightness-110">I have an invite</Link>
+      <Link to="/join" className="om-shimmer flex h-10 items-center rounded-full bg-gold px-5 text-sm font-bold whitespace-nowrap transition hover:brightness-110">I have an invite</Link>
     </>
   );
 }

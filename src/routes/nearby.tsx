@@ -185,14 +185,14 @@ function Nearby() {
             <p className="rounded-xl border border-line bg-surface p-4 text-sm text-muted">No members around you yet{grid.origin ? ` within ${grid.radiusKm} km` : ""}. Only members who share their location show up here.</p>
           )}
           {grid && grid.items.length > 0 && (
-            <div className="-mx-4 grid grid-cols-3 gap-[2px] overflow-hidden sm:mx-0 sm:grid-cols-4 sm:gap-1 sm:rounded-2xl lg:grid-cols-6">
+            <div className="om-stagger -mx-4 grid grid-cols-3 gap-[2px] px-[2px] sm:mx-0 sm:px-0 sm:grid-cols-4 sm:gap-1 sm:rounded-2xl lg:grid-cols-6">
               {grid.items.map((c) => <Tile key={c.username} c={c} onClick={() => setSel(c)} />)}
             </div>
           )}
           {demo.length > 0 && (
             <div className="grid gap-2">
               <p className="text-center text-[11px] font-bold tracking-[0.25em] text-gold/80 uppercase">Demo profiles · not real people, not near you</p>
-              <div className="-mx-4 grid grid-cols-3 gap-[2px] overflow-hidden sm:mx-0 sm:grid-cols-4 sm:gap-1 sm:rounded-2xl lg:grid-cols-6">
+              <div className="om-stagger -mx-4 grid grid-cols-3 gap-[2px] px-[2px] sm:mx-0 sm:px-0 sm:grid-cols-4 sm:gap-1 sm:rounded-2xl lg:grid-cols-6">
                 {demo.map((m) => (
                   <Link key={m.handle} to="/m/$handle" params={{ handle: m.handle }} className="om-tile">
                     <img src={m.photo} alt="" loading="lazy" />
