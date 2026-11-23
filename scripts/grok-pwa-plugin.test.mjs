@@ -489,14 +489,30 @@ test("strips install params from the app link", () => {
 });
 
 test("names the install page from host slug", () => {
-  assert.equal(appNameFromHost("localhost:8080"), "Grok App");
-  assert.equal(appNameFromHost("172.17.154.217:8080"), "Grok App");
+  assert.equal(appNameFromHost("localhost:8080"), "OnlyMen");
+  assert.equal(appNameFromHost("172.17.154.217:8080"), "OnlyMen");
   assert.equal(appNameFromHost("wild-race.grok.me"), "Wild Race");
 });
 
 test("rejects hosts that are not plain slugs", () => {
-  assert.equal(appNameFromHost("<script>alert(1)</script>"), "Grok App");
-  assert.equal(appNameFromHost('"><img src=x onerror=1>.grok.me'), "Grok App");
+  assert.equal(appNameFromHost("<script>alert(1)</script>"), "OnlyMen");
+  assert.equal(appNameFromHost('"><img src=x onerror=1>.grok.me'), "OnlyMen");
+});
+
+test("fallback PWA name is OnlyMen, never Grok App", () => {
+  assert.equal(appNameFromHost("onlymen.gay"), "OnlyMen");
+  assert.equal(appNameFromHost("onlymen.live"), "OnlyMen");
+  assert.equal(appNameFromHost("onlymen.18nover.workers.dev"), "OnlyMen");
+  for (const host of ["onlymen.gay", "onlymen.18nover.workers.dev", "localhost"]) {
+    const manifest = JSON.parse(renderWebManifest(host));
+    assert.equal(manifest.name, "OnlyMen");
+    assert.equal(manifest.short_name, "OnlyMen");
+    assert.doesNotMatch(JSON.stringify(manifest), /Grok App/);
+  }
+  const out = injectGrokPwaHead("<html><head></head></html>");
+  assert.match(out, /name="application-name" content="OnlyMen"/);
+  assert.match(out, /name="apple-mobile-web-app-title" content="OnlyMen"/);
+  assert.doesNotMatch(out, /Grok App/);
 });
 
 test("renders install page markup", () => {

@@ -6,7 +6,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-export const DEFAULT_APP_NAME = "Grok App";
+export const DEFAULT_APP_NAME = "OnlyMen";
 export const OG_SERVICE_URL_DEFAULT = "https://og.grok.me";
 export const OG_SITE_REL_PATH = "src/lib/og/site.json";
 
@@ -188,6 +188,10 @@ export function grokPwaHeadTags(appName = DEFAULT_APP_NAME) {
     // the legacy *-web-app-capable metas it replaces are deliberately absent.
     ["manifest", '<link rel="manifest" href="/__grok/manifest.webmanifest">'],
     ["apple-touch-icon", '<link rel="apple-touch-icon" href="/__grok/icon-180.png">'],
+    [
+      "application-name",
+      `<meta name="application-name" content="${escapeHtml(appName)}">`,
+    ],
     [
       "apple-mobile-web-app-title",
       `<meta name="apple-mobile-web-app-title" content="${escapeHtml(appName)}">`,
