@@ -13,6 +13,9 @@ import {
   bucketIndex, bucketLabel, cellDistanceKm, center, coarseCover, dayKey, decideMove, isCell, neighborhood, pinFor,
   PLAN_LIMITS, presenceOf, prng, seedFrom, shuffle, type Plan, type Presence,
 } from "./geo.ts";
+import { REPORT_REASONS, type ReportReason } from "./reasons.ts";
+
+export { REPORT_REASONS, type ReportReason } from "./reasons.ts";
 
 export class NearbyError extends Error {}
 
@@ -223,9 +226,6 @@ export async function block(db: Sql, blocker: string, blocked: string): Promise<
 export async function unblock(db: Sql, blocker: string, blocked: string): Promise<void> {
   await db`delete from om_block where blocker_id = ${blocker} and blocked_id = ${blocked}`;
 }
-
-export const REPORT_REASONS = ["underage", "selling_sex", "scam", "harassment", "impersonation", "non_consensual", "spam", "other"] as const;
-export type ReportReason = (typeof REPORT_REASONS)[number];
 
 export async function reportAudit(db: Sql, actor: string | null, action: string, reportId: string | null, note: string | null = null) {
   await db`insert into om_report_audit (actor_id, action, report_id, note) values (${actor}, ${action}, ${reportId}, ${note ? note.slice(0, 200) : null})`;

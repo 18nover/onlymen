@@ -52,14 +52,25 @@ const fail = (e: unknown, repo: { NearbyError: new (...a: never[]) => Error }) =
 };
 
 type Ctx = Awaited<ReturnType<typeof base>> & { uid: string; db: NonNullable<Awaited<ReturnType<typeof base>>["db"]> };
-async function member(write = false): Promise<Ctx | typeof OFF | typeof OUT> {
+async function member(write = false, requireNearby = true): Promise<Ctx | typeof OFF | typeof OUT> {
   const c = await base();
-  if (!c.enabled) return OFF;
+  if (requireNearby && !c.enabled) return OFF;
   if (write) c.assertSameSite();
   if (!c.uid || !c.db) return OUT;
   return c as Ctx;
 }
 const isCtx = (c: unknown): c is Ctx => Boolean((c as Ctx).repo);
+
+export const profileModerationStateFn = createServerFn({ method: "POST" })
+  .validator((input: unknown) => s(obj(input).username, 40))
+  .handler(async ({ data }): Promise<{ signedIn: boolean; isSelf: boolean; blocked: boolean }> => {
+    const c = await member(false, false);
+    if (!isCtx(c)) return { signedIn: false, isSelf: false, blocked: false };
+    const target = await c.repo.userIdFor(c.db, data);
+    if (!target) return { signedIn: true, isSelf: false, blocked: false };
+    const blocked = (await c.db`select 1 from om_block where blocker_id = ${c.uid} and blocked_id = ${target}`).length > 0;
+    return { signedIn: true, isSelf: target === c.uid, blocked };
+  });
 
 export const nearbyConfigFn = createServerFn({ method: "POST" }).handler(async (): Promise<{ enabled: boolean; signedIn: boolean; showDemo: boolean; isAdmin: boolean; settings: Settings | null }> => {
   const c = await base();
@@ -142,7 +153,8 @@ export const nearbyActionFn = createServerFn({ method: "POST" })
     };
   })
   .handler(async ({ data }): Promise<NResult<true>> => {
-    const c = await member(true);
+    const locationOnly = data.action === "tap" || data.action === "save" || data.action === "unsave";
+    const c = await member(true, locationOnly);
     if (!isCtx(c)) return c;
     if (!data.action) return { ok: false, error: "Unknown action." };
     try {

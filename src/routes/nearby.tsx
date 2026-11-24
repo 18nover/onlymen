@@ -7,6 +7,7 @@ import {
   deleteLocationFn, heartbeatFn, nearbyActionFn, nearbyConfigFn, nearbyGridFn, nearbyMapFn, saveNearbySettingsFn, updateLocationFn,
 } from "@/lib/nearby/api";
 import type { Card, GridResult, MapResult, Settings } from "@/lib/nearby/repo.server";
+import { REPORT_REASON_OPTIONS } from "@/lib/nearby/reasons";
 import type { MapPin as MapPinT } from "@/components/nearby-map";
 import { bucketIndex, bucketLabel, PRESENCE } from "@/lib/nearby/geo";
 import { models } from "@/lib/models";
@@ -18,15 +19,7 @@ export const Route = createFileRoute("/nearby")({
   component: Nearby,
 });
 
-const REASONS: { id: string; label: string }[] = [
-  { id: "underage", label: "May be under 18" },
-  { id: "selling_sex", label: "Paid in-person sexual services" },
-  { id: "non_consensual", label: "Non-consensual content" },
-  { id: "scam", label: "Scam or spam links" },
-  { id: "harassment", label: "Harassment" },
-  { id: "impersonation", label: "Fake or impersonation" },
-  { id: "other", label: "Something else" },
-];
+const REASONS = REPORT_REASON_OPTIONS;
 const REFUSED: Record<string, string> = {
   too_soon: "Location updates are limited to one every 20 seconds.",
   too_many_moves: "Too many location changes in the last hour; we'll try again later.",

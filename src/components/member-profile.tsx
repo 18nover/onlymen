@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AgeGate, Footer, Header, MobileNav } from "@/components/onlymen-ui";
 import { ProfileBanner } from "@/components/banner-field";
 import { RoomLinks, WatchLiveLink } from "@/components/live-ui";
+import { ProfileModeration } from "@/components/profile-moderation";
 import { useAgeGate, useCity } from "@/lib/onlymen-hooks";
 import type { PublicProfile } from "@/lib/account/repo.server";
 
@@ -154,6 +155,10 @@ export function MemberProfile({ p }: { p: PublicProfile }) {
               </Section>
             )}
             <p className="flex items-center gap-1.5 px-1 text-xs text-dim"><Sparkles className="size-3.5" /> Member since <span suppressHydrationWarning>{new Date(p.joinedAt).toLocaleDateString([], { month: "short", year: "numeric" })}</span></p>
+            <div className="grid gap-2 border-t border-line/70 pt-4">
+              <p className="text-[11px] font-bold tracking-[0.2em] text-gold uppercase">Safety</p>
+              <ProfileModeration username={p.username} displayName={p.displayName} />
+            </div>
           </div>
         </div>
       </main>
