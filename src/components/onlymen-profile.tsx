@@ -8,7 +8,6 @@ import {
   ChevronRight,
   Coins,
   Eye,
-  Flag,
   Heart,
   Languages,
   Lock,
@@ -173,9 +172,6 @@ function ActionPanel({ m }: { m: Model }) {
           className="flex h-10 items-center gap-1.5 rounded-full px-3 transition hover:text-ivory"
         >
           {copied ? <Check className="size-4 text-online" /> : <Share2 className="size-4" />} {copied ? "Link copied" : "Share"}
-        </button>
-        <button className="flex h-10 items-center gap-1.5 rounded-full px-3 transition hover:text-ivory">
-          <Flag className="size-4" /> Report
         </button>
       </div>
     </div>
