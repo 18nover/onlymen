@@ -20,10 +20,26 @@ const check = async (name, fn) => {
   }
 };
 const GATE = /Private\.[\s\S]*Coming soon\./;
+const AGE_COOKIE = "om_age18";
+
+async function confirmAge() {
+  const r = await fetch(`${BASE}/age/callback?next=%2F`, {
+    method: "POST",
+    headers: { origin: BASE, "content-type": "application/x-www-form-urlencoded" },
+    body: "confirm=yes",
+    redirect: "manual",
+  });
+  if (r.status !== 303) throw new Error(`age callback ${r.status}`);
+  const m = new RegExp(`(?:^|;\\s*)${AGE_COOKIE}=([^;]+)`).exec(r.headers.get("set-cookie") ?? "");
+  if (!m) throw new Error("no age cookie");
+  return { name: AGE_COOKIE, value: m[1], header: `${AGE_COOKIE}=${m[1]}` };
+}
+const age = await confirmAge();
+const fetchHeaders = { cookie: age.header };
 
 for (const path of ["/", "/me", "/onboarding", "/live", "/admin/invites", "/m/admin", "/forgot-password"]) {
   await check(`gate ${path}`, async () => {
-    const html = await (await fetch(BASE + path)).text();
+    const html = await (await fetch(BASE + path, { headers: fetchHeaders })).text();
     if (!GATE.test(html)) throw new Error("no gate");
     if (!/I have an invite/.test(html)) throw new Error("no invite link on gate");
     return "gate";
@@ -31,22 +47,33 @@ for (const path of ["/", "/me", "/onboarding", "/live", "/admin/invites", "/m/ad
 }
 for (const path of ["/join", "/join?code=OM-2222-2222", "/login", "/terms", "/privacy", "/guidelines", "/2257"]) {
   await check(`open ${path}`, async () => {
-    const r = await fetch(BASE + path);
+    const r = await fetch(BASE + path, { headers: fetchHeaders });
     const html = await r.text();
     if (r.status !== 200 || GATE.test(html)) throw new Error(`HTTP ${r.status}`);
     return `${r.status}`;
   });
 }
 await check("POST better-auth sign-up stays closed", async () => {
-  const r = await fetch(BASE + "/api/account/sign-up/email", { method: "POST", headers: { "content-type": "application/json", origin: BASE }, body: JSON.stringify({ email: `probe${stamp}@example.com`, password: "Probe-2026-pass", name: "probe" }) });
+  const r = await fetch(BASE + "/api/account/sign-up/email", { method: "POST", headers: { ...fetchHeaders, "content-type": "application/json", origin: BASE }, body: JSON.stringify({ email: `probe${stamp}@example.com`, password: "Probe-2026-pass", name: "probe" }) });
   if (r.ok) throw new Error(`accepted (${r.status})`);
   return `rejected ${r.status}`;
 });
 
 const browser = await chromium.launch();
+await check("age gate: click-through grants access", async () => {
+  const c = await browser.newContext();
+  const p = await c.newPage();
+  await p.goto(`${BASE}/age?next=%2Fjoin`);
+  await p.getByRole("button", { name: /I am 18 or older/ }).click();
+  await p.waitForURL("**/join");
+  await p.waitForLoadState("networkidle");
+  if (!(await p.getByLabel("Invite code").isVisible())) throw new Error("no join form after age check");
+  await c.close();
+  return "confirmed";
+});
 async function ctx() {
   const c = await browser.newContext();
-  await c.addInitScript(() => localStorage.setItem("onlymen-age-ok-v1", "1"));
+  await c.addCookies([{ name: age.name, value: age.value, url: BASE, path: "/", secure: true, sameSite: "Lax" }]);
   return c;
 }
 async function fillJoin(p, { code, user }) {
