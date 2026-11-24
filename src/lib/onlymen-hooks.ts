@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import type { CityId } from "@/lib/models";
+import { AGE_COOKIE as SERVER_AGE_COOKIE, AGE_TOKEN_RE } from "./age-gate/policy.ts";
 
 export const AGE_KEY = "onlymen-age-ok-v1";
 export const AGE_COOKIE = "onlymen_age_ok";
 /** Runs inline in <head> before paint: marks <html> when the visitor already confirmed 18+. */
-export const AGE_OK_SCRIPT = `try{if(localStorage.getItem("${AGE_KEY}")==="1"||/(?:^|; )${AGE_COOKIE}=1(?:;|$)/.test(document.cookie))document.documentElement.classList.add("om-age-ok")}catch(e){}`;
+export const AGE_OK_SCRIPT = `try{var m=/(?:^|; )${SERVER_AGE_COOKIE}=([^;]*)/.exec(document.cookie);if(localStorage.getItem("${AGE_KEY}")==="1"||(m&&/${AGE_TOKEN_RE.source}/.test(m[1])&&Number(m[1].split(".")[2])>Date.now()/1000))document.documentElement.classList.add("om-age-ok")}catch(e){}`;
 
 function ageConfirmed() {
   try {
