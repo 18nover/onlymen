@@ -13,7 +13,7 @@ export const Route = createFileRoute("/admin/reports")({
 type Filter = "open" | "resolved" | "dismissed" | "all";
 const fmt = (iso: string | null) => (iso ? new Date(iso).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }) : "—");
 const URGENT = new Set(["underage", "non_consensual", "selling_sex"]);
-const LABEL: Record<string, string> = { underage: "May be under 18", selling_sex: "Selling sex / escorting", non_consensual: "Non-consensual", scam: "Scam", harassment: "Harassment", impersonation: "Impersonation", spam: "Spam", other: "Other" };
+const LABEL: Record<string, string> = { underage: "May be under 18", selling_sex: "Paid in-person sexual services", non_consensual: "Non-consensual", scam: "Scam", harassment: "Harassment", impersonation: "Impersonation", spam: "Spam", other: "Other" };
 
 function AdminReports() {
   const [filter, setFilter] = useState<Filter>("open");

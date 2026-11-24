@@ -20,7 +20,7 @@ export const Route = createFileRoute("/nearby")({
 
 const REASONS: { id: string; label: string }[] = [
   { id: "underage", label: "May be under 18" },
-  { id: "selling_sex", label: "Selling sex / escorting" },
+  { id: "selling_sex", label: "Paid in-person sexual services" },
   { id: "non_consensual", label: "Non-consensual content" },
   { id: "scam", label: "Scam or spam links" },
   { id: "harassment", label: "Harassment" },
