@@ -12,13 +12,17 @@ export const Route = createFileRoute("/api/kyc/file/$id")({
       GET: async ({ params, request }) => {
         const id = String(params.id ?? "");
         if (!/^vf_[a-f0-9]{20}$/.test(id)) return NF();
-        const [repo, priv, inv, dbm] = await Promise.all([import("@/lib/verification/repo.server"), import("@/lib/private/allowlist.server"), import("@/lib/invites/invites.server"), import("@/lib/db")]);
+        const [repo, priv, inv, dbm, audit] = await Promise.all([import("@/lib/verification/repo.server"), import("@/lib/private/allowlist.server"), import("@/lib/invites/invites.server"), import("@/lib/db"), import("@/lib/admin/audit.server")]);
         if (!repo.idVerificationEnabled()) return NF();
         const uid = await priv.allowedSessionUserId(request.headers);
         if (!uid) return NF();
         const db = await dbm.getSql();
         if (!(await inv.isAdminUser(db, uid))) return NF();
-        const f = await repo.readFile(db, uid, id).catch(() => null);
+        const f = await dbm.withTransaction(async (tx) => {
+          const file = await repo.readFile(tx, uid, id);
+          if (file) await audit.writeAdminAudit(tx, uid, "verification.file.view", "verification_file", id);
+          return file;
+        });
         if (!f) return NF();
         return new Response(new Uint8Array(f.bytes), {
           headers: {
