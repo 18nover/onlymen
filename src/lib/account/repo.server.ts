@@ -2,7 +2,7 @@
  * Postgres persistence for OnlyMen accounts (server-only).
  * Every query is scoped to a user id that came from a verified session.
  */
-import { getSql, withTransaction, type Sql } from "../db";
+import { getSql, withTransaction, type Sql } from "../db.ts";
 import { CONSENT_VERSIONS, defaultPermissions, defaultPrivacy, emptyProfile } from "./constants.ts";
 import { RETIRED_LIVE_KEYS, RETIRED_PROFILE_KEYS, carryHiddenTags, retiredCarry, scrubLive, scrubProfile } from "./retired.ts";
 import type { ConsentKey, ConsentRecord, Photo, PublicAccount, VerificationStatus } from "./types.ts";
@@ -121,7 +121,10 @@ const validDate = (v: unknown) => typeof v === "string" && !Number.isNaN(Date.pa
  * and ignored here.
  */
 export async function saveAccount(userId: string, next: PublicAccount): Promise<void> {
-  const db = await getSql();
+  await withTransaction((tx) => saveAccountInTransaction(tx, userId, next));
+}
+
+export async function saveAccountInTransaction(db: Sql, userId: string, next: PublicAccount): Promise<void> {
   const cur = (await db<Row>`select verification_status, account_type, live_session is not null as live_now, profile, live_settings from om_account where user_id = ${userId}`)[0];
   if (!cur) throw new Error("Account not found.");
   const idGate = platformEnv("ONLYMEN_ID_VERIFICATION") === "on";

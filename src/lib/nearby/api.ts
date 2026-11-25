@@ -42,7 +42,7 @@ async function base() {
   const cf = (request as Request & { cf?: { latitude?: unknown; longitude?: unknown } }).cf;
   const la = Number(cf?.latitude), ln = Number(cf?.longitude);
   const approxCell = geo.isValidCoord(la, ln) ? geo.encode(la, ln) : null;
-  return { enabled, uid, repo, db: uid ? await dbm.getSql() : null, allow, secret, approxCell, assertSameSite: iso.assertSameSiteRequest, isAdmin: inv.isAdminUser };
+  return { enabled, uid, repo, db: uid ? await dbm.getSql() : null, allow, secret, approxCell, assertSameSite: iso.assertSameSiteRequest, isAdmin: inv.isAdminUser, withTransaction: dbm.withTransaction };
 }
 
 const fail = (e: unknown, repo: { NearbyError: new (...a: never[]) => Error }) => {
@@ -188,7 +188,12 @@ export const adminReportsFn = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<NResult<ReportRow[]>> => {
     const c = await admin();
     if (!c) return DENIED;
-    return { ok: true, value: await c.repo.adminReports(c.db, data.status) };
+    const audit = await import("../admin/audit.server");
+    const value = await c.withTransaction(async (tx) => {
+      await audit.writeAdminAudit(tx, c.uid, "reports.list", "report_queue");
+      return c.repo.adminReports(tx, data.status);
+    });
+    return { ok: true, value };
   });
 
 export const adminReportLogFn = createServerFn({ method: "POST" })
@@ -196,8 +201,13 @@ export const adminReportLogFn = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const c = await admin();
     if (!c) return DENIED;
-    await c.repo.reportAudit(c.db, c.uid, "viewed", data);
-    return { ok: true as const, value: await c.repo.reportLog(c.db, data) };
+    const audit = await import("../admin/audit.server");
+    const value = await c.withTransaction(async (tx) => {
+      await c.repo.reportAudit(tx, c.uid, "viewed", data);
+      await audit.writeAdminAudit(tx, c.uid, "reports.audit_view", "report", data);
+      return c.repo.reportLog(tx, data);
+    });
+    return { ok: true as const, value };
   });
 
 export const adminDecideReportFn = createServerFn({ method: "POST" })
@@ -209,9 +219,14 @@ export const adminDecideReportFn = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<NResult<true>> => {
     const c = await admin(true);
     if (!c) return DENIED;
-    if (!data.decision) return { ok: false, error: "Unknown decision." };
+    const decision = data.decision;
+    if (!decision) return { ok: false, error: "Unknown decision." };
     try {
-      await c.repo.decideReport(c.db, c.uid, data.id, data.decision, data.note);
+      const audit = await import("../admin/audit.server");
+      await c.withTransaction(async (tx) => {
+        await c.repo.decideReport(tx, c.uid, data.id, decision, data.note);
+        await audit.writeAdminAudit(tx, c.uid, "reports.decide", "report", data.id);
+      });
       return { ok: true, value: true };
     } catch (e) {
       return fail(e, c.repo);
@@ -228,7 +243,11 @@ export const adminSetPlusFn = createServerFn({ method: "POST" })
     if (!c) return DENIED;
     const target = await c.repo.userIdFor(c.db, data.username);
     if (!target) return { ok: false, error: "No account with that username." };
-    await c.repo.setPlus(c.db, c.uid, target, data.on);
+    const audit = await import("../admin/audit.server");
+    await c.withTransaction(async (tx) => {
+      await c.repo.setPlus(tx, c.uid, target, data.on);
+      await audit.writeAdminAudit(tx, c.uid, data.on ? "plus.grant" : "plus.revoke", "account", target);
+    });
     return { ok: true, value: true };
   });
 

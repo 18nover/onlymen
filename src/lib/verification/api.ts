@@ -26,7 +26,7 @@ async function base() {
   ]);
   const request = getRequest();
   const uid = await priv.allowedSessionUserId(request.headers);
-  return { uid, repo, db: uid ? await dbm.getSql() : null, assertSameSite: iso.assertSameSiteRequest, isAdmin: inv.isAdminUser, enabled: repo.idVerificationEnabled() };
+  return { uid, repo, db: uid ? await dbm.getSql() : null, assertSameSite: iso.assertSameSiteRequest, isAdmin: inv.isAdminUser, enabled: repo.idVerificationEnabled(), withTransaction: dbm.withTransaction };
 }
 
 const fail = (e: unknown, repo: { VerificationError: new (...a: never[]) => Error }) => {
@@ -97,7 +97,12 @@ export const adminVerificationsFn = createServerFn({ method: "GET" })
     if (!c) return DENIED;
     const [{ activeVerifier }, { platformEnv }] = await Promise.all([import("../age-gate/verifiers.ts"), import("../platform/runtime.ts")]);
     const av = activeVerifier();
-    return { ok: true, value: { rows: await c.repo.adminQueue(c.db, data.status), ageVerifier: { name: av.name, devOnly: av.devOnly }, selfReview: platformEnv("ONLYMEN_KYC_SELF_REVIEW") === "on" } };
+    const rows = await c.withTransaction(async (tx) => {
+      const audit = await import("../admin/audit.server");
+      await audit.writeAdminAudit(tx, c.uid, "verification.queue.list", "verification_queue");
+      return c.repo.adminQueue(tx, data.status);
+    });
+    return { ok: true, value: { rows, ageVerifier: { name: av.name, devOnly: av.devOnly }, selfReview: platformEnv("ONLYMEN_KYC_SELF_REVIEW") === "on" } };
   });
 
 export const adminVerificationFn = createServerFn({ method: "GET" })
@@ -105,9 +110,15 @@ export const adminVerificationFn = createServerFn({ method: "GET" })
   .handler(async ({ data }): Promise<VResult<AdminDetail>> => {
     const c = await admin();
     if (!c) return DENIED;
-    const d = await c.repo.adminDetail(c.db, data);
+    const audit = await import("../admin/audit.server");
+    const d = await c.withTransaction(async (tx) => {
+      const detail = await c.repo.adminDetail(tx, data);
+      if (!detail) return null;
+      await c.repo.audit(tx, c.uid, "viewed", detail.id);
+      await audit.writeAdminAudit(tx, c.uid, "verification.detail.view", "verification", detail.id);
+      return detail;
+    });
     if (!d) return { ok: false, error: "Unknown verification." };
-    await c.repo.audit(c.db, c.uid, "viewed", d.id);
     return { ok: true, value: d };
   });
 
@@ -123,7 +134,12 @@ export const adminDecideVerificationFn = createServerFn({ method: "POST" })
     c.assertSameSite();
     if (!data.action) return { ok: false, error: "Unknown action." };
     try {
-      const to = await c.repo.decide(c.db, c.uid, data.id, data.action, data.reason);
+      const audit = await import("../admin/audit.server");
+      const to = await c.withTransaction(async (tx) => {
+        const status = await c.repo.decide(tx, c.uid, data.id, data.action, data.reason);
+        await audit.writeAdminAudit(tx, c.uid, `verification.${data.action}`, "verification", data.id);
+        return status;
+      });
       console.info(`[kyc] ${data.id} -> ${to}`);
       return { ok: true, value: to };
     } catch (e) {

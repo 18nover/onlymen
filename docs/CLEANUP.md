@@ -42,3 +42,7 @@ No tables or columns went unused because of ONL-11.
 - Unused npm dependencies (shadcn/radix UI kit, recharts, zustand and others) stay installed so the lockfile doesn't change. They could be pruned in a separate commit.
 - The tip menu and cam-platform "private shows" in the live rules stay, because cam rooms stay.
 - "Fine dining" and "Cocktail bars" stay as ordinary interests. Ethnicity stays optional self-ID.
+
+## Follow-up audit (2026-11-25)
+
+The `/__grok/` assets and routes are still used by the install tutorial, PWA middleware, private-path policy, and builder preview. They are platform infrastructure and remain in place. A source-reference review found no other safely removable app-owned modules; the remaining unreferenced-looking helpers are retained for the builder integrations and runtime wiring described above.

@@ -77,6 +77,8 @@ export const Route = createFileRoute("/api/owner-seed")({
           on conflict (user_id) do update set username = excluded.username, dob = excluded.dob, onboarding = excluded.onboarding, role = 'owner', updated_at = now()`;
         const hasAge = await db`select 1 from om_consent where user_id = ${userId} and key = 'age18' and granted`;
         if (!hasAge.length) await db`insert into om_consent (user_id, key, granted, version, source, at) values (${userId}, 'age18', true, ${c.CONSENT_VERSIONS.age18}, 'owner-seed:dob', now())`;
+        const audit = await import("@/lib/admin/audit.server");
+        await audit.writeAdminAudit(db, userId, `owner_seed.${action}`, "account", userId);
 
         const others = await db<{ username: string | null; created: string }>`select a.username, u."createdAt"::text as created from "user" u left join om_account a on a.user_id = u.id where u.id <> ${userId} order by u."createdAt"`;
         console.info(`[owner-seed] ${action} owner account ${userId}`);

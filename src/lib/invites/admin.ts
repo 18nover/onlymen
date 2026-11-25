@@ -22,7 +22,7 @@ async function adminCtx() {
   if (!uid) return null;
   const db = await dbm.getSql();
   if (!(await inv.isAdminUser(db, uid))) return null;
-  return { uid, db, inv, assertSameSite: iso.assertSameSiteRequest };
+  return { uid, db, inv, dbm, assertSameSite: iso.assertSameSiteRequest };
 }
 
 const obj = (input: unknown) => (input && typeof input === "object" ? (input as Record<string, unknown>) : {});
@@ -30,6 +30,8 @@ const obj = (input: unknown) => (input && typeof input === "object" ? (input as 
 export const listInvitesFn = createServerFn({ method: "GET" }).handler(async (): Promise<AdminResult<InviteRow[]>> => {
   const c = await adminCtx();
   if (!c) return DENIED;
+  const audit = await import("../admin/audit.server");
+  await audit.writeAdminAudit(c.db, c.uid, "invites.list", "invite_code");
   return { ok: true, value: await c.inv.listInvites(c.db) };
 });
 
@@ -42,7 +44,12 @@ export const createInvitesFn = createServerFn({ method: "POST" })
     const c = await adminCtx();
     if (!c) return DENIED;
     c.assertSameSite();
-    const codes = await c.inv.createInvites(c.db, { count: data.count, maxUses: data.maxUses, note: data.note || null, createdBy: c.uid });
+    const audit = await import("../admin/audit.server");
+    const codes = await c.dbm.withTransaction(async (tx) => {
+      const created = await c.inv.createInvites(tx, { count: data.count, maxUses: data.maxUses, note: data.note || null, createdBy: c.uid });
+      await audit.writeAdminAudit(tx, c.uid, "invites.create", "invite_code_batch");
+      return created;
+    });
     console.info(`[invites] admin created ${codes.length} code(s)`);
     return { ok: true, value: codes };
   });
@@ -57,6 +64,11 @@ export const setInviteRevokedFn = createServerFn({ method: "POST" })
     if (!c) return DENIED;
     c.assertSameSite();
     if (!Number.isFinite(data.id) || data.id <= 0) return { ok: false, error: "Unknown code." };
-    const done = await c.inv.setRevoked(c.db, data.id, data.revoked);
+    const audit = await import("../admin/audit.server");
+    const done = await c.dbm.withTransaction(async (tx) => {
+      const updated = await c.inv.setRevoked(tx, data.id, data.revoked);
+      if (updated) await audit.writeAdminAudit(tx, c.uid, data.revoked ? "invites.revoke" : "invites.restore", "invite_code", String(data.id));
+      return updated;
+    });
     return done ? { ok: true, value: true } : { ok: false, error: "Unknown code." };
   });
