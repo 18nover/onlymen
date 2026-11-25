@@ -21,7 +21,7 @@ OnlyMen is a private, invite-only community for adult men, with creator profiles
 
 ## Changes in this branch
 
-- Admin endpoints check the signed-in account's admin/owner role on the server and write append-only audit entries for authorized admin reads and actions. This includes invite management, reports, Plus grants, creator verification, KYC-file access, and owner bootstrap.
+- Admin management endpoints check the signed-in account's admin/owner role on the server and write append-only audit entries for authorized admin reads and actions. This covers invite management, reports, Plus grants, creator verification, and KYC-file access. The one-time owner bootstrap remains separately protected by its server token and also writes an audit entry.
 - Failed password sign-ins are limited to five per 15 minutes independently by IP and normalized account identifier. Stored keys are hashed.
 - Account and profile saves now write account fields, consents, photo attachment/order, shows, and reminders in one transaction.
 - The cleanup review found no safe app-owned code to remove. Remaining `/__grok/` paths and apparently unused helpers are required platform, runtime, route, or test infrastructure; the review is recorded in `docs/CLEANUP.md`.
