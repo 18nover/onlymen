@@ -27,6 +27,7 @@ Never put secrets in these files. Use environment variable **names** only, never
 | [VERIFICATION.md](VERIFICATION.md) | Creator ID verification, 2257 records, `/admin/verifications` |
 | [LIVE.md](LIVE.md) | Partner-compliance live model, hand-offs to onlymen.live, creator rooms |
 | [NEARBY.md](NEARBY.md) | Opt-in Nearby grid, location privacy, reports |
+| [legal-placeholders.md](legal-placeholders.md) | Current unresolved placeholders in all legal pages |
 
 ### Engineering
 | File | What it covers |
