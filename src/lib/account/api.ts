@@ -177,23 +177,39 @@ export const logInFn = createServerFn({ method: "POST" })
     const c = await ctx();
     c.assertSameSite();
     const generic = { ok: false as const, error: "That email/username and password don't match.", field: "password" as const };
+    if (!data.identifier || !data.password) return generic;
     const email = data.identifier.includes("@") ? data.identifier : await c.repo.emailForUsername(data.identifier);
-    if (!email || !data.password) return generic;
+    const [{ getSql }, rateLimit] = await Promise.all([import("../db"), import("./login-rate-limit.server")]);
+    const db = await getSql();
+    const keys = rateLimit.loginRateKeys(c.headers, email ?? data.identifier);
+    if (await rateLimit.isLoginRateLimited(db, keys)) {
+      return { ok: false, error: "Too many failed sign-in attempts. Try again in 15 minutes.", field: "password" };
+    }
+    if (!email) {
+      await rateLimit.recordFailedLogin(db, keys);
+      return generic;
+    }
+    let res: Awaited<ReturnType<typeof c.auth.api.signInEmail>>;
     try {
-      const res = await c.auth.api.signInEmail({ body: { email, password: data.password, rememberMe: true }, headers: c.headers });
-      const { isUserAllowed } = await import("../private/allowlist.server");
-      if (!(await isUserAllowed(res.user.id))) {
-        await c.auth.api.signOut({ headers: c.headers }).catch(() => {});
-        return generic;
-      }
-      const acc = await c.repo.loadAccount(res.user.id);
-      if (!acc) return generic;
-      return { ok: true, value: acc };
+      res = await c.auth.api.signInEmail({ body: { email, password: data.password, rememberMe: true }, headers: c.headers });
     } catch (e) {
       const code = errCode(e);
       if (!/INVALID|NOT_FOUND|CREDENTIAL/.test(code)) console.error("[accounts] log-in failed:", code);
+      await rateLimit.recordFailedLogin(db, keys);
       return generic;
     }
+    const { isUserAllowed } = await import("../private/allowlist.server");
+    if (!(await isUserAllowed(res.user.id))) {
+      await c.auth.api.signOut({ headers: c.headers }).catch(() => {});
+      await rateLimit.recordFailedLogin(db, keys);
+      return generic;
+    }
+    const acc = await c.repo.loadAccount(res.user.id);
+    if (!acc) {
+      await rateLimit.recordFailedLogin(db, keys);
+      return generic;
+    }
+    return { ok: true, value: acc };
   });
 
 export const logOutFn = createServerFn({ method: "POST" }).handler(async () => {
