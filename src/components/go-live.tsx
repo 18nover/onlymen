@@ -5,6 +5,7 @@ import { BellRing, CalendarPlus, Check, Clock, Coins, Eye, Heart, Lock, MessageC
 import { Chips, GoldButton, TextField, inputCls } from "@/components/account-ui";
 import { LiveBadge, LiveRing } from "@/components/live-ui";
 import { useAccount } from "@/lib/account/use-account";
+import { usePaymentsEnabled } from "@/lib/use-payments";
 import { useImageUrl } from "@/lib/account/media";
 import { emptyLive } from "@/lib/account/constants";
 import { randomId } from "@/lib/account/store";
@@ -141,6 +142,7 @@ function Recap({ r, onDismiss }: { r: LiveRecap; onDismiss: () => void }) {
 }
 
 function PreflightSheet({ a, live, onClose, onStart }: { a: PublicAccount; live: CreatorLive; onClose: () => void; onStart: (s: { title: string; tags: string[]; tipGoal: string; roomUrl: string }) => void }) {
+  const payments = usePaymentsEnabled();
   const [title, setTitle] = useState("");
   const [tags, setTags] = useState<string[]>(live.categories.slice(0, 3));
   const [tipGoal, setTipGoal] = useState("");
@@ -154,8 +156,8 @@ function PreflightSheet({ a, live, onClose, onStart }: { a: PublicAccount; live:
   const options = [...live.rooms.map((r) => ({ url: r.url, label: r.platform, sub: r.url, soon: false })), { url: "", label: "OnlyMen Live room", sub: `${liveHost()}/${a.username}`, soon: true }];
   const start = () => {
     if (title.trim().length < 3) return setErr("Give your stream a title.");
-    if (tipGoal && !/^\d+$/.test(tipGoal)) return setErr("Tip goal should be a whole dollar amount.");
-    onStart({ title: title.trim(), tags, tipGoal, roomUrl: room });
+    if (payments && tipGoal && !/^\d+$/.test(tipGoal)) return setErr("Tip goal should be a whole dollar amount.");
+    onStart({ title: title.trim(), tags, tipGoal: payments ? tipGoal : "", roomUrl: room });
   };
   return createPortal(
     <div className="fixed inset-0 z-[80] flex items-end justify-center bg-ink/80 backdrop-blur-md sm:items-center sm:p-4" role="dialog" aria-modal="true" aria-labelledby="preflight-title" onClick={onClose}>
@@ -171,7 +173,7 @@ function PreflightSheet({ a, live, onClose, onStart }: { a: PublicAccount; live:
         <div className="mt-6 grid gap-5">
           <TextField label="Stream title" value={title} maxLength={70} onChange={(e) => setTitle(e.target.value)} placeholder="Late-night lounge: wine & whispers" autoFocus />
           <Chips label="Category & tags" options={LIVE_CATEGORIES} value={tags} max={4} onChange={setTags} />
-          <TextField label="Tip goal" optional prefix="$" inputMode="numeric" value={tipGoal} onChange={(e) => setTipGoal(e.target.value)} placeholder="250" hint="Shown as a progress bar on your live card." />
+          {payments && <TextField label="Tip goal" optional prefix="$" inputMode="numeric" value={tipGoal} onChange={(e) => setTipGoal(e.target.value)} placeholder="250" hint="Shown as a progress bar on your live card." />}
           <fieldset>
             <legend className="text-sm font-semibold text-ivory">Send viewers to</legend>
             <div className="mt-2 grid gap-2" role="radiogroup">

@@ -65,3 +65,13 @@ test("five failures block by IP or account independently for the rolling window"
   await pg.query(`update om_login_attempts set at = now() - interval '16 minutes'`);
   assert.equal(await isLoginRateLimited(db, ipKey), false, "expired failures no longer block sign-in");
 });
+
+test("rate-limit checks fail open if the attempts table is missing", async () => {
+  const broken = ((strings: TemplateStringsArray, ...values: unknown[]) => {
+    void strings; void values;
+    return Promise.reject(new Error("relation om_login_attempts does not exist"));
+  }) as unknown as Sql;
+  const keys = loginRateKeys(new Headers({ "cf-connecting-ip": "203.0.113.8" }), "a@b.c");
+  assert.equal(await isLoginRateLimited(broken, keys), false);
+  await recordFailedLogin(broken, keys);
+});

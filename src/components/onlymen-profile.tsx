@@ -22,6 +22,7 @@ import { WatchLiveLink } from "@/components/live-ui";
 import { AgeGate, DemoBadge, Footer, Header, MobileNav, StatusDot } from "@/components/onlymen-ui";
 import { useAgeGate, useCity } from "@/lib/onlymen-hooks";
 import { cityLabel, findModel, fmtActive, fmtHeight, models, type Model } from "@/lib/models";
+import { usePaymentsEnabled } from "@/lib/use-payments";
 
 const crops = [
   { pos: "50% 30%", scale: 1 },
@@ -97,6 +98,7 @@ function Card({ title, icon, children, id }: { title: string; icon: React.ReactN
 }
 
 function ActionPanel({ m }: { m: Model }) {
+  const payments = usePaymentsEnabled();
   const [tip, setTip] = useState<number | null>(null);
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -136,25 +138,29 @@ function ActionPanel({ m }: { m: Model }) {
         </div>
       )}
 
-      <div className="mt-6">
-        <p className="text-[11px] font-bold tracking-[0.2em] text-dim uppercase">Send a tip</p>
-        <div className="mt-2.5 grid grid-cols-4 gap-2">
-          {[5, 10, 25, 50].map((v) => (
-            <button
-              key={v}
-              onClick={() => setTip(v)}
-              className={`h-11 rounded-xl border text-sm font-bold transition ${tip === v ? "bg-gold border-transparent" : "border-gold/40 text-gold-hi hover:border-gold"}`}
-            >
-              ${v}
-            </button>
-          ))}
+      {payments && (
+        <div className="mt-6">
+          <p className="text-[11px] font-bold tracking-[0.2em] text-dim uppercase">Send a tip</p>
+          <div className="mt-2.5 grid grid-cols-4 gap-2">
+            {[5, 10, 25, 50].map((v) => (
+              <button
+                key={v}
+                onClick={() => setTip(v)}
+                className={`h-11 rounded-xl border text-sm font-bold transition ${tip === v ? "bg-gold border-transparent" : "border-gold/40 text-gold-hi hover:border-gold"}`}
+              >
+                ${v}
+              </button>
+            ))}
+          </div>
+          {tip && <p className="mt-2 text-xs text-gold-hi">Join free to send ${tip}. Tips go straight to {m.name}.</p>}
         </div>
-        {tip && <p className="mt-2 text-xs text-gold-hi">Join free to send ${tip}. Tips go straight to {m.name}.</p>}
-      </div>
-      <div className="mt-4 grid grid-cols-2 gap-2">
-        <button className="flex h-12 items-center justify-center gap-2 rounded-full bg-gold text-sm font-bold glow-gold transition hover:brightness-110">
-          <Coins className="size-4" /> Tip {tip ? `$${tip}` : m.name}
-        </button>
+      )}
+      <div className={`mt-4 grid gap-2 ${payments ? "grid-cols-2" : "grid-cols-1"}`}>
+        {payments && (
+          <button className="flex h-12 items-center justify-center gap-2 rounded-full bg-gold text-sm font-bold glow-gold transition hover:brightness-110">
+            <Coins className="size-4" /> Tip {tip ? `$${tip}` : m.name}
+          </button>
+        )}
         <a href="#message" className="flex h-12 items-center justify-center gap-2 rounded-full border border-gold/50 text-sm font-bold text-gold-hi transition hover:bg-gold/10">
           <MessageCircle className="size-4" /> Message
         </a>

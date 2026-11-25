@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { usePaymentsEnabled } from "@/lib/use-payments";
 import { Ban, CalendarClock, Coins, Plus, Radio, ShieldCheck, Trash2, Users, X } from "lucide-react";
 import { CheckRow, Chips, SelectField, TextField, Toggle, inputCls } from "@/components/account-ui";
 import { StepHead, type StepProps } from "./steps";
@@ -61,6 +62,7 @@ function TagInput({ label, value, onChange, placeholder, prefix }: { label: stri
 }
 
 export function LiveStep({ account, save, onNext }: StepProps) {
+  const payments = usePaymentsEnabled();
   const l: CreatorLive = { ...emptyLive(), ...account.live };
   const set = (patch: Partial<CreatorLive>) => save((a) => ({ ...a, live: { ...emptyLive(), ...a.live, ...patch } }));
   const prev = latestConsents(account.consents);
@@ -74,7 +76,7 @@ export function LiveStep({ account, save, onNext }: StepProps) {
     if (!l.streams) return null;
     if (!l.rooms.length && !l.useOnlyMenLive) return "Add a room link, or choose to use your OnlyMen Live room.";
     if (!LIVE_CONSENTS.every((c) => ack[c.key])) return "Accept the co-performer policy and Live Stream Rules to stream.";
-    const bad = l.tipMenu.find((t) => t.label.trim() && !/^\d+(\.\d{1,2})?$/.test(t.price.trim()));
+    const bad = payments && l.tipMenu.find((t) => t.label.trim() && !/^\d+(\.\d{1,2})?$/.test(t.price.trim()));
     if (bad) return `Enter a token/dollar amount for “${bad.label}”.`;
     save((a) => ({ ...a, consents: [...a.consents, ...LIVE_CONSENTS.map((c) => consentRecord(c.key, true, "onboarding:live"))] }));
     return null;
@@ -129,7 +131,9 @@ export function LiveStep({ account, save, onNext }: StepProps) {
               </div>
             </Card>
 
-            <Card title="Tips & private shows" icon={<Coins className="size-4" />}>
+            <Card title={payments ? "Tips & private shows" : "Recordings"} icon={<Coins className="size-4" />}>
+              {payments && (
+                <>
               <div className="flex items-center justify-between">
                 <p className="text-sm font-semibold text-ivory">Tip menu</p>
                 <button type="button" onClick={() => set({ tipMenu: [...l.tipMenu, { id: randomId(4), label: "", price: "" }] })} className="inline-flex h-9 items-center gap-1.5 rounded-full border border-gold/50 px-3 text-xs font-bold text-gold-hi hover:bg-gold/10"><Plus className="size-3.5" /> Add item</button>
@@ -152,6 +156,8 @@ export function LiveStep({ account, save, onNext }: StepProps) {
                     );
                   })}
                 </div>
+              )}
+                </>
               )}
               <Toggle checked={l.recordingsAllowed} onChange={(v) => set({ recordingsAllowed: v })} label="Allow recordings & replays" detail="Only if everyone on camera agreed to be recorded and published." />
             </Card>

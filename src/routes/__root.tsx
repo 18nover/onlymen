@@ -27,7 +27,7 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { title: APP_NAME },
-      { name: "description", content: "OnlyMen: a private community of verified adult creators for gay men. 18+. Free to join, tips only." },
+      { name: "description", content: "OnlyMen: a private, invite-only community of verified adult creators for gay men. 18+." },
       { name: "theme-color", content: "#070405" },
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-capable", content: "yes" },

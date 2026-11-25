@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { useIdVerification } from "@/lib/verification/use-verification";
+import { usePaymentsEnabled } from "@/lib/use-payments";
 import { createPortal } from "react-dom";
 import { Link } from "@tanstack/react-router";
 import {
@@ -350,6 +351,7 @@ function VerifyStepServer({ account, onNext }: StepProps) {
 }
 
 function VerifyStepLocal({ account, save, onNext }: StepProps) {
+  const payments = usePaymentsEnabled();
   const c = account.creator ?? emptyCreator();
   const set = (patch: Partial<typeof c>) => save((a) => ({ ...a, creator: { ...(a.creator ?? emptyCreator()), ...patch } }));
   const prev = latestConsents(account.consents);
@@ -407,6 +409,7 @@ function VerifyStepLocal({ account, save, onNext }: StepProps) {
             </CheckRow>
           ))}
         </Card>
+        {payments && (
         <Card className="grid gap-5">
           <h2 className="flex items-center gap-2 font-sans text-sm font-bold tracking-[0.2em] text-ivory uppercase"><CircleDollarSign className="size-4 text-gold" /> Payouts &amp; tax <span className="rounded-full border border-line px-2 py-0.5 text-[10px] tracking-wider text-dim">Set up after approval</span></h2>
           <div className="grid gap-5 sm:grid-cols-2">
@@ -417,6 +420,7 @@ function VerifyStepLocal({ account, save, onNext }: StepProps) {
           </div>
           <p className="text-xs text-dim">We'll collect bank and tax details securely through our payments partner once you're verified. Never enter an SSN or bank number here.</p>
         </Card>
+        )}
       </div>
     </>
   );

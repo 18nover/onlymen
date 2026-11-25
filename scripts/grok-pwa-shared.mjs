@@ -212,8 +212,10 @@ export function readGrokProjectId() {
 }
 
 export function readGrokExtensionsEnabled() {
+  // Default off: OnlyMen must not inject grok.com/grok-app-builder into the page.
+  // Set VITE_GROK_EXTENSIONS=1 only if that script is explicitly wanted.
   const fromProcess = typeof process !== "undefined" ? process.env?.VITE_GROK_EXTENSIONS : "";
-  return String(fromProcess ?? "").trim() !== "0";
+  return String(fromProcess ?? "").trim() === "1";
 }
 
 export function readXCreator() {
