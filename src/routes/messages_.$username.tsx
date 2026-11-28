@@ -7,7 +7,7 @@ import { useAccount } from "@/lib/account/use-account";
 import { sendMessageFn, threadFn } from "@/lib/chat/api";
 import type { ChatMessage } from "@/lib/chat/repo.server";
 
-export const Route = createFileRoute("/messages/$username")({
+export const Route = createFileRoute("/messages_/$username")({
   head: ({ params }) => ({ meta: [{ title: `Message @${params.username} — OnlyMen` }, { name: "robots", content: "noindex, nofollow" }] }),
   component: ThreadPage,
 });

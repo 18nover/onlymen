@@ -4,13 +4,14 @@ import { AuthShell, FormError, GoldButton, PasswordField, TextField, Field, inpu
 import { accountStore, AccountError } from "@/lib/account/store";
 import { useAccount } from "@/lib/account/use-account";
 import { normalizeCode } from "@/lib/invites/codes";
+import { BETA_FEEDBACK_AGREE, BETA_TERMS } from "@/lib/beta";
 import { maxDob, passwordStrength, validateDob, validateEmail, validatePassword, validateUsername } from "@/lib/account/validation";
 
 const OG_TITLE = "You're invited to OnlyMen";
 const OG_DESC = "A private, invite-only community for adult men. 18+ only.";
 const OG_IMAGE = "https://onlymen.18nover.workers.dev/og-invite.jpg";
 
-export const Route = createFileRoute("/join/$code")({
+export const Route = createFileRoute("/join_/$code")({
   head: () => ({
     meta: [
       { title: `${OG_TITLE} — 18+` },
@@ -43,6 +44,7 @@ function InviteLanding() {
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [serverErr, setServerErr] = useState<{ msg: string; field?: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  const [agree, setAgree] = useState(false);
   const [taken, setTaken] = useState(false);
 
   useEffect(() => {
@@ -72,7 +74,8 @@ function InviteLanding() {
     setBusy(true);
     setServerErr(null);
     try {
-      await accountStore.signUp({ email, username, password, dob, type: "member", inviteCode: code });
+      if (!agree) return setServerErr({ msg: "Please agree to give feedback during the beta." });
+      await accountStore.signUp({ email, username, password, dob, type: "member", inviteCode: code, agreeFeedback: true });
       nav({ to: "/onboarding" });
     } catch (err) {
       setServerErr(err instanceof AccountError ? { msg: err.message, field: err.field } : { msg: "Something went wrong. Try again." });
@@ -120,7 +123,12 @@ function InviteLanding() {
             <Field label="Date of birth" htmlFor="invite-dob" error={show("dob")} hint="You must be 18+.">
               <input id="invite-dob" type="date" max={maxDob()} min="1900-01-01" value={dob} onChange={(e) => setDob(e.target.value)} onBlur={() => setTouched((t) => ({ ...t, dob: true }))} aria-invalid={!!show("dob")} className={`${inputCls} h-12 [color-scheme:dark]`} />
             </Field>
-            <GoldButton type="submit" loading={busy} className="mt-2 w-full" disabled={!valid}>Accept invite</GoldButton>
+            <p className="text-sm leading-relaxed text-muted">{BETA_TERMS}</p>
+            <label className="flex items-start gap-3 text-sm text-ivory/90">
+              <input type="checkbox" className="mt-1" checked={agree} onChange={(e) => setAgree(e.target.checked)} required />
+              <span>{BETA_FEEDBACK_AGREE}</span>
+            </label>
+            <GoldButton type="submit" loading={busy} className="mt-2 w-full" disabled={!valid || !agree}>Accept invite</GoldButton>
             <p className="text-center text-xs leading-relaxed text-dim">By creating an account you confirm you are 18 or older. Next you'll review our Terms, Privacy Policy and Community Guidelines.</p>
             <p className="text-center text-sm text-muted">Already a member? <Link to="/login" className="font-semibold text-gold-hi underline-offset-4 hover:underline">Log in</Link></p>
           </form>

@@ -97,7 +97,11 @@ function AdminInvites() {
           <h1 className="mt-1 flex items-center gap-3 font-display text-4xl font-semibold"><Ticket className="size-7 text-gold" /> Invite codes</h1>
           <p className="mt-2 text-sm text-muted">{counts.active} active · {counts.used} used · {counts.revoked} revoked</p>
         </div>
-        <Link to="/me" className="text-sm font-semibold text-gold-hi underline-offset-4 hover:underline">Back to my profile</Link>
+        <nav className="flex flex-wrap gap-x-4 gap-y-1 text-sm font-semibold text-gold-hi">
+          <Link to="/admin/feedback" className="underline-offset-4 hover:underline">Feedback</Link>
+          <Link to="/admin/reports" className="underline-offset-4 hover:underline">Reports</Link>
+          <Link to="/me" className="underline-offset-4 hover:underline">Profile</Link>
+        </nav>
       </header>
 
       <section className="rounded-2xl border border-line bg-surface/60 p-5">

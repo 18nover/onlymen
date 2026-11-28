@@ -6,11 +6,19 @@ OnlyMen is a private, invite-only community for adult men, with creator profiles
 
 Working branch is still `invite-codes`. Production `main` is unchanged at `54434ef`. Do not merge to `main`, touch DNS, or change Vercel production without Jerry's yes.
 
+The test Worker at [onlymen.18nover.workers.dev](https://onlymen.18nover.workers.dev) is the invite-codes preview (no custom domain, no DNS change). Worker vars: `ONLYMEN_INVITES=on`, `ONLYMEN_NEARBY=on`, `ONLYMEN_AGE_GATE=on`, `ONLYMEN_PAYMENTS` unset. A later paragraph in this file may still describe the pre-deploy state; the live preview is this branch.
+
+Personal invite links `/join/<CODE>` are age-exempt so Open Graph can unfurl. The branded landing uses `public/og-invite.jpg`. Route files for `/join/$code`, `/me/settings`, and `/messages/$username` use the `me_.verify` flattening pattern so they are not wrapped by the parent page. Logged-out `/`, `/nearby`, `/me/settings`, and `/messages` still show the 18+ age gate, then the private coming-soon page — testers sign in from `/join` or `/login`.
+
+Beta terms (short): this beta is free, no payments, every feature is free for now; testers must give real feedback to help grow the app, or they'll be removed from the beta. Those terms are on the invite cards, the ready-to-send DM text, and the `/join` pages, with an "I agree to give feedback" checkbox required at signup. Members can send notes from `/me/feedback` (buttons on Profile and Settings). Jerry can review them, and see who hasn't sent any, at `/admin/feedback`.
+
 This branch now has 1:1 text chat (`/messages` and `/messages/$username`, polling, blocks and a 20/min send limit), a three-item nav (Nearby, Live, Profile), Settings inside Profile at `/me/settings`, and personal invite links at `/join/<CODE>` with a branded landing page and `public/og-invite.jpg`. Nearby's Grid view shows the full member directory (people who share an area first, nearest first, when location is on). Browse is no longer a nav item. AgeChecker mentions were replaced with a note that Stripe Identity is the planned verifier; Stripe itself is not built yet. Clickthrough remains the current age verifier.
 
-Migrations 0004–0009 were already on the shared Neon `onlymen` database. Additive migration `0010_messages.sql` (`om_message`) is in the repo but was not applied: the Neon MCP Agent role can write to existing tables but does not have CREATE on schema public, and cannot SET ROLE to `onlymen_owner`. Apply 0010 (and insert `_migrations` name `0010_messages.sql`) in the Neon SQL editor before relying on chat against the shared database. Local tests apply it through PGlite.
+Migrations 0004–0009 were already on the shared Neon `onlymen` database. 0010 and 0011 still need to be applied (see above). Local tests apply numbered migrations through PGlite.
 
-Ten single-use invite codes (note "beta testers Nov 2026") were hashed into `invite_codes`. Plaintext codes and test-site links (`https://onlymen.18nover.workers.dev/join/…`) live only at `/workspace/onlymen-invite-codes.txt` on the box — not in this repo. The test Worker has not been redeployed, so those landing pages are not live yet.
+Fifteen single-use invite codes (note "beta testers Nov 2026") are hashed into `invite_codes`. Plaintext codes and test-site links live only at `/workspace/onlymen-invite-codes.txt` on the box — not in this repo. The send kit (cards + a local index page) is at `/workspace/onlymen-invite-kit/` and must stay off git.
+
+Additive migrations `0010_messages.sql` (`om_message`) and `0011_feedback.sql` (`om_feedback`) are in the repo but were not applied: the Neon MCP Agent role cannot CREATE on schema public. Jerry can run both files in the Neon SQL editor, then insert `_migrations` names `0010_messages.sql` and `0011_feedback.sql`. A copy of 0011 is also at `/workspace/onlymen-0011-feedback.sql`. Chat and in-app feedback need those tables on the shared database.
 
 Previous snapshot from 25 November 2026:
 
@@ -23,13 +31,13 @@ Jerry merged Copilot's hardening pull request, [PR #2](https://github.com/18nove
 
 There is no Copilot Nearby-map pull request, and no other open PRs. Nearby already lives on `invite-codes` (ONL-13): the page opens on the map, the Map/Grid toggle works in code, and Nearby is in the mobile bottom nav when `ONLYMEN_NEARBY` is on.
 
-The test Worker at [onlymen.18nover.workers.dev](https://onlymen.18nover.workers.dev) is running an older `invite-codes` deploy. Logged-out app routes show the 18+ age gate; the draft Terms, Privacy, and Community Guidelines pages load. It has not been redeployed with PR #2 or the beta fixes below. This work did not deploy anything (no Cloudflare token on hand, and production/DNS stay off limits).
+Earlier on 25 November the test Worker was still on an older deploy. It has since been updated from this branch; production and DNS were not touched.
 
 ## Copilot PR #2 review
 
 The change is safe to keep. It adds two additive migrations only (`0008_admin_audit.sql` and `0009_login_attempts.sql`), no new npm packages, no escort or paid-booking wording, and no secrets. Failed sign-in counters store hashed keys, not raw IPs or emails. Admin management endpoints check the admin/owner role on the server and write an append-only audit row. The one-time owner bootstrap stays token-gated and is also audited. Account and profile saves run in one transaction. No `/__grok/` files were deleted; the review is in `docs/CLEANUP.md`. `docs/legal-placeholders.md` lists the still-open legal fields.
 
-0008 and 0009 are now on the shared Neon database (along with 0004–0007). Chat still needs 0010, which is not applied yet (see above).
+0008 and 0009 are now on the shared Neon database (along with 0004–0007). Chat still needs 0010, and feedback needs 0011 (see above).
 
 ## Beta fixes on this branch
 
@@ -46,7 +54,8 @@ The change is safe to keep. It adds two additive migrations only (`0008_admin_au
 - Nearby map with Map/Grid toggle: working in code, behind `ONLYMEN_NEARBY`. Reachable from the bottom nav. Needs a signed-in, opted-in member to show a real area; logged-out visitors on production would still see the coming-soon page until this branch is live.
 - Chat: working in code once 0010 is applied. Inbox at `/messages`, thread at `/messages/$username`. Participants only; blocks honored both ways; 20 sends per minute.
 - Settings: `/me/settings`, linked from Profile. No fourth nav button.
-- Invite links: `/join/<CODE>` prefills the code on a branded landing page. `/join` and `/join/*` are age-exempt so link previews can unfurl, and they stay open when invites are on. Sign-up still requires an 18+ date of birth.
+- Feedback: `/me/feedback` from Profile and Settings; admin list at `/admin/feedback`. Needs 0011 on Neon.
+- Invite links: `/join/<CODE>` prefills the code on a branded landing page, with short beta terms and a required feedback-agreement checkbox. `/join` and `/join/*` are age-exempt so link previews can unfurl, and they stay open when invites are on. Sign-up still requires an 18+ date of birth.
 - Report and block: working on real member profiles, with an admin queue at `/admin/reports`.
 - Legal pages: working as drafts. Terms, Privacy, and Community Guidelines load, and they still have the placeholders listed in `docs/legal-placeholders.md`. Fine for a small invite beta if you accept that; counsel should review before a wider public launch.
 - Payments: hidden/disabled. No Stripe or PayPal, no Plus purchase, tip UI hidden unless the flag is turned on.
@@ -59,7 +68,7 @@ The required checks before a push are `npm test`, `npm run lint`, `npm run typec
 
 ## Remaining steps that need Jerry's yes
 
-1. Apply additive migration `0010_messages.sql` on the shared Neon `onlymen` database (the Agent role cannot CREATE tables) and confirm a `_migrations` row for `0010_messages.sql`.
-2. When you are ready to put testers on the test Worker, deploy `invite-codes` there (Cloudflare token required). Try a personal invite link, age-gate skip on `/join/…`, chat, Nearby Grid, Profile/Settings, report/block, and the legal pages.
+1. Apply additive migrations `0010_messages.sql` and `0011_feedback.sql` on the shared Neon `onlymen` database (the Agent role cannot CREATE tables) and confirm `_migrations` rows for both names.
+2. The test Worker is already on this branch. After 0010/0011, try chat and `/me/feedback`. Invite links, Nearby, Profile/Settings, and legal pages can be tried now.
 3. When you are ready for onlymen.gay to become the invite-only app, open a pull request from `invite-codes` into `main`, review it, and merge. Until that merge, production stays the coming-soon page. On Vercel, set `ONLYMEN_INVITES=on`, `ONLYMEN_NEARBY=on`, and `ONLYMEN_AGE_GATE=on`, and leave `ONLYMEN_PAYMENTS` unset. Decide whether demo profiles should stay on.
 4. Stripe Identity is planned, not built. Do not treat clickthrough age checks or draft legal pages as ready for an open public launch.

@@ -50,11 +50,12 @@ export const accountStatus = createServerFn({ method: "GET" }).handler(async ():
 export const signUpFn = createServerFn({ method: "POST" })
   .validator((input: unknown) => {
     const o = obj(input);
-    return { email: s(o.email, 254).trim().toLowerCase(), username: s(o.username, 40), password: s(o.password, 200), dob: s(o.dob, 10), type: (o.type === "creator" ? "creator" : "member") as AccountType, inviteCode: s(o.inviteCode, 40) };
+    return { email: s(o.email, 254).trim().toLowerCase(), username: s(o.username, 40), password: s(o.password, 200), dob: s(o.dob, 10), type: (o.type === "creator" ? "creator" : "member") as AccountType, inviteCode: s(o.inviteCode, 40), agreeFeedback: o.agreeFeedback === true };
   })
   .handler(async ({ data }): Promise<ApiResult<PublicAccount>> => {
     const c = await ctx();
     c.assertSameSite();
+    if (!data.agreeFeedback) return NEED_FEEDBACK;
     // INVITE MODE (ONLYMEN_INVITES=on): sign-up needs a valid invite code.
     const inv = await import("../invites/invites.server");
     if (inv.invitesEnabled()) return signUpWithInvite(c, data);
@@ -98,7 +99,9 @@ export const signUpFn = createServerFn({ method: "POST" })
     return { ok: true, value: (await c.repo.loadAccount(userId))! };
   });
 
-type SignUpData = { email: string; username: string; password: string; dob: string; type: AccountType; inviteCode: string };
+type SignUpData = { email: string; username: string; password: string; dob: string; type: AccountType; inviteCode: string; agreeFeedback: boolean };
+
+const NEED_FEEDBACK = { ok: false as const, error: "Please agree to give feedback during the beta." };
 
 /**
  * Invite-code sign-up. The code is claimed in the SAME transaction that writes

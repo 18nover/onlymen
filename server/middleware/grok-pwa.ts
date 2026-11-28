@@ -36,10 +36,20 @@ function requestHost(event: GrokPwaEvent): string {
   );
 }
 
-function injectHeadStreaming(response: Response, host: string): Response {
+function injectHeadStreaming(response: Response, host: string, path: string): Response {
+  const join = path === "/join" || path.startsWith("/join/");
+  const site = join
+    ? {
+        ...grokOgIdentity.site,
+        title: "You're invited to OnlyMen",
+        description: "A private, invite-only community for adult men. 18+ only.",
+        card: "custom",
+        image: "/og-invite.jpg",
+      }
+    : grokOgIdentity.site;
   const injector = createHeadInjector({
     host,
-    site: grokOgIdentity.site,
+    site,
   });
   const transformed = response.body!.pipeThrough(
     new TransformStream<Uint8Array, Uint8Array>({
@@ -105,7 +115,7 @@ export default async function grokPwaMiddleware(
     String(result.headers.get("content-type") ?? "").includes("text/html") &&
     !result.headers.get("content-encoding")
   ) {
-    return injectHeadStreaming(result, requestHost(event));
+    return injectHeadStreaming(result, requestHost(event), path);
   }
   return result;
 }

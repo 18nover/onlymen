@@ -68,6 +68,7 @@ function AdminReports() {
         <div className="flex gap-4 text-sm font-semibold">
           <Link to="/admin/verifications" className="text-gold-hi underline-offset-4 hover:underline">Verifications</Link>
           <Link to="/admin/invites" className="text-gold-hi underline-offset-4 hover:underline">Invites</Link>
+          <Link to="/admin/feedback" className="text-gold-hi underline-offset-4 hover:underline">Feedback</Link>
           <Link to="/nearby" className="text-gold-hi underline-offset-4 hover:underline">Nearby</Link>
         </div>
       </header>

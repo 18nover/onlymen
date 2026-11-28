@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Bell, Loader2, LogOut, MapPin, MessageCircle, ShieldCheck } from "lucide-react";
+import { Bell, Loader2, LogOut, MapPin, MessageCircle, MessageSquare, ShieldCheck } from "lucide-react";
 import { Footer, Header, MobileNav } from "@/components/onlymen-ui";
 import { useCity } from "@/lib/onlymen-hooks";
 import { useAccount } from "@/lib/account/use-account";
@@ -9,7 +9,7 @@ import { blockedListFn } from "@/lib/chat/api";
 import { nearbyActionFn, nearbyConfigFn, saveNearbySettingsFn } from "@/lib/nearby/api";
 import type { Settings } from "@/lib/nearby/repo.server";
 
-export const Route = createFileRoute("/me/settings")({
+export const Route = createFileRoute("/me_/settings")({
   head: () => ({ meta: [{ title: "Settings — OnlyMen" }, { name: "robots", content: "noindex, nofollow" }] }),
   component: SettingsPage,
 });
@@ -144,6 +144,7 @@ function SettingsPage() {
         </Card>
 
         <div className="flex flex-wrap gap-2">
+          <Link to="/me/feedback" className="inline-flex h-11 items-center gap-2 rounded-full border border-line px-5 text-sm font-semibold text-ivory"><MessageSquare className="size-4 text-gold" /> Feedback</Link>
           <Link to="/messages" className="inline-flex h-11 items-center gap-2 rounded-full border border-line px-5 text-sm font-semibold text-ivory"><MessageCircle className="size-4 text-gold" /> Messages</Link>
           <Link to="/me" className="inline-flex h-11 items-center rounded-full border border-line px-5 text-sm font-semibold text-ivory">Back to profile</Link>
           <Link to="/logout" className="inline-flex h-11 items-center gap-2 rounded-full border border-line px-5 text-sm font-semibold text-muted"><LogOut className="size-4" /> Log out</Link>

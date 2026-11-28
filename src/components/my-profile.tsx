@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useIdVerification } from "@/lib/verification/use-verification";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Bell, Camera, Check, Coins, Crown, ExternalLink, Eye, EyeOff, Globe, Instagram, Loader2, LogOut, MapPin, MessageCircle, Mic, Pencil, Settings, ShieldCheck, Sparkles, X as XIcon } from "lucide-react";
+import { Bell, Camera, Check, Coins, Crown, ExternalLink, Eye, EyeOff, Globe, Instagram, Loader2, LogOut, MapPin, MessageCircle, MessageSquare, Mic, Pencil, Settings, ShieldCheck, Sparkles, X as XIcon } from "lucide-react";
 import { Footer, Header, MobileNav } from "@/components/onlymen-ui";
 import { GoLivePanel, RemindersCard } from "@/components/go-live";
 import { LiveRing } from "@/components/live-ui";
@@ -168,6 +168,7 @@ function Body({ a }: { a: PublicAccount }) {
             <div className="mt-5 grid grid-cols-2 gap-2">
               <Link to="/onboarding" search={{ step: "basics" }} className="flex h-11 items-center justify-center gap-1.5 rounded-full bg-gold text-sm font-bold"><Pencil className="size-4" /> Edit profile</Link>
               <Link to="/me/settings" className="flex h-11 items-center justify-center gap-1.5 rounded-full border border-line text-sm font-semibold text-ivory hover:text-gold-hi"><Settings className="size-4 text-gold" /> Settings</Link>
+              <Link to="/me/feedback" className="flex h-11 items-center justify-center gap-1.5 rounded-full border border-line text-sm font-semibold text-ivory hover:text-gold-hi"><MessageSquare className="size-4 text-gold" /> Feedback</Link>
               <Link to="/messages" className="flex h-11 items-center justify-center gap-1.5 rounded-full border border-line text-sm font-semibold text-ivory hover:text-gold-hi"><MessageCircle className="size-4 text-gold" /> Messages</Link>
               <Link to="/logout" className="flex h-11 items-center justify-center gap-1.5 rounded-full border border-line text-sm font-semibold text-muted hover:text-ivory"><LogOut className="size-4" /> Log out</Link>
             </div>

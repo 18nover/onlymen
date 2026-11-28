@@ -15,7 +15,7 @@ import type { Account, AccountType, ConsentKey, ConsentRecord, PublicAccount } f
 import { normalizeUsername } from "./validation.ts";
 import * as api from "./api.ts";
 
-export type SignUpInput = { email: string; username: string; password: string; dob: string; type: AccountType; inviteCode?: string };
+export type SignUpInput = { email: string; username: string; password: string; dob: string; type: AccountType; inviteCode?: string; agreeFeedback?: boolean };
 
 export class AccountError extends Error {
   constructor(

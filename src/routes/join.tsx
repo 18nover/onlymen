@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate, useRouteContext } from "@tanstack/r
 import { Camera, Check, Coins, Crown, Heart, MessageCircle, Radio } from "lucide-react";
 import { AuthShell, FormError, GoldButton, PasswordField, SocialButtons, TextField, Field, inputCls } from "@/components/account-ui";
 import { accountStore, AccountError } from "@/lib/account/store";
+import { BETA_FEEDBACK_AGREE, BETA_TERMS } from "@/lib/beta";
 import { useAccount } from "@/lib/account/use-account";
 import type { AccountType } from "@/lib/account/types";
 import { maxDob, passwordStrength, validateDob, validateEmail, validatePassword, validateUsername } from "@/lib/account/validation";
@@ -53,6 +54,7 @@ function Join() {
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [serverErr, setServerErr] = useState<{ msg: string; field?: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  const [agree, setAgree] = useState(false);
   const [taken, setTaken] = useState(false);
 
   useEffect(() => {
@@ -82,7 +84,8 @@ function Join() {
     if (Object.values(errs).some(Boolean)) return;
     setBusy(true);
     try {
-      await accountStore.signUp({ email, username, password, dob, type, ...(inviteOnly ? { inviteCode } : {}) });
+      if (!agree) return setServerErr({ msg: "Please agree to give feedback during the beta." });
+      await accountStore.signUp({ email, username, password, dob, type, agreeFeedback: true, ...(inviteOnly ? { inviteCode } : {}) });
       // Full navigation so the server re-checks private-mode access with the new session cookie.
       if (inviteOnly) window.location.assign("/onboarding");
       else nav({ to: "/onboarding" });
@@ -184,7 +187,12 @@ function Join() {
           <input id="dob" type="date" max={maxDob()} min="1900-01-01" value={dob} onChange={(e) => setDob(e.target.value)} onBlur={() => setTouched((t) => ({ ...t, dob: true }))} aria-invalid={!!show("dob")} className={`${inputCls} h-12 [color-scheme:dark]`} />
         </Field>
 
-        <GoldButton type="submit" loading={busy} className="mt-2 w-full">Create account</GoldButton>
+        <p className="text-sm leading-relaxed text-muted">{BETA_TERMS}</p>
+        <label className="flex items-start gap-3 text-sm text-ivory/90">
+          <input type="checkbox" className="mt-1" checked={agree} onChange={(e) => setAgree(e.target.checked)} required />
+          <span>{BETA_FEEDBACK_AGREE}</span>
+        </label>
+        <GoldButton type="submit" loading={busy} className="mt-2 w-full" disabled={!agree}>Create account</GoldButton>
         <p className="text-center text-xs leading-relaxed text-dim">
           Next you'll review our Terms, Privacy Policy and Community Guidelines before anything goes public.
         </p>

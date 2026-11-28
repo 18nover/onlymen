@@ -26,15 +26,17 @@ import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as AdminFeedbackRouteImport } from './routes/admin.feedback'
 import { Route as AdminInvitesRouteImport } from './routes/admin.invites'
 import { Route as AdminReportsRouteImport } from './routes/admin.reports'
 import { Route as AdminVerificationsRouteImport } from './routes/admin.verifications'
 import { Route as ApiOwnerSeedRouteImport } from './routes/api/owner-seed'
-import { Route as JoinCodeRouteImport } from './routes/join.$code'
+import { Route as JoinCodeRouteImport } from './routes/join_.$code'
 import { Route as MHandleRouteImport } from './routes/m.$handle'
-import { Route as MeSettingsRouteImport } from './routes/me.settings'
+import { Route as MeFeedbackRouteImport } from './routes/me_.feedback'
+import { Route as MeSettingsRouteImport } from './routes/me_.settings'
 import { Route as MeVerifyRouteImport } from './routes/me_.verify'
-import { Route as MessagesUsernameRouteImport } from './routes/messages.$username'
+import { Route as MessagesUsernameRouteImport } from './routes/messages_.$username'
 import { Route as WatchHandleRouteImport } from './routes/watch.$handle'
 import { Route as ApiPhotoIdRouteImport } from './routes/api/photo/$id'
 import { Route as ApiKycFileIdRouteImport } from './routes/api/kyc/file/$id'
@@ -125,6 +127,11 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminFeedbackRoute = AdminFeedbackRouteImport.update({
+  id: '/admin/feedback',
+  path: '/admin/feedback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminInvitesRoute = AdminInvitesRouteImport.update({
   id: '/admin/invites',
   path: '/admin/invites',
@@ -146,19 +153,24 @@ const ApiOwnerSeedRoute = ApiOwnerSeedRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const JoinCodeRoute = JoinCodeRouteImport.update({
-  id: '/$code',
-  path: '/$code',
-  getParentRoute: () => JoinRoute,
+  id: '/join_/$code',
+  path: '/join/$code',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const MHandleRoute = MHandleRouteImport.update({
   id: '/m/$handle',
   path: '/m/$handle',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MeFeedbackRoute = MeFeedbackRouteImport.update({
+  id: '/me_/feedback',
+  path: '/me/feedback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MeSettingsRoute = MeSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => MeRoute,
+  id: '/me_/settings',
+  path: '/me/settings',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const MeVerifyRoute = MeVerifyRouteImport.update({
   id: '/me_/verify',
@@ -166,9 +178,9 @@ const MeVerifyRoute = MeVerifyRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const MessagesUsernameRoute = MessagesUsernameRouteImport.update({
-  id: '/$username',
-  path: '/$username',
-  getParentRoute: () => MessagesRoute,
+  id: '/messages_/$username',
+  path: '/messages/$username',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const WatchHandleRoute = WatchHandleRouteImport.update({
   id: '/watch/$handle',
@@ -197,24 +209,26 @@ export interface FileRoutesByFullPath {
   '/custodian': typeof CustodianRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/guidelines': typeof GuidelinesRoute
-  '/join': typeof JoinRouteWithChildren
+  '/join': typeof JoinRoute
   '/live': typeof LiveRoute
   '/live-rules': typeof LiveRulesRoute
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
-  '/me': typeof MeRouteWithChildren
-  '/messages': typeof MessagesRouteWithChildren
+  '/me': typeof MeRoute
+  '/messages': typeof MessagesRoute
   '/nearby': typeof NearbyRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
+  '/admin/feedback': typeof AdminFeedbackRoute
   '/admin/invites': typeof AdminInvitesRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/verifications': typeof AdminVerificationsRoute
   '/api/owner-seed': typeof ApiOwnerSeedRoute
   '/join/$code': typeof JoinCodeRoute
   '/m/$handle': typeof MHandleRoute
+  '/me/feedback': typeof MeFeedbackRoute
   '/me/settings': typeof MeSettingsRoute
   '/me/verify': typeof MeVerifyRoute
   '/messages/$username': typeof MessagesUsernameRoute
@@ -229,24 +243,26 @@ export interface FileRoutesByTo {
   '/custodian': typeof CustodianRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/guidelines': typeof GuidelinesRoute
-  '/join': typeof JoinRouteWithChildren
+  '/join': typeof JoinRoute
   '/live': typeof LiveRoute
   '/live-rules': typeof LiveRulesRoute
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
-  '/me': typeof MeRouteWithChildren
-  '/messages': typeof MessagesRouteWithChildren
+  '/me': typeof MeRoute
+  '/messages': typeof MessagesRoute
   '/nearby': typeof NearbyRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
+  '/admin/feedback': typeof AdminFeedbackRoute
   '/admin/invites': typeof AdminInvitesRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/verifications': typeof AdminVerificationsRoute
   '/api/owner-seed': typeof ApiOwnerSeedRoute
   '/join/$code': typeof JoinCodeRoute
   '/m/$handle': typeof MHandleRoute
+  '/me/feedback': typeof MeFeedbackRoute
   '/me/settings': typeof MeSettingsRoute
   '/me/verify': typeof MeVerifyRoute
   '/messages/$username': typeof MessagesUsernameRoute
@@ -262,27 +278,29 @@ export interface FileRoutesById {
   '/custodian': typeof CustodianRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/guidelines': typeof GuidelinesRoute
-  '/join': typeof JoinRouteWithChildren
+  '/join': typeof JoinRoute
   '/live': typeof LiveRoute
   '/live-rules': typeof LiveRulesRoute
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
-  '/me': typeof MeRouteWithChildren
-  '/messages': typeof MessagesRouteWithChildren
+  '/me': typeof MeRoute
+  '/messages': typeof MessagesRoute
   '/nearby': typeof NearbyRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/terms': typeof TermsRoute
+  '/admin/feedback': typeof AdminFeedbackRoute
   '/admin/invites': typeof AdminInvitesRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/verifications': typeof AdminVerificationsRoute
   '/api/owner-seed': typeof ApiOwnerSeedRoute
-  '/join/$code': typeof JoinCodeRoute
+  '/join_/$code': typeof JoinCodeRoute
   '/m/$handle': typeof MHandleRoute
-  '/me/settings': typeof MeSettingsRoute
+  '/me_/feedback': typeof MeFeedbackRoute
+  '/me_/settings': typeof MeSettingsRoute
   '/me_/verify': typeof MeVerifyRoute
-  '/messages/$username': typeof MessagesUsernameRoute
+  '/messages_/$username': typeof MessagesUsernameRoute
   '/watch/$handle': typeof WatchHandleRoute
   '/api/photo/$id': typeof ApiPhotoIdRoute
   '/api/kyc/file/$id': typeof ApiKycFileIdRoute
@@ -308,12 +326,14 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/terms'
+    | '/admin/feedback'
     | '/admin/invites'
     | '/admin/reports'
     | '/admin/verifications'
     | '/api/owner-seed'
     | '/join/$code'
     | '/m/$handle'
+    | '/me/feedback'
     | '/me/settings'
     | '/me/verify'
     | '/messages/$username'
@@ -340,12 +360,14 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/terms'
+    | '/admin/feedback'
     | '/admin/invites'
     | '/admin/reports'
     | '/admin/verifications'
     | '/api/owner-seed'
     | '/join/$code'
     | '/m/$handle'
+    | '/me/feedback'
     | '/me/settings'
     | '/me/verify'
     | '/messages/$username'
@@ -372,15 +394,17 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/terms'
+    | '/admin/feedback'
     | '/admin/invites'
     | '/admin/reports'
     | '/admin/verifications'
     | '/api/owner-seed'
-    | '/join/$code'
+    | '/join_/$code'
     | '/m/$handle'
-    | '/me/settings'
+    | '/me_/feedback'
+    | '/me_/settings'
     | '/me_/verify'
-    | '/messages/$username'
+    | '/messages_/$username'
     | '/watch/$handle'
     | '/api/photo/$id'
     | '/api/kyc/file/$id'
@@ -393,24 +417,29 @@ export interface RootRouteChildren {
   CustodianRoute: typeof CustodianRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   GuidelinesRoute: typeof GuidelinesRoute
-  JoinRoute: typeof JoinRouteWithChildren
+  JoinRoute: typeof JoinRoute
   LiveRoute: typeof LiveRoute
   LiveRulesRoute: typeof LiveRulesRoute
   LoginRoute: typeof LoginRoute
   LogoutRoute: typeof LogoutRoute
-  MeRoute: typeof MeRouteWithChildren
-  MessagesRoute: typeof MessagesRouteWithChildren
+  MeRoute: typeof MeRoute
+  MessagesRoute: typeof MessagesRoute
   NearbyRoute: typeof NearbyRoute
   OnboardingRoute: typeof OnboardingRoute
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   TermsRoute: typeof TermsRoute
+  AdminFeedbackRoute: typeof AdminFeedbackRoute
   AdminInvitesRoute: typeof AdminInvitesRoute
   AdminReportsRoute: typeof AdminReportsRoute
   AdminVerificationsRoute: typeof AdminVerificationsRoute
   ApiOwnerSeedRoute: typeof ApiOwnerSeedRoute
+  JoinCodeRoute: typeof JoinCodeRoute
   MHandleRoute: typeof MHandleRoute
+  MeFeedbackRoute: typeof MeFeedbackRoute
+  MeSettingsRoute: typeof MeSettingsRoute
   MeVerifyRoute: typeof MeVerifyRoute
+  MessagesUsernameRoute: typeof MessagesUsernameRoute
   WatchHandleRoute: typeof WatchHandleRoute
   ApiPhotoIdRoute: typeof ApiPhotoIdRoute
   ApiKycFileIdRoute: typeof ApiKycFileIdRoute
@@ -538,6 +567,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/feedback': {
+      id: '/admin/feedback'
+      path: '/admin/feedback'
+      fullPath: '/admin/feedback'
+      preLoaderRoute: typeof AdminFeedbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/invites': {
       id: '/admin/invites'
       path: '/admin/invites'
@@ -566,12 +602,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiOwnerSeedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/join/$code': {
-      id: '/join/$code'
-      path: '/$code'
+    '/join_/$code': {
+      id: '/join_/$code'
+      path: '/join/$code'
       fullPath: '/join/$code'
       preLoaderRoute: typeof JoinCodeRouteImport
-      parentRoute: typeof JoinRoute
+      parentRoute: typeof rootRouteImport
     }
     '/m/$handle': {
       id: '/m/$handle'
@@ -580,12 +616,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MHandleRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/me/settings': {
-      id: '/me/settings'
-      path: '/settings'
+    '/me_/feedback': {
+      id: '/me_/feedback'
+      path: '/me/feedback'
+      fullPath: '/me/feedback'
+      preLoaderRoute: typeof MeFeedbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/me_/settings': {
+      id: '/me_/settings'
+      path: '/me/settings'
       fullPath: '/me/settings'
       preLoaderRoute: typeof MeSettingsRouteImport
-      parentRoute: typeof MeRoute
+      parentRoute: typeof rootRouteImport
     }
     '/me_/verify': {
       id: '/me_/verify'
@@ -594,12 +637,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MeVerifyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/messages/$username': {
-      id: '/messages/$username'
-      path: '/$username'
+    '/messages_/$username': {
+      id: '/messages_/$username'
+      path: '/messages/$username'
       fullPath: '/messages/$username'
       preLoaderRoute: typeof MessagesUsernameRouteImport
-      parentRoute: typeof MessagesRoute
+      parentRoute: typeof rootRouteImport
     }
     '/watch/$handle': {
       id: '/watch/$handle'
@@ -632,62 +675,35 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface JoinRouteChildren {
-  JoinCodeRoute: typeof JoinCodeRoute
-}
-
-const JoinRouteChildren: JoinRouteChildren = {
-  JoinCodeRoute: JoinCodeRoute,
-}
-
-const JoinRouteWithChildren = JoinRoute._addFileChildren(JoinRouteChildren)
-
-interface MeRouteChildren {
-  MeSettingsRoute: typeof MeSettingsRoute
-}
-
-const MeRouteChildren: MeRouteChildren = {
-  MeSettingsRoute: MeSettingsRoute,
-}
-
-const MeRouteWithChildren = MeRoute._addFileChildren(MeRouteChildren)
-
-interface MessagesRouteChildren {
-  MessagesUsernameRoute: typeof MessagesUsernameRoute
-}
-
-const MessagesRouteChildren: MessagesRouteChildren = {
-  MessagesUsernameRoute: MessagesUsernameRoute,
-}
-
-const MessagesRouteWithChildren = MessagesRoute._addFileChildren(
-  MessagesRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R2257Route: R2257Route,
   CustodianRoute: CustodianRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   GuidelinesRoute: GuidelinesRoute,
-  JoinRoute: JoinRouteWithChildren,
+  JoinRoute: JoinRoute,
   LiveRoute: LiveRoute,
   LiveRulesRoute: LiveRulesRoute,
   LoginRoute: LoginRoute,
   LogoutRoute: LogoutRoute,
-  MeRoute: MeRouteWithChildren,
-  MessagesRoute: MessagesRouteWithChildren,
+  MeRoute: MeRoute,
+  MessagesRoute: MessagesRoute,
   NearbyRoute: NearbyRoute,
   OnboardingRoute: OnboardingRoute,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   TermsRoute: TermsRoute,
+  AdminFeedbackRoute: AdminFeedbackRoute,
   AdminInvitesRoute: AdminInvitesRoute,
   AdminReportsRoute: AdminReportsRoute,
   AdminVerificationsRoute: AdminVerificationsRoute,
   ApiOwnerSeedRoute: ApiOwnerSeedRoute,
+  JoinCodeRoute: JoinCodeRoute,
   MHandleRoute: MHandleRoute,
+  MeFeedbackRoute: MeFeedbackRoute,
+  MeSettingsRoute: MeSettingsRoute,
   MeVerifyRoute: MeVerifyRoute,
+  MessagesUsernameRoute: MessagesUsernameRoute,
   WatchHandleRoute: WatchHandleRoute,
   ApiPhotoIdRoute: ApiPhotoIdRoute,
   ApiKycFileIdRoute: ApiKycFileIdRoute,
