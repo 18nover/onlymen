@@ -74,10 +74,11 @@ Register it, set `ONLYMEN_AGE_VERIFIER=<name>`, and add the vendor's keys with
 `wrangler secret put`. The vendor's callback or webhook URL is `/age/callback`.
 Keep only the pass/fail result.
 
-Candidates (confirm pricing):
-
-- AgeChecker.net: $25/mo plus $0.50 per accepted check (agechecker.net/pricing, read 2026-11-22).
-- VerifyMy, Yoti (facial age estimation), Incode, go.cam: quote-based.
+The planned verifier is Stripe Identity (age/ID check only; not payments). First 50
+verifications are free, then paid per check. Stripe restricts adult businesses on
+payments, so Identity should be confirmed against that policy before going live.
+Store only a verified-18+ flag, session id and timestamp — no ID images or date of
+birth from Stripe after the grant. Manual KYC stays the fallback until this is built.
 
 ## Test
 

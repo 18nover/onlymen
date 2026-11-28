@@ -10,7 +10,8 @@ import type { Card, GridResult, MapResult, Settings } from "@/lib/nearby/repo.se
 import { REPORT_REASON_OPTIONS } from "@/lib/nearby/reasons";
 import type { MapPin as MapPinT } from "@/components/nearby-map";
 import { bucketIndex, bucketLabel, PRESENCE } from "@/lib/nearby/geo";
-import { models } from "@/lib/models";
+import { models, type Model } from "@/lib/models";
+import { useDirectory } from "@/lib/use-directory";
 
 const NearbyMap = lazy(() => import("@/components/nearby-map").then((m) => ({ default: m.NearbyMap })));
 
@@ -40,6 +41,7 @@ function Nearby() {
   const [err, setErr] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const [sel, setSel] = useState<Card | null>(null);
+  const { list: directory } = useDirectory();
   const sharing = Boolean(settings?.sharing);
 
   const loadGrid = useCallback(async () => {
@@ -240,8 +242,7 @@ function Nearby() {
           <h1 className="mt-1 flex items-center gap-3 font-display text-5xl font-semibold"><Radar className="size-7 text-gold" /> Nearby</h1>
           <div className="om-ornament mt-2" aria-hidden="true"><i /></div>
           <p className="mt-2 max-w-2xl text-sm text-muted">
-            {grid?.origin === "mine" ? "Sorted by distance from your area." : grid?.origin === "approx" ? "Showing your approximate city. Share your location for closer results." : "Share your location to see who's around."}{" "}
-            {grid && <>Plan: <b className="text-ivory">{grid.plan === "plus" ? "Plus" : "Free"}</b> · up to {grid.radiusKm} km.</>}
+            {grid?.origin ? "Members who share an area appear first, nearest first. Everyone else is listed after." : "Everyone on OnlyMen. Share your area to see who's nearest first."}
           </p>
         </div>
         <div className="flex flex-wrap justify-center gap-2 text-sm font-semibold">
@@ -255,36 +256,7 @@ function Nearby() {
 
       {privacy}
 
-      {(
-        <section className="grid gap-4">
-          {grid && grid.items.length === 0 && (
-            <p className="rounded-xl border border-line bg-surface p-4 text-sm text-muted">No members around you yet{grid.origin ? ` within ${grid.radiusKm} km` : ""}. Only members who share their location show up here.</p>
-          )}
-          {grid && grid.items.length > 0 && (
-            <div className="om-stagger -mx-4 grid grid-cols-3 gap-[2px] px-[2px] sm:mx-0 sm:px-0 sm:grid-cols-4 sm:gap-1 sm:rounded-2xl lg:grid-cols-6">
-              {grid.items.map((c) => <Tile key={c.username} c={c} onClick={() => setSel(c)} />)}
-            </div>
-          )}
-          {demo.length > 0 && (
-            <div className="grid gap-2">
-              <p className="text-center text-[11px] font-bold tracking-[0.25em] text-gold/80 uppercase">Demo profiles · not real people, not near you</p>
-              <div className="om-stagger -mx-4 grid grid-cols-3 gap-[2px] px-[2px] sm:mx-0 sm:px-0 sm:grid-cols-4 sm:gap-1 sm:rounded-2xl lg:grid-cols-6">
-                {demo.map((m) => (
-                  <Link key={m.handle} to="/m/$handle" params={{ handle: m.handle }} className="om-tile">
-                    <img src={m.photo} alt="" loading="lazy" />
-                    <span className="absolute top-1.5 left-1.5 z-[3] rounded-sm bg-ink/75 px-1.5 py-0.5 text-[9px] font-extrabold tracking-wider text-gold uppercase backdrop-blur">Demo</span>
-                    {m.online && <span className="om-online absolute top-2 right-2 z-[3] size-2.5 rounded-full bg-online" title="Online" />}
-                    <span className="om-tile-meta">
-                      <span className="block truncate text-[13px] font-bold text-ivory">{m.name} <span className="font-medium text-ivory/75">{m.age}</span></span>
-                      <span className="block text-[10px] font-semibold tracking-wider text-gold-hi uppercase">{bucketLabel(bucketIndex(m.km))}</span>
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-        </section>
-      )}
+      <DirectoryGrid items={grid?.items ?? []} directory={directory} hasOrigin={Boolean(grid?.origin)} onOpen={(c) => setSel(c)} />
 
       {sel && <Sheet c={sel} onClose={() => setSel(null)} onAct={act} onReported={() => { setSel(null); setNote("Thanks. Our team will review this report."); void loadGrid(); }} />}
     </main>
@@ -295,6 +267,41 @@ function Nearby() {
 
 function Shell({ children }: { children: React.ReactNode }) {
   return <main className="grid min-h-screen place-items-center px-6 text-center text-ivory"><div className="grid gap-4">{children}</div></main>;
+}
+
+function DirectoryGrid({ items, directory, hasOrigin, onOpen }: { items: Card[]; directory: Model[]; hasOrigin: boolean; onOpen: (c: Card) => void }) {
+  const seen = new Set(items.map((c) => c.username));
+  const rest = directory.filter((m) => !seen.has(m.handle));
+  if (items.length === 0 && rest.length === 0) {
+    return <p className="rounded-xl border border-line bg-surface p-4 text-sm text-muted">No members to show yet.</p>;
+  }
+  return (
+    <section className="grid gap-4">
+      {items.length > 0 && (
+        <div className="om-stagger -mx-4 grid grid-cols-3 gap-[2px] px-[2px] sm:mx-0 sm:px-0 sm:grid-cols-4 sm:gap-1 sm:rounded-2xl lg:grid-cols-6">
+          {items.map((c) => <Tile key={c.username} c={c} onClick={() => onOpen(c)} />)}
+        </div>
+      )}
+      {rest.length > 0 && (
+        <div className="grid gap-2">
+          {hasOrigin && items.length > 0 && <p className="text-center text-[11px] font-bold tracking-[0.25em] text-gold/80 uppercase">Everyone else</p>}
+          <div className="om-stagger -mx-4 grid grid-cols-3 gap-[2px] px-[2px] sm:mx-0 sm:px-0 sm:grid-cols-4 sm:gap-1 sm:rounded-2xl lg:grid-cols-6">
+            {rest.map((m) => (
+              <Link key={m.handle} to="/m/$handle" params={{ handle: m.handle }} className="om-tile">
+                <img src={m.photo} alt="" loading="lazy" />
+                {m.source !== "real" && <span className="absolute top-1.5 left-1.5 z-[3] rounded-sm bg-ink/75 px-1.5 py-0.5 text-[9px] font-extrabold tracking-wider text-gold uppercase backdrop-blur">Demo</span>}
+                {m.online && <span className="om-online absolute top-2 right-2 z-[3] size-2.5 rounded-full bg-online" title="Online" />}
+                <span className="om-tile-meta">
+                  <span className="block truncate text-[13px] font-bold text-ivory">{m.name} {m.age != null && <span className="font-medium text-ivory/75">{m.age}</span>}</span>
+                  <span className="block text-[10px] font-semibold tracking-wider text-gold-hi uppercase">{hasOrigin && m.km != null ? bucketLabel(bucketIndex(m.km)) : (m.city || "OnlyMen")}</span>
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
+  );
 }
 
 function Tile({ c, onClick }: { c: Card; onClick: () => void }) {
@@ -329,7 +336,8 @@ function Sheet({ c, onClose, onAct, onReported }: { c: Card; onClose: () => void
         </div>
         {!reporting ? (
           <div className="grid grid-cols-2 gap-2">
-            <Link to="/m/$handle" params={{ handle: c.username }} className={`${btn} col-span-2 border-gold text-gold-hi`}>View profile</Link>
+            <Link to="/m/$handle" params={{ handle: c.username }} className={`${btn} border-gold text-gold-hi`}>View profile</Link>
+            <Link to="/messages/$username" params={{ username: c.username }} className={`${btn} border-gold text-gold-hi`}>Message</Link>
             <button className={btn} onClick={() => onAct(c, "tap")}><Hand className="size-4 text-gold" /> {c.tapped ? "Tapped" : "Tap"}</button>
             <button className={btn} onClick={() => onAct(c, c.saved ? "unsave" : "save")}>{c.saved ? <BookmarkCheck className="size-4 text-gold" /> : <Bookmark className="size-4 text-gold" />} {c.saved ? "Saved" : "Save"}</button>
             <button className={btn} onClick={() => confirm(`Block ${c.displayName}? Neither of you will see the other.`) && onAct(c, "block")}><Ban className="size-4 text-ruby" /> Block</button>

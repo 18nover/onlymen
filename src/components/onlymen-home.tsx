@@ -61,9 +61,9 @@ function Hero({ online, live }: { online: number; live: number }) {
           who make your night.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <a href="#browse" className="om-shimmer grid h-12 place-items-center rounded-full bg-gold px-7 text-sm font-bold glow-gold hover:brightness-110">
-            Browse men
-          </a>
+          <Link to="/nearby" className="om-shimmer grid h-12 place-items-center rounded-full bg-gold px-7 text-sm font-bold glow-gold hover:brightness-110">
+            See who's nearby
+          </Link>
           <Link
             to="/live"
             className="flex h-12 items-center gap-2 rounded-full border border-ruby/60 bg-oxblood/40 px-6 text-sm font-semibold text-ivory transition hover:bg-oxblood/70"
@@ -242,9 +242,8 @@ function Tile({ m, onTip, featured = false }: { m: Model; onTip: (m: Model) => v
                 <Coins className="size-3.5" /> Tip
               </button>
               <Link
-                to="/m/$handle"
-                params={{ handle: m.handle }}
-                hash="message"
+                to="/messages/$username"
+                params={{ username: m.handle }}
                 className="grid size-8 place-items-center rounded-full border border-gold/50 bg-ink/60 text-gold-hi"
                 aria-label={`Message ${m.name}`}
               >
@@ -309,9 +308,8 @@ function Row({ m, onTip }: { m: Model; onTip: (m: Model) => void }) {
               <Coins className="size-4" /> Tip
             </button>
             <Link
-              to="/m/$handle"
-              params={{ handle: m.handle }}
-              hash="message"
+              to="/messages/$username"
+              params={{ username: m.handle }}
               className="flex h-10 items-center gap-1.5 rounded-full border border-gold/50 px-4 text-xs font-bold text-gold-hi transition hover:bg-gold/10"
             >
               <MessageCircle className="size-4" /> Message

@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Check, ChevronDown, Crown, MapPin, Radar, Radio, Search, ShieldCheck, SlidersHorizontal, Star, User } from "lucide-react";
+import { Check, ChevronDown, Crown, MapPin, Radar, Radio, Search, ShieldCheck, SlidersHorizontal, User } from "lucide-react";
 import { company } from "@/lib/company";
 import { useAccount } from "@/lib/account/use-account";
 import { useImageUrl } from "@/lib/account/media";
-import { useNearbyEnabled } from "@/lib/nearby/use-nearby";
 
 const footerRoutes: Record<string, string> = {
-  Browse: "/#browse",
+  Nearby: "/nearby",
   "Live now": "/live",
   "Have an invite?": "/join",
   "Terms of service": "/terms",
@@ -199,7 +198,6 @@ type HeaderProps = {
 };
 
 export function Header({ city, onCity, q, onQ, onOpenFilters, filterCount = 0 }: HeaderProps) {
-  const nearby = useNearbyEnabled();
   return (
     <header className="sticky top-0 z-40 border-b border-line/60 bg-ink/80 backdrop-blur-xl">
       <div className="om-container flex h-16 items-center gap-3 lg:gap-4">
@@ -221,12 +219,10 @@ export function Header({ city, onCity, q, onQ, onOpenFilters, filterCount = 0 }:
           </label>
         )}
         <nav className="hidden shrink-0 items-center gap-1 text-sm font-medium text-muted xl:flex">
-          <Link to="/" hash="browse" className="rounded-full px-3 py-2 transition hover:text-gold-hi">Browse</Link>
+          <Link to="/nearby" className="rounded-full px-3 py-2 transition hover:text-gold-hi" activeProps={{ className: "text-gold-hi" }}>Nearby</Link>
           <Link to="/live" className="flex items-center gap-1.5 rounded-full px-3 py-2 transition hover:text-gold-hi" activeProps={{ className: "text-gold-hi" }}>
             <span className="size-1.5 animate-pulse-dot rounded-full bg-ruby" /> Live
           </Link>
-          <Link to="/" hash="featured" className="rounded-full px-3 py-2 transition hover:text-gold-hi">Featured</Link>
-          {nearby && <Link to="/nearby" className="rounded-full px-3 py-2 transition hover:text-gold-hi" activeProps={{ className: "text-gold-hi" }}>Nearby</Link>}
         </nav>
         <div className="ml-auto flex shrink-0 items-center gap-2">
           {onOpenFilters && (
@@ -249,7 +245,7 @@ export function Header({ city, onCity, q, onQ, onOpenFilters, filterCount = 0 }:
 
 export function Footer() {
   const cols = [
-    { title: "Explore", links: ["Browse", "Live now", "Have an invite?"] },
+    { title: "Explore", links: ["Nearby", "Live now", "Have an invite?"] },
     { title: "Safety", links: ["18+ & age verification", "Community guidelines"] },
     { title: "Legal", links: ["Terms of service", "Privacy", "2257 statement"] },
   ];
@@ -288,7 +284,7 @@ export function Footer() {
           <ul className="mt-2 flex flex-wrap gap-x-5 text-sm text-muted">
             {cities.map((c) => (
               <li key={c.id}>
-                <a href="#browse" className="inline-flex min-h-10 items-center transition hover:text-ivory">{c.label}</a>
+                <a href="/nearby" className="inline-flex min-h-10 items-center transition hover:text-ivory">{c.label}</a>
               </li>
             ))}
           </ul>
@@ -305,22 +301,20 @@ export function Footer() {
 }
 
 /**
- * The one bottom nav for every mobile browsing screen (Browse, Live, Nearby, Me):
+ * The one bottom nav for every mobile screen (Nearby, Live, Profile):
  * same height, position, frosted glass and active state everywhere.
  */
 export function MobileNav(_props: { onOpenFilters?: () => void } = {}) {
-  const nearby = useNearbyEnabled(true); // assume on so the bar never reflows; hidden only if the flag is off
   const path = useRouterState({ select: (s) => s.location.pathname });
   const { account, ready } = useAccount();
   const signedIn = ready && Boolean(account);
-  const tab = path.startsWith("/nearby") ? "nearby" : path.startsWith("/live") || path.startsWith("/watch") ? "live" : path.startsWith("/me") || path === "/login" ? "me" : "browse";
+  const tab = path.startsWith("/nearby") ? "nearby" : path.startsWith("/live") || path.startsWith("/watch") ? "live" : path.startsWith("/me") || path === "/login" ? "me" : "";
   const item = (id: string) => `om-tab-item${tab === id ? " is-active" : ""}`;
   return (
-    <nav className={`om-tabbar md:hidden ${nearby ? "grid-cols-4" : "grid-cols-3"}`} aria-label="Primary">
-      <Link to="/" hash="browse" className={item("browse")} aria-current={tab === "browse" ? "page" : undefined}><Star className="size-[19px]" strokeWidth={1.7} /> Browse</Link>
+    <nav className="om-tabbar grid-cols-3 md:hidden" aria-label="Primary">
+      <Link to="/nearby" className={item("nearby")} aria-current={tab === "nearby" ? "page" : undefined}><Radar className="size-[19px]" strokeWidth={1.7} /> Nearby</Link>
       <Link to="/live" className={item("live")} aria-current={tab === "live" ? "page" : undefined}><Radio className="size-[19px]" strokeWidth={1.7} /> Live</Link>
-      {nearby && <Link to="/nearby" className={item("nearby")} aria-current={tab === "nearby" ? "page" : undefined}><Radar className="size-[19px]" strokeWidth={1.7} /> Nearby</Link>}
-      <Link to={signedIn ? "/me" : "/login"} className={item("me")} aria-current={tab === "me" ? "page" : undefined}><User className="size-[19px]" strokeWidth={1.7} /> Me</Link>
+      <Link to={signedIn ? "/me" : "/login"} className={item("me")} aria-current={tab === "me" ? "page" : undefined}><User className="size-[19px]" strokeWidth={1.7} /> Profile</Link>
     </nav>
   );
 }

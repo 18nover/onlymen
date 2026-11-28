@@ -16,7 +16,7 @@
  *                                (owner/admin accounts bypass). Default OFF.
  * Both unset (Vercel production today) → nothing changes.
  */
-import { isStaticAsset, normalizePath } from "../private/policy.ts";
+import { isJoinPath, isStaticAsset, normalizePath } from "../private/policy.ts";
 import { AV_LAW_STATE_CODES } from "./av-states.ts";
 
 export const AGE_COOKIE = "om_age18";
@@ -34,7 +34,7 @@ export const AGE_EXEMPT_PAGES = new Set(["/terms", "/privacy", "/guidelines", "/
 
 export function isAgeExempt(path: string): boolean {
   const p = normalizePath(path);
-  return AGE_EXEMPT_PAGES.has(p) || p.startsWith("/legal/") || p.startsWith("/api/kyc/webhook/") || isStaticAsset(p);
+  return AGE_EXEMPT_PAGES.has(p) || isJoinPath(p) || p.startsWith("/legal/") || p.startsWith("/api/kyc/webhook/") || isStaticAsset(p);
 }
 
 /**

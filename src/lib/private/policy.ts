@@ -32,6 +32,12 @@ export function isPublicPath(path: string): boolean {
   return PUBLIC_PAGES.has(p) || isStaticAsset(p);
 }
 
+/** /join and personal invite links /join/OM-XXXX-XXXX (open when invites are on). */
+export function isJoinPath(path: string): boolean {
+  const p = normalizePath(path);
+  return p === "/join" || p.startsWith("/join/");
+}
+
 /** Parse a comma/space/newline separated env list. Empty or unset → empty set (deny everyone). */
 export function parseList(raw: string | undefined | null, lower = false): Set<string> {
   const out = new Set<string>();

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { allowlistEmpty, isAllowedIdentity, isPublicPath, parseList, readAllowlist, signUpAllowedFor } from "./policy.ts";
+import { allowlistEmpty, isAllowedIdentity, isJoinPath, isPublicPath, parseList, readAllowlist, signUpAllowedFor } from "./policy.ts";
 
 test("unset allowlist denies everyone", () => {
   const a = readAllowlist({});
@@ -26,5 +26,9 @@ test("parseList", () => {
 
 test("public paths", () => {
   for (const p of ["/login", "/terms", "/privacy/", "/guidelines", "/2257", "/favicon.ico", "/assets/main-abc.js", "/models/m03.webp", "/robots.txt"]) assert.equal(isPublicPath(p), true, p);
-  for (const p of ["/", "/me", "/onboarding", "/live", "/watch/marco.noir", "/join", "/m/someone", "/forgot-password", "/api/photo/ph_abcdef12"]) assert.equal(isPublicPath(p), false, p);
+  for (const p of ["/", "/me", "/onboarding", "/live", "/watch/marco.noir", "/join", "/join/OM-7K3Q-HX9D", "/m/someone", "/forgot-password", "/api/photo/ph_abcdef12"]) assert.equal(isPublicPath(p), false, p);
+  assert.equal(isJoinPath("/join"), true);
+  assert.equal(isJoinPath("/join/OM-7K3Q-HX9D"), true);
+  assert.equal(isJoinPath("/join/OM-7K3Q-HX9D/"), true);
+  assert.equal(isJoinPath("/login"), false);
 });

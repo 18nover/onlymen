@@ -10,10 +10,8 @@ import {
   Eye,
   Heart,
   Languages,
-  Lock,
   MapPin,
   MessageCircle,
-  Send,
   Share2,
   ShieldCheck,
   Sparkles,
@@ -161,9 +159,9 @@ function ActionPanel({ m }: { m: Model }) {
             <Coins className="size-4" /> Tip {tip ? `$${tip}` : m.name}
           </button>
         )}
-        <a href="#message" className="flex h-12 items-center justify-center gap-2 rounded-full border border-gold/50 text-sm font-bold text-gold-hi transition hover:bg-gold/10">
+        <Link to="/messages/$username" params={{ username: m.handle }} className="flex h-12 items-center justify-center gap-2 rounded-full border border-gold/50 text-sm font-bold text-gold-hi transition hover:bg-gold/10">
           <MessageCircle className="size-4" /> Message
-        </a>
+        </Link>
       </div>
       <div className="mt-3 flex flex-wrap items-center justify-center gap-1 text-sm text-muted">
         <button onClick={() => setSaved((s) => !s)} aria-pressed={saved} className="flex h-10 items-center gap-1.5 rounded-full px-3 transition hover:text-ivory">
@@ -185,32 +183,12 @@ function ActionPanel({ m }: { m: Model }) {
 }
 
 function MessageBox({ m }: { m: Model }) {
-  const [text, setText] = useState("");
-  const starters = ["Hi! Loved your profile.", "What are you streaming next?", "Any custom video slots open?"];
   return (
-    <div>
-      <div className="flex flex-wrap gap-2">
-        {starters.map((s) => (
-          <button key={s} onClick={() => setText(s)} className="inline-flex min-h-10 items-center rounded-full border border-line bg-surface-2/60 px-3.5 text-xs text-muted transition hover:border-gold/50 hover:text-ivory">
-            {s}
-          </button>
-        ))}
-      </div>
-      <div className="mt-3 flex items-end gap-2 rounded-2xl border border-line bg-ink/40 p-2 focus-within:border-gold/60">
-        <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          rows={2}
-          placeholder={`Say hi to ${m.name}…`}
-          className="min-h-12 flex-1 resize-none bg-transparent px-2 py-1.5 text-sm text-ivory outline-none placeholder:text-dim"
-        />
-        <button className="flex h-11 items-center gap-1.5 rounded-xl bg-gold px-4 text-sm font-bold" aria-label="Send message">
-          <Send className="size-4" /> <span className="hidden sm:inline">Send</span>
-        </button>
-      </div>
-      <p className="mt-2 flex items-start gap-1.5 text-xs leading-relaxed text-dim">
-        <Lock className="mt-0.5 size-3.5 shrink-0" /> Join free to send. Keep it respectful — conversations are private between adults.
-      </p>
+    <div className="grid gap-3">
+      <p className="text-sm text-muted">Start a private conversation with {m.name}.</p>
+      <Link to="/messages/$username" params={{ username: m.handle }} className="flex h-12 items-center justify-center gap-2 rounded-full bg-gold text-sm font-bold">
+        <MessageCircle className="size-4" /> Message {m.name}
+      </Link>
     </div>
   );
 }
@@ -356,9 +334,9 @@ export function OnlyMenProfile({ handle }: { handle: string }) {
             <StatusDot m={m} className="size-1.5" /> {fmtActive(m)}
           </p>
         </div>
-        <a href="#message" className="grid size-11 place-items-center rounded-full border border-gold/50 text-gold-hi" aria-label="Message">
+        <Link to="/messages/$username" params={{ username: m.handle }} className="grid size-11 place-items-center rounded-full border border-gold/50 text-gold-hi" aria-label="Message">
           <MessageCircle className="size-5" />
-        </a>
+        </Link>
         <button className="om-shimmer flex h-11 items-center gap-1.5 rounded-full bg-gold px-5 text-sm font-bold">
           <Coins className="size-4" /> Tip
         </button>
@@ -376,8 +354,8 @@ export function ProfileNotFound() {
       <div>
         <p className="font-display text-5xl text-ivory">He's not here tonight.</p>
         <p className="mt-3 text-muted">This profile doesn't exist or has gone private.</p>
-        <Link to="/" className="mt-6 inline-grid h-12 place-items-center rounded-full bg-gold px-7 text-sm font-bold">
-          Browse men
+        <Link to="/nearby" className="mt-6 inline-grid h-12 place-items-center rounded-full bg-gold px-7 text-sm font-bold">
+          See who's nearby
         </Link>
       </div>
     </div>

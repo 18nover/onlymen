@@ -60,19 +60,14 @@ export const clickthroughVerifier: AgeVerifier = {
 };
 
 /**
- * STUB for a third-party age-verification vendor, chosen later. Candidates
- * (confirm prices with each vendor before choosing):
- *   - AgeChecker.net — data/ID check; $25/mo + $0.50 per accepted check
- *     (agechecker.net/pricing, read 2026-11-22; add-ons extra).
- *   - VerifyMy (verifymy.io) — email-based age estimation + ID; quote.
- *   - Yoti (yoti.com) — facial age estimation / Digital ID / doc scan; quote.
- *   - Incode — ID + selfie; enterprise quote.
- *   (also go.cam, AgeGO, Veriff age estimation)
- * Typical flow: startVerification creates a vendor session server-side
- * (secret API key) and redirects to the vendor; the vendor redirects back to
- * /age/callback?session=… and/or POSTs a signed webhook there. handleCallback
- * verifies the vendor signature / re-fetches the session result and returns
- * pass/fail. Never store the vendor's payload — only our signed pass token.
+ * STUB for a third-party age-verification vendor. The planned verifier is
+ * Stripe Identity (age/ID check only — not payments). Confirm Stripe's adult-
+ * business policy before going live. Typical flow: startVerification creates
+ * a vendor session server-side (secret API key) and redirects to the vendor;
+ * the vendor redirects back to /age/callback?session=… and/or POSTs a signed
+ * webhook there. handleCallback verifies the vendor signature / re-fetches
+ * the session result and returns pass/fail. Store only a verified-18+ flag,
+ * session id and timestamp — never the vendor payload, ID images, or DOB.
  */
 export const vendorStubVerifier: AgeVerifier = {
   name: "vendor",

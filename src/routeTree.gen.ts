@@ -20,6 +20,7 @@ import { Route as LiveRulesRouteImport } from './routes/live-rules'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LogoutRouteImport } from './routes/logout'
 import { Route as MeRouteImport } from './routes/me'
+import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as NearbyRouteImport } from './routes/nearby'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -29,8 +30,11 @@ import { Route as AdminInvitesRouteImport } from './routes/admin.invites'
 import { Route as AdminReportsRouteImport } from './routes/admin.reports'
 import { Route as AdminVerificationsRouteImport } from './routes/admin.verifications'
 import { Route as ApiOwnerSeedRouteImport } from './routes/api/owner-seed'
+import { Route as JoinCodeRouteImport } from './routes/join.$code'
 import { Route as MHandleRouteImport } from './routes/m.$handle'
+import { Route as MeSettingsRouteImport } from './routes/me.settings'
 import { Route as MeVerifyRouteImport } from './routes/me_.verify'
+import { Route as MessagesUsernameRouteImport } from './routes/messages.$username'
 import { Route as WatchHandleRouteImport } from './routes/watch.$handle'
 import { Route as ApiPhotoIdRouteImport } from './routes/api/photo/$id'
 import { Route as ApiKycFileIdRouteImport } from './routes/api/kyc/file/$id'
@@ -91,6 +95,11 @@ const MeRoute = MeRouteImport.update({
   path: '/me',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MessagesRoute = MessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NearbyRoute = NearbyRouteImport.update({
   id: '/nearby',
   path: '/nearby',
@@ -136,15 +145,30 @@ const ApiOwnerSeedRoute = ApiOwnerSeedRouteImport.update({
   path: '/api/owner-seed',
   getParentRoute: () => rootRouteImport,
 } as any)
+const JoinCodeRoute = JoinCodeRouteImport.update({
+  id: '/$code',
+  path: '/$code',
+  getParentRoute: () => JoinRoute,
+} as any)
 const MHandleRoute = MHandleRouteImport.update({
   id: '/m/$handle',
   path: '/m/$handle',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MeSettingsRoute = MeSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => MeRoute,
+} as any)
 const MeVerifyRoute = MeVerifyRouteImport.update({
   id: '/me_/verify',
   path: '/me/verify',
   getParentRoute: () => rootRouteImport,
+} as any)
+const MessagesUsernameRoute = MessagesUsernameRouteImport.update({
+  id: '/$username',
+  path: '/$username',
+  getParentRoute: () => MessagesRoute,
 } as any)
 const WatchHandleRoute = WatchHandleRouteImport.update({
   id: '/watch/$handle',
@@ -173,12 +197,13 @@ export interface FileRoutesByFullPath {
   '/custodian': typeof CustodianRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/guidelines': typeof GuidelinesRoute
-  '/join': typeof JoinRoute
+  '/join': typeof JoinRouteWithChildren
   '/live': typeof LiveRoute
   '/live-rules': typeof LiveRulesRoute
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
-  '/me': typeof MeRoute
+  '/me': typeof MeRouteWithChildren
+  '/messages': typeof MessagesRouteWithChildren
   '/nearby': typeof NearbyRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
@@ -188,8 +213,11 @@ export interface FileRoutesByFullPath {
   '/admin/reports': typeof AdminReportsRoute
   '/admin/verifications': typeof AdminVerificationsRoute
   '/api/owner-seed': typeof ApiOwnerSeedRoute
+  '/join/$code': typeof JoinCodeRoute
   '/m/$handle': typeof MHandleRoute
+  '/me/settings': typeof MeSettingsRoute
   '/me/verify': typeof MeVerifyRoute
+  '/messages/$username': typeof MessagesUsernameRoute
   '/watch/$handle': typeof WatchHandleRoute
   '/api/photo/$id': typeof ApiPhotoIdRoute
   '/api/kyc/file/$id': typeof ApiKycFileIdRoute
@@ -201,12 +229,13 @@ export interface FileRoutesByTo {
   '/custodian': typeof CustodianRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/guidelines': typeof GuidelinesRoute
-  '/join': typeof JoinRoute
+  '/join': typeof JoinRouteWithChildren
   '/live': typeof LiveRoute
   '/live-rules': typeof LiveRulesRoute
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
-  '/me': typeof MeRoute
+  '/me': typeof MeRouteWithChildren
+  '/messages': typeof MessagesRouteWithChildren
   '/nearby': typeof NearbyRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
@@ -216,8 +245,11 @@ export interface FileRoutesByTo {
   '/admin/reports': typeof AdminReportsRoute
   '/admin/verifications': typeof AdminVerificationsRoute
   '/api/owner-seed': typeof ApiOwnerSeedRoute
+  '/join/$code': typeof JoinCodeRoute
   '/m/$handle': typeof MHandleRoute
+  '/me/settings': typeof MeSettingsRoute
   '/me/verify': typeof MeVerifyRoute
+  '/messages/$username': typeof MessagesUsernameRoute
   '/watch/$handle': typeof WatchHandleRoute
   '/api/photo/$id': typeof ApiPhotoIdRoute
   '/api/kyc/file/$id': typeof ApiKycFileIdRoute
@@ -230,12 +262,13 @@ export interface FileRoutesById {
   '/custodian': typeof CustodianRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/guidelines': typeof GuidelinesRoute
-  '/join': typeof JoinRoute
+  '/join': typeof JoinRouteWithChildren
   '/live': typeof LiveRoute
   '/live-rules': typeof LiveRulesRoute
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
-  '/me': typeof MeRoute
+  '/me': typeof MeRouteWithChildren
+  '/messages': typeof MessagesRouteWithChildren
   '/nearby': typeof NearbyRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
@@ -245,8 +278,11 @@ export interface FileRoutesById {
   '/admin/reports': typeof AdminReportsRoute
   '/admin/verifications': typeof AdminVerificationsRoute
   '/api/owner-seed': typeof ApiOwnerSeedRoute
+  '/join/$code': typeof JoinCodeRoute
   '/m/$handle': typeof MHandleRoute
+  '/me/settings': typeof MeSettingsRoute
   '/me_/verify': typeof MeVerifyRoute
+  '/messages/$username': typeof MessagesUsernameRoute
   '/watch/$handle': typeof WatchHandleRoute
   '/api/photo/$id': typeof ApiPhotoIdRoute
   '/api/kyc/file/$id': typeof ApiKycFileIdRoute
@@ -266,6 +302,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/logout'
     | '/me'
+    | '/messages'
     | '/nearby'
     | '/onboarding'
     | '/privacy'
@@ -275,8 +312,11 @@ export interface FileRouteTypes {
     | '/admin/reports'
     | '/admin/verifications'
     | '/api/owner-seed'
+    | '/join/$code'
     | '/m/$handle'
+    | '/me/settings'
     | '/me/verify'
+    | '/messages/$username'
     | '/watch/$handle'
     | '/api/photo/$id'
     | '/api/kyc/file/$id'
@@ -294,6 +334,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/logout'
     | '/me'
+    | '/messages'
     | '/nearby'
     | '/onboarding'
     | '/privacy'
@@ -303,8 +344,11 @@ export interface FileRouteTypes {
     | '/admin/reports'
     | '/admin/verifications'
     | '/api/owner-seed'
+    | '/join/$code'
     | '/m/$handle'
+    | '/me/settings'
     | '/me/verify'
+    | '/messages/$username'
     | '/watch/$handle'
     | '/api/photo/$id'
     | '/api/kyc/file/$id'
@@ -322,6 +366,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/logout'
     | '/me'
+    | '/messages'
     | '/nearby'
     | '/onboarding'
     | '/privacy'
@@ -331,8 +376,11 @@ export interface FileRouteTypes {
     | '/admin/reports'
     | '/admin/verifications'
     | '/api/owner-seed'
+    | '/join/$code'
     | '/m/$handle'
+    | '/me/settings'
     | '/me_/verify'
+    | '/messages/$username'
     | '/watch/$handle'
     | '/api/photo/$id'
     | '/api/kyc/file/$id'
@@ -345,12 +393,13 @@ export interface RootRouteChildren {
   CustodianRoute: typeof CustodianRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   GuidelinesRoute: typeof GuidelinesRoute
-  JoinRoute: typeof JoinRoute
+  JoinRoute: typeof JoinRouteWithChildren
   LiveRoute: typeof LiveRoute
   LiveRulesRoute: typeof LiveRulesRoute
   LoginRoute: typeof LoginRoute
   LogoutRoute: typeof LogoutRoute
-  MeRoute: typeof MeRoute
+  MeRoute: typeof MeRouteWithChildren
+  MessagesRoute: typeof MessagesRouteWithChildren
   NearbyRoute: typeof NearbyRoute
   OnboardingRoute: typeof OnboardingRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -447,6 +496,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/messages': {
+      id: '/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof MessagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/nearby': {
       id: '/nearby'
       path: '/nearby'
@@ -510,6 +566,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiOwnerSeedRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/join/$code': {
+      id: '/join/$code'
+      path: '/$code'
+      fullPath: '/join/$code'
+      preLoaderRoute: typeof JoinCodeRouteImport
+      parentRoute: typeof JoinRoute
+    }
     '/m/$handle': {
       id: '/m/$handle'
       path: '/m/$handle'
@@ -517,12 +580,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MHandleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/me/settings': {
+      id: '/me/settings'
+      path: '/settings'
+      fullPath: '/me/settings'
+      preLoaderRoute: typeof MeSettingsRouteImport
+      parentRoute: typeof MeRoute
+    }
     '/me_/verify': {
       id: '/me_/verify'
       path: '/me/verify'
       fullPath: '/me/verify'
       preLoaderRoute: typeof MeVerifyRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/messages/$username': {
+      id: '/messages/$username'
+      path: '/$username'
+      fullPath: '/messages/$username'
+      preLoaderRoute: typeof MessagesUsernameRouteImport
+      parentRoute: typeof MessagesRoute
     }
     '/watch/$handle': {
       id: '/watch/$handle'
@@ -555,18 +632,51 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface JoinRouteChildren {
+  JoinCodeRoute: typeof JoinCodeRoute
+}
+
+const JoinRouteChildren: JoinRouteChildren = {
+  JoinCodeRoute: JoinCodeRoute,
+}
+
+const JoinRouteWithChildren = JoinRoute._addFileChildren(JoinRouteChildren)
+
+interface MeRouteChildren {
+  MeSettingsRoute: typeof MeSettingsRoute
+}
+
+const MeRouteChildren: MeRouteChildren = {
+  MeSettingsRoute: MeSettingsRoute,
+}
+
+const MeRouteWithChildren = MeRoute._addFileChildren(MeRouteChildren)
+
+interface MessagesRouteChildren {
+  MessagesUsernameRoute: typeof MessagesUsernameRoute
+}
+
+const MessagesRouteChildren: MessagesRouteChildren = {
+  MessagesUsernameRoute: MessagesUsernameRoute,
+}
+
+const MessagesRouteWithChildren = MessagesRoute._addFileChildren(
+  MessagesRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R2257Route: R2257Route,
   CustodianRoute: CustodianRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   GuidelinesRoute: GuidelinesRoute,
-  JoinRoute: JoinRoute,
+  JoinRoute: JoinRouteWithChildren,
   LiveRoute: LiveRoute,
   LiveRulesRoute: LiveRulesRoute,
   LoginRoute: LoginRoute,
   LogoutRoute: LogoutRoute,
-  MeRoute: MeRoute,
+  MeRoute: MeRouteWithChildren,
+  MessagesRoute: MessagesRouteWithChildren,
   NearbyRoute: NearbyRoute,
   OnboardingRoute: OnboardingRoute,
   PrivacyRoute: PrivacyRoute,

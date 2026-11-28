@@ -9,7 +9,7 @@
  * again server-side by the root route's private guard (src/routes/__root.tsx),
  * so a forged cookie only gets the same coming-soon page.
  */
-import { isPublicPath, normalizePath, SERVER_FN_PREFIX } from "../../src/lib/private/policy";
+import { isJoinPath, isPublicPath, normalizePath, SERVER_FN_PREFIX } from "../../src/lib/private/policy";
 import { renderGateHtml } from "../../src/lib/private/gate-html";
 import { platformEnv } from "../../src/lib/platform/runtime.ts";
 import { invitesEnabled } from "../../src/lib/invites/invites.server.ts";
@@ -47,7 +47,7 @@ export default async function privateGate(event: GateEvent, next: () => unknown 
   if (privateModeOff()) return next();
   const path = normalizePath(event.url.pathname);
   if (isPublicPath(path) || path.startsWith(SERVER_FN_PREFIX) || path.startsWith("/api/photo/") || path === "/api/owner-seed" || path.startsWith("/api/kyc/webhook/")) return pass(next);
-  if (signUpPageOpen() && path === "/join") return pass(next);
+  if (signUpPageOpen() && isJoinPath(path)) return pass(next);
   if (hasSessionCookie(event.req.headers)) return pass(next);
 
   const method = (event.req.method ?? "GET").toUpperCase();

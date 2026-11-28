@@ -7,7 +7,7 @@ import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { PrivateComingSoon } from "@/components/private-gate";
 import { useAccount } from "@/lib/account/use-account";
 import { privateAccessFn } from "@/lib/private/access";
-import { isPublicPath } from "@/lib/private/policy";
+import { isJoinPath, isPublicPath } from "@/lib/private/policy";
 import { AGE_GATE_PATH, hasAgeCookie, isAgeExempt } from "@/lib/age-gate/policy";
 import appCss from "../styles.css?url";
 
@@ -57,7 +57,7 @@ function RootComponent() {
   const { access } = Route.useRouteContext();
   useRecheckAccessOnAccountChange();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const gated = !access.allowed && !isPublicPath(pathname) && !(access.ownerSignup && pathname === "/join");
+  const gated = !access.allowed && !isPublicPath(pathname) && !(access.ownerSignup && isJoinPath(pathname));
   // 18+ gate, client side: the server middleware covers full page loads; this
   // covers in-app navigation from an exempt page (e.g. /terms) to a gated one.
   const [ageOk, setAgeOk] = useState(true);
