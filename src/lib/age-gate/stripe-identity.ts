@@ -93,7 +93,7 @@ export function createIdentitySession(secretKey: string, returnUrl: string): Pro
 }
 
 export function getIdentitySession(secretKey: string, id: string): Promise<IdentitySession> {
-  return stripe<IdentitySession>(secretKey, `/identity/verification_sessions/${encodeURIComponent(id)}?expand[]=verified_outputs`);
+  return stripe<IdentitySession>(secretKey, `/identity/verification_sessions/${encodeURIComponent(id)}?expand[]=verified_outputs&expand[]=verified_outputs.dob`);
 }
 
 /** Ask Stripe to delete the collected ID data (best effort). */
