@@ -20,6 +20,11 @@ export const sessionUser = (headers: Headers) => allowedSessionUserId(headers);
 
 export async function isAccountAgeVerified(uid: string): Promise<boolean> {
   try {
+    // Owner/admin accounts and accounts whose ID an admin already approved count as 18+ verified.
+    const a = await (await db())<{ role: string | null; vs: string | null }>`select role, verification_status as vs from om_account where user_id = ${uid}`;
+    if (a[0] && (a[0].role === "owner" || a[0].role === "admin" || a[0].vs === "approved")) return true;
+  } catch { /* fall through */ }
+  try {
     const r = await (await db())<{ at: string | null }>`select age_verified_at as at from om_account where user_id = ${uid}`;
     return Boolean(r[0]?.at);
   } catch {
