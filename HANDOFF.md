@@ -6,7 +6,7 @@ OnlyMen is a private, invite-only community for adult men, with creator profiles
 
 Working branch is still `invite-codes`. Production `main` is unchanged at `54434ef`. Do not merge to `main`, touch DNS, or change Vercel production without Jerry's yes.
 
-The test Worker at [onlymen.18nover.workers.dev](https://onlymen.18nover.workers.dev) is the invite-codes preview (no custom domain, no DNS change). Worker vars: `ONLYMEN_INVITES=on`, `ONLYMEN_NEARBY=on`, `ONLYMEN_AGE_GATE=on`, `ONLYMEN_PAYMENTS` unset. A later paragraph in this file may still describe the pre-deploy state; the live preview is this branch.
+The test Worker at [onlymen.18nover.workers.dev](https://onlymen.18nover.workers.dev) is the invite-codes preview (no custom domain, no DNS change). Current Version ID: `d8848022-52c5-4a7f-b1b3-8edd847685af` (commit `cc74523`). Worker vars: `ONLYMEN_INVITES=on`, `ONLYMEN_NEARBY=on`, `ONLYMEN_AGE_GATE=on`, `ONLYMEN_PAYMENTS` unset. A later paragraph in this file may still describe the pre-deploy state; the live preview is this branch.
 
 Personal invite links `/join/<CODE>` are age-exempt so Open Graph can unfurl. The branded landing uses `public/og-invite.jpg`. Route files for `/join/$code`, `/me/settings`, and `/messages/$username` use the `me_.verify` flattening pattern so they are not wrapped by the parent page. Logged-out `/`, `/nearby`, `/me/settings`, and `/messages` still show the 18+ age gate, then the private coming-soon page — testers sign in from `/join` or `/login`.
 
