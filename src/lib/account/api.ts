@@ -83,7 +83,7 @@ export const signUpFn = createServerFn({ method: "POST" })
       return { ok: false, error: "We couldn't create your account. Please try again." };
     }
     try {
-      await c.repo.createAccountRow({ userId, username, dob: data.dob, type: data.type, displayName: data.username.trim().replace(/^@/, ""), userAgent: c.headers.get("user-agent") ?? undefined });
+      await c.repo.createAccountRow({ userId, username, dob: data.dob, type: "creator", displayName: data.username.trim().replace(/^@/, ""), userAgent: c.headers.get("user-agent") ?? undefined });
     } catch (e) {
       // Username race (unique constraint) or DB hiccup: roll the identity back.
       await c.repo.deleteUser(userId).catch(() => {});

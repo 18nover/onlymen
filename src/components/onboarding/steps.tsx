@@ -338,9 +338,9 @@ function VerifyStepServer({ account, onNext }: StepProps) {
   const st = account.creator?.status;
   return (
     <>
-      <StepHead kicker="Creator verification" title={<>Prove you're <span className="text-gold italic">you.</span></>} sub="Every creator is ID- and age-verified before going live or posting explicit photos. Documents are encrypted and only seen by our review team." />
+      <StepHead kicker="Creator verification" title={<>Prove you're <span className="text-gold italic">you.</span></>} sub="Everyone on OnlyMen can go live. Your Stripe ID check unlocks going live and explicit photos." />
       <Card className="grid gap-3">
-        <p className="flex items-center gap-2 text-sm font-semibold text-ivory"><ShieldCheck className="size-4 text-gold" /> {st === "approved" ? "You're verified." : st === "pending_review" ? "Submitted — in review." : st === "rejected" ? "Your last submission was declined." : "Not verified yet."}</p>
+        <p className="flex items-center gap-2 text-sm font-semibold text-ivory"><ShieldCheck className="size-4 text-gold" /> {st === "approved" ? "You're verified." : st === "pending_review" ? "In review." : st === "rejected" ? "Your last submission was declined." : "Not verified yet."}</p>
         {st !== "approved" && st !== "pending_review" && (
           <Link to="/me/verify" className="inline-flex h-11 w-fit items-center rounded-full bg-gold px-6 text-sm font-bold tracking-[0.12em] uppercase">Verify my ID</Link>
         )}

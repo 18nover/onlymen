@@ -89,7 +89,7 @@ function InviteLanding() {
     setServerErr(null);
     try {
       if (!agree) return setServerErr({ msg: "Please agree to give feedback during the beta." });
-      await accountStore.signUp({ email, username, password, dob, type: "member", inviteCode: code, agreeFeedback: true });
+      await accountStore.signUp({ email, username, password, dob, type: "creator", inviteCode: code, agreeFeedback: true });
       nav({ to: "/onboarding" });
     } catch (err) {
       setServerErr(err instanceof AccountError ? { msg: err.message, field: err.field } : { msg: "Something went wrong. Try again." });

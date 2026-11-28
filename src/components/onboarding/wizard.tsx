@@ -228,7 +228,9 @@ function Finish({ account }: { account: PublicAccount }) {
           </h1>
           <p className="mt-4 text-sm leading-relaxed text-muted">
             {creator
-              ? "Your creator profile is set up. It goes public as soon as our team approves your ID — usually within 48 hours. Until then you can browse, chat and polish your page."
+              ? account.creator?.status === "approved"
+                ? "You're verified, so you can go live on OnlyMen Live and post right away. Polish your page whenever you like."
+                : "Your profile is set up. Going live and explicit photos unlock once your ID check passes. Until then you can browse, chat and polish your page."
               : "Your profile is live. Start browsing, follow the men you like and say hello."}
           </p>
           <ul className="mt-6 grid gap-2">
