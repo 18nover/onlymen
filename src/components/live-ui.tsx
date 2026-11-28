@@ -53,13 +53,13 @@ export function LiveCard({ s }: { s: LiveNow }) {
         </div>
         <div className="absolute inset-x-3 bottom-3">
           <p className="text-[10px] font-bold tracking-[0.18em] text-gold-hi uppercase">{s.own ? "You · " : ""}{s.platform}</p>
-          <p className="mt-0.5 truncate font-display text-2xl leading-tight font-semibold text-ivory">{s.name}</p>
-          <p className="line-clamp-1 text-xs text-muted">{s.title}</p>
+          <p className="mt-0.5 line-clamp-1 font-display text-2xl leading-tight font-semibold text-ivory">{s.name}</p>
+          <p className="line-clamp-2 text-xs text-muted">{s.title}</p>
           {s.tipGoal && (
             <div className="mt-2">
               <div className="flex items-center justify-between text-[10px] text-dim">
-                <span className="flex items-center gap-1 truncate"><Target className="size-3 text-gold" /> {s.tipGoal.label}</span>
-                <span>{s.tipGoal.pct}%</span>
+                <span className="flex min-w-0 items-center gap-1"><Target className="size-3 shrink-0 text-gold" /> <span className="truncate">{s.tipGoal.label}</span></span>
+                <span className="ml-2 shrink-0">{s.tipGoal.pct}%</span>
               </div>
               <div className="mt-1 h-1 overflow-hidden rounded-full bg-surface-2">
                 <div className="h-full rounded-full bg-gold" style={{ width: `${s.tipGoal.pct}%` }} />

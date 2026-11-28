@@ -26,7 +26,7 @@ function LivePage() {
   const viewers = live.reduce((n, s) => n + s.viewers, 0);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pb-[calc(var(--tabbar-h)+var(--tabbar-gap)+env(safe-area-inset-bottom,0px)+1rem)] md:pb-0">
       <Header city={city} onCity={setCity} />
       <main className="om-container">
         <section className="relative mt-6 overflow-hidden rounded-3xl border-gold-grad p-[clamp(1.25rem,4vw,2.5rem)]">
@@ -72,7 +72,7 @@ function LivePage() {
         <section aria-labelledby="live-now" className="mt-6">
           <h2 id="live-now" className="sr-only">Live now</h2>
           {shown.length ? (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
               {shown.map((s) => <LiveCard key={s.handle} s={s} />)}
             </div>
           ) : (

@@ -128,7 +128,9 @@ function Nearby() {
     void loadGrid();
   };
 
-  const demo = useMemo(() => (cfg?.showDemo ? models.slice(0, 12) : []), [cfg?.showDemo]);
+  // Placeholders only fill the grid up to DEMO_TARGET: each real member replaces one; none once there are enough.
+  const realCount = new Set([...(grid?.items ?? []).map((c) => c.username), ...directory.filter((m) => m.source === "real").map((m) => m.handle)]).size;
+  const demo = useMemo(() => (cfg?.showDemo ? models.slice(0, demoSlots(realCount)) : []), [cfg?.showDemo, realCount]);
 
   // Map pins: opted-in members from the server (already jittered), plus labelled demo
   // profiles around the viewer's area when demo profiles are on. Online dots come from the grid.
@@ -235,7 +237,7 @@ function Nearby() {
   return (
     <>
     {topbar}
-    <main className="mx-auto grid max-w-6xl gap-5 px-4 pt-[calc(88px+env(safe-area-inset-top,0px))] pb-28 text-ivory sm:px-6">
+    <main className="mx-auto grid max-w-6xl gap-5 px-4 pt-[calc(88px+env(safe-area-inset-top,0px))] pb-[calc(var(--tabbar-h)+var(--tabbar-gap)+env(safe-area-inset-bottom,0px)+2rem)] text-ivory sm:px-6">
       <header className="flex flex-col items-center gap-3 text-center">
         <div className="flex flex-col items-center">
           <p className="text-xs font-bold tracking-[0.3em] text-gold uppercase">Around you</p>
@@ -269,9 +271,20 @@ function Shell({ children }: { children: React.ReactNode }) {
   return <main className="grid min-h-screen place-items-center px-6 text-center text-ivory"><div className="grid gap-4">{children}</div></main>;
 }
 
+/** Target number of tiles (real + placeholder). Real members come first and each one removes a placeholder. */
+const DEMO_TARGET = 12;
+const demoSlots = (real: number) => Math.max(0, DEMO_TARGET - real);
+
 function DirectoryGrid({ items, directory, hasOrigin, onOpen }: { items: Card[]; directory: Model[]; hasOrigin: boolean; onOpen: (c: Card) => void }) {
   const seen = new Set(items.map((c) => c.username));
-  const rest = directory.filter((m) => !seen.has(m.handle));
+  const realTotal = new Set([...seen, ...directory.filter((m) => m.source === "real").map((m) => m.handle)]).size;
+  const slots = demoSlots(realTotal);
+  let demoShown = 0;
+  const rest = directory.filter((m) => {
+    if (seen.has(m.handle)) return false;
+    if (m.source === "real") return true;
+    return demoShown++ < slots;
+  });
   if (items.length === 0 && rest.length === 0) {
     return <p className="rounded-xl border border-line bg-surface p-4 text-sm text-muted">No members to show yet.</p>;
   }
