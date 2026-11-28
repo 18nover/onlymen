@@ -91,7 +91,8 @@ function Body({ a }: { a: PublicAccount }) {
           <span className="font-semibold text-gold-hi">Continue →</span>
         </Link>
       )}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-8">
+      {/* Masonry: one column on phones, two from md. Every block is sized to its content and the browser balances the columns, so there are no stretched cards or empty gaps. */}
+      <div className="space-y-6 md:columns-2 md:gap-6 md:space-y-0 lg:gap-8 md:[&>*]:mb-6 md:[&>*]:break-inside-avoid lg:[&>*]:mb-8">
         {/* gallery */}
         <div className="min-w-0">
           <LiveRing live={!!a.live?.session} radius="rounded-3xl">
@@ -141,8 +142,7 @@ function Body({ a }: { a: PublicAccount }) {
           )}
         </div>
 
-        {/* side */}
-        <div className="grid min-w-0 content-start gap-6 md:sticky md:top-24 md:self-start">
+        {/* identity */}
           <div className="rounded-2xl border-gold-grad p-5 sm:p-6">
             <p className="text-xs text-dim">onlymen.gay/@{a.username}</p>
             <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
@@ -214,10 +214,6 @@ function Body({ a }: { a: PublicAccount }) {
               ) : null,
             )}
           </Card>
-        </div>
-      </div>
-
-      <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {creator && (
           <Card title="Tips" icon={<Coins className="size-3.5" />} edit="socials">
             <p className="text-sm text-ivory">Tips {p.acceptsTips ? "on" : "off"}</p>

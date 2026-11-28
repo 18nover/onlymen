@@ -101,6 +101,8 @@ Invite sign-up and `/join/<CODE>` landing; Stripe Identity age check on LIVE key
 
 ## Open
 
+- **/me desktop layout (just changed, NOT visually verified or deployed):** `src/components/my-profile.tsx` now uses a CSS-columns masonry (`md:columns-2`, every block `break-inside-avoid`) instead of the old gallery/side grid plus a separate bottom grid, to fix big gaps and uneven cards on desktop. tsc passes. Still to do: check it in a browser at ~1440px and ~390px (signed in; a static harness is at `/workspace/shots` on the box), adjust, then `npm run deploy:cf`. Latest deployed Worker version (c851874b) does not include this change.
+
 - **Android PWA test** of the full path: tap `/join/CODE` → install → sign in → Nearby/chat, on a real Android Chrome.
 - **One account across onlymen.gay and onlymen.live:** cookies are per host, so a .gay session does not carry to .live. A one-time-token hand-off is designed in `docs/LIVE.md` ("SSO to onlymen.live") and not built. Needs a production change; can't be tested on the workers.dev Worker.
 - **Stripe adult-business policy check** before any public launch (Identity is age check only, but confirm).
