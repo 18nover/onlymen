@@ -259,6 +259,11 @@
 @keyframes om-slide-up { from { opacity: 0; transform: translateY(130%); } to { opacity: 1; transform: none; } }
 @keyframes om-photo-in { from { opacity: 0; transform: scale(1.03); } to { opacity: 1; transform: none; } }
 @keyframes om-shimmer { 0%, 62% { transform: translateX(-130%) skewX(-18deg); } 100% { transform: translateX(230%) skewX(-18deg); } }
+.om-you { position: relative; width: 18px; height: 18px; border-radius: 999px; background: #e8c45a; border: 3px solid #1a1208; box-shadow: 0 0 0 2px rgb(232 196 90 / 0.9), 0 0 18px 4px rgb(212 175 55 / 0.6); z-index: 5; }
+.om-you::before { content: ""; position: absolute; inset: -12px; border-radius: 999px; border: 2px solid rgb(232 196 90 / 0.7); animation: om-you-ping 2s ease-out infinite; }
+.om-you-label { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); padding: 1px 7px; border-radius: 999px; background: #e8c45a; color: #1a1208; font: 800 10px/1.4 Manrope, sans-serif; letter-spacing: 0.1em; text-transform: uppercase; }
+@keyframes om-you-ping { 0% { transform: scale(0.6); opacity: 0.9; } 100% { transform: scale(1.9); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .om-you::before { animation: none; } }
 @keyframes om-pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.45); opacity: 0.55; } }
 @layer components {
   .om-enter { animation: om-rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; }

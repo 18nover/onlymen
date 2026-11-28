@@ -8,7 +8,7 @@ import {
 } from "@/lib/nearby/api";
 import type { Card, GridResult, MapResult, Settings } from "@/lib/nearby/repo.server";
 import { REPORT_REASON_OPTIONS } from "@/lib/nearby/reasons";
-import type { MapPin as MapPinT } from "@/components/nearby-map";
+import type { MapPin as MapPinT, MyPos } from "@/components/nearby-map";
 import { bucketIndex, bucketLabel, PRESENCE } from "@/lib/nearby/geo";
 import { models, type Model } from "@/lib/models";
 import { useDirectory } from "@/lib/use-directory";
@@ -36,6 +36,8 @@ function Nearby() {
   const [map, setMap] = useState<MapResult | null>(null);
   const [view, setView] = useState<"grid" | "map">("map");
   const [privOpen, setPrivOpen] = useState(false);
+  // Own position for the "You" dot: browser geolocation, client-side only (never sent anywhere by this code).
+  const [geo, setGeo] = useState<{ state: "pending" | "ok" | "denied" | "unsupported"; lat?: number; lng?: number }>({ state: "pending" });
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -109,6 +111,19 @@ function Nearby() {
   useEffect(() => {
     if (view === "map") void loadMap();
   }, [view, loadMap]);
+
+  const locate = useCallback(() => {
+    if (!("geolocation" in navigator)) return setGeo({ state: "unsupported" });
+    setGeo((g) => (g.state === "ok" ? g : { state: "pending" }));
+    navigator.geolocation.getCurrentPosition(
+      (p) => setGeo({ state: "ok", lat: p.coords.latitude, lng: p.coords.longitude }),
+      () => setGeo({ state: "denied" }),
+      { enableHighAccuracy: true, maximumAge: 60_000, timeout: 12_000 },
+    );
+  }, []);
+  useEffect(() => {
+    if (cfg?.signedIn && view === "map") locate();
+  }, [cfg?.signedIn, view, locate]);
 
   const save = async (patch: Patch) => {
     setErr(null);
@@ -191,30 +206,45 @@ function Nearby() {
     </div>
   );
 
+  // Where to centre and where the "You" dot goes: the device first, else the saved (rounded) area.
+  const me: MyPos | null = geo.state === "ok" && geo.lat != null && geo.lng != null ? { lat: geo.lat, lng: geo.lng, exact: true } : map?.center ? { ...map.center, exact: false } : null;
+  const mapCenter = me ?? map?.center ?? null;
+
   if (view === "map")
     return (
       <>
         <main className="text-ivory">
           <h1 className="sr-only">Nearby map</h1>
-          {map?.center && (
+          {mapCenter && (
             <Suspense fallback={null}>
-              <NearbyMap center={map.center} pins={pins} onOpen={(u) => void navigate({ to: "/m/$handle", params: { handle: u } })} />
+              <NearbyMap center={mapCenter} me={me} pins={pins} onOpen={(u) => void navigate({ to: "/m/$handle", params: { handle: u } })} />
             </Suspense>
           )}
           {topbar}
           <div className="pointer-events-none fixed inset-x-3 top-[calc(76px+env(safe-area-inset-top,0px))] z-20 mx-auto grid max-w-md justify-items-center gap-2">
             {err && <p className="pointer-events-auto rounded-full border border-ruby/60 bg-ink/85 px-4 py-2 text-xs">{err}</p>}
             {note && <p className="pointer-events-auto rounded-full border border-gold/40 bg-ink/85 px-4 py-2 text-xs">{note}</p>}
+            {mapCenter && geo.state !== "ok" && geo.state !== "pending" && (
+              <p className="pointer-events-auto max-w-sm rounded-2xl border border-gold/40 bg-ink/85 px-4 py-2 text-center text-xs text-ivory/90">
+                {geo.state === "denied" ? "Location is off, so this is your saved area. Turn on location for this site in your browser to see your exact spot. " : "This browser can't share a location. "}
+                {geo.state === "denied" && <button type="button" onClick={locate} className="font-bold text-gold-hi underline">Try again</button>}
+              </p>
+            )}
+            {mapCenter && !map?.center && (
+              <button type="button" disabled={busy} onClick={() => push(false)} className="pointer-events-auto rounded-full border border-gold/40 bg-ink/85 px-4 py-2 text-xs font-bold text-gold-hi">Share my approximate area to see members nearby</button>
+            )}
             {map?.center && demo.length > 0 && <p className="rounded-full bg-ink/70 px-3 py-1 text-[10px] font-bold tracking-[0.22em] text-gold/85 uppercase backdrop-blur">Demo pins · not real people</p>}
           </div>
           {!map ? (
             <div className="fixed inset-0 grid place-items-center"><p className="flex items-center gap-2 text-muted"><Loader2 className="size-4 animate-spin" /> Loading map…</p></div>
-          ) : !map.center ? (
+          ) : !mapCenter && geo.state === "pending" ? (
+            <div className="fixed inset-0 grid place-items-center"><p className="flex items-center gap-2 text-muted"><Loader2 className="size-4 animate-spin" /> Finding you…</p></div>
+          ) : !mapCenter ? (
             <div className="fixed inset-0 grid place-items-center bg-[radial-gradient(circle_at_50%_30%,#2a0a12,#070405_70%)] px-6">
               <div className="grid max-w-sm justify-items-center gap-3 text-center">
                 <Radar className="size-8 text-gold" />
                 <h2 className="font-display text-3xl">See who's around</h2>
-                <p className="text-sm text-muted">Your spot is rounded on our server to an area about 1.2 km across and shown to you as a soft circle, never an exact dot.</p>
+                <p className="text-sm text-muted">{geo.state === "denied" ? "Location is blocked for this site. Turn it on in your browser settings to see yourself on the map, or share an approximate area below. " : ""}Other members only ever see your spot rounded to an area about 1.2 km across. Your exact spot stays on your device.</p>
                 <button disabled={busy} onClick={() => push(false)} className="om-shimmer flex h-11 items-center gap-2 rounded-full bg-gold px-6 text-sm font-bold text-ink disabled:opacity-60">{busy && <Loader2 className="size-4 animate-spin" />} Share my approximate area</button>
                 <button onClick={() => setView("grid")} className="text-sm font-semibold text-gold-hi underline">Browse the grid instead</button>
               </div>

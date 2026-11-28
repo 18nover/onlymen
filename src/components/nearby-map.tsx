@@ -2,8 +2,10 @@
  * Nearby map (MapLibre GL JS + OpenFreeMap tiles: free, no API key) in the
  * OnlyMen "noir gold" style. Loaded only on the client.
  *
- * Privacy: the viewer's own position is shown ONLY as a soft ~600 m gold
- * circle around their snapped, rounded cell centre — never a dot. Member pins
+ * Privacy: the viewer's own "You" dot is drawn client-side only, from the
+ * browser's geolocation (or the saved rounded cell as a fallback). It is never
+ * sent to or stored by the server, so nobody else can see it. The soft ~600 m
+ * gold circle still marks the rounded area others are shown. Member pins
  * come from the server already jittered and only for members who opted in
  * (share-pin on, not incognito / offline / distance-hidden / in their home
  * zone). This component never sees an exact location.
@@ -26,7 +28,9 @@ function circle(lng: number, lat: number, m: number, n = 64) {
   return { type: "Polygon" as const, coordinates: [ring] };
 }
 
-export function NearbyMap({ center, pins, onOpen }: { center: { lat: number; lng: number }; pins: MapPin[]; onOpen: (username: string) => void }) {
+export type MyPos = { lat: number; lng: number; exact: boolean };
+
+export function NearbyMap({ center, pins, me, onOpen }: { center: { lat: number; lng: number }; pins: MapPin[]; me?: MyPos | null; onOpen: (username: string) => void }) {
   const el = useRef<HTMLDivElement>(null);
   const openRef = useRef(onOpen);
   openRef.current = onOpen;
@@ -85,13 +89,24 @@ export function NearbyMap({ center, pins, onOpen }: { center: { lat: number; lng
         b.addEventListener("click", () => openRef.current(p.username));
         new maplibregl.Marker({ element: b, anchor: "center" }).setLngLat([p.lng, p.lat]).addTo(m);
       }
+      if (me) {
+        const y = document.createElement("div");
+        y.className = "om-you";
+        y.setAttribute("role", "img");
+        y.setAttribute("aria-label", me.exact ? "You are here" : "You, in your saved area");
+        const l = document.createElement("span");
+        l.className = "om-you-label";
+        l.textContent = "You";
+        y.appendChild(l);
+        new maplibregl.Marker({ element: y, anchor: "center" }).setLngLat([me.lng, me.lat]).addTo(m);
+      }
       map = m;
     })();
     return () => {
       dead = true;
       map?.remove();
     };
-  }, [center.lat, center.lng, pins]);
+  }, [center.lat, center.lng, pins, me?.lat, me?.lng, me?.exact]);
   return (
     <>
       <div className="om-map" role="region" aria-label="Map of members near your area">
