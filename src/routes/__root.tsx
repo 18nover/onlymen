@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AGE_OK_SCRIPT } from "@/lib/onlymen-hooks";
+import { usePresencePing } from "@/lib/nearby/use-online";
 import { InstallPrompt } from "@/components/install-prompt";
 import { createRootRoute, HeadContent, Outlet, Scripts, useRouter, useRouterState } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth/provider";
@@ -78,11 +79,19 @@ function RootComponent() {
         <AuthProvider>
           {ageGated ? <AgeInterstitial next={pathname} /> : gated ? <PrivateComingSoon invites={access.invites} /> : <Outlet />}
           {!ageGated && !gated && <InstallPrompt />}
+          <PresenceBeat />
         </AuthProvider>
         <Scripts />
       </body>
     </html>
   );
+}
+
+/** Keeps this member's "online" heartbeat fresh on every page (counted for the "N online right now" number). */
+function PresenceBeat() {
+  const { account } = useAccount();
+  usePresencePing(Boolean(account));
+  return null;
 }
 
 /** Sign-in / sign-out changes the session cookie: re-run the root beforeLoad (server check). */

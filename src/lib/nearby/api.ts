@@ -252,3 +252,21 @@ export const adminSetPlusFn = createServerFn({ method: "POST" })
   });
 
 export type { Card };
+
+/** Light presence ping from any signed-in page (about every 60 s). Writes only user_id + last_seen. */
+export const presencePingFn = createServerFn({ method: "POST" }).handler(async (): Promise<NResult<true>> => {
+  const c = await member(true, false);
+  if (!isCtx(c)) return c;
+  await c.repo.heartbeat(c.db, c.uid);
+  return { ok: true, value: true };
+});
+
+/** Real accounts seen in the last 5 minutes (incognito / appear-offline members aren't counted). Signed-in only. */
+export const onlineNowFn = createServerFn({ method: "POST" }).handler(async (): Promise<NResult<{ online: number }>> => {
+  const c = await member(false, false);
+  if (!isCtx(c)) return c;
+  const r = await c.db<{ n: number }>`select count(*)::int as n from om_presence p
+    where p.last_seen > now() - interval '5 minutes'
+    and not exists (select 1 from om_location l where l.user_id = p.user_id and (l.incognito or l.appear_offline))`;
+  return { ok: true, value: { online: Number(r[0]?.n ?? 0) } };
+});

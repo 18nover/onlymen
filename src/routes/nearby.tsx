@@ -12,6 +12,7 @@ import type { MapPin as MapPinT, MyPos } from "@/components/nearby-map";
 import { bucketIndex, bucketLabel, PRESENCE } from "@/lib/nearby/geo";
 import { models, type Model } from "@/lib/models";
 import { useDirectory } from "@/lib/use-directory";
+import { useOnlineNow } from "@/lib/nearby/use-online";
 
 const NearbyMap = lazy(() => import("@/components/nearby-map").then((m) => ({ default: m.NearbyMap })));
 
@@ -44,6 +45,10 @@ function Nearby() {
   const [note, setNote] = useState<string | null>(null);
   const [sel, setSel] = useState<Card | null>(null);
   const { list: directory } = useDirectory();
+  const onlineNow = useOnlineNow(Boolean(cfg?.signedIn));
+  const onlinePill = onlineNow != null && (
+    <p className="pointer-events-auto inline-flex items-center gap-2 rounded-full border border-gold/40 bg-ink/80 px-3 py-1 text-xs font-semibold text-ivory backdrop-blur"><span className="om-online size-2 rounded-full bg-online" />{onlineNow} online right now</p>
+  );
   const sharing = Boolean(settings?.sharing);
 
   const loadGrid = useCallback(async () => {
@@ -222,6 +227,7 @@ function Nearby() {
           )}
           {topbar}
           <div className="pointer-events-none fixed inset-x-3 top-[calc(76px+env(safe-area-inset-top,0px))] z-20 mx-auto grid max-w-md justify-items-center gap-2">
+            {onlinePill}
             {err && <p className="pointer-events-auto rounded-full border border-ruby/60 bg-ink/85 px-4 py-2 text-xs">{err}</p>}
             {note && <p className="pointer-events-auto rounded-full border border-gold/40 bg-ink/85 px-4 py-2 text-xs">{note}</p>}
             {mapCenter && geo.state !== "ok" && geo.state !== "pending" && (
@@ -283,6 +289,7 @@ function Nearby() {
         </div>
       </header>
 
+      {onlinePill && <div className="flex justify-center">{onlinePill}</div>}
       <FormError>{err}</FormError>
       {note && <p className="rounded-xl border border-gold/40 bg-surface px-4 py-3 text-sm">{note}</p>}
 

@@ -40,6 +40,9 @@ import {
   type SortId,
 } from "@/lib/models";
 
+import { useAccount } from "@/lib/account/use-account";
+import { useOnlineNow } from "@/lib/nearby/use-online";
+
 const PAGE = 12;
 
 function Hero({ online, live }: { online: number; live: number }) {
@@ -76,7 +79,7 @@ function Hero({ online, live }: { online: number; live: number }) {
             <span className="size-2 rounded-full bg-online" />
             <dt className="sr-only">Online</dt>
             <dd>
-              <b className="text-ivory">{online}</b> <span className="text-muted">online</span>
+              <b className="text-ivory">{online}</b> <span className="text-muted">online right now</span>
             </dd>
           </div>
           <div className="flex items-center gap-2">
@@ -400,7 +403,9 @@ export function OnlyMenHome() {
     return [...real, ...demos];
   }, [cityList]);
   const live = useMemo(() => cityList.filter((m) => m.live), [cityList]);
-  const onlineCount = catalog.filter((m) => m.online || m.live).length;
+  const { account: me } = useAccount();
+  const onlineNow = useOnlineNow(Boolean(me));
+  const onlineCount = onlineNow ?? 0; // real count of accounts seen in the last 5 minutes (signed-in only)
   const nFilters = activeFilterCount(search);
 
   useEffect(() => setPage(1), [city, filter, search, sort]);
