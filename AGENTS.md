@@ -1,3 +1,22 @@
+# OnlyMen — agent rules (any AI tool)
+
+**Start with [`HANDOFF.md`](HANDOFF.md).** It has the project state, branches, deploy steps, flags (names only), migrations, accounts and Jerry's standing rules. Depth is in `docs/`.
+
+Rules that apply to every tool and every agent:
+
+1. Work on `invite-codes`. **Never push or merge to `main`** (a push auto-deploys production) without Jerry's explicit yes.
+2. Never print, log or commit secrets. Env var names only; secrets via `wrangler secret put`.
+3. No new npm dependencies. No DNS, payment, vendor, billing or public-launch changes without Jerry's OK.
+4. Migrations are additive only. Write the SQL to a file and let Jerry run it in Neon; don't run it on the shared database yourself.
+5. Don't store identifying data (DOB, name, ID images) after an age check. Keep only the 18+ flag, session id and timestamp.
+6. Before deploying: `npm test`, `npm run typecheck`, `npm run lint`, then `npm run deploy:cf` (test Worker only). Never deploy with a failing test.
+7. Commit as `Jerry Lockard <jerry@lockard.me>`. Keep changes small and update `HANDOFF.md` when facts change.
+8. Anything sent as Jerry (email, X, chat) is a draft until he approves it.
+
+Everything below this line is the original App Builder sandbox contract for the template this app started from. It is background only; where it conflicts with the rules above or `HANDOFF.md`, the rules above win.
+
+---
+
 # App Builder Workspace
 
 **The single source of truth** for the App Builder sandbox contract. You are

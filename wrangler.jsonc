@@ -31,15 +31,14 @@
     "NODE_ENV": "production",
     // Invite-code sign-up (src/lib/invites). Vercel leaves this unset → owner-only private mode.
     "ONLYMEN_INVITES": "on",
-    // Default on: invented demo profiles stay in the directory, with real
-    // eligible accounts (today: role=owner) replacing them one-for-one.
-    // Set to "off" to hide every placeholder once you want a real-only grid.
+    // "off" hides every invented demo profile (real members only). Production
+    // (main) still defaults to on until this branch is merged.
     "ONLYMEN_DEMO_PROFILES": "off",
     // 18+ visitor age gate (server/middleware/age-gate.ts, docs/AGE_GATE.md).
     "ONLYMEN_AGE_GATE": "on",
     // Which AgeVerifier passes visitors. "clickthrough" = DEV/TEST ONLY — NOT
     // legal age verification under KRS 436.001 (Kentucky) or similar laws.
-    // "stripe" = Stripe Identity (test keys on the test Worker). Never set on production without Jerry.
+    // "stripe" = Stripe Identity (LIVE keys on the test Worker). Never set on production without Jerry.
     "ONLYMEN_AGE_VERIFIER": "stripe",
     // Block visitors geolocated to U.S. states with adult-site AV laws
     // (src/lib/age-gate/av-states.ts). OFF: Jerry is in Kentucky. Owner/admin bypass.
