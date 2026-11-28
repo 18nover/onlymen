@@ -21,7 +21,7 @@ function Avatar({ id, name, className = "size-8" }: { id?: string; name: string;
   return url ? (
     <img src={url} alt="" className={`${className} rounded-full object-cover ring-1 ring-gold/60`} />
   ) : (
-    <span className={`${className} grid place-items-center rounded-full bg-oxblood font-display text-sm font-bold text-gold-hi ring-1 ring-gold/60`}>{name.slice(0, 1).toUpperCase()}</span>
+    <img src="/icon-512.png" alt="" aria-label={name} className={`${className} rounded-full bg-ink object-cover ring-1 ring-gold/60`} />
   );
 }
 

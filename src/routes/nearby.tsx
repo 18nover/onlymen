@@ -350,7 +350,7 @@ function DirectoryGrid({ items, directory, hasOrigin, onOpen }: { items: Card[];
 function Tile({ c, onClick }: { c: Card; onClick: () => void }) {
   return (
     <button onClick={onClick} className="om-tile text-left">
-      {c.photoId ? <img src={`/api/photo/${encodeURIComponent(c.photoId)}`} alt="" loading="lazy" /> : <span className="grid size-full place-items-center bg-[radial-gradient(circle_at_50%_35%,#4a0614,#0f0809)] font-display text-5xl text-gold">{c.displayName.slice(0, 1).toUpperCase()}</span>}
+      {c.photoId ? <img src={`/api/photo/${encodeURIComponent(c.photoId)}`} alt="" loading="lazy" /> : <span className="grid size-full place-items-center bg-[radial-gradient(circle_at_50%_35%,#4a0614,#0f0809)]"><img src="/icon-512.png" alt="" className="size-1/2 rounded-full opacity-90" /></span>}
       {c.presence && <span className={`absolute top-2 right-2 z-[3] size-2.5 rounded-full ${PRES[c.presence].dot} ${c.presence === "online" ? "om-online" : "ring-2 ring-ink"}`} title={PRES[c.presence].label} />}
       <span className="om-tile-meta">
         <span className="block truncate text-[13px] font-bold text-ivory">{c.displayName} {c.age != null && <span className="font-medium text-ivory/75">{c.age}</span>} {c.verified && <ShieldCheck className="inline size-3 text-gold" />}</span>

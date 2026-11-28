@@ -93,7 +93,8 @@ function inferBuild(bodyType?: string): Build {
 
 function primaryPhotoId(photos: DirectoryProfile["photos"]): string | undefined {
   const usable = photos.filter((p) => !p.explicit);
-  return (usable.find((p) => p.primary) ?? usable[0] ?? photos.find((p) => p.primary) ?? photos[0])?.id;
+  // Never fall back to an explicit photo for a tile or avatar: explicit media only shows behind a reveal on the profile.
+  return (usable.find((p) => p.primary) ?? usable[0])?.id;
 }
 
 function isNew(joinedAt: string, now = Date.now()): boolean {
