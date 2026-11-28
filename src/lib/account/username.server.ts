@@ -1,6 +1,6 @@
 /**
  * Username changes: at most 2 in any rolling 12 months (admins/owners exempt). The old name is reserved
- * for 30 days so nobody can impersonate it. History lives in om_username_history (migration 0013); until
+ * for 30 days so nobody can impersonate it. History lives in om_username_log (migration 0013); until
  * it exists everything here fails safe ("not available yet") and nothing changes.
  */
 import { withTransaction, type Sql } from "../db.ts";
@@ -19,7 +19,7 @@ async function isAdmin(db: Sql, uid: string) {
 export async function usernameStatus(db: Sql, uid: string): Promise<UsernameStatus> {
   const exempt = await isAdmin(db, uid);
   try {
-    const rows = await db<{ at: Date | string }>`select changed_at as at from om_username_history where user_id = ${uid} and changed_at > now() - interval '12 months' order by changed_at asc`;
+    const rows = await db<{ at: Date | string }>`select changed_at as at from om_username_log where user_id = ${uid} and changed_at > now() - interval '12 months' order by changed_at asc`;
     const used = rows.length;
     const left = exempt ? USERNAME_LIMIT : Math.max(0, USERNAME_LIMIT - used);
     let nextAt: string | null = null;
@@ -38,8 +38,8 @@ export async function usernameStatus(db: Sql, uid: string): Promise<UsernameStat
 export async function reservedByOther(db: Sql, username: string, exceptUid?: string): Promise<boolean> {
   try {
     const r = exceptUid
-      ? await db`select 1 from om_username_history where old_username = ${username} and changed_at > now() - interval '30 days' and user_id <> ${exceptUid} limit 1`
-      : await db`select 1 from om_username_history where old_username = ${username} and changed_at > now() - interval '30 days' limit 1`;
+      ? await db`select 1 from om_username_log where old_username = ${username} and changed_at > now() - interval '30 days' and user_id <> ${exceptUid} limit 1`
+      : await db`select 1 from om_username_log where old_username = ${username} and changed_at > now() - interval '30 days' limit 1`;
     return r.length > 0;
   } catch {
     return false;
@@ -63,7 +63,7 @@ export async function changeUsername(db: Sql, uid: string, raw: string): Promise
       if (locked[0]?.username !== cur) throw new Error("changed");
       await tx`update om_account set username = ${next}, updated_at = now() where user_id = ${uid}`;
       await tx`update "user" set name = ${next}, "updatedAt" = now() where id = ${uid}`;
-      await tx`insert into om_username_history (user_id, old_username, new_username) values (${uid}, ${cur}, ${next})`;
+      await tx`insert into om_username_log (user_id, old_username, new_username) values (${uid}, ${cur}, ${next})`;
     });
   } catch (e) {
     if (/unique|duplicate/i.test(String((e as Error).message))) return { ok: false, error: "That username is taken." };
