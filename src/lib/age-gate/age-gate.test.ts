@@ -18,9 +18,9 @@ test("flag off: everything passes", () => {
 });
 
 test("no cookie: app pages get the interstitial; exempt pages pass", () => {
-  for (const p of ["/", "/me", "/m/admin", "/watch/admin", "/login", "/admin/invites", "/api/photo/ph_12345678"])
+  for (const p of ["/", "/me", "/m/admin", "/watch/admin", "/admin/invites", "/api/photo/ph_12345678"])
     assert.equal(decide({ path: p, ageGate: true, geoblock: false, verified: false, geo: geoNone }), "interstitial", p);
-  for (const p of ["/terms", "/privacy", "/guidelines", "/2257", "/custodian", "/age", "/robots.txt", "/assets/x.js", "/favicon.ico", "/icon-512.png", "/_serverFn/abc", "/join", "/join/OM-7K3Q-HX9D"])
+  for (const p of ["/terms", "/privacy", "/guidelines", "/2257", "/custodian", "/age", "/robots.txt", "/assets/x.js", "/favicon.ico", "/icon-512.png", "/_serverFn/abc", "/join", "/login", "/forgot-password", "/join/OM-7K3Q-HX9D"])
     assert.equal(decide({ path: p, ageGate: true, geoblock: false, verified: false, geo: geoNone }), "pass", p);
 });
 

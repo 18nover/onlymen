@@ -3,7 +3,7 @@
   "name": "OnlyMen",
   "short_name": "OnlyMen",
   "description": "A private club for gay men, 18+.",
-  "start_url": "/?source=pwa",
+  "start_url": "/login?source=pwa",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",

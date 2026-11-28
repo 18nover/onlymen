@@ -39,6 +39,9 @@ const fail = (e: unknown, repo: { VerificationError: new (...a: never[]) => Erro
 export const myVerificationFn = createServerFn({ method: "GET" }).handler(async (): Promise<{ enabled: boolean; me: MyVerification | null }> => {
   const c = await base();
   if (!c.enabled || !c.uid || !c.db) return { enabled: c.enabled, me: null };
+  // Stripe Identity is the one path: an existing Stripe age pass approves the creator before we read the status.
+  const { getRequest } = await import("@tanstack/react-start/server");
+  await (await import("../age-gate/account-flag.server")).syncStripeApproval(c.uid, getRequest().headers);
   return { enabled: true, me: await c.repo.myVerification(c.db, c.uid) };
 });
 

@@ -3,10 +3,12 @@
  * and shows a small, dismissible "Add to Home Screen" card.
  *  - Android / Chrome: uses the browser's beforeinstallprompt.
  *  - iPhone / iPad Safari: a hint (Share → Add to Home Screen), since iOS has no prompt API.
- * Never shown when already installed, over the 18+ gate, or for 30 days after "Not now".
+ * Never shown when already installed, over the 18+ gate, before the account exists (signed in), or for 30 days after "Not now".
+ * Installing before sign-up/verification loses the invite and the in-progress check, so we wait for a signed-in account.
  */
 import { useEffect, useState } from "react";
 import { Share, X } from "lucide-react";
+import { useAccount } from "@/lib/account/use-account";
 
 type BIPEvent = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> };
 const KEY = "om-install-dismissed";
@@ -29,6 +31,8 @@ function gateShowing() {
 export function InstallPrompt() {
   const [mode, setMode] = useState<"android" | "ios" | null>(null);
   const [evt, setEvt] = useState<BIPEvent | null>(null);
+  const { account } = useAccount();
+  const signedIn = Boolean(account);
 
   useEffect(() => {
     if (import.meta.env.PROD && "serviceWorker" in navigator) {
@@ -59,7 +63,7 @@ export function InstallPrompt() {
     };
   }, []);
 
-  if (!mode) return null;
+  if (!mode || !signedIn) return null;
   const dismiss = () => {
     try {
       localStorage.setItem(KEY, String(Date.now()));

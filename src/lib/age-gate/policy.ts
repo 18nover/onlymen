@@ -30,7 +30,7 @@ export const flagOn = (v: string | undefined | null) => String(v ?? "").trim().t
 
 /** Crawl-safe pages anyone may open without confirming: legal pages, the gate itself, static assets. */
 export const AGE_CALLBACK_PATH = "/age/callback";
-export const AGE_EXEMPT_PAGES = new Set(["/terms", "/privacy", "/guidelines", "/2257", "/custodian", "/live-rules", "/robots.txt", AGE_GATE_PATH, AGE_CALLBACK_PATH, REGION_BLOCKED_PATH]);
+export const AGE_EXEMPT_PAGES = new Set(["/terms", "/privacy", "/guidelines", "/2257", "/custodian", "/live-rules", "/robots.txt", AGE_GATE_PATH, AGE_CALLBACK_PATH, REGION_BLOCKED_PATH, "/login", "/logout", "/forgot-password", "/reset-password"]);
 
 export function isAgeExempt(path: string): boolean {
   const p = normalizePath(path);

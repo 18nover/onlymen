@@ -45,6 +45,7 @@ function VerifyPage() {
   const [busy, setBusy] = useState<FileKind | "submit" | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  const [showManual, setShowManual] = useState(false);
 
   if (!ready) return <Shell><p className="flex items-center gap-2 text-muted"><Loader2 className="size-4 animate-spin" /> Loading…</p></Shell>;
   if (!enabled) return <Shell><p className="text-muted">ID verification isn't turned on here yet.</p></Shell>;
@@ -56,6 +57,17 @@ function VerifyPage() {
     return <Shell><Status icon={<ShieldCheck className="size-5 text-online" />} title="You're verified." body="You can go live and post explicit photos." /></Shell>;
   if (status === "pending")
     return <Shell><Status icon={<ShieldCheck className="size-5 text-gold" />} title="Submitted — in review." body="An admin will review your documents. Until it's approved you can't go live or post explicit photos." /></Shell>;
+
+  // Stripe Identity is the one verification path. The manual document upload is only an admin-approved fallback
+  // (revealed after "Stripe didn't work for me"), so beta members never see it by default.
+  if (!showManual)
+    return (
+      <Shell>
+        <Status icon={<ScanFace className="size-5 text-gold" />} title="Verify with Stripe." body="Quick ID and selfie check with Stripe. It unlocks going live and explicit photos right away." />
+        <a href="/age?next=%2Fme%2Fverify" className="mt-4 inline-grid h-12 place-items-center rounded-full bg-gold px-7 text-sm font-bold text-ink">Verify with Stripe</a>
+        <button type="button" onClick={() => setShowManual(true)} className="mt-4 block text-xs text-dim underline underline-offset-4">Stripe didn't work for me</button>
+      </Shell>
+    );
 
   // not_started, or rejected (a new attempt starts with the first upload)
   const have = new Set(me.status === "rejected" ? [] : me.files);

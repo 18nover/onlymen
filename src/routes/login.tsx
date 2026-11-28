@@ -16,10 +16,24 @@ function Login() {
   const [pw, setPw] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [invite, setInvite] = useState<string | null>(null);
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem("om-invite") ?? decodeURIComponent(/(?:^|; )om_invite=([^;]*)/.exec(document.cookie)?.[1] ?? "");
+      setInvite(stored || null);
+    } catch { /* storage unavailable */ }
+  }, []);
 
   useEffect(() => {
     if (ready && account) nav({ to: account.onboarding.finishedAt ? "/me" : "/onboarding", replace: true });
   }, [ready, account, nav]);
+
+  // Installed app opened before signing up: go straight back to the saved invite (the install itself drops the link).
+  useEffect(() => {
+    if (!invite || !ready || account) return;
+    const pwa = window.matchMedia("(display-mode: standalone)").matches || new URLSearchParams(location.search).get("source") === "pwa";
+    if (pwa) nav({ to: "/join/$code", params: { code: invite }, replace: true });
+  }, [invite, ready, account, nav]);
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -28,6 +42,7 @@ function Login() {
     setErr(null);
     try {
       const acc = await accountStore.logIn(id, pw);
+      try { window.localStorage.removeItem("om-invite"); } catch { /* ignore */ }
       // Full navigation so the server re-checks private-mode access with the
       // new session cookie (the root guard's state is decided server-side).
       window.location.assign(acc.onboarding.finishedAt ? "/me" : "/onboarding");
@@ -50,7 +65,11 @@ function Login() {
           <Link to="/forgot-password" className="justify-self-end text-xs font-semibold text-gold-hi underline-offset-4 hover:underline">Forgot password?</Link>
         </div>
         <GoldButton type="submit" loading={busy} className="w-full">Log in</GoldButton>
-        <p className="text-center text-sm text-muted">OnlyMen is private for now. Sign-ups are closed.</p>
+        {invite ? (
+          <a href={`/join/${encodeURIComponent(invite)}`} className="text-center text-sm font-semibold text-gold-hi underline underline-offset-4">New here? Continue with your invite</a>
+        ) : (
+          <p className="text-center text-sm text-muted">OnlyMen is invite-only. New? Open the personal link you were sent.</p>
+        )}
       </form>
     </AuthShell>
   );

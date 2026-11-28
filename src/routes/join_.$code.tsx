@@ -47,6 +47,20 @@ function InviteLanding() {
   const [agree, setAgree] = useState(false);
   const [taken, setTaken] = useState(false);
 
+  // Remember the invite on this device so the installed app's login page can offer "Continue with your invite".
+  useEffect(() => {
+    try {
+      if (valid && !account) {
+        window.localStorage.setItem("om-invite", code);
+        document.cookie = `om_invite=${encodeURIComponent(code)}; Max-Age=2592000; Path=/; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
+      }
+      if (account) {
+        window.localStorage.removeItem("om-invite");
+        document.cookie = "om_invite=; Max-Age=0; Path=/; SameSite=Lax";
+      }
+    } catch { /* storage unavailable */ }
+  }, [valid, code, account]);
+
   useEffect(() => {
     if (ready && account) nav({ to: account.onboarding.finishedAt ? "/me" : "/onboarding", replace: true });
   }, [ready, account, nav]);

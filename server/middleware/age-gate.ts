@@ -22,9 +22,10 @@
  */
 import { platformEnv } from "../../src/lib/platform/runtime.ts";
 import { normalizePath } from "../../src/lib/private/policy.ts";
-import { AGE_CALLBACK_PATH, AGE_COOKIE, AGE_GATE_PATH, ageCookieHeader, decide, flagOn, readCookie, readGeo, REGION_BLOCKED_PATH, safeNext, type Geo } from "../../src/lib/age-gate/policy.ts";
+import { AGE_CALLBACK_PATH, AGE_COOKIE, AGE_GATE_PATH, ageCookieHeader, decide, flagOn, isAgeExempt, readCookie, readGeo, REGION_BLOCKED_PATH, safeNext, type Geo } from "../../src/lib/age-gate/policy.ts";
 import { renderRegionBlockedHtml } from "../../src/lib/age-gate/html.ts";
-import { STRIPE_WEBHOOK_PATH, verifyStripeSignature } from "../../src/lib/age-gate/stripe-identity.ts";
+import { isAccountAgeVerified, markAccountAgeVerified, sessionUser } from "../../src/lib/age-gate/account-flag.server.ts";
+import { STRIPE_SESSION_COOKIE, STRIPE_WEBHOOK_PATH, verifyStripeSignature } from "../../src/lib/age-gate/stripe-identity.ts";
 import { signAgeToken, verifyAgeToken } from "../../src/lib/age-gate/token.ts";
 import { activeVerifier, ageTokenKey, type AgeRequest, type AgeVerifier } from "../../src/lib/age-gate/verifiers.ts";
 
@@ -85,7 +86,24 @@ export default async function ageGate(event: GateEvent, next: () => unknown | Pr
 
   const verifier = activeVerifier();
   const key = ageTokenKey();
-  const verified = Boolean(key) && verifyAgeToken(key!, readCookie(headers.get("cookie"), AGE_COOKIE), new Set([verifier.name])).ok;
+  let verified = Boolean(key) && verifyAgeToken(key!, readCookie(headers.get("cookie"), AGE_COOKIE), new Set([verifier.name])).ok;
+
+  // Account-level 18+ pass (Stripe only). A signed-in member who already passed the ID check never repeats it:
+  // not on another device, not in the installed app. A browser pass also gets stored on the account.
+  let grantCookie = false;
+  const isPage = (method === "GET" || method === "HEAD") && ageOn && verifier.name === "stripe" && key && hasSessionCookie(headers) && !isAgeExempt(path) && !path.startsWith("/_serverFn/") && !path.startsWith("/api/");
+  if (isPage || (ageOn && verifier.name === "stripe" && key && path === AGE_GATE_PATH && method === "GET" && hasSessionCookie(headers))) {
+    const uid = await sessionUser(headers);
+    if (uid) {
+      if (!verified && (await isAccountAgeVerified(uid))) {
+        verified = true;
+        grantCookie = true;
+      } else if (verified && !(await isAccountAgeVerified(uid))) {
+        const vs = (readCookie(headers.get("cookie"), STRIPE_SESSION_COOKIE) ?? "").split(".")[0];
+        await markAccountAgeVerified(uid, vs.startsWith("vs_") ? vs : null);
+      }
+    }
+  }
 
   let decision = decide({ path, ageGate: ageOn, geoblock: geoOn, verified, geo });
   if (decision === "blocked" && (await isStaff(headers))) decision = decide({ path, ageGate: ageOn, geoblock: geoOn, verified, geo, isStaff: true });
@@ -104,6 +122,11 @@ export default async function ageGate(event: GateEvent, next: () => unknown | Pr
     if (!ageOn) return new Response(null, { status: 404 });
     const dest = safeNext(event.url.searchParams.get("next"));
     const result = await verifier.handleCallback(ageReq(dest));
+    if (result.ok && verifier.name === "stripe" && hasSessionCookie(headers)) {
+      const uid = await sessionUser(headers);
+      const vs = (readCookie(headers.get("cookie"), STRIPE_SESSION_COOKIE) ?? "").split(".")[0];
+      if (uid) await markAccountAgeVerified(uid, vs.startsWith("vs_") ? vs : null);
+    }
     const withCookies = (res: Response, cookies?: string[]) => {
       for (const c of cookies ?? []) res.headers.append("set-cookie", c);
       return res;
@@ -116,11 +139,19 @@ export default async function ageGate(event: GateEvent, next: () => unknown | Pr
 
   if (path === AGE_GATE_PATH) {
     const dest = safeNext(event.url.searchParams.get("next"));
-    if (!ageOn || verified) return new Response(null, { status: 302, headers: { location: dest, "cache-control": "no-store" } });
+    if (!ageOn || verified) return new Response(null, { status: 302, headers: { location: dest, "cache-control": "no-store", ...(grantCookie && key ? { "set-cookie": ageCookieHeader(signAgeToken(key, verifier.name), secure) } : {}) } });
     return start(verifier, ageReq(dest), method, vHeaders);
   }
 
-  if (decision === "pass") return next();
+  if (decision === "pass") {
+    const res = await next();
+    if (grantCookie && key && res instanceof Response) {
+      const out = new Response(res.body, res);
+      out.headers.append("set-cookie", ageCookieHeader(signAgeToken(key, verifier.name), secure));
+      return out;
+    }
+    return res;
+  }
 
   // No valid age token yet.
   if ((method !== "GET" && method !== "HEAD") || path.startsWith("/api/")) {
