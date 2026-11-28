@@ -119,6 +119,8 @@ export type OnboardingProgress = {
 
 export type Account = {
   id: string;
+  /** UI hint only (shows the Admin links). Every admin page and call re-checks the role on the server. */
+  isAdmin?: boolean;
   email: string;
   username: string;
   /** YYYY-MM-DD */

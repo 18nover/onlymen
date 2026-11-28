@@ -71,6 +71,7 @@ export async function loadAccount(userId: string): Promise<PublicAccount | null>
   const creator = json<Record<string, unknown> | null>(r.creator, null);
   const acc: PublicAccount = {
     id: String(r.user_id),
+    isAdmin: r.role === "admin" || r.role === "owner",
     email: String(r.email),
     username: String(r.username),
     dob: day(r.dob),

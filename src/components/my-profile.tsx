@@ -165,6 +165,17 @@ function Body({ a }: { a: PublicAccount }) {
                 </div>
               </div>
             )}
+            {a.isAdmin && (
+              <nav aria-label="Admin" className="mt-5 grid gap-2 rounded-xl border border-gold/30 bg-gold/[0.05] p-3">
+                <p className="text-[10px] font-bold tracking-[0.22em] text-gold uppercase">Admin (only you see this)</p>
+                <div className="grid grid-cols-2 gap-2 text-sm font-semibold">
+                  <Link to="/admin/verifications" className="grid h-10 place-items-center rounded-full border border-line text-gold-hi">Verifications</Link>
+                  <Link to="/admin/feedback" className="grid h-10 place-items-center rounded-full border border-line text-gold-hi">Feedback</Link>
+                  <Link to="/admin/invites" className="grid h-10 place-items-center rounded-full border border-line text-gold-hi">Invites</Link>
+                  <Link to="/admin/reports" className="grid h-10 place-items-center rounded-full border border-line text-gold-hi">Reports</Link>
+                </div>
+              </nav>
+            )}
             <div className="mt-5 grid grid-cols-2 gap-2">
               <Link to="/onboarding" search={{ step: "basics" }} className="flex h-11 items-center justify-center gap-1.5 rounded-full bg-gold text-sm font-bold"><Pencil className="size-4" /> Edit profile</Link>
               <Link to="/me/settings" className="flex h-11 items-center justify-center gap-1.5 rounded-full border border-line text-sm font-semibold text-ivory hover:text-gold-hi"><Settings className="size-4 text-gold" /> Settings</Link>
