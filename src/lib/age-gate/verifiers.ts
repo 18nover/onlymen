@@ -18,7 +18,7 @@
  *
  * Adding a vendor = one new object below (or its own module) + env config
  * (ONLYMEN_AGE_VERIFIER=<name> and the vendor's secrets via `wrangler secret
- * put`). No other code changes.
+ * put`). The live verifier is `stripe` (Stripe Identity); `clickthrough` is dev only.
  */
 import { createHmac } from "node:crypto";
 import { platformEnv } from "../platform/runtime.ts";
@@ -60,33 +60,6 @@ export const clickthroughVerifier: AgeVerifier = {
     const origin = req.headers.get("origin");
     if (origin && origin !== req.url.origin) return { ok: false, reason: "origin", status: 403 };
     return { ok: true };
-  },
-};
-
-/**
- * STUB for a third-party age-verification vendor. The planned verifier is
- * Stripe Identity (age/ID check only — not payments). Confirm Stripe's adult-
- * business policy before going live. Typical flow: startVerification creates
- * a vendor session server-side (secret API key) and redirects to the vendor;
- * the vendor redirects back to /age/callback?session=… and/or POSTs a signed
- * webhook there. handleCallback verifies the vendor signature / re-fetches
- * the session result and returns pass/fail. Store only a verified-18+ flag,
- * session id and timestamp — never the vendor payload, ID images, or DOB.
- */
-export const vendorStubVerifier: AgeVerifier = {
-  name: "vendor",
-  devOnly: false,
-  label: "Third-party vendor (NOT CONFIGURED — stub)",
-  async startVerification() {
-    // TODO(vendor): create a session with the chosen vendor and redirect:
-    // return { kind: "redirect", url: session.url };
-    return { kind: "html", html: renderVerifierUnavailableHtml(), status: 503 };
-  },
-  async handleCallback() {
-    // TODO(vendor): verify the webhook signature (e.g. HMAC header with
-    // ONLYMEN_AGE_VENDOR_WEBHOOK_SECRET) or re-fetch the session by id, then
-    // return { ok: true } only for a confirmed 18+ result.
-    return { ok: false, reason: "not_configured", status: 501 };
   },
 };
 
@@ -156,7 +129,6 @@ export const stripeIdentityVerifier: AgeVerifier = {
 
 const REGISTRY: Record<string, AgeVerifier> = {
   [clickthroughVerifier.name]: clickthroughVerifier,
-  [vendorStubVerifier.name]: vendorStubVerifier,
   [stripeIdentityVerifier.name]: stripeIdentityVerifier,
 };
 

@@ -46,7 +46,7 @@ function AccountButtons() {
   );
 }
 
-import { cities, cityLabel, models, type CityId, type Model } from "@/lib/models";
+import { cities, cityLabel, type CityId, type Model } from "@/lib/models";
 import { useDirectory } from "@/lib/use-directory";
 
 

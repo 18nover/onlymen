@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { AGE_COOKIE, ageCookieHeader, decide, hasAgeCookie, isAgeExempt, isBlockedRegion, readGeo, safeNext } from "./policy.ts";
 import { signAgeToken, verifyAgeToken } from "./token.ts";
-import { clickthroughVerifier, vendorStubVerifier, verifierByName } from "./verifiers.ts";
+import { clickthroughVerifier, verifierByName } from "./verifiers.ts";
 import { AV_LAW_STATE_CODES, AV_LAW_STATES } from "./av-states.ts";
 import { renderAgeGateHtml } from "./html.ts";
 
@@ -41,7 +41,7 @@ test("signed token: valid lets you through; tampered, expired, wrong key or othe
   assert.equal(hasAgeCookie(`x${AGE_COOKIE}=${tok}`, T0), false);
 });
 
-test("verifiers: clickthrough is dev-only and needs a same-origin POST; vendor stub fails closed", async () => {
+test("verifiers: clickthrough is dev-only and needs a same-origin POST; unknown names fall back to click-through", async () => {
   const url = new URL("https://onlymen.example/age/callback");
   const req = (method: string, origin?: string) => ({ url, method, headers: new Headers(origin ? { origin } : {}), next: "/" });
   assert.equal(clickthroughVerifier.devOnly, true);
@@ -51,8 +51,8 @@ test("verifiers: clickthrough is dev-only and needs a same-origin POST; vendor s
   assert.equal((await clickthroughVerifier.handleCallback(req("GET"))).ok, false);
   const start = await clickthroughVerifier.startVerification(req("GET"));
   assert.ok(start.kind === "html" && /TEST MODE/.test(start.html) && /DEV\/TEST ONLY/.test(start.html));
-  assert.equal((await vendorStubVerifier.handleCallback(req("POST"))).ok, false);
-  assert.equal(verifierByName("vendor").name, "vendor");
+  assert.equal(verifierByName("stripe").name, "stripe");
+  assert.equal(verifierByName("nope").name, "clickthrough");
   assert.equal(verifierByName(undefined).name, "clickthrough");
 });
 

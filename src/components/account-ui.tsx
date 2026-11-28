@@ -262,59 +262,6 @@ export function GhostButton({ children, className = "", ...rest }: React.ButtonH
   );
 }
 
-function XLogo() {
-  return (
-    <svg viewBox="0 0 24 24" className="size-4" fill="currentColor" aria-hidden="true">
-      <path d="M18.9 2H22l-7.6 8.7L23 22h-6.8l-5.3-6.9L4.8 22H1.7l8.1-9.3L1 2h7l4.8 6.3L18.9 2Zm-1.2 18h1.9L7.4 3.9H5.4L17.7 20Z" />
-    </svg>
-  );
-}
-function GoogleLogo() {
-  return (
-    <svg viewBox="0 0 24 24" className="size-4" aria-hidden="true">
-      <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.2 1.3-1.7 3.9-5.5 3.9-3.3 0-6-2.7-6-6.1s2.7-6.1 6-6.1c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.3 14.6 2.3 12 2.3 6.6 2.3 2.3 6.6 2.3 12s4.3 9.7 9.7 9.7c5.6 0 9.3-3.9 9.3-9.5 0-.6-.1-1.1-.2-1.6H12Z" />
-    </svg>
-  );
-}
-function AppleLogo() {
-  return (
-    <svg viewBox="0 0 24 24" className="size-4" fill="currentColor" aria-hidden="true">
-      <path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9 0 0-2.7-1-2.7-4.1ZM13.9 5c.7-.9 1.2-2 1-3.2-1 0-2.3.7-3 1.6-.7.8-1.3 2-1.1 3.1 1.2.1 2.3-.6 3.1-1.5Z" />
-    </svg>
-  );
-}
-
-/** Social sign-in placeholders — disabled until an OAuth provider is configured. */
-export function SocialButtons() {
-  const items = [
-    { name: "Google", icon: <GoogleLogo /> },
-    { name: "Apple", icon: <AppleLogo /> },
-    { name: "X", icon: <XLogo /> },
-  ];
-  return (
-    <div>
-      <div className="grid grid-cols-3 gap-2">
-        {items.map((i) => (
-          <button
-            key={i.name}
-            type="button"
-            disabled
-            title={`Continue with ${i.name} — coming soon`}
-            aria-label={`Continue with ${i.name} (coming soon)`}
-            className="relative flex h-12 cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-line bg-surface/50 text-sm font-semibold text-muted opacity-70"
-          >
-            {i.icon}
-            <span className="hidden sm:inline">{i.name}</span>
-          </button>
-        ))}
-      </div>
-      <p className="mt-2 text-center text-[11px] tracking-wide text-dim uppercase">Google, Apple &amp; X sign-in coming soon</p>
-      <div className="my-6 flex items-center gap-3 text-xs font-semibold tracking-[0.2em] text-dim uppercase">
-        <span className="h-px flex-1 bg-line" /> or with email <span className="h-px flex-1 bg-line" />
-      </div>
-    </div>
-  );
-}
 
 export function FormError({ children }: { children?: ReactNode }) {
   if (!children) return null;

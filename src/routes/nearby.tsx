@@ -153,7 +153,7 @@ function Nearby() {
   const demo = useMemo(() => (cfg?.showDemo ? models.slice(0, demoSlots(realCount)) : []), [cfg?.showDemo, realCount]);
 
   // Map pins: opted-in members from the server (already jittered), plus labelled demo
-  // profiles around the viewer's area when demo profiles are on. Online dots come from the grid.
+  // profiles around the viewer's area only when ONLYMEN_DEMO_PROFILES is on (off on the test site). Online dots come from the grid.
   const pins = useMemo<MapPinT[]>(() => {
     if (!map?.center) return [];
     const online = new Set((grid?.items ?? []).filter((c) => c.presence === "online").map((c) => c.username));

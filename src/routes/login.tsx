@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { AuthShell, FormError, GoldButton, PasswordField, SocialButtons, TextField } from "@/components/account-ui";
+import { AuthShell, FormError, GoldButton, PasswordField, TextField } from "@/components/account-ui";
 import { accountStore, AccountError } from "@/lib/account/store";
 import { useAccount } from "@/lib/account/use-account";
 
@@ -56,7 +56,6 @@ function Login() {
 
   return (
     <AuthShell kicker="Welcome back" title={<>The night's <span className="text-gold italic">still young.</span></>} photos={["/models/m03.webp", "/models/m09.webp", "/models/m12.webp"]}>
-      <SocialButtons />
       <form onSubmit={submit} noValidate className="grid gap-5">
         <FormError>{err}</FormError>
         <TextField label="Email or username" autoComplete="username" autoCapitalize="none" spellCheck={false} value={id} onChange={(e) => setId(e.target.value)} placeholder="you@example.com" />

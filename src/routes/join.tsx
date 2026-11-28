@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { createFileRoute, Link, useNavigate, useRouteContext } from "@tanstack/react-router";
 import { Camera, Check, Coins, Crown, Heart, MessageCircle, Radio } from "lucide-react";
-import { AuthShell, FormError, GoldButton, PasswordField, SocialButtons, TextField, Field, inputCls } from "@/components/account-ui";
+import { AuthShell, FormError, GoldButton, PasswordField, TextField, Field, inputCls } from "@/components/account-ui";
 import { accountStore, AccountError } from "@/lib/account/store";
 import { BETA_FEEDBACK_AGREE, BETA_TERMS } from "@/lib/beta";
 import { useAccount } from "@/lib/account/use-account";
@@ -152,8 +152,6 @@ function Join() {
           </div>
           {type === "creator" && <p className="mt-2 text-xs text-dim">Creators verify their ID and age before going public. You can browse right away.</p>}
         </fieldset>
-
-        <SocialButtons />
 
         <FormError>{serverErr && !serverErr.field ? serverErr.msg : null}</FormError>
         <TextField label="Email" type="email" autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} onBlur={() => setTouched((t) => ({ ...t, email: true }))} error={show("email")} placeholder="you@example.com" />

@@ -39,7 +39,7 @@ function Watch() {
     return () => {
       live = false;
     };
-  }, [handle, account]);
+  }, [handle, account, demoModel]);
 
   const info = useMemo(() => {
     const ownRooms = (): PublicRoom[] => publicRooms(account?.username === handle ? account.live?.rooms : undefined);

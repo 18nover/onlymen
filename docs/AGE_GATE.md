@@ -16,7 +16,7 @@ must keep records. The visitor gate keeps none.
 | Var | Worker value | Meaning |
 | --- | --- | --- |
 | `ONLYMEN_AGE_GATE` | `on` | Every app page needs a valid signed age token. |
-| `ONLYMEN_AGE_VERIFIER` | `clickthrough` | Which verifier issues tokens. `clickthrough` is **DEV/TEST ONLY**. `vendor` is a stub that fails closed. |
+| `ONLYMEN_AGE_VERIFIER` | `stripe` | Which verifier issues tokens: `stripe` (Stripe Identity, the real one) or `clickthrough` (**DEV/TEST ONLY**, the default when unset). |
 | `ONLYMEN_AGE_GATE_GEOBLOCK` | `off` | `on` = visitors geolocated to a state in `av-states.ts` get "Not available in your region" (HTTP 451). Owner/admin accounts bypass after logging in. Default off because Jerry is in Kentucky. |
 
 ## Why click-through is not enough (Kentucky)
@@ -69,12 +69,12 @@ If the location is unknown the visitor is let through (fails open). VPNs get aro
 
 Implement `AgeVerifier` (`startVerification(req)` creates a vendor session and
 redirects; `handleCallback(req)` checks the vendor's signed webhook or
-re-fetches the session and returns pass or fail) next to `vendorStubVerifier`.
+re-fetches the session and returns pass or fail) next to `stripeIdentityVerifier` in `verifiers.ts`.
 Register it, set `ONLYMEN_AGE_VERIFIER=<name>`, and add the vendor's keys with
 `wrangler secret put`. The vendor's callback or webhook URL is `/age/callback`.
 Keep only the pass/fail result.
 
-The planned verifier is Stripe Identity (age/ID check only; not payments). First 50
+The live verifier on the test Worker is Stripe Identity (age/ID check only; not payments; see `HANDOFF.md`). First 50
 verifications are free, then paid per check. Stripe restricts adult businesses on
 payments, so Identity should be confirmed against that policy before going live.
 Store only a verified-18+ flag, session id and timestamp — no ID images or date of

@@ -106,6 +106,8 @@ export function NearbyMap({ center, pins, me, onOpen }: { center: { lat: number;
       dead = true;
       map?.remove();
     };
+    // `me` is read through its fields so a new object each render doesn't rebuild the map.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [center.lat, center.lng, pins, me?.lat, me?.lng, me?.exact]);
   return (
     <>
