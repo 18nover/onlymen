@@ -286,7 +286,7 @@ function DirectoryGrid({ items, directory, hasOrigin, onOpen }: { items: Card[];
     return demoShown++ < slots;
   });
   if (items.length === 0 && rest.length === 0) {
-    return <p className="rounded-xl border border-line bg-surface p-4 text-sm text-muted">No members to show yet.</p>;
+    return <p className="rounded-xl border border-line bg-surface p-4 text-sm text-muted">No one nearby yet. Invite friends.</p>;
   }
   return (
     <section className="grid gap-4">

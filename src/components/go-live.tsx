@@ -11,6 +11,7 @@ import { emptyLive } from "@/lib/account/constants";
 import { randomId } from "@/lib/account/store";
 import { canGoLive } from "@/lib/live/gate";
 import { useIdVerification } from "@/lib/verification/use-verification";
+import { useDirectory } from "@/lib/use-directory";
 import { demoRecapStats } from "@/lib/live/demo";
 import { LIVE_CATEGORIES, liveHost, resolveHandoff } from "@/lib/live/config";
 import type { CreatorLive, LiveRecap } from "@/lib/live/types";
@@ -116,13 +117,16 @@ export function GoLivePanel({ a }: { a: PublicAccount }) {
 }
 
 function Recap({ r, onDismiss }: { r: LiveRecap; onDismiss: () => void }) {
-  const stats = [
+  const { showDemo } = useDirectory();
+  const all = [
     { icon: Clock, label: "Duration", v: fmtDur(new Date(r.endedAt).getTime() - new Date(r.startedAt).getTime()) },
     { icon: Eye, label: "Peak viewers", v: r.peakViewers.toLocaleString("en-US") },
     { icon: Coins, label: "Tips", v: `$${r.tipsUsd.toLocaleString("en-US")}` },
     { icon: Heart, label: "New followers", v: String(r.newFollowers) },
     { icon: MessageCircle, label: "Chat messages", v: r.chatMessages.toLocaleString("en-US") },
   ];
+  // Peak viewers, tips, followers and chat are invented placeholders: only the real duration shows unless demo content is on.
+  const stats = showDemo ? all : all.slice(0, 1);
   return (
     <div className="relative mt-5 animate-fade-up overflow-hidden rounded-2xl border border-gold/40 bg-gradient-to-br from-oxblood/40 to-night p-5" role="status">
       <button type="button" onClick={onDismiss} aria-label="Dismiss recap" className="absolute top-3 right-3 grid size-8 place-items-center rounded-full text-dim hover:text-ivory"><X className="size-4" /></button>
@@ -136,7 +140,7 @@ function Recap({ r, onDismiss }: { r: LiveRecap; onDismiss: () => void }) {
           </div>
         ))}
       </dl>
-      <p className="mt-3 text-[11px] text-dim">Demo numbers — real stats come from your streaming platform once connected.</p>
+      <p className="mt-3 text-[11px] text-dim">{showDemo ? "Demo numbers — real stats" : "Viewer, tip and chat stats"} come from your streaming platform once connected.</p>
     </div>
   );
 }

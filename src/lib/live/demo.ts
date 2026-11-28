@@ -13,7 +13,7 @@ export type LiveNow = {
   platform: string;
   roomUrl: string;
   startedMinAgo: number;
-  tipGoal?: { label: string; pct: number };
+  tipGoal?: { label: string; pct?: number };
   model?: Model;
   own?: boolean;
 };

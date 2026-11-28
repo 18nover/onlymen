@@ -40,7 +40,7 @@ function LivePage() {
                 OnlyMen <span className="text-gold italic">Live</span>
               </h1>
               <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted">
-                {live.length} men live now · {viewers.toLocaleString("en-US")} watching. Tap <b className="text-ivory">Watch live</b> and we'll take you to their room — on their own platform or OnlyMen Live.
+                {live.length === 0 ? "No one's live right now." : `${live.length} ${live.length === 1 ? "man" : "men"} live now${viewers > 0 ? ` · ${viewers.toLocaleString("en-US")} watching` : ""}.`} Tap <b className="text-ivory">Watch live</b> and we'll take you to their room — on their own platform or OnlyMen Live.
               </p>
             </div>
             {account?.type === "creator" ? (
@@ -76,7 +76,7 @@ function LivePage() {
               {shown.map((s) => <LiveCard key={s.handle} s={s} />)}
             </div>
           ) : (
-            <p className="rounded-2xl border border-line p-8 text-center text-muted">Nobody live in this category right now. Check the schedule below.</p>
+            <p className="rounded-2xl border border-line p-8 text-center text-muted">{cat ? "No one's live in this category right now." : "No one's live right now."} Check the schedule below.</p>
           )}
         </section>
 
@@ -92,6 +92,8 @@ function LivePage() {
           <div className="mt-5 grid gap-3 lg:grid-cols-2">
             {upcoming === null
               ? Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-24 animate-pulse rounded-2xl bg-surface/60" />)
+              : upcoming.length === 0
+              ? <p className="rounded-2xl border border-line p-6 text-center text-sm text-muted lg:col-span-2">No shows scheduled yet. Creators will post them here.</p>
               : upcoming.map((u) => <UpcomingRow key={u.id} show={u} reminded={rem.has(u.id)} onRemind={() => rem.toggle(u)} />)}
           </div>
         </section>

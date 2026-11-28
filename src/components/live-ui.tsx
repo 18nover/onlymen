@@ -47,9 +47,11 @@ export function LiveCard({ s }: { s: LiveNow }) {
         <div className="absolute inset-0 tile-shade" />
         <div className="absolute inset-x-3 top-3 flex items-center justify-between">
           <LiveBadge />
-          <span className="flex items-center gap-1 rounded-full bg-ink/70 px-2 py-1 text-[11px] font-semibold text-ivory backdrop-blur">
-            <Eye className="size-3" /> {s.viewers}
-          </span>
+          {s.viewers > 0 && (
+            <span className="flex items-center gap-1 rounded-full bg-ink/70 px-2 py-1 text-[11px] font-semibold text-ivory backdrop-blur">
+              <Eye className="size-3" /> {s.viewers}
+            </span>
+          )}
         </div>
         <div className="absolute inset-x-3 bottom-3">
           <p className="text-[10px] font-bold tracking-[0.18em] text-gold-hi uppercase">{s.own ? "You · " : ""}{s.platform}</p>
@@ -59,11 +61,13 @@ export function LiveCard({ s }: { s: LiveNow }) {
             <div className="mt-2">
               <div className="flex items-center justify-between text-[10px] text-dim">
                 <span className="flex min-w-0 items-center gap-1"><Target className="size-3 shrink-0 text-gold" /> <span className="truncate">{s.tipGoal.label}</span></span>
-                <span className="ml-2 shrink-0">{s.tipGoal.pct}%</span>
+                {s.tipGoal.pct != null && <span className="ml-2 shrink-0">{s.tipGoal.pct}%</span>}
               </div>
-              <div className="mt-1 h-1 overflow-hidden rounded-full bg-surface-2">
-                <div className="h-full rounded-full bg-gold" style={{ width: `${s.tipGoal.pct}%` }} />
-              </div>
+              {s.tipGoal.pct != null && (
+                <div className="mt-1 h-1 overflow-hidden rounded-full bg-surface-2">
+                  <div className="h-full rounded-full bg-gold" style={{ width: `${s.tipGoal.pct}%` }} />
+                </div>
+              )}
             </div>
           )}
           <WatchLiveLink handle={s.handle} className="relative z-10 mt-3 h-10 w-full" />

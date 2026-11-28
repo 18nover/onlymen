@@ -6,7 +6,7 @@ OnlyMen is a private, invite-only community for adult men, with creator profiles
 
 Working branch is still `invite-codes`. Production `main` is unchanged at `54434ef`. Do not merge to `main`, touch DNS, or change Vercel production without Jerry's yes.
 
-The test Worker at [onlymen.18nover.workers.dev](https://onlymen.18nover.workers.dev) is the invite-codes preview (no custom domain, no DNS change). Current Version ID: `8c3dddad-1e74-47ff-897d-b9105416bb82` (commit `e41364f`; Stripe Identity age check on LIVE keys). Worker vars: `ONLYMEN_INVITES=on`, `ONLYMEN_NEARBY=on`, `ONLYMEN_AGE_GATE=on`, `ONLYMEN_PAYMENTS` unset. A later paragraph in this file may still describe the pre-deploy state; the live preview is this branch.
+The test Worker at [onlymen.18nover.workers.dev](https://onlymen.18nover.workers.dev) is the invite-codes preview (no custom domain, no DNS change). Current Version ID: `3ba1b52d-dc2e-4ffc-9b63-3bfb62b416a7` (Worker var `ONLYMEN_DEMO_PROFILES=off`; Stripe Identity age check on LIVE keys). Worker vars: `ONLYMEN_INVITES=on`, `ONLYMEN_NEARBY=on`, `ONLYMEN_AGE_GATE=on`, `ONLYMEN_PAYMENTS` unset. A later paragraph in this file may still describe the pre-deploy state; the live preview is this branch.
 
 Personal invite links `/join/<CODE>` are age-exempt so Open Graph can unfurl. The branded landing uses `public/og-invite.jpg`. Route files for `/join/$code`, `/me/settings`, and `/messages/$username` use the `me_.verify` flattening pattern so they are not wrapped by the parent page. Logged-out `/`, `/nearby`, `/me/settings`, and `/messages` still show the 18+ age gate, then the private coming-soon page — testers sign in from `/join` or `/login`.
 
@@ -79,3 +79,6 @@ The required checks before a push are `npm test`, `npm run lint`, `npm run typec
 
 ## Nearby placeholders and mobile layout (latest)
 Demo profiles now fill Nearby only up to 12 tiles in total (`DEMO_TARGET` in `src/routes/nearby.tsx`). Each real member (grid or directory) removes one placeholder; at 12 real members none show. Real members always come first. No migration. The Live grid is 1 column under 640px (2 at sm, 3 at md) with clamped text, and Live and Nearby pad the bottom by the tab-bar height plus the safe area. Not verified end to end past the age gate: the box can't pass a live Stripe ID check, so sign-up, location, chat and feedback were checked by code, unit tests (364 pass) and DB state only.
+
+## No placeholder people on the test site
+The test Worker sets `ONLYMEN_DEMO_PROFILES=off` (it was `on`). Hidden now: demo members in Nearby (grid and map pins), the directory, Live cards, the Coming up schedule, `/m/<demo handle>` and `/watch/<demo handle>` (404 or not found), and the city counts. Invented stats are gone too: Live viewer counts, tip-goal progress bars, and the made-up stream recap numbers (the recap shows only the real duration). Empty states: Nearby "No one nearby yet. Invite friends.", Live "No one's live right now.", Schedule "No shows scheduled yet." Production (`main`) keeps its current default (demo on) until this branch is merged. Before the directory loads, the client now assumes demo off.

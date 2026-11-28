@@ -139,7 +139,7 @@ export function CityPicker({ city, onCity, compact = false }: { city: CityId | "
   const [open, setOpen] = useState(false);
   const ref = useOutside<HTMLDivElement>(open, () => setOpen(false));
   const { list } = useDirectory();
-  const catalog = list.length ? list : models;
+  const catalog = list;
   const counts = Object.fromEntries(cities.map((c) => [c.id, catalog.filter((m) => m.source === "real" ? m.metroKnown !== false && m.metro === c.id : m.metro === c.id).length]));
   const options: { id: CityId | "all"; label: string; n: number }[] = [
     { id: "all", label: "All cities", n: catalog.length },

@@ -44,11 +44,11 @@ export function useLiveNow(): LiveNow[] {
           photo: ph ? `/api/photo/${ph.id}` : "/models/hero.webp",
           title: p.live!.title,
           tags: p.live!.tags,
-          viewers: 12 + mins * 3,
+          viewers: 0, // real viewer counts aren't tracked; 0 hides the badge
           platform: t.platform,
           roomUrl: t.url,
           startedMinAgo: mins,
-          tipGoal: p.live!.tipGoal ? { label: `$${p.live!.tipGoal} goal`, pct: Math.min(100, 8 + mins * 4) } : undefined,
+          tipGoal: p.live!.tipGoal ? { label: `$${p.live!.tipGoal} goal` } : undefined,
         };
       });
     const realHandles = new Set(real.map((r) => r.handle));
@@ -64,11 +64,11 @@ export function useLiveNow(): LiveNow[] {
         photo: photo ?? "/models/hero.webp",
         title: s.title,
         tags: s.tags,
-        viewers: 12 + mins * 3,
+        viewers: 0,
         platform: t.platform,
         roomUrl: t.url,
         startedMinAgo: mins,
-        tipGoal: s.tipGoal ? { label: `$${s.tipGoal} goal`, pct: Math.min(100, 8 + mins * 4) } : undefined,
+        tipGoal: s.tipGoal ? { label: `$${s.tipGoal} goal` } : undefined,
         own: true,
       });
     }

@@ -34,7 +34,7 @@
     // Default on: invented demo profiles stay in the directory, with real
     // eligible accounts (today: role=owner) replacing them one-for-one.
     // Set to "off" to hide every placeholder once you want a real-only grid.
-    "ONLYMEN_DEMO_PROFILES": "on",
+    "ONLYMEN_DEMO_PROFILES": "off",
     // 18+ visitor age gate (server/middleware/age-gate.ts, docs/AGE_GATE.md).
     "ONLYMEN_AGE_GATE": "on",
     // Which AgeVerifier passes visitors. "clickthrough" = DEV/TEST ONLY — NOT

@@ -8,6 +8,7 @@ import { useImageUrl } from "@/lib/account/media";
 import { publicProfileFn } from "@/lib/account/api";
 import { liveNow } from "@/lib/live/demo";
 import { findModel } from "@/lib/models";
+import { useDirectory } from "@/lib/use-directory";
 import { LIVE_BASE_URL, chaturbateEmbedSrc, liveHost, publicRooms, resolveHandoff } from "@/lib/live/config";
 import type { PublicRoom } from "@/lib/live/config";
 
@@ -27,9 +28,12 @@ function Watch() {
   const [paused, setPaused] = useState(false);
   const [showEmbed, setShowEmbed] = useState(false);
 
+  const { showDemo } = useDirectory();
+  const demoModel = showDemo ? findModel(handle) : undefined;
+
   const [real, setReal] = useState<Awaited<ReturnType<typeof publicProfileFn>> | undefined>(undefined);
   useEffect(() => {
-    if (findModel(handle) || (account && account.username === handle)) return;
+    if (demoModel || (account && account.username === handle)) return;
     let live = true;
     publicProfileFn({ data: { username: handle } }).then((p) => live && setReal(p)).catch(() => live && setReal(null));
     return () => {
@@ -60,11 +64,11 @@ function Watch() {
       };
     }
     const d = liveNow().find((s) => s.handle === handle);
-    const m = findModel(handle);
+    const m = demoModel;
     if (!m) return null;
     // demo creators have no linked external room, so they resolve to their OnlyMen Live room
     return { name: m.name, photo: m.photo, title: d?.title ?? m.tagline, live: !!d, target: resolveHandoff(handle, null), rooms: [] as PublicRoom[], profile: true };
-  }, [account, handle, ownPhoto, real]);
+  }, [account, handle, ownPhoto, real, demoModel]);
 
   const member = !!account;
   const embedSrc = member && info?.live ? (chaturbateEmbedSrc(info.target.kind === "own-room" ? info.target.url : "") ?? info.rooms.map((r) => chaturbateEmbedSrc(r.url)).find(Boolean) ?? null) : null;
@@ -89,7 +93,7 @@ function Watch() {
       <div className="absolute inset-0 vignette" />
       <div className={`relative w-full animate-fade-up rounded-3xl border-gold-grad p-[clamp(1.5rem,6vw,2.5rem)] text-center glow-gold ${showEmbed ? "max-w-3xl" : "max-w-md"}`}>
         <div className="flex justify-center"><Brand /></div>
-        {!ready || (!info && real === undefined && !findModel(handle) && account?.username !== handle) ? (
+        {!ready || (!info && real === undefined && !demoModel && account?.username !== handle) ? (
           <Loader2 className="mx-auto mt-10 size-8 animate-spin text-gold" />
         ) : !info ? (
           <>

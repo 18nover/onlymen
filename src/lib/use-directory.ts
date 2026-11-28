@@ -14,7 +14,7 @@ async function load(): Promise<DirectoryPayload> {
   if (cache && Date.now() - cache.at < 30_000) return cache.value;
   if (!inflight) {
     inflight = directoryFn()
-      .catch((): DirectoryPayload => cache?.value ?? { showDemo: true, profiles: [] })
+      .catch((): DirectoryPayload => cache?.value ?? { showDemo: false, profiles: [] })
       .then((d) => {
         cache = { at: Date.now(), value: d };
         inflight = null;
@@ -48,7 +48,7 @@ export function useDirectory(): { list: Model[]; showDemo: boolean; ready: boole
     };
   }, [ctx]);
   return useMemo(() => {
-    const showDemo = data?.showDemo ?? true;
+    const showDemo = data?.showDemo ?? false;
     const real = (data?.profiles ?? []).flatMap((p) => {
       const m = toDirectoryModel(p);
       return m ? [m] : [];
