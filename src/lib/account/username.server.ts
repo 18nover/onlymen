@@ -3,7 +3,7 @@
  * for 30 days so nobody can impersonate it. History lives in om_username_log (migration 0013); until
  * it exists everything here fails safe ("not available yet") and nothing changes.
  */
-import { withTransaction, type Sql } from "../db.ts";
+import type { Sql } from "../db.ts";
 import { normalizeUsername, validateUsername } from "./validation.ts";
 
 export const USERNAME_LIMIT = 2;
@@ -46,7 +46,7 @@ export async function reservedByOther(db: Sql, username: string, exceptUid?: str
   }
 }
 
-export async function changeUsername(db: Sql, uid: string, raw: string): Promise<{ ok: true; username: string } | { ok: false; error: string }> {
+export async function changeUsername(db: Sql, uid: string, raw: string, tx: (fn: (t: Sql) => Promise<void>) => Promise<void> = async (fn) => (await import("../db.ts")).withTransaction(fn)): Promise<{ ok: true; username: string } | { ok: false; error: string }> {
   const next = normalizeUsername(raw);
   const bad = validateUsername(next);
   if (bad) return { ok: false, error: bad };
@@ -58,7 +58,7 @@ export async function changeUsername(db: Sql, uid: string, raw: string): Promise
   if (cur === next) return { ok: false, error: "That's already your username." };
   if ((await db`select 1 from om_account where username = ${next}`).length || (await reservedByOther(db, next, uid))) return { ok: false, error: "That username is taken." };
   try {
-    await withTransaction(async (tx) => {
+    await tx(async (tx) => {
       const locked = await tx<{ username: string }>`select username from om_account where user_id = ${uid} for update`;
       if (locked[0]?.username !== cur) throw new Error("changed");
       await tx`update om_account set username = ${next}, updated_at = now() where user_id = ${uid}`;
