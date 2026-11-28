@@ -24,6 +24,7 @@ import { platformEnv } from "../../src/lib/platform/runtime.ts";
 import { normalizePath } from "../../src/lib/private/policy.ts";
 import { AGE_CALLBACK_PATH, AGE_COOKIE, AGE_GATE_PATH, ageCookieHeader, decide, flagOn, readCookie, readGeo, REGION_BLOCKED_PATH, safeNext, type Geo } from "../../src/lib/age-gate/policy.ts";
 import { renderRegionBlockedHtml } from "../../src/lib/age-gate/html.ts";
+import { STRIPE_WEBHOOK_PATH, verifyStripeSignature } from "../../src/lib/age-gate/stripe-identity.ts";
 import { signAgeToken, verifyAgeToken } from "../../src/lib/age-gate/token.ts";
 import { activeVerifier, ageTokenKey, type AgeRequest, type AgeVerifier } from "../../src/lib/age-gate/verifiers.ts";
 
@@ -78,6 +79,10 @@ export default async function ageGate(event: GateEvent, next: () => unknown | Pr
   const geo: Geo = readGeo(headers, event.cf);
   const secure = event.url.protocol === "https:";
 
+  // Stripe Identity webhook: signature-verified, exempt from the age/private gates. Stateless (the
+  // callback re-fetches the session), so this only acknowledges verified events.
+  if (path === STRIPE_WEBHOOK_PATH) return stripeWebhook(event, method);
+
   const verifier = activeVerifier();
   const key = ageTokenKey();
   const verified = Boolean(key) && verifyAgeToken(key!, readCookie(headers.get("cookie"), AGE_COOKIE), new Set([verifier.name])).ok;
@@ -99,8 +104,14 @@ export default async function ageGate(event: GateEvent, next: () => unknown | Pr
     if (!ageOn) return new Response(null, { status: 404 });
     const dest = safeNext(event.url.searchParams.get("next"));
     const result = await verifier.handleCallback(ageReq(dest));
+    const withCookies = (res: Response, cookies?: string[]) => {
+      for (const c of cookies ?? []) res.headers.append("set-cookie", c);
+      return res;
+    };
+    if (!result.ok && result.redirect) return withCookies(new Response(null, { status: 303, headers: { location: result.redirect, "cache-control": "no-store", "x-robots-tag": NOINDEX, ...vHeaders } }), result.setCookies);
+    if (!result.ok && result.html) return withCookies(html(method === "HEAD" ? null : result.html, result.status ?? 200, vHeaders), result.setCookies);
     if (!result.ok || !key) return html(method === "HEAD" ? null : "<!doctype html><title>Age check failed</title><p>Age check failed. <a href=\"/age\">Try again</a></p>", result.ok ? 503 : (result.status ?? 403), vHeaders);
-    return new Response(null, { status: 303, headers: { location: dest, "set-cookie": ageCookieHeader(signAgeToken(key, verifier.name), secure), "cache-control": "no-store", "x-robots-tag": NOINDEX, ...vHeaders } });
+    return withCookies(new Response(null, { status: 303, headers: { location: dest, "set-cookie": ageCookieHeader(signAgeToken(key, verifier.name), secure), "cache-control": "no-store", "x-robots-tag": NOINDEX, ...vHeaders } }), result.setCookies);
   }
 
   if (path === AGE_GATE_PATH) {
@@ -122,4 +133,23 @@ async function start(verifier: AgeVerifier, req: AgeRequest, method: string, ext
   const s = await verifier.startVerification(req);
   if (s.kind === "redirect") return new Response(null, { status: 302, headers: { location: s.url, "cache-control": "no-store", ...extra } });
   return html(method === "HEAD" ? null : s.html, s.status ?? 200, extra);
+}
+
+/** POST /api/stripe/identity-webhook — verifies Stripe-Signature (HMAC-SHA256) and acknowledges identity.verification_session.* events. */
+async function stripeWebhook(event: GateEvent, method: string): Promise<Response> {
+  const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
+  if (method !== "POST") return json(405, { error: "method" });
+  const secret = platformEnv("STRIPE_IDENTITY_WEBHOOK_SECRET");
+  if (!secret) return json(503, { error: "not_configured" });
+  const raw = (await event.req.text?.()) ?? "";
+  if (!(await verifyStripeSignature(raw, event.req.headers.get("stripe-signature"), secret))) return json(400, { error: "bad_signature" });
+  let type = "";
+  try {
+    type = String(JSON.parse(raw).type ?? "");
+  } catch {
+    return json(400, { error: "bad_json" });
+  }
+  // verified → the return-URL callback re-fetches the session and grants access;
+  // requires_input / canceled → the callback shows the retry option. Nothing is stored.
+  return json(200, { received: true, handled: type.startsWith("identity.verification_session.") });
 }

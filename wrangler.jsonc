@@ -39,8 +39,8 @@
     "ONLYMEN_AGE_GATE": "on",
     // Which AgeVerifier passes visitors. "clickthrough" = DEV/TEST ONLY — NOT
     // legal age verification under KRS 436.001 (Kentucky) or similar laws.
-    // A real vendor ("vendor" stub today) is needed before going public.
-    "ONLYMEN_AGE_VERIFIER": "clickthrough",
+    // "stripe" = Stripe Identity (test keys on the test Worker). Never set on production without Jerry.
+    "ONLYMEN_AGE_VERIFIER": "stripe",
     // Block visitors geolocated to U.S. states with adult-site AV laws
     // (src/lib/age-gate/av-states.ts). OFF: Jerry is in Kentucky. Owner/admin bypass.
     "ONLYMEN_AGE_GATE_GEOBLOCK": "off",

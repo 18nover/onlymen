@@ -98,3 +98,23 @@ export function renderVerifierUnavailableHtml(): string {
 </main>
 ${FOOT}`;
 }
+
+export function renderStripeGateHtml(next: string, opts: { testMode?: boolean; note?: string; processing?: boolean } = {}): string {
+  const action = `${AGE_CALLBACK_PATH}?next=${encodeURIComponent(next)}`;
+  return `${HEAD(AGE_GATE_TITLE)}
+${opts.testMode ? `<div data-testmode style="position:fixed;top:0;left:0;right:0;padding:.45rem 1rem;background:#5c0d1b;color:#f3dca0;font-size:.72rem;letter-spacing:.08em">TEST MODE · Stripe test ID check</div>` : ""}
+${opts.processing ? `<meta http-equiv="refresh" content="4">` : ""}
+<main data-gate="age-stripe">
+<img class="crest" src="/icon-512.png" alt="OnlyMen crest" width="96" height="96">
+<div class="kicker">OnlyMen · Adults only</div>
+<h1>Verify you're <em>18 or older.</em></h1>
+<div class="rule" aria-hidden="true"></div>
+${opts.note ? `<p role="alert">${esc(opts.note)}</p>` : ""}
+${opts.processing ? `<p>Checking your ID… this page refreshes on its own.</p>` : `<p>A quick ID check with Stripe: a photo of your government ID and a selfie. We only keep a yes or no. Stripe deletes your ID images after the check.</p>
+<div class="row">
+<form method="post" action="${esc(action)}"><button class="btn enter" type="submit">Verify with ID</button></form>
+<a class="btn exit" href="${EXIT_URL}" rel="nofollow noreferrer">Exit</a>
+</div>`}
+</main>
+${FOOT}`;
+}

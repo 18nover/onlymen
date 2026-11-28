@@ -102,3 +102,25 @@ test("interstitial has both choices and escapes next", () => {
   assert.ok(isAgeExempt("/join"));
   assert.ok(isAgeExempt("/join/OM-7K3Q-HX9D"));
 });
+
+import { hmacHex, isAdult, verifyStripeSignature } from "./stripe-identity.ts";
+
+test("stripe: isAdult computes 18+ from a DOB without storing it", () => {
+  const now = new Date("2026-11-27T12:00:00Z");
+  assert.equal(isAdult({ year: 2008, month: 11, day: 27 }, now), true);
+  assert.equal(isAdult({ year: 2008, month: 11, day: 28 }, now), false);
+  assert.equal(isAdult({ year: 1990, month: 1, day: 1 }, now), true);
+  assert.equal(isAdult(null, now), false);
+  assert.equal(isAdult({ year: null, month: 1, day: 1 }, now), false);
+});
+
+test("stripe: webhook signature verifies, rejects tampering and stale timestamps", async () => {
+  const secret = "whsec_test_fixture";
+  const body = '{"type":"identity.verification_session.verified"}';
+  const t = 1_800_000_000;
+  const v1 = await hmacHex(secret, `${t}.${body}`);
+  assert.equal(await verifyStripeSignature(body, `t=${t},v1=${v1}`, secret, 300, t + 10), true);
+  assert.equal(await verifyStripeSignature(body + " ", `t=${t},v1=${v1}`, secret, 300, t + 10), false);
+  assert.equal(await verifyStripeSignature(body, `t=${t},v1=${v1}`, secret, 300, t + 1000), false);
+  assert.equal(await verifyStripeSignature(body, null, secret), false);
+});

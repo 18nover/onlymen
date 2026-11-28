@@ -22,11 +22,15 @@
  */
 import { createHmac } from "node:crypto";
 import { platformEnv } from "../platform/runtime.ts";
-import { renderAgeGateHtml, renderVerifierUnavailableHtml } from "./html.ts";
+import { renderAgeGateHtml, renderStripeGateHtml, renderVerifierUnavailableHtml } from "./html.ts";
+import { AGE_CALLBACK_PATH, readCookie } from "./policy.ts";
+import { STRIPE_SESSION_COOKIE, createIdentitySession, getIdentitySession, hmacHex, isAdult, redactIdentitySession, safeEqual } from "./stripe-identity.ts";
 
 export type AgeRequest = { url: URL; method: string; headers: Headers; next: string; body?: () => Promise<string> };
 export type AgeStart = { kind: "html"; html: string; status?: number } | { kind: "redirect"; url: string };
-export type AgeResult = { ok: true } | { ok: false; reason: string; status?: number };
+export type AgeResult =
+  | { ok: true; setCookies?: string[] }
+  | { ok: false; reason: string; status?: number; redirect?: string; html?: string; setCookies?: string[] };
 
 export interface AgeVerifier {
   /** Goes into the signed token; changing verifier invalidates old passes. */
@@ -86,9 +90,74 @@ export const vendorStubVerifier: AgeVerifier = {
   },
 };
 
+const VS_COOKIE_TTL = 60 * 60; // 1 h to finish the Stripe flow
+const vsCookie = (value: string, secure: boolean, maxAge = VS_COOKIE_TTL) => `${STRIPE_SESSION_COOKIE}=${value}; Max-Age=${maxAge}; Path=/; HttpOnly; SameSite=Lax${secure ? "; Secure" : ""}`;
+
+/**
+ * Stripe Identity (age check only — no payments). Flow: the gate shows a
+ * "Verify with ID" button → POST /age/callback creates a VerificationSession
+ * (document + matching selfie, live capture) and redirects to Stripe's hosted
+ * page, binding the session to this browser with a short HttpOnly cookie →
+ * Stripe returns to GET /age/callback → we re-fetch the session with the secret
+ * key, compute 18+ from verified_outputs.dob in memory, redact the session at
+ * Stripe, and the middleware sets the signed pass cookie. Nothing is stored.
+ * Env: STRIPE_SECRET_KEY, STRIPE_PUBLISHABLE_KEY (unused by the hosted flow),
+ * STRIPE_IDENTITY_WEBHOOK_SECRET (webhook at /api/stripe/identity-webhook).
+ */
+export const stripeIdentityVerifier: AgeVerifier = {
+  name: "stripe",
+  devOnly: false,
+  label: "Stripe Identity (government ID + selfie)",
+  async startVerification(req) {
+    if (!platformEnv("STRIPE_SECRET_KEY")) return { kind: "html", html: renderVerifierUnavailableHtml(), status: 503 };
+    const test = (platformEnv("STRIPE_SECRET_KEY") ?? "").startsWith("sk_test_");
+    return { kind: "html", html: renderStripeGateHtml(req.next, { testMode: test }) };
+  },
+  async handleCallback(req) {
+    const secret = platformEnv("STRIPE_SECRET_KEY");
+    const key = ageTokenKey();
+    if (!secret || !key) return { ok: false, reason: "not_configured", status: 503 };
+    const secure = req.url.protocol === "https:";
+    const retry = (note: string): AgeResult => ({ ok: false, reason: note, status: 200, html: renderStripeGateHtml(req.next, { note }), setCookies: [vsCookie("", secure, 0)] });
+
+    // 1) Button press: create a session and send the visitor to Stripe.
+    if (req.method === "POST") {
+      const origin = req.headers.get("origin");
+      if (origin && origin !== req.url.origin) return { ok: false, reason: "origin", status: 403 };
+      try {
+        const returnUrl = `${req.url.origin}${AGE_CALLBACK_PATH}?next=${encodeURIComponent(req.next)}`;
+        const s = await createIdentitySession(secret, returnUrl);
+        if (!s.url) throw new Error("no url");
+        const sig = await hmacHex(key.toString("hex"), `vs:${s.id}`);
+        return { ok: false, reason: "redirect", redirect: s.url, setCookies: [vsCookie(`${s.id}.${sig}`, secure)] };
+      } catch {
+        return { ok: false, reason: "stripe_error", status: 502, html: renderVerifierUnavailableHtml() };
+      }
+    }
+
+    // 2) Return from Stripe: re-fetch the session and decide.
+    if (req.method !== "GET") return { ok: false, reason: "method", status: 405 };
+    const [id, sig] = (readCookie(req.headers.get("cookie"), STRIPE_SESSION_COOKIE) ?? "").split(".");
+    if (!id || !sig || !id.startsWith("vs_") || !safeEqual(sig, await hmacHex(key.toString("hex"), `vs:${id}`))) return retry("We couldn't find your check. Please start again.");
+    let s;
+    try {
+      s = await getIdentitySession(secret, id);
+    } catch {
+      return { ok: false, reason: "stripe_error", status: 502, html: renderVerifierUnavailableHtml() };
+    }
+    if (s.status === "processing") return { ok: false, reason: "processing", status: 200, html: renderStripeGateHtml(req.next, { processing: true }) };
+    if (s.status !== "verified") return retry(s.status === "canceled" ? "That check was canceled. You can try again." : "We couldn't verify your ID. Please try again.");
+    const adult = isAdult(s.verified_outputs?.dob);
+    await redactIdentitySession(secret, id);
+    if (!adult) return retry("We couldn't confirm you are 18 or older.");
+    return { ok: true, setCookies: [vsCookie("", secure, 0)] };
+  },
+};
+
 const REGISTRY: Record<string, AgeVerifier> = {
   [clickthroughVerifier.name]: clickthroughVerifier,
   [vendorStubVerifier.name]: vendorStubVerifier,
+  [stripeIdentityVerifier.name]: stripeIdentityVerifier,
 };
 
 export function verifierByName(name: string | undefined | null): AgeVerifier {
