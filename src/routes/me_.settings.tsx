@@ -4,6 +4,8 @@ import { Bell, Loader2, LogOut, MapPin, MessageCircle, MessageSquare, ShieldChec
 import { Footer, Header, MobileNav } from "@/components/onlymen-ui";
 import { useCity } from "@/lib/onlymen-hooks";
 import { useAccount } from "@/lib/account/use-account";
+import { changeUsernameFn, usernameStatusFn } from "@/lib/account/api";
+import { validateUsername, normalizeUsername } from "@/lib/account/validation";
 import { useIdVerification } from "@/lib/verification/use-verification";
 import { blockedListFn } from "@/lib/chat/api";
 import { nearbyActionFn, nearbyConfigFn, saveNearbySettingsFn } from "@/lib/nearby/api";
@@ -31,6 +33,10 @@ function SettingsPage() {
   const [blocks, setBlocks] = useState<{ username: string; displayName: string }[]>([]);
   const [nearby, setNearby] = useState<Settings | null>(null);
   const [note, setNote] = useState<string | null>(null);
+  const [uname, setUname] = useState<{ available: boolean; exempt: boolean; left: number; limit: number; nextAt: string | null } | null>(null);
+  const [newName, setNewName] = useState("");
+  const [unameErr, setUnameErr] = useState<string | null>(null);
+  const [unameBusy, setUnameBusy] = useState(false);
 
   useEffect(() => {
     if (ready && !account) nav({ to: "/login", replace: true });
@@ -40,6 +46,7 @@ function SettingsPage() {
     if (!account) return;
     void blockedListFn().then((r) => r.ok && setBlocks(r.value));
     void nearbyConfigFn().then((r) => r.settings && setNearby(r.settings));
+    void usernameStatusFn().then((r) => r && setUname(r));
   }, [account]);
 
   if (!ready || !account) {
@@ -52,6 +59,18 @@ function SettingsPage() {
   async function unblock(username: string) {
     const r = await nearbyActionFn({ data: { action: "unblock", username } });
     if (r.ok) setBlocks((b) => b.filter((x) => x.username !== username));
+  }
+
+  async function changeName() {
+    setUnameErr(null);
+    const bad = validateUsername(newName);
+    if (bad) return setUnameErr(bad);
+    if (!confirm(`Change your username to @${normalizeUsername(newName)}? Your old link stops working and the old name is held for 30 days.`)) return;
+    setUnameBusy(true);
+    const r = await changeUsernameFn({ data: { username: newName } });
+    setUnameBusy(false);
+    if (!r.ok) return setUnameErr(r.error);
+    window.location.reload();
   }
 
   async function saveNearby(patch: Partial<Settings>) {
@@ -77,6 +96,30 @@ function SettingsPage() {
             <li className="flex justify-between gap-4"><span className="text-muted">Type</span><span className="capitalize text-ivory">{account.type}</span></li>
           </ul>
           <Link to="/onboarding" search={{ step: "basics" }} className="mt-4 inline-flex h-10 items-center rounded-full border border-line px-4 text-sm font-semibold text-gold-hi">Edit profile</Link>
+        </Card>
+
+        <Card title="Change username">
+          {!uname ? (
+            <p className="text-sm text-muted">Loading…</p>
+          ) : !uname.available ? (
+            <p className="text-sm text-muted">Username changes aren't available yet.</p>
+          ) : (
+            <div className="grid gap-3 text-sm">
+              <p className="text-muted">
+                {uname.exempt ? "Admins can change their username any time." : <><b className="text-ivory">{uname.left} of {uname.limit}</b> changes left in the last 12 months.</>}
+                {!uname.exempt && uname.left === 0 && uname.nextAt && <> Next change on <b className="text-ivory">{new Date(uname.nextAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</b>.</>}
+              </p>
+              {(uname.exempt || uname.left > 0) && (
+                <form className="grid gap-2" onSubmit={(e) => { e.preventDefault(); void changeName(); }}>
+                  <label className="text-xs text-dim" htmlFor="new-username">New username</label>
+                  <input id="new-username" value={newName} onChange={(e) => setNewName(e.target.value)} maxLength={21} autoCapitalize="none" autoCorrect="off" spellCheck={false} placeholder="new_username" className="h-11 rounded-xl border border-line bg-ink px-3 text-ivory" />
+                  {unameErr && <p role="alert" className="text-xs text-ruby">{unameErr}</p>}
+                  <button type="submit" disabled={unameBusy || !newName.trim()} className="h-11 w-fit rounded-full bg-gold px-6 text-sm font-bold text-ink disabled:opacity-60">{unameBusy ? "Changing…" : "Change username"}</button>
+                  <p className="text-[11px] text-dim">Letters, numbers, dots and underscores. Your old name is held for 30 days so nobody can copy it.</p>
+                </form>
+              )}
+            </div>
+          )}
         </Card>
 
         <Card title="Privacy" icon={<ShieldCheck className="size-3.5" />}>

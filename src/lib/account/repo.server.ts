@@ -34,7 +34,9 @@ export async function emailForUsername(username: string): Promise<string | null>
 export async function usernameTaken(username: string): Promise<boolean> {
   const db = await getSql();
   const rows = await db`select 1 from om_account where username = ${username}`;
-  return rows.length > 0;
+  if (rows.length > 0) return true;
+  // A recently released name stays reserved for 30 days (anti-impersonation; migration 0013).
+  return (await import("./username.server.ts")).reservedByOther(db, username);
 }
 
 /** Pass `tx` to write inside an existing transaction (see withTransaction in ../db). */

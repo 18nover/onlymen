@@ -96,3 +96,6 @@ The Nearby map now always shows a pulsing gold "You" dot (`.om-you` in `src/styl
 
 ## Online counter and auto-creators
 "N online right now" (Home hero and Nearby) counts real accounts whose `om_presence.last_seen` is within 5 minutes, excluding incognito or appear-offline members. A heartbeat (`presencePingFn`) runs about every 60 s from the root while signed in and the tab is visible. It uses the existing `om_presence` table, so no migration. The count is read with `onlineNowFn` (signed-in only). Fake online numbers are gone. Every invited sign-up is created as `account_type=creator` (server-side, `signUpWithInvite`), so there is no application step. Going live and explicit photos still need the ID pass (Stripe verified or admin approved).
+
+## Change username
+`/me/settings` has a "Change username" card: 2 changes per rolling 12 months (admins/owners exempt), same validation and uniqueness as sign-up, enforced on the server (`src/lib/account/username.server.ts`, `changeUsernameFn`). The card shows "X of 2 changes left" and the next allowed date. A released name is reserved 30 days for everyone else. History is the additive table `om_username_history` (migration `0013_username_history.sql`, SQL in `/workspace`). Until it is run, the card says changes aren't available yet and nothing changes.

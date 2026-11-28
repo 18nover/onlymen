@@ -391,3 +391,23 @@ export const deleteBannerFn = createServerFn({ method: "POST" }).handler(async (
   await c.repo.deleteBanner(uid);
   return { ok: true, value: true };
 });
+
+export const usernameStatusFn = createServerFn({ method: "GET" }).handler(async () => {
+  const c = await ctx();
+  const uid = c.enabled ? await sessionUserId(c) : null;
+  if (!uid) return null;
+  const [{ getSql }, u] = await Promise.all([import("../db"), import("./username.server.ts")]);
+  return u.usernameStatus(await getSql(), uid);
+});
+
+export const changeUsernameFn = createServerFn({ method: "POST" })
+  .validator((input: unknown) => s(obj(input).username, 40))
+  .handler(async ({ data }): Promise<ApiResult<{ username: string }>> => {
+    const c = await ctx();
+    c.assertSameSite();
+    const uid = await sessionUserId(c);
+    if (!uid) return { ok: false, error: "You're signed out." };
+    const [{ getSql }, u] = await Promise.all([import("../db"), import("./username.server.ts")]);
+    const r = await u.changeUsername(await getSql(), uid, data);
+    return r.ok ? { ok: true, value: { username: r.username } } : { ok: false, error: r.error, field: "username" };
+  });
